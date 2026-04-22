@@ -1,0 +1,20 @@
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - BITRIX24_WEBHOOK_URL
+    properties:
+      BITRIX24_WEBHOOK_URL:
+        type: string
+        title: "Bitrix24 Webhook URL"
+        description: "Webhook URL for Bitrix24 CRM API access. Create it in Bitrix24 → Developer resources → Inbound webhooks. Format: https://your-domain.bitrix24.ru/rest/1/your-webhook-key/"
+  commandFunction:
+    |-
+    (config) => ({
+      command: 'npx',
+      args: ['-y', '@theyahia/bitrix24-mcp'],
+      env: {
+        ...config
+      }
+    })

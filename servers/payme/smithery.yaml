@@ -1,0 +1,25 @@
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - PAYME_MERCHANT_ID
+      - PAYME_KEY
+    properties:
+      PAYME_MERCHANT_ID:
+        type: string
+        title: "Payme Merchant ID"
+        description: "Merchant ID for Payme payment system. Get it from your Payme business dashboard → Integration settings."
+      PAYME_KEY:
+        type: string
+        title: "Payme Key"
+        description: "API key for Payme JSON-RPC authentication. Get it from your Payme business dashboard → Integration settings."
+  commandFunction:
+    |-
+    (config) => ({
+      command: 'npx',
+      args: ['-y', '@theyahia/payme-mcp'],
+      env: {
+        ...config
+      }
+    })

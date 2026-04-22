@@ -1,0 +1,19 @@
+name: chapa-mcp
+description: MCP server for Chapa — payments, transfers, banks (Ethiopia, v1.0.0)
+icon: https://raw.githubusercontent.com/theYahia/mcp-servers/main/servers/chapa/icon.png
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - CHAPA_SECRET_KEY
+    properties:
+      CHAPA_SECRET_KEY:
+        type: string
+        description: "Bearer secret key from Chapa dashboard. Test: CHASECK_TEST-..., live: CHASECK-..."
+  commandFunction: |-
+    (config) => ({
+      command: "npx",
+      args: ["-y", "@theyahia/chapa-mcp"],
+      env: { CHAPA_SECRET_KEY: config.CHAPA_SECRET_KEY }
+    })

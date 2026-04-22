@@ -1,0 +1,25 @@
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - CLOUDPAYMENTS_PUBLIC_ID
+      - CLOUDPAYMENTS_API_SECRET
+    properties:
+      CLOUDPAYMENTS_PUBLIC_ID:
+        type: string
+        title: "CloudPayments Public ID"
+        description: "Public ID for CloudPayments API (Basic auth username). Find it in your CloudPayments dashboard → API settings."
+      CLOUDPAYMENTS_API_SECRET:
+        type: string
+        title: "CloudPayments API Secret"
+        description: "API Secret for CloudPayments API (Basic auth password). Find it in your CloudPayments dashboard → API settings."
+  commandFunction:
+    |-
+    (config) => ({
+      command: 'npx',
+      args: ['-y', '@theyahia/cloudpayments-mcp'],
+      env: {
+        ...config
+      }
+    })

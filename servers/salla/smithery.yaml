@@ -1,0 +1,19 @@
+name: salla-mcp
+description: MCP server for Salla e-commerce platform — products, orders, customers, store (Saudi Arabia, v2.0.0)
+icon: https://raw.githubusercontent.com/theYahia/salla-mcp/main/icon.png
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - SALLA_ACCESS_TOKEN
+    properties:
+      SALLA_ACCESS_TOKEN:
+        type: string
+        description: "OAuth 2.0 access token from Salla (https://salla.partners/)"
+  commandFunction: |-
+    (config) => ({
+      command: "npx",
+      args: ["-y", "@theyahia/salla-mcp"],
+      env: { SALLA_ACCESS_TOKEN: config.SALLA_ACCESS_TOKEN }
+    })

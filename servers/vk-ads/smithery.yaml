@@ -1,0 +1,21 @@
+name: vk-ads-mcp
+description: MCP server for VK Ads API — campaigns, ads, statistics, targeting, budgets (v2.0.0)
+icon: https://raw.githubusercontent.com/theYahia/vk-ads-mcp/main/icon.png
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - VK_ADS_TOKEN
+    properties:
+      VK_ADS_TOKEN:
+        type: string
+        description: "Bearer token from your VK Ads account (Tools → API access)"
+  commandFunction: |-
+    (config) => ({
+      command: "npx",
+      args: ["-y", "@theyahia/vk-ads-mcp"],
+      env: {
+        VK_ADS_TOKEN: config.VK_ADS_TOKEN,
+      }
+    })

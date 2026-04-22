@@ -1,0 +1,30 @@
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - ROBOKASSA_MERCHANT_LOGIN
+      - ROBOKASSA_PASSWORD1
+      - ROBOKASSA_PASSWORD2
+    properties:
+      ROBOKASSA_MERCHANT_LOGIN:
+        type: string
+        title: "Robokassa Merchant Login"
+        description: "Your Robokassa merchant login (store identifier). Find it in your Robokassa merchant dashboard."
+      ROBOKASSA_PASSWORD1:
+        type: string
+        title: "Robokassa Password #1"
+        description: "First password for Robokassa API. Used for generating payment URLs and signatures. Set in Robokassa dashboard → Technical settings."
+      ROBOKASSA_PASSWORD2:
+        type: string
+        title: "Robokassa Password #2"
+        description: "Second password for Robokassa API. Used for result URL verification. Set in Robokassa dashboard → Technical settings."
+  commandFunction:
+    |-
+    (config) => ({
+      command: 'npx',
+      args: ['-y', '@theyahia/robokassa-mcp'],
+      env: {
+        ...config
+      }
+    })

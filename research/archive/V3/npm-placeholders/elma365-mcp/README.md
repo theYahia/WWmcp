@@ -1,0 +1,5 @@
+# @theyahia/elma365-mcp
+
+> MCP server for ELMA365 BPM API
+
+Coming soon. Part of [@theyahia Russian API MCP series](https://github.com/theYahia/russian-mcp) by [@theYahia](https://github.com/theYahia).
