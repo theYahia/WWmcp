@@ -338,6 +338,25 @@ Wire DaData + MoySklad + CDEK + YooKassa into one agent flow:
 
 ---
 
+## Monorepo Development
+
+This repo is a **Turborepo + pnpm workspace**. Production servers live in [`servers/`](./servers/), shared library in [`packages/core`](./packages/core), CI/release pipelines in [`.github/workflows/`](./.github/workflows/).
+
+Pipeline servers (100+ in queue) live as standalone repos under [@theYahia](https://github.com/theYahia?tab=repositories) by design — each is its own git history and npm publish target.
+
+```bash
+git clone https://github.com/theYahia/WWmcp.git
+cd WWmcp
+pnpm install
+pnpm build                                # build all workspaces
+pnpm dev --filter @theyahia/moysklad-mcp  # dev a single server
+pnpm test                                 # run tests across the monorepo
+```
+
+Internal docs: [`docs/planning/`](./docs/planning/) (PLAN, STRUCTURE, BUILD_QUEUE, etc.) · Project rules: [`CLAUDE.md`](./CLAUDE.md) · Migration history: [`IMPLEMENTATION_PLAN.md`](./IMPLEMENTATION_PLAN.md).
+
+---
+
 ## Author
 
 [@theYahia](https://github.com/theYahia) · Telegram: [@vhodvai](https://t.me/vhodvai) · npm: [npmjs.com/org/theyahia](https://www.npmjs.com/org/theyahia)
