@@ -1,0 +1,13 @@
+{
+  "name": "@theyahia/sms-ru-mcp",
+  "version": "0.0.1",
+  "description": "MCP server for SMS.ru API",
+  "keywords": ["mcp", "model-context-protocol", "russia", "russian-api", "claude"],
+  "license": "MIT",
+  "main": "index.js",
+  "author": "theYahia (https://github.com/theYahia)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/theYahia/sms-ru-mcp"
+  }
+}

@@ -1,0 +1,19 @@
+name: wildberries-mcp
+description: MCP server for Wildberries Seller API — 14 tools, production-grade rate limiting with 409 penalty protection (Russia, v2.0.0)
+icon: https://raw.githubusercontent.com/theYahia/wildberries-mcp/main/icon.png
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - WB_API_TOKEN
+    properties:
+      WB_API_TOKEN:
+        type: string
+        description: "Wildberries Seller API token (Settings → Access to API)"
+  commandFunction: |-
+    (config) => ({
+      command: "npx",
+      args: ["-y", "@theyahia/wildberries-mcp"],
+      env: { WB_API_TOKEN: config.WB_API_TOKEN }
+    })

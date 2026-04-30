@@ -1,0 +1,23 @@
+{
+  "mcpServers": {
+    "moysklad": {
+      "command": "npx",
+      "args": ["-y", "@theyahia/moysklad-mcp"],
+      "env": {
+        "MOYSKLAD_TOKEN": "YOUR_TOKEN"
+      }
+    },
+    "cdek": {
+      "command": "npx",
+      "args": ["-y", "@theyahia/cdek-mcp"],
+      "env": {
+        "CDEK_CLIENT_ID": "YOUR_CLIENT_ID",
+        "CDEK_CLIENT_SECRET": "YOUR_SECRET"
+      }
+    },
+    "cbr": {
+      "command": "npx",
+      "args": ["-y", "@theyahia/cbr-mcp"]
+    }
+  }
+}

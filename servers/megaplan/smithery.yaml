@@ -1,0 +1,33 @@
+name: megaplan-mcp
+description: MCP server for Megaplan — tasks, deals, projects, employees, comments + 2 MCP prompts (v2.0.0)
+icon: https://raw.githubusercontent.com/theYahia/megaplan-mcp/main/icon.png
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - MEGAPLAN_DOMAIN
+    properties:
+      MEGAPLAN_DOMAIN:
+        type: string
+        description: "Your Megaplan subdomain (e.g. 'mycompany' for mycompany.megaplan.ru)"
+      MEGAPLAN_TOKEN:
+        type: string
+        description: "Bearer access token (preferred). If omitted, MEGAPLAN_LOGIN+MEGAPLAN_PASSWORD must be set."
+      MEGAPLAN_LOGIN:
+        type: string
+        description: "Login email (used with MEGAPLAN_PASSWORD if MEGAPLAN_TOKEN is not set)"
+      MEGAPLAN_PASSWORD:
+        type: string
+        description: "Password (used with MEGAPLAN_LOGIN if MEGAPLAN_TOKEN is not set)"
+  commandFunction: |-
+    (config) => ({
+      command: "npx",
+      args: ["-y", "@theyahia/megaplan-mcp"],
+      env: {
+        MEGAPLAN_DOMAIN: config.MEGAPLAN_DOMAIN,
+        ...(config.MEGAPLAN_TOKEN ? { MEGAPLAN_TOKEN: config.MEGAPLAN_TOKEN } : {}),
+        ...(config.MEGAPLAN_LOGIN ? { MEGAPLAN_LOGIN: config.MEGAPLAN_LOGIN } : {}),
+        ...(config.MEGAPLAN_PASSWORD ? { MEGAPLAN_PASSWORD: config.MEGAPLAN_PASSWORD } : {}),
+      }
+    })

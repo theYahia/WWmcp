@@ -1,0 +1,57 @@
+{
+  "name": "@theyahia/mercadopago-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for MercadoPago — 10 tools for payments, refunds, checkout preferences, merchant orders. Multi-country: AR/BR/MX/UY/CL/CO/PE/EC/VE.",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": { "mercadopago-mcp": "dist/index.js" },
+  "files": ["dist", "smithery.yaml"],
+  "engines": { "node": ">=18.0.0" },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@theyahia/mcp-core": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "express": "^5.2.1",
+    "zod": "^3.24.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "tsx": "^4.19.0",
+    "typescript": "^5.8.3",
+    "vitest": "^4.1.2"
+  },
+  "publishConfig": { "access": "public" },
+  "mcpName": "io.github.theYahia/mercadopago-mcp",
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "claude",
+    "ai",
+    "latam-api",
+    "argentina-api",
+    "brazil-api",
+    "mexico-api",
+    "mercadopago",
+    "payments",
+    "checkout",
+    "e-commerce"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/theYahia/mcp-servers.git",
+    "directory": "servers/mercadopago"
+  },
+  "homepage": "https://github.com/theYahia/mcp-servers/tree/main/servers/mercadopago",
+  "author": "theYahia (https://github.com/theYahia)"
+}

@@ -1,0 +1,73 @@
+version: "3.8"
+
+x-common: &common
+  restart: unless-stopped
+  networks:
+    - mcp
+
+services:
+  moysklad-mcp:
+    <<: *common
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVER: moysklad
+    image: theyahia/moysklad-mcp
+    container_name: moysklad-mcp
+    ports:
+      - "3001:3000"
+    environment:
+      - MOYSKLAD_TOKEN=${MOYSKLAD_TOKEN}
+      - MOYSKLAD_LOGIN=${MOYSKLAD_LOGIN:-}
+      - MOYSKLAD_PASSWORD=${MOYSKLAD_PASSWORD:-}
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  cdek-mcp:
+    <<: *common
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVER: cdek
+    image: theyahia/cdek-mcp
+    container_name: cdek-mcp
+    ports:
+      - "3002:3000"
+    environment:
+      - CDEK_CLIENT_ID=${CDEK_CLIENT_ID}
+      - CDEK_CLIENT_SECRET=${CDEK_CLIENT_SECRET}
+      - CDEK_SANDBOX=${CDEK_SANDBOX:-false}
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  cbr-mcp:
+    <<: *common
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVER: cbr
+    image: theyahia/cbr-mcp
+    container_name: cbr-mcp
+    ports:
+      - "3003:3000"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+networks:
+  mcp:
+    driver: bridge

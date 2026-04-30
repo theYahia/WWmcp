@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:yookassa.ru)",
+      "WebSearch",
+      "Bash(grep -oP '\\\\`[a-z_]+\\\\`')",
+      "Bash(sort -u __NEW_LINE_32dd413559310572__ echo \"\" echo \"--- API version v3 \\(не v2\\)? ---\" grep -c \"v3\" \"D:/Yahia/Yahia/neuraldeep/Researches/V3/PLAN_yookassa-mcp.md\" grep \"v2\" \"D:/Yahia/Yahia/neuraldeep/Researches/V3/PLAN_yookassa-mcp.md\")",
+      "Bash(gh repo:*)",
+      "Bash(cp \"D:/Yahia/Yahia/neuraldeep/cbr-mcp/tsconfig.json\" \"D:/Yahia/Yahia/neuraldeep/yookassa-mcp/tsconfig.json\")",
+      "Bash(cp \"D:/Yahia/Yahia/neuraldeep/cbr-mcp/.gitignore\" \"D:/Yahia/Yahia/neuraldeep/yookassa-mcp/.gitignore\")",
+      "Bash(cp \"D:/Yahia/Yahia/neuraldeep/cbr-mcp/LICENSE\" \"D:/Yahia/Yahia/neuraldeep/yookassa-mcp/LICENSE\")",
+      "Bash(npm run:*)"
+    ]
+  }
+}
