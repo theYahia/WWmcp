@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "yandex-search": {
+      "command": "npx",
+      "args": ["-y", "@theyahia/yandex-search-mcp"],
+      "env": {
+        "YANDEX_SEARCH_API_KEY": "your_api_key",
+        "YANDEX_FOLDER_ID": "your_folder_id"
+      }
+    }
+  }
+}

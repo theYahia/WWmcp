@@ -1,0 +1,25 @@
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - GETCOURSE_API_KEY
+      - GETCOURSE_DOMAIN
+    properties:
+      GETCOURSE_API_KEY:
+        type: string
+        title: "GetCourse API Key"
+        description: "API key for GetCourse platform. Get it from your GetCourse account → Settings → API."
+      GETCOURSE_DOMAIN:
+        type: string
+        title: "GetCourse Domain"
+        description: "Your GetCourse account domain (e.g., 'myschool' for myschool.getcourse.ru). Just the subdomain part, without .getcourse.ru."
+  commandFunction:
+    |-
+    (config) => ({
+      command: 'npx',
+      args: ['-y', '@theyahia/getcourse-mcp'],
+      env: {
+        ...config
+      }
+    })

@@ -1,0 +1,19 @@
+name: 2gis-mcp
+description: MCP server for 2GIS API — places, geocoding, directions, reviews (Russia/CIS, v2.0.0)
+icon: https://raw.githubusercontent.com/theYahia/2gis-mcp/main/icon.png
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - TWOGIS_API_KEY
+    properties:
+      TWOGIS_API_KEY:
+        type: string
+        description: "API key from dev.2gis.com"
+  commandFunction: |-
+    (config) => ({
+      command: "npx",
+      args: ["-y", "@theyahia/2gis-mcp"],
+      env: { TWOGIS_API_KEY: config.TWOGIS_API_KEY }
+    })

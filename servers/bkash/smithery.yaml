@@ -1,0 +1,41 @@
+name: bkash-mcp
+description: MCP server for bKash Tokenized Checkout — payments, refunds, agreements (Bangladesh, v1.0.0)
+icon: https://raw.githubusercontent.com/theYahia/mcp-servers/main/servers/bkash/icon.png
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - BKASH_APP_KEY
+      - BKASH_APP_SECRET
+      - BKASH_USERNAME
+      - BKASH_PASSWORD
+    properties:
+      BKASH_APP_KEY:
+        type: string
+        description: "Application key from bKash merchant panel"
+      BKASH_APP_SECRET:
+        type: string
+        description: "Application secret"
+      BKASH_USERNAME:
+        type: string
+        description: "Merchant username"
+      BKASH_PASSWORD:
+        type: string
+        description: "Merchant password"
+      BKASH_SANDBOX:
+        type: string
+        description: "Set to 'true' to use sandbox endpoint"
+        default: "false"
+  commandFunction: |-
+    (config) => ({
+      command: "npx",
+      args: ["-y", "@theyahia/bkash-mcp"],
+      env: {
+        BKASH_APP_KEY: config.BKASH_APP_KEY,
+        BKASH_APP_SECRET: config.BKASH_APP_SECRET,
+        BKASH_USERNAME: config.BKASH_USERNAME,
+        BKASH_PASSWORD: config.BKASH_PASSWORD,
+        ...(config.BKASH_SANDBOX ? { BKASH_SANDBOX: config.BKASH_SANDBOX } : {}),
+      }
+    })

@@ -1,0 +1,19 @@
+name: mercadopago-mcp
+description: MCP server for MercadoPago — payments, refunds, checkout preferences, merchant orders (Argentina + LATAM, v1.0.0)
+icon: https://raw.githubusercontent.com/theYahia/mcp-servers/main/servers/mercadopago/icon.png
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - MERCADOPAGO_ACCESS_TOKEN
+    properties:
+      MERCADOPAGO_ACCESS_TOKEN:
+        type: string
+        description: "Bearer access token from MercadoPago Developers Panel. Production: APP_USR-..., test: TEST-..."
+  commandFunction: |-
+    (config) => ({
+      command: "npx",
+      args: ["-y", "@theyahia/mercadopago-mcp"],
+      env: { MERCADOPAGO_ACCESS_TOKEN: config.MERCADOPAGO_ACCESS_TOKEN }
+    })

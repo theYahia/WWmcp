@@ -1,0 +1,32 @@
+{
+  "name": "@theyahia/mcp-servers",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Monorepo for 53 MCP servers covering Russian, Uzbek, and Kazakh services",
+  "author": "theYahia (https://github.com/theYahia)",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "packageManager": "pnpm@9.15.4",
+  "scripts": {
+    "build": "turbo build",
+    "build:core": "turbo build --filter=@theyahia/mcp-core",
+    "dev": "turbo dev",
+    "test": "turbo test",
+    "test:e2e": "turbo test:e2e",
+    "lint": "turbo lint",
+    "clean": "turbo clean",
+    "typecheck": "turbo typecheck",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "turbo build && changeset publish",
+    "audit:security": "pnpm audit --audit-level=high"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.27.0",
+    "turbo": "^2.4.0",
+    "typescript": "^5.8.3"
+  }
+}

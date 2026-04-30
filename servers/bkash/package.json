@@ -1,0 +1,54 @@
+{
+  "name": "@theyahia/bkash-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for bKash Tokenized Checkout (Bangladesh) — 8 tools for payments, refunds, agreements. Custom 3-step token auth.",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": { "bkash-mcp": "dist/index.js" },
+  "files": ["dist", "smithery.yaml"],
+  "engines": { "node": ">=18.0.0" },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@theyahia/mcp-core": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "express": "^5.2.1",
+    "zod": "^3.24.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "tsx": "^4.19.0",
+    "typescript": "^5.8.3",
+    "vitest": "^4.1.2"
+  },
+  "publishConfig": { "access": "public" },
+  "mcpName": "io.github.theYahia/bkash-mcp",
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "claude",
+    "ai",
+    "bangladesh-api",
+    "bkash",
+    "mobile-money",
+    "payments",
+    "tokenized-checkout"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/theYahia/mcp-servers.git",
+    "directory": "servers/bkash"
+  },
+  "homepage": "https://github.com/theYahia/mcp-servers/tree/main/servers/bkash",
+  "author": "theYahia (https://github.com/theYahia)"
+}

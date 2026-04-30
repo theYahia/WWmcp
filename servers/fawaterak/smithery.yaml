@@ -1,0 +1,26 @@
+name: fawaterak-mcp
+description: MCP server for Fawaterak — invoices, payments, refunds (Egypt, v1.0.0)
+icon: https://raw.githubusercontent.com/theYahia/mcp-servers/main/servers/fawaterak/icon.png
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - FAWATERAK_API_KEY
+    properties:
+      FAWATERAK_API_KEY:
+        type: string
+        description: "Bearer API key from Fawaterak merchant panel"
+      FAWATERAK_SANDBOX:
+        type: string
+        description: "Set to 'true' to use staging.fawaterk.com"
+        default: "false"
+  commandFunction: |-
+    (config) => ({
+      command: "npx",
+      args: ["-y", "@theyahia/fawaterak-mcp"],
+      env: {
+        FAWATERAK_API_KEY: config.FAWATERAK_API_KEY,
+        ...(config.FAWATERAK_SANDBOX ? { FAWATERAK_SANDBOX: config.FAWATERAK_SANDBOX } : {}),
+      }
+    })

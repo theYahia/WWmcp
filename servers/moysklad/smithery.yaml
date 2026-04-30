@@ -1,0 +1,27 @@
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required: []
+    properties:
+      MOYSKLAD_TOKEN:
+        type: string
+        title: "MoySklad Bearer Token"
+        description: "Bearer token for MoySklad API authentication. Get it from MoySklad admin panel → Settings → Users → API Access. Either provide this token OR use login+password."
+      MOYSKLAD_LOGIN:
+        type: string
+        title: "MoySklad Login"
+        description: "Login (email) for Basic authentication. Use together with MOYSKLAD_PASSWORD as an alternative to MOYSKLAD_TOKEN."
+      MOYSKLAD_PASSWORD:
+        type: string
+        title: "MoySklad Password"
+        description: "Password for Basic authentication. Use together with MOYSKLAD_LOGIN as an alternative to MOYSKLAD_TOKEN."
+  commandFunction:
+    |-
+    (config) => ({
+      command: 'npx',
+      args: ['-y', '@theyahia/moysklad-mcp'],
+      env: {
+        ...config
+      }
+    })

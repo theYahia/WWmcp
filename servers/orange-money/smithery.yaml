@@ -1,0 +1,35 @@
+name: orange-money-mcp
+description: MCP server for Orange Money WebPay — payments, cashin, cashout, transfers (Senegal + 11 Francophone African countries, v1.0.0)
+icon: https://raw.githubusercontent.com/theYahia/mcp-servers/main/servers/orange-money/icon.png
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - ORANGE_MONEY_CLIENT_ID
+      - ORANGE_MONEY_CLIENT_SECRET
+      - ORANGE_MONEY_COUNTRY
+    properties:
+      ORANGE_MONEY_CLIENT_ID:
+        type: string
+        description: "OAuth2 client ID from developer.orange.com → MyApps"
+      ORANGE_MONEY_CLIENT_SECRET:
+        type: string
+        description: "OAuth2 client secret"
+      ORANGE_MONEY_MERCHANT_KEY:
+        type: string
+        description: "Per-country merchant key from Orange Money business contract"
+      ORANGE_MONEY_COUNTRY:
+        type: string
+        description: "ISO country code lowercase (sn, ci, ml, cm, bf, td, mg, ne, gn, lr, sl, cd)"
+  commandFunction: |-
+    (config) => ({
+      command: "npx",
+      args: ["-y", "@theyahia/orange-money-mcp"],
+      env: {
+        ORANGE_MONEY_CLIENT_ID: config.ORANGE_MONEY_CLIENT_ID,
+        ORANGE_MONEY_CLIENT_SECRET: config.ORANGE_MONEY_CLIENT_SECRET,
+        ORANGE_MONEY_COUNTRY: config.ORANGE_MONEY_COUNTRY,
+        ...(config.ORANGE_MONEY_MERCHANT_KEY ? { ORANGE_MONEY_MERCHANT_KEY: config.ORANGE_MONEY_MERCHANT_KEY } : {}),
+      }
+    })

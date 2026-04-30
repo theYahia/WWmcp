@@ -1,0 +1,26 @@
+name: ileti-merkezi-mcp
+description: MCP server for Ileti Merkezi SMS API — send/bulk SMS, reports, contacts, blacklist (Turkey, v2.0.0)
+icon: https://raw.githubusercontent.com/theYahia/ileti-merkezi-mcp/main/icon.png
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - ILETI_API_KEY
+      - ILETI_SECRET
+    properties:
+      ILETI_API_KEY:
+        type: string
+        description: "API key from Ileti Merkezi panel (Settings → API)"
+      ILETI_SECRET:
+        type: string
+        description: "Secret key from Ileti Merkezi panel (Settings → API)"
+  commandFunction: |-
+    (config) => ({
+      command: "npx",
+      args: ["-y", "@theyahia/ileti-merkezi-mcp"],
+      env: {
+        ILETI_API_KEY: config.ILETI_API_KEY,
+        ILETI_SECRET: config.ILETI_SECRET,
+      }
+    })
