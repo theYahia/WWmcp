@@ -1,0 +1,29 @@
+{
+  "name": "@theyahia/wwmcp-telemetry",
+  "version": "0.1.0",
+  "description": "Privacy-first opt-in telemetry SDK for @theyahia MCP servers",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist", "README.md", "PRIVACY.md"],
+  "engines": { "node": ">=18.0.0" },
+  "scripts": {
+    "build": "tsc",
+    "test": "node --experimental-vm-modules node_modules/.bin/vitest run",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "mcpName": "io.github.theYahia/wwmcp-telemetry",
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "vitest": "^1.6.0",
+    "@types/node": "^22.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/theYahia/WWmcp.git",
+    "directory": "packages/telemetry"
+  },
+  "keywords": ["mcp", "telemetry", "privacy", "anonymous", "opt-in"],
+  "license": "MIT"
+}
