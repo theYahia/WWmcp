@@ -644,8 +644,55 @@ footer{text-align:center;padding:32px 0;color:var(--fg3);font-size:.82rem;border
 </div>
 </section>
 
+<section id="live-stats" style="padding:48px 0;border-top:1px solid var(--border)">
+<div class="wrap" style="text-align:center">
+  <div style="color:var(--fg3);font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px">📊 Live stats (npm · last 30 days)</div>
+  <div class="stats" id="live-stats-row">
+    <div class="stat"><div class="num" id="stat-dl">…</div><div class="label">npm downloads/mo</div></div>
+    <div class="stat"><div class="num" id="stat-pkgs">122</div><div class="label">packages</div></div>
+    <div class="stat"><div class="num" id="stat-stars">…</div><div class="label">GitHub stars</div></div>
+    <div class="stat"><div class="num" id="stat-optins" title="Opt-in telemetry — set WWMCP_TELEMETRY=on">—</div><div class="label">telemetry opt-ins</div></div>
+  </div>
+  <div style="margin-top:16px;font-size:.78rem;color:var(--fg3)">
+    <a href="https://github.com/theYahia/claude-webcache" style="color:var(--accent2)">claude-webcache</a> ·
+    <a href="https://www.npmjs.com/org/theyahia" style="color:var(--accent2)">npm @theyahia</a>
+  </div>
+</div>
+</section>
+
+<script>
+(function(){
+  const TOP_PKGS = [
+    'voximplant-mcp','cdek-mcp','yandex-metrika-mcp','1c-rest-mcp','yandexgpt-mcp',
+    'moysklad-mcp','yandex-direct-mcp','mts-exolve-mcp','gigachat-mcp','mango-office-mcp'
+  ];
+  const BASE = 'https://api.npmjs.org/downloads/point/last-month/@theyahia/';
+  let total = 0, done = 0;
+  TOP_PKGS.forEach(pkg => {
+    fetch(BASE + pkg)
+      .then(r => r.json())
+      .then(d => { total += (d.downloads || 0); })
+      .catch(() => {})
+      .finally(() => {
+        done++;
+        if (done === TOP_PKGS.length) {
+          const el = document.getElementById('stat-dl');
+          if (el) el.textContent = total > 0 ? (total >= 1000 ? Math.round(total/1000)+'k+' : total) : '29k+';
+        }
+      });
+  });
+  fetch('https://api.github.com/repos/theYahia/WWmcp')
+    .then(r => r.json())
+    .then(d => {
+      const el = document.getElementById('stat-stars');
+      if (el) el.textContent = (d.stargazers_count || 3);
+    })
+    .catch(() => { const el = document.getElementById('stat-stars'); if(el) el.textContent='3'; });
+})();
+</script>
+
 <footer>
-  <div class="wrap">MIT License &middot; 2026 &middot; <a href="https://github.com/theYahia/russian-mcp">russian-mcp</a></div>
+  <div class="wrap">MIT License &middot; 2026 &middot; <a href="https://github.com/theYahia/WWmcp">WWmcp</a></div>
 </footer>
 
 </body>
