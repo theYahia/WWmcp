@@ -1,21 +1,21 @@
-# MCP Servers for Non-Western APIs
+# MCP-серверы для не-западных API
 
-**English** | [Русский](README.ru.md)
+[English](README.md) | **Русский**
 
-> **114 servers · 910+ tools · 15+ countries · npm @theyahia**
+> **114 серверов · 910+ инструментов · 15+ стран · npm @theyahia**
 >
-> The largest open-source collection of MCP servers for CIS, MENA, Africa, LATAM, and Southeast Asia.
+> Крупнейший open-source каталог MCP-серверов для СНГ, MENA, Африки, Латинской Америки и Юго-Восточной Азии.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-![Servers](https://img.shields.io/badge/MCP_Servers-114-blue)
-![Tools](https://img.shields.io/badge/Tools-910+-green)
+[![Лицензия: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![Серверы](https://img.shields.io/badge/MCP_Servers-114-blue)
+![Инструменты](https://img.shields.io/badge/Tools-910+-green)
 [![npm org](https://img.shields.io/badge/npm-@theyahia-red)](https://www.npmjs.com/org/theyahia)
 
-> **🎯 40+ ready-made skills** for these servers: [mcp-skills](https://github.com/theYahia/mcp-skills) — e-commerce workflows, HR pipelines, marketing reports, financial audits
+> **🎯 40+ готовых скиллов** для этих серверов: [mcp-skills](https://github.com/theYahia/mcp-skills) — workflow для e-commerce, HR-конвейеры, маркетинг-отчёты, финансовые аудиты
 
-## Quick Start
+## Быстрый старт
 
-### 1. Add to your Claude Desktop config
+### 1. Добавь в Claude Desktop config
 
 `claude_desktop_config.json`:
 
@@ -41,25 +41,25 @@
 }
 ```
 
-### 2. Ask the AI
+### 2. Скажи AI
 
-> "Check stock for SKU TS-100 in MoySklad, calculate CDEK shipping to Novosibirsk, and generate a YooKassa payment link."
+> «Проверь остатки товара TS-100 в МойСклад, рассчитай доставку СДЭК до Новосибирска и создай ссылку на оплату через ЮKassa»
 
-### 3. The AI handles the rest
+### 3. AI сделает всё сам
 
-MoySklad → stock & pricing → CDEK → shipping rates → YooKassa → payment link. One prompt, no manual API work.
+МойСклад → остатки и цена → СДЭК → тарифы доставки → ЮKassa → ссылка на оплату. Один промпт, без ручной возни с API.
 
-> 📦 **Ready-made workflows:** [@theyahia/mcp-skills](https://github.com/theYahia/mcp-skills) — 40+ skills for e-commerce, HR, marketing, and finance
+> 📦 **Готовые сценарии:** [@theyahia/mcp-skills](https://github.com/theYahia/mcp-skills) — 40+ скиллов для e-commerce, HR, маркетинга, финансов
 
 ---
 
-## Servers by Region
+## Серверы по регионам
 
-### Russia
+### Россия
 
-#### Payments
+#### Платежи
 
-| Package | Status | Tools | Description |
+| Пакет | Статус | Инструменты | Описание |
 |---------|--------|-------|-------------|
 | [@theyahia/yookassa-mcp](https://www.npmjs.com/package/@theyahia/yookassa-mcp) | v2.0.0 | 20 tools | YooKassa — payments, refunds, receipts (54-FZ), payouts, webhooks, recurring, SBP, splits |
 | [@theyahia/tkassa-mcp](https://www.npmjs.com/package/@theyahia/tkassa-mcp) | v2.0.0 | 14 tools | T-Kassa (T-Bank/Tinkoff) — payments, refunds, recurring, customers, cards, SBP, receipts (54-FZ) |
@@ -68,9 +68,9 @@ MoySklad → stock & pricing → CDEK → shipping rates → YooKassa → paymen
 | [@theyahia/sberbank-acquiring-mcp](https://www.npmjs.com/package/@theyahia/sberbank-acquiring-mcp) | v1.0.0 | 8 tools | Sberbank eCommerce Acquiring — online payments, refunds, pre-auth, card tokenization |
 | [@theyahia/prodamus-mcp](https://www.npmjs.com/package/@theyahia/prodamus-mcp) | v1.0.0 | 8 tools | Prodamus — payments, subscriptions, refunds, invoices |
 
-#### CRM / Business
+#### CRM / Бизнес
 
-| Package | Status | Tools | Description |
+| Пакет | Статус | Инструменты | Описание |
 |---------|--------|-------|-------------|
 | [@theyahia/amocrm-mcp](https://www.npmjs.com/package/@theyahia/amocrm-mcp) | v2.0.1 | 19 tools | amoCRM — leads, contacts, companies, pipelines, tasks, notes, search, events, unsorted |
 | [@theyahia/bitrix24-mcp](https://www.npmjs.com/package/@theyahia/bitrix24-mcp) | v3.0.0 | 12 tools | Bitrix24 CRM — deals, contacts, tasks, users, files, messages |
@@ -82,9 +82,9 @@ MoySklad → stock & pricing → CDEK → shipping rates → YooKassa → paymen
 | [@theyahia/elma365-mcp](https://www.npmjs.com/package/@theyahia/elma365-mcp) | v1.0.0 | 3 tools | ELMA365 — app items, BPM tasks |
 | [@theyahia/yandex-tracker-mcp](https://www.npmjs.com/package/@theyahia/yandex-tracker-mcp) | v1.0.0 | 12 tools | Yandex Tracker — issues, queues, comments, worklogs |
 
-#### Marketing
+#### Маркетинг
 
-| Package | Status | Tools | Description |
+| Пакет | Статус | Инструменты | Описание |
 |---------|--------|-------|-------------|
 | [@theyahia/yandex-metrika-mcp](https://www.npmjs.com/package/@theyahia/yandex-metrika-mcp) | v2.1.0 | 15 tools | Yandex.Metrika — counters, goals, reports, logs, traffic analysis |
 | [@theyahia/yandex-direct-mcp](https://www.npmjs.com/package/@theyahia/yandex-direct-mcp) | v3.0.0 | 12 tools | Yandex.Direct — campaigns, ad groups, ads, keywords, statistics, account |
@@ -98,9 +98,9 @@ MoySklad → stock & pricing → CDEK → shipping rates → YooKassa → paymen
 | [@theyahia/tgstat-mcp](https://www.npmjs.com/package/@theyahia/tgstat-mcp) | v1.0.0 | 8 tools | TGStat — Telegram channel analytics, search, posts, stats, mentions, comparison |
 | [@theyahia/vk-ads-mcp](https://www.npmjs.com/package/@theyahia/vk-ads-mcp) | v1.0.0 | 8 tools | VK Ads — campaigns, ads, statistics, targeting, budgets |
 
-#### Logistics
+#### Логистика
 
-| Package | Status | Tools | Description |
+| Пакет | Статус | Инструменты | Описание |
 |---------|--------|-------|-------------|
 | [@theyahia/cdek-mcp](https://www.npmjs.com/package/@theyahia/cdek-mcp) | v2.0.1 | 14 tools | CDEK — tariff calculation, order management, tracking, cities, delivery points, webhooks |
 | [@theyahia/boxberry-mcp](https://www.npmjs.com/package/@theyahia/boxberry-mcp) | v1.0.1 | 4 tools | Boxberry — city/point search, delivery calculation, tracking |
@@ -111,15 +111,15 @@ MoySklad → stock & pricing → CDEK → shipping rates → YooKassa → paymen
 
 #### HR
 
-| Package | Status | Tools | Description |
+| Пакет | Статус | Инструменты | Описание |
 |---------|--------|-------|-------------|
 | [@theyahia/hh-mcp](https://www.npmjs.com/package/@theyahia/hh-mcp) | v2.0.0 | 16 tools | hh.ru — vacancy search, resumes, employers, salary stats, dictionaries, autocomplete |
 | [@theyahia/superjob-mcp](https://www.npmjs.com/package/@theyahia/superjob-mcp) | v1.0.0 | 2 tools | SuperJob — vacancy search, employers |
 | [@theyahia/huntflow-mcp](https://www.npmjs.com/package/@theyahia/huntflow-mcp) | v1.0.0 | 4 tools | HuntFlow ATS — vacancies, candidates, applicants |
 
-#### Comms
+#### Связь
 
-| Package | Status | Tools | Description |
+| Пакет | Статус | Инструменты | Описание |
 |---------|--------|-------|-------------|
 | [@theyahia/vk-mcp](https://www.npmjs.com/package/@theyahia/vk-mcp) | v1.0.1 | 4 tools | VK — wall posts, news search, users, groups |
 | [@theyahia/jivosite-mcp](https://www.npmjs.com/package/@theyahia/jivosite-mcp) | v1.0.1 | 3 tools | JivoSite — chats, agents, visitors |
@@ -130,9 +130,9 @@ MoySklad → stock & pricing → CDEK → shipping rates → YooKassa → paymen
 | [@theyahia/tilda-mcp](https://www.npmjs.com/package/@theyahia/tilda-mcp) | v1.0.0 | 3 tools | Tilda — projects, pages |
 | [@theyahia/yandex-360-mcp](https://www.npmjs.com/package/@theyahia/yandex-360-mcp) | v1.0.0 | 10 tools | Yandex 360 — users, departments, groups, disk, calendar |
 
-#### AI / Cloud
+#### AI / Облако
 
-| Package | Status | Tools | Description |
+| Пакет | Статус | Инструменты | Описание |
 |---------|--------|-------|-------------|
 | [@theyahia/gigachat-mcp](https://www.npmjs.com/package/@theyahia/gigachat-mcp) | v3.0.0 | 8 tools | GigaChat (Sber) — chat, models, embeddings, token count, image generation, balance, assistants |
 | [@theyahia/yandexgpt-mcp](https://www.npmjs.com/package/@theyahia/yandexgpt-mcp) | v3.0.0 | 8 tools | YandexGPT — completion, async completion, embeddings, classification, summarization, tokenization |
@@ -140,9 +140,9 @@ MoySklad → stock & pricing → CDEK → shipping rates → YooKassa → paymen
 | [@theyahia/yandex-speechkit-mcp](https://www.npmjs.com/package/@theyahia/yandex-speechkit-mcp) | v1.0.0 | 2 tools | Yandex SpeechKit — speech recognition and synthesis |
 | [@theyahia/yandex-cloud-mcp](https://www.npmjs.com/package/@theyahia/yandex-cloud-mcp) | v1.0.0 | 8 tools | Yandex Cloud — compute, storage, serverless, operations |
 
-#### Finance / Fiscal
+#### Финансы / Фискальное
 
-| Package | Status | Tools | Description |
+| Пакет | Статус | Инструменты | Описание |
 |---------|--------|-------|-------------|
 | [@theyahia/sber-mcp](https://www.npmjs.com/package/@theyahia/sber-mcp) | v1.0.0 | 5 tools | Sberbank — accounts, statements |
 | [@theyahia/alfa-bank-mcp](https://www.npmjs.com/package/@theyahia/alfa-bank-mcp) | v1.0.0 | 8 tools | Alfa-Bank Business — accounts, payments, statements, exchange rates |
@@ -151,9 +151,9 @@ MoySklad → stock & pricing → CDEK → shipping rates → YooKassa → paymen
 | [@theyahia/atol-online-mcp](https://www.npmjs.com/package/@theyahia/atol-online-mcp) | v1.0.0 | 8 tools | ATOL Online — fiscal receipts (54-FZ compliance) |
 | [@theyahia/kontur-diadoc-mcp](https://www.npmjs.com/package/@theyahia/kontur-diadoc-mcp) | v1.0.0 | 8 tools | Kontur.Diadoc — electronic document interchange |
 
-#### Data / Legal
+#### Данные / Право
 
-| Package | Status | Tools | Description |
+| Пакет | Статус | Инструменты | Описание |
 |---------|--------|-------|-------------|
 | [@metarebalance/dadata-mcp](https://www.npmjs.com/package/@metarebalance/dadata-mcp) | v1.0.4 | 31 tools | DaData — address validation, company lookup, phone cleaning, geocoding |
 | [@theyahia/kontur-focus-mcp](https://www.npmjs.com/package/@theyahia/kontur-focus-mcp) | v3.0.0 | 8 tools | Kontur.Focus — company search, EGRUL extracts, financial statements, arbitration, bankruptcy |
@@ -164,53 +164,53 @@ MoySklad → stock & pricing → CDEK → shipping rates → YooKassa → paymen
 | [@theyahia/2gis-mcp](https://www.npmjs.com/package/@theyahia/2gis-mcp) | v1.0.0 | 8 tools | 2GIS — places, geocoding, directions, reviews |
 | [@theyahia/yandex-maps-mcp](https://www.npmjs.com/package/@theyahia/yandex-maps-mcp) | v1.0.0 | 8 tools | Yandex Maps — geocoding, routing, places search, static maps |
 
-#### Other
+#### Прочее
 
-| Package | Status | Tools | Description |
+| Пакет | Статус | Инструменты | Описание |
 |---------|--------|-------|-------------|
 | [@theyahia/travelpayouts-mcp](https://www.npmjs.com/package/@theyahia/travelpayouts-mcp) | v2.0.0 | 11 tools | Travelpayouts — flight search, price calendar, popular directions, hotel search |
 | [@theyahia/getcourse-mcp](https://www.npmjs.com/package/@theyahia/getcourse-mcp) | v1.0.0 | 5 tools | GetCourse — users, deals (online school platform) |
 
 ---
 
-### Kazakhstan
+### Казахстан
 
-| Package | Status | Tools | Description |
+| Пакет | Статус | Инструменты | Описание |
 |---------|--------|-------|-------------|
 | [@theyahia/kaspi-mcp](https://www.npmjs.com/package/@theyahia/kaspi-mcp) | v1.0.0 | 3 tools | Kaspi.kz — shop orders and products |
 | [@theyahia/halyk-epay-mcp](https://www.npmjs.com/package/@theyahia/halyk-epay-mcp) | v1.0.0 | 8 tools | Halyk Bank ePay — payment gateway |
 | [@theyahia/forte-bank-mcp](https://www.npmjs.com/package/@theyahia/forte-bank-mcp) | v1.0.0 | 8 tools | Forte Bank — payment gateway |
 
-### Uzbekistan
+### Узбекистан
 
-| Package | Status | Tools | Description |
+| Пакет | Статус | Инструменты | Описание |
 |---------|--------|-------|-------------|
 | [@theyahia/click-mcp](https://www.npmjs.com/package/@theyahia/click-mcp) | v1.0.0 | 8 tools | Click — payment system |
 | [@theyahia/payme-mcp](https://www.npmjs.com/package/@theyahia/payme-mcp) | v1.0.0 | 8 tools | Payme — payment system |
 | [@theyahia/factura-uz-mcp](https://www.npmjs.com/package/@theyahia/factura-uz-mcp) | v1.0.0 | 8 tools | Factura.uz — electronic invoicing |
 
-### Georgia
+### Грузия
 
-| Package | Status | Tools | Description |
+| Пакет | Статус | Инструменты | Описание |
 |---------|--------|-------|-------------|
 | [@theyahia/bog-ipay-mcp](https://www.npmjs.com/package/@theyahia/bog-ipay-mcp) | v1.0.0 | 8 tools | Bank of Georgia iPay — payment gateway |
 | [@theyahia/tbc-bank-mcp](https://www.npmjs.com/package/@theyahia/tbc-bank-mcp) | v1.0.0 | 8 tools | TBC Bank — payment gateway |
 
-### Belarus
+### Беларусь
 
-| Package | Status | Tools | Description |
+| Пакет | Статус | Инструменты | Описание |
 |---------|--------|-------|-------------|
 | [@theyahia/bepaid-mcp](https://www.npmjs.com/package/@theyahia/bepaid-mcp) | v1.0.0 | 8 tools | bePaid — payment gateway |
 
-### Moldova
+### Молдова
 
-| Package | Status | Tools | Description |
+| Пакет | Статус | Инструменты | Описание |
 |---------|--------|-------|-------------|
 | [@theyahia/maib-mcp](https://www.npmjs.com/package/@theyahia/maib-mcp) | v1.0.0 | 8 tools | MAIB — e-commerce payments |
 
-### Turkey
+### Турция
 
-| Package | Status | Tools | Description |
+| Пакет | Статус | Инструменты | Описание |
 |---------|--------|-------|-------------|
 | [@theyahia/iyzico-mcp](https://www.npmjs.com/package/@theyahia/iyzico-mcp) | v1.0.1 | 8 tools | iyzico — payment gateway |
 | [@theyahia/is-bankasi-mcp](https://www.npmjs.com/package/@theyahia/is-bankasi-mcp) | v1.0.0 | 8 tools | Isbank — developer API |
@@ -220,9 +220,9 @@ MoySklad → stock & pricing → CDEK → shipping rates → YooKassa → paymen
 | [@theyahia/trendyol-mcp](https://www.npmjs.com/package/@theyahia/trendyol-mcp) | v1.0.0 | 9 tools | Trendyol — marketplace |
 | [@theyahia/ileti-merkezi-mcp](https://www.npmjs.com/package/@theyahia/ileti-merkezi-mcp) | v1.0.0 | 8 tools | Ileti Merkezi — SMS API |
 
-### Gulf (UAE + Saudi Arabia)
+### Залив (ОАЭ + Саудовская Аравия)
 
-| Package | Status | Tools | Description |
+| Пакет | Статус | Инструменты | Описание |
 |---------|--------|-------|-------------|
 | [@theyahia/tap-payments-mcp](https://www.npmjs.com/package/@theyahia/tap-payments-mcp) | v1.1.0 | 8 tools | Tap Payments — payment gateway (UAE/Saudi/Kuwait/Bahrain) |
 | [@theyahia/moyasar-mcp](https://www.npmjs.com/package/@theyahia/moyasar-mcp) | v1.1.0 | 8 tools | Moyasar — payment gateway (Saudi Arabia) |
@@ -232,9 +232,9 @@ MoySklad → stock & pricing → CDEK → shipping rates → YooKassa → paymen
 | [@theyahia/unifonic-mcp](https://www.npmjs.com/package/@theyahia/unifonic-mcp) | v1.1.0 | 8 tools | Unifonic — CPaaS: SMS, Voice, WhatsApp (Saudi Arabia) |
 | [@theyahia/paytabs-mcp](https://www.npmjs.com/package/@theyahia/paytabs-mcp) | v1.1.0 | 8 tools | PayTabs — payment gateway (MENA region) |
 
-### Latin America (Brazil + Mexico)
+### Латинская Америка (Бразилия + Мексика)
 
-| Package | Status | Tools | Description |
+| Пакет | Статус | Инструменты | Описание |
 |---------|--------|-------|-------------|
 | [@theyahia/asaas-mcp](https://www.npmjs.com/package/@theyahia/asaas-mcp) | v1.0.0 | 9 tools | Asaas — payment and Pix gateway (Brazil) |
 | [@theyahia/pagarme-mcp](https://www.npmjs.com/package/@theyahia/pagarme-mcp) | v1.0.0 | 10 tools | Pagar.me — payment gateway (Brazil) |
@@ -244,9 +244,9 @@ MoySklad → stock & pricing → CDEK → shipping rates → YooKassa → paymen
 | [@theyahia/correios-mcp](https://www.npmjs.com/package/@theyahia/correios-mcp) | v1.0.0 | 8 tools | Correios — Brazilian postal service |
 | [@theyahia/facturapi-mcp](https://www.npmjs.com/package/@theyahia/facturapi-mcp) | v1.0.0 | 10 tools | Facturapi — Mexican e-invoicing (CFDI) |
 
-### Africa (Nigeria + Kenya + South Africa + Algeria)
+### Африка (Нигерия + Кения + ЮАР + Алжир)
 
-| Package | Status | Tools | Description |
+| Пакет | Статус | Инструменты | Описание |
 |---------|--------|-------|-------------|
 | [@theyahia/payfast-mcp](https://www.npmjs.com/package/@theyahia/payfast-mcp) | v1.0.0 | 8 tools | PayFast — payment gateway (South Africa) |
 | [@theyahia/yoco-mcp](https://www.npmjs.com/package/@theyahia/yoco-mcp) | v1.0.0 | 8 tools | Yoco — payment gateway (South Africa) |
@@ -255,9 +255,9 @@ MoySklad → stock & pricing → CDEK → shipping rates → YooKassa → paymen
 | [@theyahia/africas-talking-mcp](https://www.npmjs.com/package/@theyahia/africas-talking-mcp) | v1.0.0 | 8 tools | Africa's Talking — communications platform (Kenya/Nigeria/Uganda) |
 | [@theyahia/chargily-mcp](https://www.npmjs.com/package/@theyahia/chargily-mcp) | v1.0.0 | 8 tools | Chargily Pay — payment gateway (Algeria) |
 
-### Southeast Asia (Indonesia + Vietnam + Philippines)
+### Юго-Восточная Азия (Индонезия + Вьетнам + Филиппины)
 
-| Package | Status | Tools | Description |
+| Пакет | Статус | Инструменты | Описание |
 |---------|--------|-------|-------------|
 | [@theyahia/midtrans-mcp](https://www.npmjs.com/package/@theyahia/midtrans-mcp) | v1.0.1 | 8 tools | Midtrans — payment gateway (Indonesia) |
 | [@theyahia/xendit-mcp](https://www.npmjs.com/package/@theyahia/xendit-mcp) | v1.0.1 | 10 tools | Xendit — payment gateway (Indonesia/Philippines) |
@@ -267,9 +267,9 @@ MoySklad → stock & pricing → CDEK → shipping rates → YooKassa → paymen
 | [@theyahia/zalo-oa-mcp](https://www.npmjs.com/package/@theyahia/zalo-oa-mcp) | v1.0.1 | 8 tools | Zalo Official Account — messaging API (Vietnam) |
 | [@theyahia/paymongo-mcp](https://www.npmjs.com/package/@theyahia/paymongo-mcp) | v1.0.1 | 9 tools | PayMongo — payment gateway (Philippines) |
 
-### MENA (Iran + Pakistan)
+### MENA (Иран + Пакистан)
 
-| Package | Status | Tools | Description |
+| Пакет | Статус | Инструменты | Описание |
 |---------|--------|-------|-------------|
 | [@theyahia/zarinpal-mcp](https://www.npmjs.com/package/@theyahia/zarinpal-mcp) | v1.0.1 | 8 tools | Zarinpal — payment gateway (Iran) |
 | [@theyahia/idpay-mcp](https://www.npmjs.com/package/@theyahia/idpay-mcp) | v1.0.0 | 8 tools | IDPay — payment gateway (Iran) |
@@ -280,9 +280,9 @@ MoySklad → stock & pricing → CDEK → shipping rates → YooKassa → paymen
 
 ---
 
-## Usage with Claude Desktop
+## Использование с Claude Desktop
 
-Add to `claude_desktop_config.json`:
+Добавь в `claude_desktop_config.json`:
 
 ```json
 {
@@ -306,9 +306,9 @@ Add to `claude_desktop_config.json`:
 }
 ```
 
-## Usage with Cursor / VS Code
+## Использование с Cursor / VS Code
 
-Add to `.cursor/mcp.json` or `.vscode/mcp.json`:
+Добавь в `.cursor/mcp.json` или `.vscode/mcp.json`:
 
 ```json
 {
@@ -325,44 +325,44 @@ Add to `.cursor/mcp.json` or `.vscode/mcp.json`:
 }
 ```
 
-## E-commerce Stack Demo
+## Демо: e-commerce стек
 
-Wire DaData + MoySklad + CDEK + YooKassa into one agent flow:
+Связываем DaData + МойСклад + СДЭК + ЮKassa в один agent flow:
 
 ```
-1. dadata-mcp:    suggest_company("7707083893")  → validate counterparty by INN
-2. moysklad-mcp:  create_customer_order(...)     → create sales order
-3. cdek-mcp:      calculate_tariff(...)          → get shipping cost
-4. cdek-mcp:      create_order(...)              → book delivery
-5. yookassa-mcp:  create_payment(...)            → accept payment
-6. atol-online-mcp: create_receipt(...)          → issue fiscal receipt (54-FZ)
+1. dadata-mcp:    suggest_company("7707083893")  → валидация контрагента по ИНН
+2. moysklad-mcp:  create_customer_order(...)     → создать заказ покупателя
+3. cdek-mcp:      calculate_tariff(...)          → рассчитать стоимость доставки
+4. cdek-mcp:      create_order(...)              → оформить доставку
+5. yookassa-mcp:  create_payment(...)            → принять оплату
+6. atol-online-mcp: create_receipt(...)          → выдать фискальный чек (54-ФЗ)
 ```
 
 ---
 
-## Monorepo Development
+## Разработка монорепо
 
-This repo is a **Turborepo + pnpm workspace**. Production servers live in [`servers/`](./servers/), shared library in [`packages/core`](./packages/core), CI/release pipelines in [`.github/workflows/`](./.github/workflows/).
+Этот репозиторий — **Turborepo + pnpm workspace**. Production-серверы лежат в [`servers/`](./servers/), общая библиотека в [`packages/core`](./packages/core), CI/release пайплайны в [`.github/workflows/`](./.github/workflows/).
 
-Pipeline servers (100+ in queue) live as standalone repos under [@theYahia](https://github.com/theYahia?tab=repositories) by design — each is its own git history and npm publish target.
+Pipeline-серверы (100+ в очереди) живут отдельными репозиториями под [@theYahia](https://github.com/theYahia?tab=repositories) — у каждого собственная git-история и npm publish target.
 
 ```bash
 git clone https://github.com/theYahia/WWmcp.git
 cd WWmcp
 pnpm install
-pnpm build                                # build all workspaces
-pnpm dev --filter @theyahia/moysklad-mcp  # dev a single server
-pnpm test                                 # run tests across the monorepo
+pnpm build                                # собрать все workspace'ы
+pnpm dev --filter @theyahia/moysklad-mcp  # dev один сервер
+pnpm test                                 # тесты по всему монорепо
 ```
 
-Internal docs: [`docs/planning/`](./docs/planning/) (PLAN, STRUCTURE, BUILD_QUEUE, etc.) · Project rules: [`CLAUDE.md`](./CLAUDE.md) · Migration history: [`IMPLEMENTATION_PLAN.md`](./IMPLEMENTATION_PLAN.md).
+Внутренняя документация: [`docs/planning/`](./docs/planning/) (PLAN, STRUCTURE, BUILD_QUEUE и др.) · Правила проекта: [`CLAUDE.md`](./CLAUDE.md) · История миграции: [`IMPLEMENTATION_PLAN.md`](./IMPLEMENTATION_PLAN.md).
 
 ---
 
-## Author
+## Автор
 
 [@theYahia](https://github.com/theYahia) · Telegram: [@vhodvai](https://t.me/vhodvai) · npm: [npmjs.com/org/theyahia](https://www.npmjs.com/org/theyahia)
 
-## License
+## Лицензия
 
 MIT
