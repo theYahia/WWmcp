@@ -1,5 +1,19 @@
 # Changelog
 
+## 3.0.0
+
+### Major Changes
+
+- 54cb308: Production-grade rewrite to v2.0.0. Promoted from `pipeline/marketing/` to `servers/` workspace. Now built on `@theyahia/mcp-core` (`BaseHttpClient` + `ApiKeyStrategy` + `runServer` dual transport).
+
+  Breaking changes:
+
+  - Internal client now extends `BaseHttpClient`. Functional API (`apiGet`, `apiPost`) unchanged.
+  - Tool errors return MCP-spec `CallToolResult` with `isError: true`.
+  - Adds Streamable HTTP transport (previously stdio-only).
+
+  Tool names, arguments, return formats, and `VK_ADS_TOKEN` env var are unchanged.
+
 ## 2.0.0 — 2026-04-22
 
 Production-grade rewrite. Promoted from `pipeline/marketing/` to `servers/` workspace with full integration into `@theyahia/mcp-core`.
