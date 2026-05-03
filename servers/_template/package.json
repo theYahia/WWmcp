@@ -1,6 +1,7 @@
 {
   "name": "@theyahia/CHANGEME-mcp",
   "version": "1.0.0",
+  "private": true,
   "description": "MCP server for CHANGEME API — DESCRIBE TOOLS HERE.",
   "type": "module",
   "main": "dist/index.js",
