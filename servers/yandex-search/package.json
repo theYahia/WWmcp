@@ -26,7 +26,7 @@
     "@types/node": "^22.0.0",
     "tsx": "^4.19.0",
     "typescript": "^5.7.0",
-    "vitest": "^3.1.0"
+    "vitest": "^4.1.5"
   },
   "publishConfig": { "access": "public" },
   "keywords": ["mcp","mcp-server","model-context-protocol","claude","ai","anthropic","russian-api","yandex","wordstat","seo","keyword-research","yandex-cloud","russian-seo","typescript"],
