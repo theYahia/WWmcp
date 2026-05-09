@@ -1,6 +1,6 @@
 {
   "name": "@theyahia/create-mcp",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Scaffold a new MCP server in the WWmcp monorepo (or anywhere) — copies the production-grade template, wires placeholders, prints next steps.",
   "type": "module",
   "bin": {
