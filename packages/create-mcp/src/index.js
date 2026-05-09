@@ -50,7 +50,7 @@ After scaffolding:
   pnpm changeset
 `.trimStart();
 
-function parseArgs(argv) {
+export function parseArgs(argv) {
   const args = { _: [], flags: {} };
   for (const arg of argv) {
     if (arg === "--help" || arg === "-h") {
@@ -67,7 +67,7 @@ function parseArgs(argv) {
   return args;
 }
 
-function validateName(name) {
+export function validateName(name) {
   if (!name) throw new Error("Missing <name>. Run with --help for usage.");
   if (!NAME_RE.test(name)) {
     throw new Error(
@@ -143,7 +143,7 @@ async function copyDir(src, dst, dryRun) {
   });
 }
 
-function buildReplacements({ name, baseUrl, description, region, category }) {
+export function buildReplacements({ name, baseUrl, description, region, category }) {
   const envPrefix = name.toUpperCase().replace(/-/g, "_");
   const desc =
     description ||
