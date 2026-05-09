@@ -1,0 +1,122 @@
+name: 🌍 New Server Request
+description: Propose a new MCP server for an API not yet covered (your country's payment gateway, CRM, logistics, etc.)
+title: "[New Server] Add @theyahia/<name>-mcp"
+labels: ["new-server", "help wanted"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for proposing a new server! WWmcp's mission is to cover non-Western APIs that aren't on Anthropic's official MCP list. The more specific you are, the easier it is for someone (you?) to ship this.
+
+        💡 Want to build it yourself? Run `npx @theyahia/create-mcp <name>` to scaffold it, then open a PR.
+
+  - type: input
+    id: api-name
+    attributes:
+      label: API name
+      description: Official name of the API / service.
+      placeholder: "e.g., Tinkoff Bank API, Hepsiburada, M-Pesa Daraja"
+    validations:
+      required: true
+
+  - type: input
+    id: package-name
+    attributes:
+      label: Suggested package name
+      description: Lowercase, hyphenated. Will be published as `@theyahia/<name>-mcp`.
+      placeholder: "tinkoff"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: region
+    attributes:
+      label: Region
+      options:
+        - Russia
+        - CIS (Kazakhstan / Uzbekistan / Belarus / Kyrgyzstan / Armenia / Azerbaijan / Tajikistan / Turkmenistan / Moldova / Georgia)
+        - Turkey
+        - MENA (Iran / Pakistan / Egypt / Morocco / Tunisia / Algeria)
+        - Gulf (UAE / Saudi Arabia / Qatar / Kuwait / Bahrain / Oman)
+        - Africa (Nigeria / Kenya / South Africa / Ghana / Ethiopia)
+        - LATAM (Brazil / Mexico / Argentina / Colombia / Chile / Peru)
+        - Southeast Asia (Indonesia / Vietnam / Philippines / Thailand / Malaysia / Singapore)
+        - South Asia (India / Bangladesh / Sri Lanka / Nepal)
+        - Other / Global
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - payments
+        - crm
+        - logistics
+        - comms (SMS / email / messengers)
+        - ai (LLMs / TTS / STT)
+        - data (analytics / verification / lookup)
+        - hr (job boards / ATS)
+        - marketing (ads / mailing)
+        - finance (banking / fiscal / accounting)
+        - e-commerce (marketplaces / storefronts)
+        - other
+    validations:
+      required: true
+
+  - type: input
+    id: docs-url
+    attributes:
+      label: Public API docs URL
+      description: We need machine-readable docs (OpenAPI / Swagger / well-structured HTML) to build this. Link required.
+      placeholder: "https://developers.example.com/docs"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: auth
+    attributes:
+      label: Authentication type
+      options:
+        - API key (header or query)
+        - Bearer token
+        - OAuth 2.0
+        - HMAC signed requests
+        - mTLS / certificate
+        - Other / unclear
+    validations:
+      required: true
+
+  - type: textarea
+    id: tools
+    attributes:
+      label: Suggested tools (8+ for production-grade)
+      description: List the operations you want the AI to be able to do. Format → `tool_name`: short description.
+      placeholder: |
+        - `tinkoff_create_payment`: initiate a new payment
+        - `tinkoff_get_payment_status`: poll status
+        - `tinkoff_refund_payment`: full or partial refund
+        - `tinkoff_list_transactions`: paginated list
+        - `tinkoff_create_subscription`: recurring payment
+        - ... (8+ total)
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use case
+      description: What real-world flow does this enable? (helps us prioritize)
+      placeholder: |
+        E-commerce shop based in Russia wants AI agent to handle the full order → payment → shipping flow.
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      options:
+        - label: I'd be willing to submit a PR for this server
+          required: false
+        - label: I have access to this API (test credentials / sandbox account)
+          required: false

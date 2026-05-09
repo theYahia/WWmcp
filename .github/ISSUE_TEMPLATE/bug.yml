@@ -1,0 +1,113 @@
+name: 🐛 Bug Report
+description: Report a bug in an existing MCP server or in @theyahia/mcp-core
+title: "[Bug] <server-name>: <short description>"
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug report. Please fill out the form below — the more detail, the faster we can fix it.
+
+        🔒 **Security issues:** do NOT use this form. Use a [private Security Advisory](https://github.com/theYahia/WWmcp/security/advisories/new) instead.
+
+  - type: dropdown
+    id: package
+    attributes:
+      label: Affected package
+      description: Which `@theyahia/*-mcp` package is affected? Pick "other" if it's mcp-core, telemetry, or unclear.
+      options:
+        - "@theyahia/mcp-core"
+        - "@theyahia/wwmcp-telemetry"
+        - "@theyahia/1c-rest-mcp"
+        - "@theyahia/2gis-mcp"
+        - "@theyahia/bitrix24-mcp"
+        - "@theyahia/bkash-mcp"
+        - "@theyahia/cbr-mcp"
+        - "@theyahia/cbu-mcp"
+        - "@theyahia/cdek-mcp"
+        - "@theyahia/chapa-mcp"
+        - "@theyahia/cloudpayments-mcp"
+        - "@theyahia/fawaterak-mcp"
+        - "@theyahia/getcourse-mcp"
+        - "@theyahia/ileti-merkezi-mcp"
+        - "@theyahia/megaplan-mcp"
+        - "@theyahia/mercadopago-mcp"
+        - "@theyahia/moysklad-mcp"
+        - "@theyahia/orange-money-mcp"
+        - "@theyahia/payme-mcp"
+        - "@theyahia/robokassa-mcp"
+        - "@theyahia/salla-mcp"
+        - "@theyahia/tkassa-mcp"
+        - "@theyahia/travelpayouts-mcp"
+        - "@theyahia/vk-ads-mcp"
+        - "@theyahia/wildberries-mcp"
+        - "@theyahia/yandex-search-mcp"
+        - "other / unclear"
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Package version
+      description: Run `npm list @theyahia/<package>` or check your config.
+      placeholder: "1.2.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: client
+    attributes:
+      label: MCP client
+      description: Which MCP client are you using?
+      options:
+        - Claude Desktop
+        - Cursor
+        - VS Code (Continue / Cline)
+        - Custom (Anthropic SDK / mcp-client)
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: Minimal steps that reproduce the bug. Include the prompt you sent, expected response, and actual response.
+      placeholder: |
+        1. Configured server in Claude Desktop with env vars `X=...`, `Y=...`
+        2. Asked: "List my last 10 orders"
+        3. Got error: "..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / stack trace
+      description: Server stderr, MCP client logs, or relevant error output. **Redact API keys and secrets.**
+      render: shell
+
+  - type: textarea
+    id: env
+    attributes:
+      label: Environment
+      description: Node version, OS, transport mode (stdio/http), anything else relevant.
+      placeholder: |
+        - Node: v20.11.0
+        - OS: macOS 14.4 / Windows 11 / Ubuntu 22.04
+        - Transport: stdio
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-flight checks
+      options:
+        - label: I searched [existing issues](https://github.com/theYahia/WWmcp/issues?q=is%3Aissue) and didn't find a duplicate
+          required: true
+        - label: I'm running the latest published version (or noted the older version above)
+          required: true
+        - label: I redacted all API keys, tokens, and PII from logs/output
+          required: true

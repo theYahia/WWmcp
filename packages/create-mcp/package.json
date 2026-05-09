@@ -1,0 +1,41 @@
+{
+  "name": "@theyahia/create-mcp",
+  "version": "0.1.0",
+  "description": "Scaffold a new MCP server in the WWmcp monorepo (or anywhere) — copies the production-grade template, wires placeholders, prints next steps.",
+  "type": "module",
+  "bin": {
+    "create-mcp": "./bin.js"
+  },
+  "files": [
+    "bin.js",
+    "src/",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "test": "node --test src/*.test.js"
+  },
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "scaffold",
+    "create",
+    "cli",
+    "generator",
+    "claude",
+    "anthropic"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/theYahia/WWmcp.git",
+    "directory": "packages/create-mcp"
+  },
+  "author": "theYahia (https://github.com/theYahia)",
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -63,6 +63,18 @@ mcp-servers/
 | Деплой/публикация | `/ship` |
 | Баг/ошибка | `/investigate` |
 
+## Скаффолд нового сервера
+
+Канонический способ — через `@theyahia/create-mcp`:
+
+```bash
+npx @theyahia/create-mcp <name> --region=<...> --category=<...> --base-url=<...>
+```
+
+Копирует `servers/_template/` в `servers/<name>/`, заменяет placeholders. Подробности — `packages/create-mcp/README.md` и `servers/_template/HOW_TO_TEMPLATE.md`.
+
+Не копировать `_template/` руками — CLI делает это правильнее (env-prefix, mcpName, repository.directory, keywords).
+
 ## Структура MCP-сервера (production)
 ```
 servers/{name}/

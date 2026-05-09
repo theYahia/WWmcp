@@ -7,11 +7,32 @@
 > The largest open-source collection of MCP servers for CIS, MENA, Africa, LATAM, and Southeast Asia.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![CI](https://github.com/theYahia/WWmcp/actions/workflows/ci.yml/badge.svg)](https://github.com/theYahia/WWmcp/actions/workflows/ci.yml)
+[![npm downloads](https://img.shields.io/npm/dm/@theyahia/mcp-core?label=downloads)](https://www.npmjs.com/org/theyahia)
+[![GitHub stars](https://img.shields.io/github/stars/theYahia/WWmcp?style=social)](https://github.com/theYahia/WWmcp/stargazers)
 ![Servers](https://img.shields.io/badge/MCP_Servers-114-blue)
 ![Tools](https://img.shields.io/badge/Tools-910+-green)
 [![npm org](https://img.shields.io/badge/npm-@theyahia-red)](https://www.npmjs.com/org/theyahia)
 
 > **🎯 40+ ready-made skills** for these servers: [mcp-skills](https://github.com/theYahia/mcp-skills) — e-commerce workflows, HR pipelines, marketing reports, financial audits
+
+## Why WWmcp?
+
+- **🌍 Non-Western coverage.** Anthropic's official MCP catalog ships mostly US/global SaaS. WWmcp fills the gap: Russian payments, Turkish SMS, MENA e-commerce, African mobile money, LATAM fintech, SEA logistics — all under one scope.
+- **📦 One scope, one core, one CI.** Every server is `@theyahia/<name>-mcp`, built on `@theyahia/mcp-core` (auth, retries, dual transport stdio+HTTP, structured errors, opt-in telemetry). No copy-pasted boilerplate across 25 repos.
+- **🛠 Production-grade by default.** 8+ tools per server, vitest coverage, automated changesets release pipeline, MCP-spec conformance. Not a Hello-World gallery.
+- **🚀 Frictionless contribution.** `npx @theyahia/create-mcp <name>` scaffolds a working server in 30 seconds. Add your country's API in an afternoon.
+
+## Table of Contents
+
+- [Quick Start](#quick-start)
+- [Servers by Region](#servers-by-region)
+- [Usage with Claude Desktop](#usage-with-claude-desktop)
+- [Usage with Cursor / VS Code](#usage-with-cursor--vs-code)
+- [E-commerce Stack Demo](#e-commerce-stack-demo)
+- [Monorepo Development](#monorepo-development)
+- [Contributing](#contributing)
+- [Community](#community)
 
 ## Quick Start
 
@@ -54,6 +75,9 @@ MoySklad → stock & pricing → CDEK → shipping rates → YooKassa → paymen
 ---
 
 ## Servers by Region
+
+<details>
+<summary><b>📋 Full server catalog — 25 published packages across 15+ countries</b> (click to expand)</summary>
 
 ### Russia
 
@@ -278,6 +302,8 @@ MoySklad → stock & pricing → CDEK → shipping rates → YooKassa → paymen
 | [@theyahia/easypaisa-mcp](https://www.npmjs.com/package/@theyahia/easypaisa-mcp) | v1.0.0 | 8 tools | Easypaisa — mobile wallet and payments (Pakistan) |
 | [@theyahia/jazzcash-mcp](https://www.npmjs.com/package/@theyahia/jazzcash-mcp) | v1.0.0 | 8 tools | JazzCash — mobile wallet and payments (Pakistan) |
 
+</details>
+
 ---
 
 ## Usage with Claude Desktop
@@ -356,6 +382,33 @@ pnpm test                                 # run tests across the monorepo
 ```
 
 Internal docs: [`docs/planning/`](./docs/planning/) (PLAN, STRUCTURE, BUILD_QUEUE, etc.) · Project rules: [`CLAUDE.md`](./CLAUDE.md) · Migration history: [`IMPLEMENTATION_PLAN.md`](./IMPLEMENTATION_PLAN.md).
+
+---
+
+## Contributing
+
+We welcome contributions of all sizes — from typo fixes to brand-new MCP servers for your country's APIs.
+
+**Fastest way to add a new server:**
+
+```bash
+npx @theyahia/create-mcp <name> --region <country> --category <type> --base-url <api-url>
+```
+
+This scaffolds a working server in 30 seconds. Then implement your tools, run `pnpm test`, add a changeset, and open a PR.
+
+- 🐛 [Report a bug](https://github.com/theYahia/WWmcp/issues/new?template=bug.yml)
+- ✨ [Request a feature](https://github.com/theYahia/WWmcp/issues/new?template=feature.yml)
+- 🌍 [Propose a new server](https://github.com/theYahia/WWmcp/issues/new?template=new-server.yml) for your country's API
+- 🟢 [Browse `good first issue`](https://github.com/theYahia/WWmcp/labels/good%20first%20issue) — pick one and ship
+
+Read the full [**Contributing Guide**](CONTRIBUTING.md) and our [**Code of Conduct**](CODE_OF_CONDUCT.md). For security reports, see [SECURITY.md](SECURITY.md).
+
+## Community
+
+- 💬 [GitHub Discussions](https://github.com/theYahia/WWmcp/discussions) — questions, ideas, use cases
+- 📢 [Telegram channel](https://t.me/vhodvai) — release announcements, news
+- ⭐ Star the repo if you find it useful — it directly helps discoverability
 
 ---
 
