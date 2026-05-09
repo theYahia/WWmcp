@@ -1,0 +1,61 @@
+name: ✨ Feature Request
+description: Suggest a new tool, capability, or improvement to an existing MCP server
+title: "[Feature] <server-name>: <short description>"
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Want a brand-new MCP server (e.g., for a country/API not yet covered)? Use the [New Server Request](https://github.com/theYahia/WWmcp/issues/new?template=new-server.yml) template instead.
+
+  - type: input
+    id: package
+    attributes:
+      label: Target package
+      description: Which `@theyahia/*-mcp` package should this go into?
+      placeholder: "@theyahia/moysklad-mcp"
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / use case
+      description: What are you trying to do? What's the pain point today?
+      placeholder: |
+        I want my AI agent to fetch product variants from Salla, but the current `salla_get_product` tool only returns the parent SKU.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: What should the new/updated tool look like? Inputs, outputs, and which API endpoint it should call.
+      placeholder: |
+        New tool: `salla_get_product_variants(product_id: string)`
+        Endpoint: GET https://api.salla.dev/admin/v2/products/{id}/variants
+        Returns: array of variants with SKU, price, stock.
+    validations:
+      required: true
+
+  - type: input
+    id: api-docs
+    attributes:
+      label: API docs link
+      description: Direct URL to the API endpoint documentation.
+      placeholder: "https://docs.salla.dev/..."
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Did you try a workaround? Why isn't it good enough?
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      options:
+        - label: I'd be willing to submit a PR for this
+          required: false

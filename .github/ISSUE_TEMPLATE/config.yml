@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Questions & Discussions
+    url: https://github.com/theYahia/WWmcp/discussions
+    about: Ask questions, share use cases, propose ideas. Please use Discussions for anything that isn't a bug or a concrete feature request.
+  - name: 🔒 Security Vulnerability
+    url: https://github.com/theYahia/WWmcp/security/advisories/new
+    about: Report a security vulnerability privately. Do NOT open a public issue for security reports.
+  - name: 📚 Documentation
+    url: https://github.com/theYahia/WWmcp#readme
+    about: Read the README, server catalog, and Quick Start guide.

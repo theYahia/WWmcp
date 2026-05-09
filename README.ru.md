@@ -7,11 +7,32 @@
 > Крупнейший open-source каталог MCP-серверов для СНГ, MENA, Африки, Латинской Америки и Юго-Восточной Азии.
 
 [![Лицензия: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![CI](https://github.com/theYahia/WWmcp/actions/workflows/ci.yml/badge.svg)](https://github.com/theYahia/WWmcp/actions/workflows/ci.yml)
+[![npm downloads](https://img.shields.io/npm/dm/@theyahia/mcp-core?label=downloads)](https://www.npmjs.com/org/theyahia)
+[![GitHub stars](https://img.shields.io/github/stars/theYahia/WWmcp?style=social)](https://github.com/theYahia/WWmcp/stargazers)
 ![Серверы](https://img.shields.io/badge/MCP_Servers-114-blue)
 ![Инструменты](https://img.shields.io/badge/Tools-910+-green)
 [![npm org](https://img.shields.io/badge/npm-@theyahia-red)](https://www.npmjs.com/org/theyahia)
 
 > **🎯 40+ готовых скиллов** для этих серверов: [mcp-skills](https://github.com/theYahia/mcp-skills) — workflow для e-commerce, HR-конвейеры, маркетинг-отчёты, финансовые аудиты
+
+## Зачем WWmcp?
+
+- **🌍 Покрытие не-западного мира.** Официальный каталог MCP от Anthropic — это в основном US/global SaaS. WWmcp закрывает пробел: российские платежи, турецкие SMS, MENA e-commerce, африканские мобильные деньги, LATAM-финтех, SEA-логистика — всё под одним scope.
+- **📦 Один scope, одно ядро, один CI.** Каждый сервер — `@theyahia/<name>-mcp`, построен на `@theyahia/mcp-core` (auth, ретраи, dual transport stdio+HTTP, структурированные ошибки, opt-in телеметрия). Без копипасты boilerplate'а в 25 репозиториях.
+- **🛠 Production-grade по умолчанию.** 8+ tools на сервер, vitest-покрытие, автоматический changesets release pipeline, соответствие MCP-спеке. Не Hello-World галерея.
+- **🚀 Контрибуция без трения.** `npx @theyahia/create-mcp <name>` скаффолдит рабочий сервер за 30 секунд. Добавить API своей страны — за вечер.
+
+## Содержание
+
+- [Быстрый старт](#быстрый-старт)
+- [Серверы по регионам](#серверы-по-регионам)
+- [Использование с Claude Desktop](#использование-с-claude-desktop)
+- [Использование с Cursor / VS Code](#использование-с-cursor--vs-code)
+- [Демо: e-commerce стек](#демо-e-commerce-стек)
+- [Разработка монорепо](#разработка-монорепо)
+- [Контрибуция](#контрибуция)
+- [Сообщество](#сообщество)
 
 ## Быстрый старт
 
@@ -54,6 +75,9 @@
 ---
 
 ## Серверы по регионам
+
+<details>
+<summary><b>📋 Полный каталог — 25 опубликованных пакетов в 15+ странах</b> (нажми чтобы развернуть)</summary>
 
 ### Россия
 
@@ -278,6 +302,8 @@
 | [@theyahia/easypaisa-mcp](https://www.npmjs.com/package/@theyahia/easypaisa-mcp) | v1.0.0 | 8 tools | Easypaisa — mobile wallet and payments (Pakistan) |
 | [@theyahia/jazzcash-mcp](https://www.npmjs.com/package/@theyahia/jazzcash-mcp) | v1.0.0 | 8 tools | JazzCash — mobile wallet and payments (Pakistan) |
 
+</details>
+
 ---
 
 ## Использование с Claude Desktop
@@ -356,6 +382,33 @@ pnpm test                                 # тесты по всему моно�
 ```
 
 Внутренняя документация: [`docs/planning/`](./docs/planning/) (PLAN, STRUCTURE, BUILD_QUEUE и др.) · Правила проекта: [`CLAUDE.md`](./CLAUDE.md) · История миграции: [`IMPLEMENTATION_PLAN.md`](./IMPLEMENTATION_PLAN.md).
+
+---
+
+## Контрибуция
+
+Принимаем контрибуции любого размера — от исправления опечатки до целого нового MCP-сервера для API твоей страны.
+
+**Самый быстрый способ добавить новый сервер:**
+
+```bash
+npx @theyahia/create-mcp <name> --region <страна> --category <тип> --base-url <api-url>
+```
+
+Скаффолдит рабочий сервер за 30 секунд. Дальше — реализуй tools, прогони `pnpm test`, добавь changeset, открывай PR.
+
+- 🐛 [Сообщить о баге](https://github.com/theYahia/WWmcp/issues/new?template=bug.yml)
+- ✨ [Запросить фичу](https://github.com/theYahia/WWmcp/issues/new?template=feature.yml)
+- 🌍 [Предложить новый сервер](https://github.com/theYahia/WWmcp/issues/new?template=new-server.yml) для API твоей страны
+- 🟢 [Смотри `good first issue`](https://github.com/theYahia/WWmcp/labels/good%20first%20issue) — выбери и зашипи
+
+Полный гайд: [**CONTRIBUTING.md**](CONTRIBUTING.md) и [**Code of Conduct**](CODE_OF_CONDUCT.md). По вопросам безопасности — [SECURITY.md](SECURITY.md).
+
+## Сообщество
+
+- 💬 [GitHub Discussions](https://github.com/theYahia/WWmcp/discussions) — вопросы, идеи, кейсы
+- 📢 [Telegram-канал](https://t.me/vhodvai) — анонсы релизов, новости
+- ⭐ Поставь звезду репо если он полезен — это напрямую помогает discoverability
 
 ---
 
