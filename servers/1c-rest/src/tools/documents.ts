@@ -27,7 +27,7 @@ export async function handleGetDocuments(params: z.infer<typeof getDocumentsSche
 
 export const createDocumentSchema = z.object({
   document_type: z.string().describe("Тип документа (например, Document_РеализацияТоваровУслуг)"),
-  data: z.record(z.unknown()).describe("Данные документа в формате JSON"),
+  data: z.record(z.string(), z.unknown()).describe("Данные документа в формате JSON"),
 });
 
 export async function handleCreateDocument(params: z.infer<typeof createDocumentSchema>): Promise<string> {
@@ -39,7 +39,7 @@ export async function handleCreateDocument(params: z.infer<typeof createDocument
 export const updateDocumentSchema = z.object({
   document_type: z.string().describe("Тип документа"),
   ref_key: z.string().describe("Ref_Key документа (GUID)"),
-  data: z.record(z.unknown()).describe("Обновляемые поля"),
+  data: z.record(z.string(), z.unknown()).describe("Обновляемые поля"),
 });
 
 export async function handleUpdateDocument(params: z.infer<typeof updateDocumentSchema>): Promise<string> {

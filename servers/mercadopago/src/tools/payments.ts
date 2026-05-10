@@ -12,7 +12,7 @@ export const createPaymentSchema = z.object({
   installments: z.number().int().min(1).optional().describe("Number of installments (cards only)"),
   external_reference: z.string().optional().describe("Your internal order/reference ID"),
   notification_url: z.string().url().optional().describe("Webhook URL for status updates"),
-  metadata: z.record(z.unknown()).optional().describe("Custom key-value metadata"),
+  metadata: z.record(z.string(), z.unknown()).optional().describe("Custom key-value metadata"),
 });
 
 export async function handleCreatePayment(
