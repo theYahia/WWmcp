@@ -31,6 +31,15 @@ updates:
       # MCP SDK ships frequently — review majors manually
       - dependency-name: "@modelcontextprotocol/sdk"
         update-types: ["version-update:semver-major"]
+      # Major bumps for ecosystem-wide deps — review manually, no auto-PR
+      - dependency-name: "zod"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "vitest"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
 
   # GitHub Actions — monthly, less churn
   - package-ecosystem: "github-actions"
@@ -42,3 +51,7 @@ updates:
       - "github-actions"
     commit-message:
       prefix: "chore(ci)"
+    ignore:
+      # No auto-PR for action major bumps (e.g. checkout v4 -> v6)
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]

@@ -66,7 +66,7 @@ export async function handleGetPreference(
 
 export const updatePreferenceSchema = z.object({
   preference_id: z.string().describe("Preference ID to update"),
-  patch: z.record(z.unknown()).describe("Fields to update (e.g. items, back_urls, expiration)"),
+  patch: z.record(z.string(), z.unknown()).describe("Fields to update (e.g. items, back_urls, expiration)"),
 });
 
 export async function handleUpdatePreference(

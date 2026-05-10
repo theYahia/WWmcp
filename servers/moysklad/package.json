@@ -21,10 +21,10 @@
   "dependencies": {
     "@theyahia/mcp-core": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.29.0",
-    "zod": "^3.24.4"
+    "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@types/node": "^22.15.3",
+    "@types/node": "^22.19.18",
     "tsx": "^4.19.0",
     "typescript": "^5.8.3",
     "vitest": "^4.1.2"
