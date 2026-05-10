@@ -56,7 +56,7 @@ export function createToolError(error: unknown): CallToolResult {
   switch (category) {
     case "validation": {
       const zodErr = error as ZodError;
-      const details = zodErr.errors
+      const details = zodErr.issues
         .map((e) => `${e.path.join(".")}: ${e.message}`)
         .join("; ");
       return {
