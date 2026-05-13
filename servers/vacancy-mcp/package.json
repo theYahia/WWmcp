@@ -1,0 +1,44 @@
+{
+  "name": "@theyahia/vacancy-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MCP server for vacancy search — aggregates Habr Career, TG digest, career pages from night-loop into a queryable SQLite db.",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "vacancy-mcp": "dist/index.js"
+  },
+  "files": ["dist"],
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "import": "tsx scripts/import_from_night_loop.ts",
+    "test": "vitest run --passWithNoTests",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "better-sqlite3": "^11.5.0",
+    "zod": "^3.24.4",
+    "zod-to-json-schema": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.11",
+    "@types/node": "^22.15.3",
+    "tsx": "^4.19.0",
+    "typescript": "^5.8.3",
+    "vitest": "^4.1.2"
+  },
+  "mcpName": "io.github.theYahia/vacancy-mcp",
+  "keywords": [
+    "mcp", "mcp-server", "model-context-protocol", "claude", "ai",
+    "vacancy", "jobs", "habr-career", "russian-jobs"
+  ],
+  "license": "MIT",
+  "author": "theYahia (https://github.com/theYahia)"
+}

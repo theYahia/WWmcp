@@ -1,0 +1,23 @@
+{
+  "name": "github-trends-bot",
+  "version": "0.1.0",
+  "description": "Парсер GitHub Trending — фильтр по AI/MCP/RAG/Claude/agents → TG alerts + Obsidian Inbox",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "scripts": {
+    "dev": "node --experimental-strip-types src/index.ts",
+    "start": "node --experimental-strip-types src/index.ts",
+    "dry-run": "node --experimental-strip-types src/index.ts --dry-run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.6.0"
+  }
+}

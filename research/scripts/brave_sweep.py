@@ -69,6 +69,20 @@ TOS_DISCLAIMER = (
     "_For internal research only; not for redistribution or AI training._  \n"
     "_Brave query logs retained for 90 days. Zero Data Retention on Enterprise tier only._\n"
 )
+AUTHORITY_DOMAINS = {
+    "github.com", "stackoverflow.com", "docs.python.org", "developer.mozilla.org",
+    "arxiv.org", "wikipedia.org", "microsoft.com", "openai.com", "anthropic.com",
+    "consultant.ru", "garant.ru", "pravo.gov.ru", "kremlin.ru", "government.ru",
+    "nalog.gov.ru", "cbr.ru", "rkn.gov.ru", "publication.pravo.gov.ru",
+    "minfin.gov.ru", "rosmintrud.ru", "fas.gov.ru", "sozd.duma.gov.ru",
+}
+
+
+def canonical_host(h: str | None) -> str:
+    if not h:
+        return ""
+    return h.lower().removeprefix("www.")
+
 RICH_VERTICAL_NAMES = {
     "calculator": "Calculator",
     "definitions": "Dictionary (Wordnik)",
@@ -340,6 +354,7 @@ class SweepConfig:
     results_per: int = 10
     dry_run: bool = False
     check_status: bool = False
+    exclude_domains: set = field(default_factory=set)
 
 
 # ── Validation ─────────────────────────────────────────────────────────────────
@@ -1239,6 +1254,28 @@ def _iso_now() -> str:
     return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
 
 
+def quality_score(result: Any) -> float:
+    score = 0.0
+    title = getattr(result, "title", "") or ""
+    tlen = len(title)
+    if 40 <= tlen <= 100:
+        score += 2.0
+    elif tlen > 10:
+        score += 1.0
+    desc = getattr(result, "description", "") or ""
+    dlen = len(desc)
+    if dlen > 200:
+        score += 2.0
+    elif dlen > 80:
+        score += 1.0
+    hostname = getattr(result, "hostname", "") or ""
+    if canonical_host(hostname) in AUTHORITY_DOMAINS:
+        score += 3.0
+    snippets = getattr(result, "extra_snippets", None) or []
+    score += min(len(snippets) * 0.5, 2.0)
+    return score
+
+
 # ── Suggest expansion ──────────────────────────────────────────────────────────
 
 def expand_via_suggest(
@@ -1323,11 +1360,22 @@ def check_brave_status() -> None:
 
 # ── Sweep log ──────────────────────────────────────────────────────────────────
 
-def write_sweep_log(out_dir: Path, warnings: list, stats: dict, queries: list, duration: float) -> None:
+def write_sweep_log(
+    out_dir: Path,
+    warnings: list,
+    stats: dict,
+    queries: list,
+    duration: float,
+    deduped_count: int = 0,
+    quality_scores: list | None = None,
+) -> None:
+    quality_avg = round(sum(quality_scores) / len(quality_scores), 2) if quality_scores else 0.0
     log = {
         "generated": _iso_now(),
         "duration_seconds": round(duration, 2),
         "total_queries": len(queries),
+        "deduped_count": deduped_count,
+        "quality_avg": quality_avg,
         "stats": {k: v for k, v in stats.items() if k != "hostname_counts"},
         "warnings": warnings,
     }
@@ -1401,6 +1449,8 @@ def build_parser() -> argparse.ArgumentParser:
     ap.add_argument("--max-parallel", type=int)
     ap.add_argument("--target-rps", type=float, default=1.0)
 
+    ap.add_argument("--exclude", dest="exclude_file", metavar="FILE",
+                    help="Domain exclusion list — one domain per line")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--check-status", action="store_true")
     return ap
@@ -1467,6 +1517,18 @@ def args_to_cfg(args: argparse.Namespace, key: str) -> SweepConfig:
 
     if args.max_parallel is not None:
         cfg.max_parallel = args.max_parallel
+
+    exclude_file = getattr(args, "exclude_file", None)
+    if exclude_file:
+        p = Path(exclude_file)
+        if p.exists():
+            cfg.exclude_domains = {
+                ln.strip().lower() for ln in p.read_text(encoding="utf-8").splitlines()
+                if ln.strip() and not ln.startswith("#")
+            }
+            print(f"[brave_sweep] loaded {len(cfg.exclude_domains)} excluded domains from {exclude_file}")
+        else:
+            print(f"[brave_sweep] WARNING: --exclude file not found: {exclude_file}", file=sys.stderr)
 
     return cfg
 
@@ -1543,6 +1605,9 @@ def main() -> int:
     stats: dict = {}
     results_map: dict = {}
     all_warnings: list[str] = []
+    seen_urls: set[str] = set()
+    total_deduped = 0
+    all_quality_scores: list[float] = []
 
     tasks = [(label, q, ep) for label, q in queries for ep in endpoints]
 
@@ -1560,6 +1625,36 @@ def main() -> int:
                 print(f"  ✓ {label}/{ep}  {q[:55]}")
                 try:
                     parsed = parse_response(payload, ep, rate_hdrs, q)
+
+                    # URL dedup + domain exclusion + quality sort (web results)
+                    if ep == "web":
+                        filtered: list[WebResult] = []
+                        for wr in parsed.web:
+                            chost = canonical_host(wr.hostname)
+                            if wr.url in seen_urls or chost in cfg.exclude_domains:
+                                total_deduped += 1
+                                continue
+                            if wr.url:
+                                seen_urls.add(wr.url)
+                            filtered.append(wr)
+                        filtered.sort(key=quality_score, reverse=True)
+                        for wr in filtered:
+                            all_quality_scores.append(quality_score(wr))
+                        parsed.web = filtered
+
+                    # URL dedup + domain exclusion for news
+                    if ep == "news":
+                        filtered_news: list[NewsResult] = []
+                        for nr in parsed.news:
+                            chost = canonical_host(nr.hostname)
+                            if nr.url in seen_urls or chost in cfg.exclude_domains:
+                                total_deduped += 1
+                                continue
+                            if nr.url:
+                                seen_urls.add(nr.url)
+                            filtered_news.append(nr)
+                        parsed.news = filtered_news
+
                     if label not in results_map:
                         results_map[label] = {}
                     results_map[label][ep] = parsed
@@ -1574,16 +1669,18 @@ def main() -> int:
 
     duration = time.time() - start_ts
 
-    # Hostname stats
+    # Hostname stats (canonicalized: www.X and X collapse into one)
     hcounts: dict[str, int] = {}
     for lr in results_map.values():
         for pr in lr.values():
             for wr in pr.web:
-                if wr.hostname:
-                    hcounts[wr.hostname] = hcounts.get(wr.hostname, 0) + 1
+                chost = canonical_host(wr.hostname)
+                if chost:
+                    hcounts[chost] = hcounts.get(chost, 0) + 1
             for nr in pr.news:
-                if nr.hostname:
-                    hcounts[nr.hostname] = hcounts.get(nr.hostname, 0) + 1
+                chost = canonical_host(nr.hostname)
+                if chost:
+                    hcounts[chost] = hcounts.get(chost, 0) + 1
     stats["unique_hostnames"] = len(hcounts)
     stats["hostname_counts"] = hcounts
 
@@ -1591,11 +1688,13 @@ def main() -> int:
     md = render_markdown(results_map, queries, cfg, all_warnings, suggest_expansions, duration, stats)
     md_path = out_dir / "parsed_snippets.md"
     md_path.write_text(md, encoding="utf-8")
-    write_sweep_log(out_dir, all_warnings, stats, queries, duration)
+    write_sweep_log(out_dir, all_warnings, stats, queries, duration, total_deduped, all_quality_scores)
 
     total_ok = sum(v for k, v in stats.items() if k.endswith("_ok"))
     total_fail = sum(v for k, v in stats.items() if k.endswith("_fail"))
+    quality_avg = round(sum(all_quality_scores) / len(all_quality_scores), 2) if all_quality_scores else 0.0
     print(f"[brave_sweep] done: {total_ok} ok / {total_fail} fail in {duration:.1f}s")
+    print(f"[brave_sweep] deduped: {total_deduped} results removed | quality_avg: {quality_avg}")
     print(f"[brave_sweep] parsed → {md_path} ({md_path.stat().st_size} bytes)")
     if all_warnings:
         print(f"[brave_sweep] ⚠️  {len(all_warnings)} warnings in parsed_snippets.md")
