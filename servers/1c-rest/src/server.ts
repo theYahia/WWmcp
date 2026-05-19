@@ -21,6 +21,15 @@ import {
   listEntitiesSchema, handleListEntities,
   getDocumentByNumberSchema, handleGetDocumentByNumber,
 } from "./tools/metadata.js";
+import {
+  batchCreateDocumentsSchema, handleBatchCreateDocuments,
+  batchUpdateCatalogItemsSchema, handleBatchUpdateCatalogItems,
+  batchQuerySchema, handleBatchQuery,
+} from "./tools/batch.js";
+import {
+  pollChangesSinceSchema, handlePollChangesSince,
+  listSubscriptionsSchema, handleListSubscriptions,
+} from "./tools/change-tracking.js";
 
 export const logger = createLogger("1c-rest-mcp");
 
@@ -32,16 +41,26 @@ export const logger = createLogger("1c-rest-mcp");
  * navigate an unfamiliar 1C database.
  */
 export const MODULE_TOOL_COUNTS = {
-  meta: 2,        // list_entities + get_document_by_number — always on
-  catalogs: 1,    // get_catalogs
-  documents: 3,   // get_documents + create_document + update_document
-  registers: 1,   // get_register
-  reports: 1,     // get_report
-  odata: 1,       // odata_query
+  meta: 2,            // list_entities + get_document_by_number — always on
+  catalogs: 1,        // get_catalogs
+  documents: 3,       // get_documents + create_document + update_document
+  registers: 1,       // get_register
+  reports: 1,         // get_report
+  odata: 1,           // odata_query
+  batch: 3,           // batch_create_documents + batch_update_catalog_items + batch_query
+  changes: 2,         // poll_changes_since + list_subscriptions
 } as const;
 
 export type ModuleName = keyof typeof MODULE_TOOL_COUNTS;
-const OPTIONAL_MODULES: ModuleName[] = ["catalogs", "documents", "registers", "reports", "odata"];
+const OPTIONAL_MODULES: ModuleName[] = [
+  "catalogs",
+  "documents",
+  "registers",
+  "reports",
+  "odata",
+  "batch",
+  "changes",
+];
 
 /**
  * ONEC_SERVICES env var filters which tool groups are registered.
@@ -167,6 +186,60 @@ export function createServer(): McpServer {
       odataQuerySchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleODataQuery(params) }],
+      })),
+    );
+  }
+
+  if (modules.has("batch")) {
+    server.tool(
+      "batch_create_documents",
+      "Create N 1C documents in parallel (1..100 per call). 1C does NOT support OData $batch — " +
+      "this is client-side parallel batching with concurrency cap and per-item success/failure reporting.",
+      batchCreateDocumentsSchema.shape,
+      withErrorHandling(async (params) => ({
+        content: [{ type: "text", text: await handleBatchCreateDocuments(params) }],
+      })),
+    );
+
+    server.tool(
+      "batch_update_catalog_items",
+      "Update N 1C catalog items in parallel (1..100). Each item updated via OData PATCH on its Ref_Key. " +
+      "Per-item success/failure reported; partial failures do not abort the batch.",
+      batchUpdateCatalogItemsSchema.shape,
+      withErrorHandling(async (params) => ({
+        content: [{ type: "text", text: await handleBatchUpdateCatalogItems(params) }],
+      })),
+    );
+
+    server.tool(
+      "batch_query",
+      "Run N 1C OData queries in parallel (1..50). Each query reported individually. " +
+      "No server-side join (1C does not support $batch) — combine results client-side.",
+      batchQuerySchema.shape,
+      withErrorHandling(async (params) => ({
+        content: [{ type: "text", text: await handleBatchQuery(params) }],
+      })),
+    );
+  }
+
+  if (modules.has("changes")) {
+    server.tool(
+      "poll_changes_since",
+      "Poll a 1C entity for rows modified since a timestamp cursor. 1C does NOT support webhooks — " +
+      "use this on a schedule (every 30-300s). Returns rows + a `next_cursor` for the next poll.",
+      pollChangesSinceSchema.shape,
+      withErrorHandling(async (params) => ({
+        content: [{ type: "text", text: await handlePollChangesSince(params) }],
+      })),
+    );
+
+    server.tool(
+      "list_subscriptions",
+      "Documents that 1C does NOT support webhook subscriptions. Returns empty list + workaround hints " +
+      "(use poll_changes_since instead). Prevents LLMs from hallucinating subscribe_to_event flows.",
+      listSubscriptionsSchema.shape,
+      withErrorHandling(async (params) => ({
+        content: [{ type: "text", text: await handleListSubscriptions(params) }],
       })),
     );
   }
