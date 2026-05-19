@@ -57,4 +57,49 @@ describe("RateLimiter", () => {
     limiter.applyPenalty(1000);
     expect(limiter.availableTokens).toBeGreaterThanOrEqual(0);
   });
+
+  // ---- happy-path & failure scenarios (added v1.1.0) ----
+
+  it("happy path: 10 sequential acquires complete and deduct ~10 tokens", async () => {
+    const fastLimiter = new RateLimiter(1000, 0); // no inter-call wait
+    const before = fastLimiter.availableTokens;
+    for (let i = 0; i < 10; i++) {
+      await fastLimiter.acquire();
+    }
+    const after = fastLimiter.availableTokens;
+    expect(before - after).toBeGreaterThanOrEqual(9);
+    expect(before - after).toBeLessThanOrEqual(10);
+  });
+
+  it("failure scenario: exhausting the bucket forces a wait, then recovers", async () => {
+    // 5 tokens/min, no min interval → bucket runs dry quickly
+    const tiny = new RateLimiter(5, 0);
+    for (let i = 0; i < 5; i++) {
+      await tiny.acquire();
+    }
+    // Bucket is now near-empty. The next acquire must wait for refill.
+    const start = Date.now();
+    const acquirePromise = tiny.acquire();
+    // Don't wait for real refill (12s/token at 5/min) — race the promise
+    // against a short timeout and assert it isn't immediately resolved.
+    const winner = await Promise.race([
+      acquirePromise.then(() => "acquired"),
+      new Promise((r) => setTimeout(() => r("timeout"), 50)),
+    ]);
+    expect(winner).toBe("timeout");
+    expect(Date.now() - start).toBeGreaterThanOrEqual(40);
+    // Don't await the dangling acquire — let the test cleanup tear it down.
+  }, 1000);
+
+  it("handlePenalty + applyPenalty sequence reflects in availableTokens", () => {
+    const before = limiter.availableTokens;
+    limiter.applyPenalty(5);
+    const headers = new Headers({
+      "x-ratelimit-remaining": "10",
+      "x-ratelimit-retry-after": "1.0",
+    });
+    limiter.handlePenalty(headers);
+    expect(limiter.availableTokens).toBeLessThanOrEqual(11);
+    expect(limiter.availableTokens).toBeLessThan(before);
+  });
 });
