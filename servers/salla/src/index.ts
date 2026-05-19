@@ -3,10 +3,14 @@
 /**
  * @theyahia/salla-mcp — MCP server for Salla e-commerce platform (Saudi Arabia)
  *
- * 9 tools: list_products, get_product, create_product, update_product,
- * list_orders, get_order, update_order_status, list_customers, get_store_info.
+ * 15 tools across products, orders, customers, store info, catalog ops, and
+ * webhook signature verification. See README.md for the full list.
  *
- * Auth: OAuth 2.0 Bearer token (SALLA_ACCESS_TOKEN env var).
+ * Auth: OAuth 2.0 Bearer token (static or auto-refresh).
+ *   - Static:   SALLA_ACCESS_TOKEN
+ *   - Refresh:  SALLA_OAUTH_CLIENT_ID + SALLA_OAUTH_CLIENT_SECRET + SALLA_REFRESH_TOKEN
+ *
+ * Webhook security: SALLA_WEBHOOK_SECRET (HMAC-SHA256 verification).
  *
  * Transports:
  *   - stdio (default) — for Claude Desktop / Cursor / Windsurf
@@ -18,7 +22,7 @@ import { createServer, TOOL_COUNT, logger } from "./server.js";
 
 runServer(createServer, {
   name: "salla-mcp",
-  version: "2.0.0",
+  version: "3.1.0",
   toolCount: TOOL_COUNT,
   logger,
 }).catch((error) => {
