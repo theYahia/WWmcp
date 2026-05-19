@@ -1,10 +1,10 @@
-# MCP Servers for Non-Western APIs
+# Emerging Markets MCP — Servers for the Rest of the World
 
 **English** | [Русский](README.ru.md)
 
 > **114 servers · 910+ tools · 15+ countries · npm @theyahia**
 >
-> The largest open-source collection of MCP servers for CIS, MENA, Africa, LATAM, and Southeast Asia.
+> The only open-source MCP collection covering **Brazil, MENA, Gulf, Turkey, Africa, Southeast Asia, CIS, and Iran**. Where Composio/MCP-get/Anthropic Cookbook stop at US/EU SaaS — WWmcp fills the rest of the map.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![CI](https://github.com/theYahia/WWmcp/actions/workflows/ci.yml/badge.svg)](https://github.com/theYahia/WWmcp/actions/workflows/ci.yml)
@@ -18,7 +18,7 @@
 
 ## Why WWmcp?
 
-- **🌍 Non-Western coverage.** Anthropic's official MCP catalog ships mostly US/global SaaS. WWmcp fills the gap: Russian payments, Turkish SMS, MENA e-commerce, African mobile money, LATAM fintech, SEA logistics — all under one scope.
+- **🌍 First-class emerging-markets coverage.** Anthropic's official MCP catalog and every major awesome-list (punkpeye, ComposioHQ, appcypher) ship mostly US/EU SaaS. WWmcp fills the rest of the map: Brazilian fintech (Pix, NFe-e, Hotmart), Saudi/UAE SaaS (Salla, Foodics, Tabby BNPL), Turkish marketplaces (Trendyol, Hepsiburada, iyzico), African mobile money (Nomba, Termii, M-Pesa-adjacent), Indonesian/Vietnamese/Filipino payments (Midtrans, Xendit, VNPay, PayMongo), Russian/CIS payments + e-commerce (YooKassa, MoySklad, CDEK, Bitrix24), Iranian gateways (Zarinpal, IDPay), Pakistani wallets (Easypaisa, JazzCash) — all under one scope.
 - **📦 One scope, one core, one CI.** Every server is `@theyahia/<name>-mcp`, built on `@theyahia/mcp-core` (auth, retries, dual transport stdio+HTTP, structured errors, opt-in telemetry). No copy-pasted boilerplate across 25 repos.
 - **🛠 Production-grade by default.** 8+ tools per server, vitest coverage, automated changesets release pipeline, MCP-spec conformance. Not a Hello-World gallery.
 - **🚀 Frictionless contribution.** `npx @theyahia/create-mcp <name>` scaffolds a working server in 30 seconds. Add your country's API in an afternoon.
@@ -36,39 +36,96 @@
 
 ## Quick Start
 
-### 1. Add to your Claude Desktop config
+Pick the region you build for:
+
+### 🇧🇷 Brazil — full e-commerce stack
 
 `claude_desktop_config.json`:
 
 ```json
 {
   "mcpServers": {
-    "moysklad": {
+    "ifood": {
       "command": "npx",
-      "args": ["-y", "@theyahia/moysklad-mcp"],
-      "env": { "MOYSKLAD_TOKEN": "your_token" }
+      "args": ["-y", "@theyahia/ifood-mcp"],
+      "env": { "IFOOD_CLIENT_ID": "your_id", "IFOOD_CLIENT_SECRET": "your_secret" }
     },
-    "cdek": {
+    "asaas": {
       "command": "npx",
-      "args": ["-y", "@theyahia/cdek-mcp"],
-      "env": { "CDEK_CLIENT_ID": "your_id", "CDEK_CLIENT_SECRET": "your_secret" }
+      "args": ["-y", "@theyahia/asaas-mcp"],
+      "env": { "ASAAS_API_KEY": "your_key" }
     },
-    "yookassa": {
+    "nfeio": {
       "command": "npx",
-      "args": ["-y", "@theyahia/yookassa-mcp"],
-      "env": { "YOOKASSA_SHOP_ID": "your_id", "YOOKASSA_SECRET_KEY": "your_key" }
+      "args": ["-y", "@theyahia/nfeio-mcp"],
+      "env": { "NFEIO_API_KEY": "your_key" }
     }
   }
 }
 ```
 
-### 2. Ask the AI
+> "Pull yesterday's iFood orders, charge them through Asaas with Pix, and emit NFe via NFe.io."
+
+iFood → orders → Asaas → Pix payment → NFe.io → fiscal invoice. One prompt, full Brazilian e-commerce flow.
+
+### 🇸🇦 Gulf — SaaS + BNPL stack
+
+```json
+{
+  "mcpServers": {
+    "salla":    { "command": "npx", "args": ["-y", "@theyahia/salla-mcp"],    "env": { "SALLA_ACCESS_TOKEN": "your_token" } },
+    "foodics":  { "command": "npx", "args": ["-y", "@theyahia/foodics-mcp"],  "env": { "FOODICS_TOKEN": "your_token" } },
+    "tabby":    { "command": "npx", "args": ["-y", "@theyahia/tabby-mcp"],    "env": { "TABBY_SECRET_KEY": "your_key" } },
+    "unifonic": { "command": "npx", "args": ["-y", "@theyahia/unifonic-mcp"], "env": { "UNIFONIC_APP_SID": "your_sid" } }
+  }
+}
+```
+
+> "Check Salla store inventory, list yesterday's Foodics POS orders, offer Tabby BNPL to top customers, and SMS them via Unifonic."
+
+### 🇷🇺 Russia — e-commerce + payments
+
+```json
+{
+  "mcpServers": {
+    "moysklad": { "command": "npx", "args": ["-y", "@theyahia/moysklad-mcp"], "env": { "MOYSKLAD_TOKEN": "your_token" } },
+    "cdek":     { "command": "npx", "args": ["-y", "@theyahia/cdek-mcp"],     "env": { "CDEK_CLIENT_ID": "your_id", "CDEK_CLIENT_SECRET": "your_secret" } },
+    "yookassa": { "command": "npx", "args": ["-y", "@theyahia/yookassa-mcp"], "env": { "YOOKASSA_SHOP_ID": "your_id", "YOOKASSA_SECRET_KEY": "your_key" } }
+  }
+}
+```
 
 > "Check stock for SKU TS-100 in MoySklad, calculate CDEK shipping to Novosibirsk, and generate a YooKassa payment link."
 
-### 3. The AI handles the rest
+### 🇳🇬 Nigeria / Africa — fintech + comms
 
-MoySklad → stock & pricing → CDEK → shipping rates → YooKassa → payment link. One prompt, no manual API work.
+```json
+{
+  "mcpServers": {
+    "nomba":  { "command": "npx", "args": ["-y", "@theyahia/nomba-mcp"],  "env": { "NOMBA_API_KEY": "your_key" } },
+    "termii": { "command": "npx", "args": ["-y", "@theyahia/termii-mcp"], "env": { "TERMII_API_KEY": "your_key" } }
+  }
+}
+```
+
+> "Charge customer through Nomba POS, confirm via Termii SMS to +234..."
+
+### 🇮🇩 Southeast Asia — payments + logistics
+
+```json
+{
+  "mcpServers": {
+    "xendit":     { "command": "npx", "args": ["-y", "@theyahia/xendit-mcp"],     "env": { "XENDIT_SECRET_KEY": "your_key" } },
+    "rajaongkir": { "command": "npx", "args": ["-y", "@theyahia/rajaongkir-mcp"], "env": { "RAJAONGKIR_API_KEY": "your_key" } }
+  }
+}
+```
+
+> "Xendit invoice + RajaOngkir shipping quote from Jakarta to Surabaya, all in one prompt."
+
+### One prompt, full stack — no manual API work.
+
+⭐ **Star this repo if you ship for emerging markets** — helps other devs find it.
 
 > 📦 **Ready-made workflows:** [@theyahia/mcp-skills](https://github.com/theYahia/mcp-skills) — 40+ skills for e-commerce, HR, marketing, and finance
 
