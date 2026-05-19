@@ -1,5 +1,7 @@
 # @theyahia/ileti-merkezi-mcp
 
+> 📦 Part of **[WWmcp — Emerging Markets MCP](https://github.com/theYahia/WWmcp)** — 114 MCP servers for non-Western APIs (Brazil/MENA/Gulf/SE Asia/Africa/CIS).
+
 > MCP server for **Ileti Merkezi** SMS API (Turkey) — single SMS, bulk SMS, delivery reports, contacts, blacklist.
 > 8 tools. HMAC SHA256 auth. Stdio + Streamable HTTP transports.
 
@@ -127,7 +129,14 @@ Get your credentials from the [Ileti Merkezi panel](https://www.iletimerkezi.com
 
 ---
 
-## Demo Prompts
+## 🚀 Demo prompts
+
+> **Use case:** "Send OTP via Ileti Merkezi to +90551234567 with text 'Your code is 1234'"
+
+🤖 **Pairs well with:**
+- [`@theyahia/termii-mcp`](https://github.com/theYahia/termii-mcp)
+- [`@theyahia/unifonic-mcp`](https://github.com/theYahia/unifonic-mcp)
+- [`@theyahia/mts-exolve-mcp`](https://github.com/theYahia/mts-exolve-mcp)
 
 Try these natural-language prompts in your MCP client:
 
@@ -175,3 +184,11 @@ servers/ileti-merkezi/
 ## License
 
 MIT — see [LICENSE](./LICENSE).
+
+---
+
+## 🌍 Part of WWmcp — Emerging Markets MCP
+
+**[WWmcp](https://github.com/theYahia/WWmcp)** ships 114 MCP servers covering APIs across Russia/CIS, MENA, Gulf, SE Asia, Africa, and Latin America — the markets ignored by Composio and other Western MCP hubs.
+
+⭐ **Star the [monorepo](https://github.com/theYahia/WWmcp)** to support the project, or [open an issue](https://github.com/theYahia/WWmcp/issues) if your favorite non-Western API isn't covered yet.

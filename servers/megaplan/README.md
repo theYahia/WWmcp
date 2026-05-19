@@ -1,5 +1,7 @@
 # @theyahia/megaplan-mcp
 
+> 📦 Part of **[WWmcp — Emerging Markets MCP](https://github.com/theYahia/WWmcp)** — 114 MCP servers for non-Western APIs (Brazil/MENA/Gulf/SE Asia/Africa/CIS).
+
 > MCP server for **Megaplan** project management — tasks, deals, projects, employees, comments via API v3.
 > 8 tools + 2 MCP prompts. Token OR Password-grant auth. Stdio + Streamable HTTP transports.
 
@@ -150,7 +152,14 @@ Two options:
 
 ---
 
-## Demo Prompts
+## 🚀 Demo prompts
+
+> **Use case:** "Создай в Megaplan задачу 'Перезвонить клиенту Acme' с дедлайном завтра 17:00"
+
+🤖 **Pairs well with:**
+- [`@theyahia/planfix-mcp`](https://github.com/theYahia/planfix-mcp)
+- [`@theyahia/kaiten-mcp`](https://github.com/theYahia/kaiten-mcp)
+- [`@theyahia/bitrix24-mcp`](https://github.com/theYahia/bitrix24-mcp)
 
 Try these in your MCP client:
 
@@ -204,3 +213,11 @@ servers/megaplan/
 ## License
 
 MIT — see [LICENSE](./LICENSE).
+
+---
+
+## 🌍 Part of WWmcp — Emerging Markets MCP
+
+**[WWmcp](https://github.com/theYahia/WWmcp)** ships 114 MCP servers covering APIs across Russia/CIS, MENA, Gulf, SE Asia, Africa, and Latin America — the markets ignored by Composio and other Western MCP hubs.
+
+⭐ **Star the [monorepo](https://github.com/theYahia/WWmcp)** to support the project, or [open an issue](https://github.com/theYahia/WWmcp/issues) if your favorite non-Western API isn't covered yet.
