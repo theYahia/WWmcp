@@ -1,7 +1,7 @@
 {
   "name": "@theyahia/salla-mcp",
-  "version": "3.0.0",
-  "description": "MCP server for Salla e-commerce (Saudi Arabia) — 9 tools for products, orders, customers, store. OAuth 2.0.",
+  "version": "3.1.0",
+  "description": "MCP server for Salla e-commerce (Saudi Arabia) — 15 tools: products, orders, customers, catalog ops (variants/categories/brands/bulk-inventory), webhook HMAC-SHA256 verification, OAuth 2.0 with auto-refresh.",
   "type": "module",
   "main": "dist/index.js",
   "bin": {

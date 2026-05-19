@@ -5,6 +5,11 @@ describe("SallaClient", () => {
   const originalEnv = { ...process.env };
 
   beforeEach(() => {
+    // Wipe Salla env vars then set the static token for the happy-path tests.
+    delete process.env["SALLA_OAUTH_CLIENT_ID"];
+    delete process.env["SALLA_OAUTH_CLIENT_SECRET"];
+    delete process.env["SALLA_REFRESH_TOKEN"];
+    delete process.env["SALLA_ACCESS_TOKEN_EXPIRES_AT"];
     process.env["SALLA_ACCESS_TOKEN"] = "test-token";
   });
 
@@ -18,10 +23,12 @@ describe("SallaClient", () => {
     expect(() => new SallaClient()).not.toThrow();
   });
 
-  it("throws on first request when SALLA_ACCESS_TOKEN missing", async () => {
+  it("throws a clear error on first request when no auth env vars are set", async () => {
     delete process.env["SALLA_ACCESS_TOKEN"];
     const client = new SallaClient();
-    await expect(client.request("GET", "/products")).rejects.toThrow("SALLA_ACCESS_TOKEN");
+    await expect(client.request("GET", "/products")).rejects.toThrow(
+      /Salla auth not configured/,
+    );
   });
 
   it("sends Bearer auth header", async () => {
