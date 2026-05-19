@@ -4,5 +4,6 @@ export default defineConfig({
   test: {
     exclude: ["tests/e2e/**", "node_modules/**"],
     passWithNoTests: true,
+    setupFiles: ["./tests/setup.ts"],
   },
 });

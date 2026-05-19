@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { moyskladGet, moyskladPost } from "../client.js";
+import { moyskladGet, moyskladPost, moyskladPut } from "../client.js";
+import { runInPool, buildBatchEnvelope } from "./batch-utils.js";
 
 // --- create_customer_order ---
 export const createCustomerOrderSchema = z.object({
@@ -57,6 +58,46 @@ export async function handleGetOrders(params: z.infer<typeof getOrdersSchema>): 
   if (filters.length) query.set("filter", filters.join(";"));
   const result = await moyskladGet(`/entity/customerorder?${query.toString()}`);
   return formatOrders(result);
+}
+
+// --- batch_create_orders ---
+export const batchCreateOrdersSchema = z.object({
+  orders: z.array(z.object({
+    organization_href: z.string().describe("Meta href of the organization (seller)"),
+    agent_href: z.string().describe("Meta href of the counterparty (buyer)"),
+    description: z.string().optional().describe("Order description/comment"),
+    positions: z.array(z.object({
+      assortment_href: z.string().describe("Meta href of the product"),
+      quantity: z.number().min(1).describe("Quantity"),
+      price_rubles: z.number().optional().describe("Price per unit in RUBLES"),
+      discount: z.number().min(0).max(100).optional().describe("Discount percentage"),
+    })).min(1),
+  })).min(1).max(100).describe("Customer orders to create (1..100). Each item is the same shape as `create_customer_order`."),
+  concurrency: z.number().int().min(1).max(20).default(5).describe("Max parallel HTTP requests. Default 5."),
+});
+
+export async function handleBatchCreateOrders(params: z.infer<typeof batchCreateOrdersSchema>): Promise<string> {
+  const results = await runInPool(params.orders, params.concurrency, async (order) => {
+    return JSON.parse(await handleCreateCustomerOrder(order));
+  });
+  return JSON.stringify(buildBatchEnvelope(results), null, 2);
+}
+
+// --- batch_update_status ---
+export const batchUpdateStatusSchema = z.object({
+  ids: z.array(z.string()).min(1).max(100).describe("Customer order UUIDs to transition (1..100)."),
+  state_href: z.string().describe("Meta href of the target state (get from /entity/customerorder/metadata → states[].meta.href)."),
+  concurrency: z.number().int().min(1).max(20).default(5).describe("Max parallel HTTP requests. Default 5."),
+});
+
+export async function handleBatchUpdateStatus(params: z.infer<typeof batchUpdateStatusSchema>): Promise<string> {
+  const results = await runInPool(params.ids, params.concurrency, async (id) => {
+    const body = {
+      state: { meta: { href: params.state_href, type: "state", mediaType: "application/json" } },
+    };
+    return JSON.parse(formatOrder(await moyskladPut(`/entity/customerorder/${id}`, body)));
+  });
+  return JSON.stringify(buildBatchEnvelope(results), null, 2);
 }
 
 function formatOrder(raw: unknown): string {

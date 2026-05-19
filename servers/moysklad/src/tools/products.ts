@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { moyskladGet, moyskladPost, moyskladPut } from "../client.js";
+import { runInPool, buildBatchEnvelope, BATCH_NOTE_CLIENT_SIDE } from "./batch-utils.js";
 
 // --- search_products ---
 export const searchProductsSchema = z.object({
@@ -93,6 +94,62 @@ export async function handleUpdatePrices(params: z.infer<typeof updatePricesSche
   }
   const result = await moyskladPut(`/entity/product/${params.id}`, body);
   return formatProduct(result);
+}
+
+// --- batch_update_products ---
+export const batchUpdateProductsSchema = z.object({
+  items: z.array(z.object({
+    id: z.string().describe("Product UUID"),
+    name: z.string().optional().describe("New product name"),
+    article: z.string().optional().describe("New article/SKU"),
+    description: z.string().optional().describe("New description"),
+    code: z.string().optional().describe("New product code"),
+    weight: z.number().optional().describe("New weight in grams"),
+    volume: z.number().optional().describe("New volume in liters"),
+    vat: z.number().optional().describe("New VAT rate: 0, 10, 20"),
+  })).min(1).max(100).describe("Products to update (1..100). Each item must include `id`; other fields are optional and only patched if present."),
+  concurrency: z.number().int().min(1).max(20).default(5).describe("Max parallel HTTP requests. Default 5 — safe for the 45 req / 3s rate limiter."),
+});
+
+export async function handleBatchUpdateProducts(params: z.infer<typeof batchUpdateProductsSchema>): Promise<string> {
+  const results = await runInPool(params.items, params.concurrency, async (item) => {
+    const body: Record<string, unknown> = {};
+    if (item.name !== undefined) body.name = item.name;
+    if (item.article !== undefined) body.article = item.article;
+    if (item.description !== undefined) body.description = item.description;
+    if (item.code !== undefined) body.code = item.code;
+    if (item.weight !== undefined) body.weight = item.weight;
+    if (item.volume !== undefined) body.volume = item.volume;
+    if (item.vat !== undefined) body.effectiveVat = item.vat;
+    const result = await moyskladPut(`/entity/product/${item.id}`, body);
+    return JSON.parse(formatProduct(result));
+  });
+  return JSON.stringify(buildBatchEnvelope(results), null, 2);
+}
+
+// --- batch_set_prices ---
+export const batchSetPricesSchema = z.object({
+  items: z.array(z.object({
+    id: z.string().describe("Product UUID"),
+    sale_price_rubles: z.number().optional().describe("New sale price in RUBLES"),
+    buy_price_rubles: z.number().optional().describe("New buy/cost price in RUBLES"),
+    min_price_rubles: z.number().optional().describe("New minimum price in RUBLES"),
+  })).min(1).max(100).describe("Price updates per product (1..100). Each item must include `id` and at least one price field."),
+  concurrency: z.number().int().min(1).max(20).default(5).describe("Max parallel HTTP requests. Default 5."),
+});
+
+export async function handleBatchSetPrices(params: z.infer<typeof batchSetPricesSchema>): Promise<string> {
+  const results = await runInPool(params.items, params.concurrency, async (item) => {
+    // Reuse the same single-product update_prices logic so salePrices priceType
+    // metadata is preserved (MoySklad rejects salePrices items without priceType).
+    return JSON.parse(await handleUpdatePrices({
+      id: item.id,
+      sale_price_rubles: item.sale_price_rubles,
+      buy_price_rubles: item.buy_price_rubles,
+      min_price_rubles: item.min_price_rubles,
+    }));
+  });
+  return JSON.stringify(buildBatchEnvelope(results), null, 2);
 }
 
 // --- Formatting ---
