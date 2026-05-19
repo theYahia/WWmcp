@@ -1,7 +1,7 @@
 {
   "name": "@theyahia/moysklad-mcp",
-  "version": "2.1.0",
-  "description": "MCP server for MoySklad (Moy Sklad) ERP/inventory API — products, stock, orders, counterparties, supplies, profit reports. 10 tools. Token bucket rate limiting (45 req/3s). Dual auth: Bearer token or Basic login/password.",
+  "version": "3.1.0",
+  "description": "MCP server for MoySklad (Moy Sklad) ERP/inventory API — products, stock, orders, counterparties, supplies, profit reports + 5 batch tools (parallel update_products, set_prices, create_orders, update_status, create_counterparties). 15 tools. Token bucket rate limiting (45 req/3s). Dual auth: Bearer token or Basic login/password.",
   "type": "module",
   "main": "dist/index.js",
   "bin": { "moysklad-mcp": "dist/index.js" },

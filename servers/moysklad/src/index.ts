@@ -3,9 +3,12 @@
 /**
  * @theyahia/moysklad-mcp — MCP server for MoySklad ERP/inventory API
  *
- * 10 tools: search_products, get_product, create_product, update_prices,
- * get_stock, get_counterparties, create_customer_order, get_orders,
- * get_profit_report, create_supply.
+ * 15 tools:
+ *   - Single-entity (10): search_products, get_product, create_product, update_prices,
+ *     get_stock, get_counterparties, create_customer_order, get_orders,
+ *     get_profit_report, create_supply.
+ *   - Batch (5, v3.1.0): batch_update_products, batch_set_prices,
+ *     batch_create_orders, batch_update_status, batch_create_counterparties.
  *
  * Auth: Bearer token (MOYSKLAD_TOKEN) or Basic (MOYSKLAD_LOGIN + MOYSKLAD_PASSWORD).
  * Rate limit: token bucket 45 req / 3s.
@@ -20,10 +23,20 @@ import {
   getProductSchema, handleGetProduct,
   createProductSchema, handleCreateProduct,
   updatePricesSchema, handleUpdatePrices,
+  batchUpdateProductsSchema, handleBatchUpdateProducts,
+  batchSetPricesSchema, handleBatchSetPrices,
 } from "./tools/products.js";
 import { getStockSchema, handleGetStock } from "./tools/stock.js";
-import { createCustomerOrderSchema, handleCreateCustomerOrder, getOrdersSchema, handleGetOrders } from "./tools/orders.js";
-import { getCounterpartiesSchema, handleGetCounterparties } from "./tools/counterparties.js";
+import {
+  createCustomerOrderSchema, handleCreateCustomerOrder,
+  getOrdersSchema, handleGetOrders,
+  batchCreateOrdersSchema, handleBatchCreateOrders,
+  batchUpdateStatusSchema, handleBatchUpdateStatus,
+} from "./tools/orders.js";
+import {
+  getCounterpartiesSchema, handleGetCounterparties,
+  batchCreateCounterpartiesSchema, handleBatchCreateCounterparties,
+} from "./tools/counterparties.js";
 import { getProfitReportSchema, handleGetProfitReport } from "./tools/reports.js";
 import { createSupplySchema, handleCreateSupply } from "./tools/supply.js";
 
@@ -32,7 +45,7 @@ const logger = createLogger("moysklad-mcp");
 function createServer(): McpServer {
   const server = new McpServer({
     name: "moysklad-mcp",
-    version: "2.1.0",
+    version: "3.1.0",
   });
 
   server.tool(
@@ -125,13 +138,63 @@ function createServer(): McpServer {
     })),
   );
 
+  // ── Batch tools (v3.1.0) ───────────────────────────────────────────────
+  // Client-side parallel batching: N parallel HTTP requests with a concurrency
+  // cap (default 5), per-item success/failure reporting, partial failures do
+  // NOT abort. The shared 45 req/3s token bucket already shields MoySklad.
+
+  server.tool(
+    "batch_update_products",
+    "Update up to 100 products in parallel by UUID. Each item may patch any subset of name/article/description/code/weight/volume/vat. Returns per-item ok/error envelope with `failed_indexes` ready for retry. For price-only updates use batch_set_prices (preserves priceType meta).",
+    batchUpdateProductsSchema.shape,
+    withErrorHandling(async (params) => ({
+      content: [{ type: "text", text: await handleBatchUpdateProducts(params) }],
+    })),
+  );
+
+  server.tool(
+    "batch_set_prices",
+    "Update sale/buy/min prices for up to 100 products in parallel. Reuses the single-product update_prices logic per item so MoySklad's required salePrices.priceType meta is preserved. Returns per-item ok/error envelope with `failed_indexes`.",
+    batchSetPricesSchema.shape,
+    withErrorHandling(async (params) => ({
+      content: [{ type: "text", text: await handleBatchSetPrices(params) }],
+    })),
+  );
+
+  server.tool(
+    "batch_create_orders",
+    "Create up to 100 customer orders in parallel. Each item is the same shape as create_customer_order (organization_href, agent_href, positions[]). Returns per-item ok/error envelope; failed orders can be retried by passing the subset back without re-running the successful ones.",
+    batchCreateOrdersSchema.shape,
+    withErrorHandling(async (params) => ({
+      content: [{ type: "text", text: await handleBatchCreateOrders(params) }],
+    })),
+  );
+
+  server.tool(
+    "batch_update_status",
+    "Transition up to 100 customer orders to a target state in parallel. Pass an array of order UUIDs and one state meta href (look it up via /entity/customerorder/metadata). Returns per-item ok/error envelope.",
+    batchUpdateStatusSchema.shape,
+    withErrorHandling(async (params) => ({
+      content: [{ type: "text", text: await handleBatchUpdateStatus(params) }],
+    })),
+  );
+
+  server.tool(
+    "batch_create_counterparties",
+    "Create up to 100 counterparties (customers/suppliers) in parallel. Each item requires `name`; optional fields: inn, kpp, phone, email, description, company_type (legal/entrepreneur/individual). Returns per-item ok/error envelope with `failed_indexes`.",
+    batchCreateCounterpartiesSchema.shape,
+    withErrorHandling(async (params) => ({
+      content: [{ type: "text", text: await handleBatchCreateCounterparties(params) }],
+    })),
+  );
+
   return server;
 }
 
 runServer(createServer, {
   name: "moysklad-mcp",
   version: "2.1.0",
-  toolCount: 10,
+  toolCount: 15,
   logger,
 }).catch((error) => {
   logger.error("Fatal error", {

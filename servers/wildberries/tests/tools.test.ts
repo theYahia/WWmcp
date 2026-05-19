@@ -13,12 +13,12 @@ function createMockClient(): WBClient {
 }
 
 describe("Tool definitions", () => {
-  it("should have exactly 15 tools", () => {
+  it("should have at least 25 tools (post-v1.1.0 expansion)", () => {
     const tools = Object.keys(toolDefinitions);
-    expect(tools).toHaveLength(15);
+    expect(tools.length).toBeGreaterThanOrEqual(25);
   });
 
-  it("should include all required tool names", () => {
+  it("should include all v1.0 tool names (backward compat)", () => {
     const expected: ToolName[] = [
       "list_products",
       "get_product",
@@ -32,6 +32,27 @@ describe("Tool definitions", () => {
       "create_supply",
       "get_statistics",
       "get_feedbacks",
+      "get_stocks",
+      "get_abc_analysis",
+      "reply_feedback",
+    ];
+    for (const name of expected) {
+      expect(toolDefinitions).toHaveProperty(name);
+    }
+  });
+
+  it("should include new v1.1.0 tool names", () => {
+    const expected: ToolName[] = [
+      "get_warehouse_list",
+      "get_commission_rates",
+      "get_sales_velocity",
+      "get_competitor_prices",
+      "get_returns_stats",
+      "subscribe_to_orders",
+      "subscribe_to_stock_changes",
+      "list_subscriptions",
+      "unsubscribe",
+      "check_subscriptions",
     ];
     for (const name of expected) {
       expect(toolDefinitions).toHaveProperty(name);

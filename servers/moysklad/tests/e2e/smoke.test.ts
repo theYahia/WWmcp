@@ -5,22 +5,22 @@ import { runSmokeTest } from "@theyahia/mcp-core/testing/smoke.js";
 const SERVER_PATH = resolve(import.meta.dirname, "../../dist/index.js");
 
 describe("MoySklad MCP E2E Smoke Test", () => {
-  it("starts and lists 10 tools", async () => {
+  it("starts and lists 15 tools", async () => {
     const result = await runSmokeTest({
       serverPath: SERVER_PATH,
-      expectedToolCount: 10,
+      expectedToolCount: 15,
       env: { MOYSKLAD_TOKEN: "test" },
     });
 
     expect(result.connected).toBe(true);
-    expect(result.toolCount).toBe(10);
+    expect(result.toolCount).toBe(15);
     expect(result.errors).toHaveLength(0);
   }, 15_000);
 
   it("all tools have quality descriptions (20+ chars)", async () => {
     const result = await runSmokeTest({
       serverPath: SERVER_PATH,
-      expectedToolCount: 10,
+      expectedToolCount: 15,
       env: { MOYSKLAD_TOKEN: "test" },
     });
 
@@ -33,12 +33,17 @@ describe("MoySklad MCP E2E Smoke Test", () => {
   it("has expected tool names", async () => {
     const result = await runSmokeTest({
       serverPath: SERVER_PATH,
-      expectedToolCount: 10,
+      expectedToolCount: 15,
       env: { MOYSKLAD_TOKEN: "test" },
     });
 
     const names = result.tools.map((t) => t.name).sort();
     expect(names).toEqual([
+      "batch_create_counterparties",
+      "batch_create_orders",
+      "batch_set_prices",
+      "batch_update_products",
+      "batch_update_status",
       "create_customer_order",
       "create_product",
       "create_supply",
