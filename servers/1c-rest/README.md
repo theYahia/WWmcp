@@ -1,10 +1,15 @@
 # @theyahia/1c-rest-mcp
 
-> MCP server for **1C:Enterprise** REST API via OData 3.0 — catalogs, documents, registers, reports.
-> 9 tools. HTTP Basic auth. Stdio + Streamable HTTP transports.
+> **AI agent for 1C:Enterprise** — MCP server exposing the 1C REST/OData 3.0
+> API to Claude, Cursor, Windsurf and any MCP-compatible LLM.
+> 14 tools (catalogs, documents, registers, reports, **batch ops, change tracking**).
+> HTTP Basic auth. Stdio + Streamable HTTP transports.
 
 [![npm](https://img.shields.io/npm/v/@theyahia/1c-rest-mcp)](https://www.npmjs.com/package/@theyahia/1c-rest-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+Part of the [WWmcp](https://github.com/theYahia/WWmcp) monorepo — _Composio
+for the rest of the world_: MCP servers for non-Western APIs (33 countries).
 
 ---
 
@@ -22,7 +27,30 @@ Tool names, arguments, return formats, and the `ONEC_*` env vars are unchanged.
 
 ---
 
-## Tools (9)
+## Use case: AI agent for 1C
+
+Drop this server into your MCP-compatible LLM client and you get an _agent
+that speaks 1C natively_. Common workflows:
+
+- **"Catch up the books overnight"** — agent polls `Document_*` for everything
+  modified since yesterday, validates totals via `get_register`, posts missing
+  documents via `batch_create_documents`.
+- **"Reprice 800 SKUs from a CSV"** — agent loads `Catalog_Номенклатура`,
+  reconciles against the CSV, applies updates via `batch_update_catalog_items`
+  with concurrency cap 10 and reports per-item failures.
+- **"Watch sales in real-time-ish"** — agent calls `poll_changes_since` on a
+  60-second loop, surfaces new invoices to a Slack channel via your other MCP
+  servers, and uses the returned `next_cursor` to stay current.
+- **"Debug why this document won't post"** — agent calls `update_document`,
+  receives the 1C error enriched with a Russian→English hint
+  (`field_required`, `posting_failed`, `type_mismatch`, …) and self-corrects.
+
+The error parser, batch concurrency cap, and poll cursor are deliberately
+LLM-friendly: every response includes a structured `note` describing what
+1C natively supports vs what is done client-side, so the model never
+hallucinates webhook setup or `$batch` endpoints.
+
+## Tools (14)
 
 ### Discovery (always enabled)
 
@@ -62,6 +90,30 @@ Tool names, arguments, return formats, and the `ONEC_*` env vars are unchanged.
 | Tool | Description |
 |------|-------------|
 | `odata_query` | Run an arbitrary OData 3.0 query. Supports `$filter`, `$select`, `$expand`, `$orderby`, `$top`, `$skip`, `$inlinecount`. |
+
+### Batch operations (v3.1)
+
+> **Note:** 1C does **not** natively support the OData `$batch` endpoint
+> (verified via 1C support / Infostart community 2026-05).
+> These tools implement **client-side parallel batching** with a concurrency
+> cap and per-item success/failure reporting — partial failures do not abort.
+
+| Tool | Description |
+|------|-------------|
+| `batch_create_documents` | Create N documents (1..100) in parallel. Each item reported individually. |
+| `batch_update_catalog_items` | Update N catalog items by `Ref_Key` in parallel. |
+| `batch_query` | Run N OData GET queries (1..50) in parallel. Combine results client-side. |
+
+### Change tracking (v3.1)
+
+> **Note:** 1C OData has **no webhooks / no event subscriptions**.
+> Only polling is possible. These tools make that explicit so an LLM never
+> hallucinates `subscribe_to_event(...)`.
+
+| Tool | Description |
+|------|-------------|
+| `poll_changes_since` | Pull rows where `date_field >= cursor`. Returns rows + `next_cursor` + `has_more`. |
+| `list_subscriptions` | Returns `supported: false` and lists workarounds. Pure metadata, no HTTP. |
 
 ---
 
@@ -148,10 +200,10 @@ Includes session management (`mcp-session-id` header), CORS, graceful shutdown.
 
 ### Module filtering (`ONEC_SERVICES`)
 
-Limit registered tools to save LLM context. Modules: `catalogs`, `documents`, `registers`, `reports`, `odata`, `meta`.
+Limit registered tools to save LLM context. Modules: `catalogs`, `documents`, `registers`, `reports`, `odata`, `batch`, `changes`, `meta`.
 
 ```bash
-ONEC_SERVICES=catalogs,documents npx @theyahia/1c-rest-mcp
+ONEC_SERVICES=catalogs,documents,batch npx @theyahia/1c-rest-mcp
 ```
 
 The discovery tools (`list_entities`, `get_document_by_number`) are always registered — without them an agent cannot discover the database structure.
@@ -189,6 +241,26 @@ Try these natural-language prompts in your MCP client:
 
 > "Get the balance report from `/hs/reports/balance?date=2026-04-01` and summarize it."
 
+> "Reprice 50 SKUs from this CSV — use `batch_update_catalog_items` and report which ones failed."
+
+> "Poll `Document_РеализацияТоваровУслуг` every 60s for invoices since this morning — use `poll_changes_since`."
+
+---
+
+## What 1C natively supports — and what we work around
+
+| Feature | 1C native | This server |
+|---------|-----------|-------------|
+| CRUD on OData entities | Yes | All 9 base tools |
+| OData `$batch` multipart endpoint | **No** ([Infostart](https://forum.infostart.ru/forum15/topic272942/) confirms returns "Произошла ошибка сервиса") | Client-side parallel batching with concurrency cap |
+| Webhooks / event push | **No** | `poll_changes_since` pull-mode polling |
+| Russian error messages | Yes, raw | Auto-mapped to 10 English categories with recovery hints |
+| HTTPS / auth refresh | Basic auth only | Backed by `@theyahia/mcp-core` retry+timeout+auth client |
+
+If your 1C deployment exposes custom HTTP services (`/hs/...`) — for example
+a custom webhook endpoint maintained by your 1C developer — use the generic
+`get_report` tool to invoke it.
+
 ---
 
 ## Development
@@ -207,18 +279,26 @@ servers/1c-rest/
 ├── src/
 │   ├── index.ts            — entry point, runServer, tool registration
 │   ├── client.ts           — BaseHttpClient + BasicAuthStrategy + functional API
+│   ├── server.ts           — server factory + module wiring
 │   ├── types.ts            — OData TypeScript types
+│   ├── lib/
+│   │   └── errors.ts       — 1C-specific error parsing (Russian → category + hint)
 │   └── tools/
 │       ├── catalogs.ts
 │       ├── documents.ts
 │       ├── metadata.ts     — discovery (list_entities, get_document_by_number)
 │       ├── odata-query.ts
 │       ├── registers.ts
-│       └── reports.ts
+│       ├── reports.ts
+│       ├── batch.ts        — batch_create_documents, batch_update_catalog_items, batch_query
+│       └── change-tracking.ts — poll_changes_since, list_subscriptions
 └── tests/
     ├── client.test.ts
     ├── server.test.ts
-    └── tools.test.ts
+    ├── tools.test.ts
+    ├── batch.test.ts          — 8 tests (happy path + partial failure + concurrency)
+    ├── error-parsing.test.ts  — 16 tests (10 error categories + envelope formats)
+    └── change-tracking.test.ts — 8 tests (polling cursor + has_more + no-webhook contract)
 ```
 
 ---

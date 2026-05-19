@@ -7,8 +7,18 @@
  */
 
 import { BaseHttpClient, BasicAuthStrategy, createLogger } from "@theyahia/mcp-core";
+import { enrichOneCError } from "./lib/errors.js";
 
 const logger = createLogger("1c-rest-mcp");
+
+/** Wrap a request promise to enrich 1C errors with Russian-aware hints. */
+async function withOneCErrorEnrichment<T>(p: Promise<T>): Promise<T> {
+  try {
+    return await p;
+  } catch (e) {
+    throw enrichOneCError(e);
+  }
+}
 
 function getBaseUrl(): string {
   const url = process.env["ONEC_BASE_URL"] ?? process.env["1C_BASE_URL"];
@@ -72,13 +82,23 @@ export function buildODataPath(
 }
 
 export async function oneCGet(path: string): Promise<unknown> {
-  return getClient().request({ method: "GET", path });
+  return withOneCErrorEnrichment(getClient().request({ method: "GET", path }));
 }
 
 export async function oneCPost(path: string, body: unknown): Promise<unknown> {
-  return getClient().request({ method: "POST", path, body });
+  return withOneCErrorEnrichment(
+    getClient().request({ method: "POST", path, body }),
+  );
 }
 
 export async function oneCPatch(path: string, body: unknown): Promise<unknown> {
-  return getClient().request({ method: "PATCH", path, body });
+  return withOneCErrorEnrichment(
+    getClient().request({ method: "PATCH", path, body }),
+  );
+}
+
+export async function oneCDelete(path: string): Promise<unknown> {
+  return withOneCErrorEnrichment(
+    getClient().request({ method: "DELETE", path }),
+  );
 }
