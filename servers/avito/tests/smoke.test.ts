@@ -8,7 +8,7 @@ describe("avito server factory", () => {
     expect(typeof server.connect).toBe("function");
   });
 
-  it("TOOL_COUNT matches the 3 tools registered in v0.1.0", () => {
-    expect(TOOL_COUNT).toBe(3);
+  it("TOOL_COUNT matches the 8 tools registered in v0.2.0", () => {
+    expect(TOOL_COUNT).toBe(8);
   });
 });

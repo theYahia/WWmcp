@@ -1,7 +1,7 @@
 {
   "name": "@theyahia/avito-mcp",
-  "version": "0.1.0",
-  "description": "MCP server for Avito — Russia's #1 classifieds platform (50M+ MAU). 3 tools: list seller's items, get item details, list messenger chats. OAuth 2.0 Client Credentials with auto-refresh.",
+  "version": "0.2.0",
+  "description": "MCP server for Avito — Russia's #1 classifieds platform (50M+ MAU). 8 tools: list/inspect items, items stats, messenger chats with send/read/history, wallet balance. OAuth 2.0 Client Credentials with auto-refresh.",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
