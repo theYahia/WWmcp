@@ -1,0 +1,30 @@
+name: avito-mcp
+description: MCP server for Avito — Russia's #1 classifieds platform (50M+ MAU). List your ads, get item details, browse messenger chats (v0.1.0)
+icon: https://raw.githubusercontent.com/theYahia/mcp-servers/main/servers/avito/icon.png
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - AVITO_CLIENT_ID
+      - AVITO_CLIENT_SECRET
+    properties:
+      AVITO_CLIENT_ID:
+        type: string
+        description: "OAuth client_id from Avito API office (https://developers.avito.ru/)"
+      AVITO_CLIENT_SECRET:
+        type: string
+        description: "OAuth client_secret from Avito API office"
+      AVITO_USER_ID:
+        type: string
+        description: "(Optional) Your Avito numeric user_id. Used as default for tools that need user_id in the URL path."
+  commandFunction: |-
+    (config) => ({
+      command: "npx",
+      args: ["-y", "@theyahia/avito-mcp"],
+      env: {
+        AVITO_CLIENT_ID: config.AVITO_CLIENT_ID,
+        AVITO_CLIENT_SECRET: config.AVITO_CLIENT_SECRET,
+        AVITO_USER_ID: config.AVITO_USER_ID || ""
+      }
+    })
