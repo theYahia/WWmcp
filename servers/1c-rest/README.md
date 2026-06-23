@@ -1,7 +1,8 @@
 # @theyahia/1c-rest-mcp
 
-> MCP server for **1C:Enterprise** REST API via OData 3.0 — catalogs, documents, registers, reports.
-> 9 tools. HTTP Basic auth. Stdio + Streamable HTTP transports.
+> MCP server for **1C:Enterprise** REST API via OData 3.0 — catalogs, documents, registers,
+> accounting, constants, reports + metadata discovery.
+> 26 tools across 9 modules. HTTP Basic auth. Stdio + Streamable HTTP transports.
 
 [![npm](https://img.shields.io/npm/v/@theyahia/1c-rest-mcp)](https://www.npmjs.com/package/@theyahia/1c-rest-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)

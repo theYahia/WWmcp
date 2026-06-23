@@ -3,8 +3,9 @@
 /**
  * @theyahia/1c-rest-mcp — MCP server for 1C:Enterprise REST/OData API
  *
- * 9 tools split into modules: meta (always on), catalogs, documents, registers,
- * reports, odata. Use ONEC_SERVICES env var to limit registered tools.
+ * 26 tools across 9 modules: meta (always on), catalogs, documents, registers,
+ * accounting, constants, shortcuts, reports, odata. Use ONEC_SERVICES env var
+ * to limit which optional modules register.
  *
  * Auth: HTTP Basic (ONEC_LOGIN / ONEC_PASSWORD) — backward-compat aliases 1C_*.
  *
@@ -19,11 +20,12 @@ import {
   countRegisteredTools,
   getEnabledModules,
   logger,
+  VERSION,
 } from "./server.js";
 
 runServer(createServer, {
   name: "1c-rest-mcp",
-  version: "2.0.0",
+  version: VERSION,
   toolCount: countRegisteredTools(getEnabledModules()),
   logger,
 }).catch((error) => {

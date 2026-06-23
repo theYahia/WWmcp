@@ -20,7 +20,7 @@
     "start": "node dist/index.js",
     "test": "vitest run",
     "test:watch": "vitest",
-    "clean": "rm -rf dist",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run build"
   },

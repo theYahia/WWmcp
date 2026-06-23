@@ -52,6 +52,13 @@ import {
 export const logger = createLogger("1c-rest-mcp");
 
 /**
+ * Single source of truth for the server version. Used by both `McpServer`
+ * (MCP handshake) here and `runServer` (the /health endpoint) in index.ts,
+ * so the two can never drift apart again. Keep in sync with package.json.
+ */
+export const VERSION = "3.1.0";
+
+/**
  * Single source of truth for module → tool count mapping.
  * Used both to filter registration in createServer() and to compute the
  * tools count reported by the /health endpoint via runServer.
@@ -105,7 +112,7 @@ export function countRegisteredTools(modules: Set<ModuleName>): number {
 export function createServer(): McpServer {
   const server = new McpServer({
     name: "1c-rest-mcp",
-    version: "3.1.0",
+    version: VERSION,
   });
 
   const modules = getEnabledModules();
