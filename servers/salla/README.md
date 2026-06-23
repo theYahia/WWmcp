@@ -1,7 +1,7 @@
 # @theyahia/salla-mcp
 
-> MCP server for **Salla** e-commerce platform (Saudi Arabia) — products, orders, customers, store.
-> 9 tools. OAuth 2.0 Bearer auth. Stdio + Streamable HTTP transports.
+> MCP server for **Salla** e-commerce platform (Saudi Arabia) — products, categories, brands, orders, customers, coupons, branches, store.
+> 22 tools. OAuth 2.0 Bearer auth. Stdio + Streamable HTTP transports.
 
 [![npm](https://img.shields.io/npm/v/@theyahia/salla-mcp)](https://www.npmjs.com/package/@theyahia/salla-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -21,7 +21,7 @@ Tool names, arguments, return formats, and `SALLA_ACCESS_TOKEN` env var are unch
 
 ---
 
-## Tools (9)
+## Tools (22)
 
 ### Products
 
@@ -29,8 +29,20 @@ Tool names, arguments, return formats, and `SALLA_ACCESS_TOKEN` env var are unch
 |------|-------------|
 | `list_products` | List products with pagination. Optional `status` filter (sale, out, hidden, deleted). |
 | `get_product` | Get full product details by ID. |
+| `get_product_by_sku` | Get full product details by SKU code. |
 | `create_product` | Create a new product (name, price, product_type, optional quantity/SKU/description). |
 | `update_product` | Update name, price, quantity, or status. |
+| `delete_product` | Permanently delete a product by ID. |
+| `bulk_update_quantities` | Bulk-update stock by product/variant ID or SKU (queued). |
+
+### Categories & brands
+
+| Tool | Description |
+|------|-------------|
+| `list_categories` | List categories with optional keyword + status filters. |
+| `get_category` | Get a single category by ID. |
+| `create_category` | Create a category (name, optional status/parent_id/sort_order/image). |
+| `list_brands` | List brands with pagination. |
 
 ### Orders
 
@@ -39,13 +51,19 @@ Tool names, arguments, return formats, and `SALLA_ACCESS_TOKEN` env var are unch
 | `list_orders` | List orders with pagination. Optional `status` filter. |
 | `get_order` | Get full order details (customer, items, totals). |
 | `update_order_status` | Set order fulfillment status (completed, in_progress, under_review, cancelled, restoring, refunded). |
+| `list_order_statuses` | List valid order statuses/sub-statuses for the store. |
+| `get_order_histories` | Get an order's status-change timeline. |
 
-### Customers & Store
+### Customers, store & operations
 
 | Tool | Description |
 |------|-------------|
 | `list_customers` | List customers with pagination. |
+| `get_customer` | Get a single customer by ID (incl. groups). |
 | `get_store_info` | Get store information (name, currency, timezone, plan). |
+| `list_coupons` | List discount coupons with pagination. |
+| `list_abandoned_carts` | List abandoned carts for recovery workflows. |
+| `list_branches` | List store branches (locations / pickup points). |
 
 ---
 
@@ -164,19 +182,10 @@ Project layout:
 servers/salla/
 ├── src/
 │   ├── index.ts          — bin entry, runServer
-│   ├── server.ts         — createServer factory + tool registration
+│   ├── server.ts         — createServer factory + tool registration (VERSION, TOOL_COUNT)
 │   ├── client.ts         — SallaClient wrapping BaseHttpClient
 │   ├── types.ts          — TypeScript types for Salla responses
-│   └── tools/
-│       ├── create-product.ts
-│       ├── get-order.ts
-│       ├── get-product.ts
-│       ├── get-store-info.ts
-│       ├── list-customers.ts
-│       ├── list-orders.ts
-│       ├── list-products.ts
-│       ├── update-order-status.ts
-│       └── update-product.ts
+│   └── tools/            — one file per tool (22 tools)
 └── tests/
     ├── client.test.ts
     ├── server.test.ts
