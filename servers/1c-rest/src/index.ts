@@ -3,7 +3,7 @@
 /**
  * @theyahia/1c-rest-mcp — MCP server for 1C:Enterprise REST/OData API
  *
- * 31 tools across 11 modules: meta (always on), catalogs, documents, registers,
+ * 32 tools across 11 modules: meta (always on), catalogs, documents, registers,
  * accounting, constants, shortcuts, batch, changes, reports, odata. Use
  * ONEC_SERVICES env var to limit which optional modules register.
  *

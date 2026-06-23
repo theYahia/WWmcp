@@ -58,9 +58,9 @@ describe("countRegisteredTools", () => {
     process.env = { ...originalEnv };
   });
 
-  it("default config = 31 tools (4 meta + 27 optional)", () => {
+  it("default config = 32 tools (4 meta + 28 optional)", () => {
     delete process.env["ONEC_SERVICES"];
-    expect(countRegisteredTools(getEnabledModules())).toBe(31);
+    expect(countRegisteredTools(getEnabledModules())).toBe(32);
   });
 
   it("ONEC_SERVICES=catalogs = 7 tools (4 meta + 3 catalog)", () => {
@@ -68,9 +68,9 @@ describe("countRegisteredTools", () => {
     expect(countRegisteredTools(getEnabledModules())).toBe(7);
   });
 
-  it("ONEC_SERVICES=documents = 10 tools (4 meta + 6 documents)", () => {
+  it("ONEC_SERVICES=documents = 11 tools (4 meta + 7 documents)", () => {
     process.env["ONEC_SERVICES"] = "documents";
-    expect(countRegisteredTools(getEnabledModules())).toBe(10);
+    expect(countRegisteredTools(getEnabledModules())).toBe(11);
   });
 });
 

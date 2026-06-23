@@ -11,6 +11,7 @@ import {
   handlePostDocument,
   handleUnpostDocument,
   handleDeleteDocument,
+  handleGetDocumentLines,
 } from "../src/tools/documents.js";
 import {
   handleGetRegister,
@@ -247,6 +248,23 @@ describe("tool handlers", () => {
     expect(opts.method).toBe("DELETE");
     expect(url).toContain("guid'5c8d9e2f-1a2b-3c4d-5e6f-7a8b9c0d1e2f'");
     expect(JSON.parse(result).deleted).toBe(true);
+  });
+
+  it("handleGetDocumentLines expands the tabular section by GUID", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve(JSON.stringify({ Ref_Key: "5c8d9e2f-1a2b-3c4d-5e6f-7a8b9c0d1e2f", Товары: [{ Номенклатура: "x" }] })),
+      headers: new Map(),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    await handleGetDocumentLines({
+      document_type: "Document_РеализацияТоваровУслуг",
+      ref_key: "5c8d9e2f-1a2b-3c4d-5e6f-7a8b9c0d1e2f",
+      tabular_section: "Товары",
+    });
+    const [url] = fetchMock.mock.calls[0];
+    expect(url).toContain("guid'5c8d9e2f-1a2b-3c4d-5e6f-7a8b9c0d1e2f'");
+    expect(decodeURIComponent(url)).toContain("$expand=Товары");
   });
 
   it("handleGetAccumulationBalance hits the Balance virtual method", async () => {

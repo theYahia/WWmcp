@@ -2,7 +2,7 @@
 
 > MCP server for **1C:Enterprise** REST API via OData 3.0 — catalogs, documents, registers,
 > accounting, constants, reports, batch ops & change-tracking + metadata discovery.
-> 31 tools across 11 modules. HTTP Basic auth. Stdio + Streamable HTTP transports.
+> 32 tools across 11 modules. HTTP Basic auth. Stdio + Streamable HTTP transports.
 
 [![npm](https://img.shields.io/npm/v/@theyahia/1c-rest-mcp)](https://www.npmjs.com/package/@theyahia/1c-rest-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -23,7 +23,7 @@ Tool names, arguments, return formats, and the `ONEC_*` env vars are unchanged.
 
 ---
 
-## Tools (31)
+## Tools (32)
 
 > Tools are grouped into modules. All are registered by default; the `ONEC_SERVICES`
 > env var filters which optional modules load (discovery `meta` is always on). See
@@ -56,6 +56,7 @@ Tool names, arguments, return formats, and the `ONEC_*` env vars are unchanged.
 | `post_document` | Post (провести) a document via the OData bound action `Post()`. `operational` toggles оперативное проведение. |
 | `unpost_document` | Unpost (отменить проведение) a document via `Unpost()`. |
 | `delete_document` | Physically delete a document via OData DELETE. Prefer `set_deletion_mark` for a recoverable soft delete. |
+| `get_document_lines` | Read a document's tabular section (строки, e.g. Товары) by `Ref_Key` via `$expand`. Section name is config-specific — discover via `get_metadata`/`describe_entity`. |
 
 ### Registers — `registers`
 

@@ -20,6 +20,7 @@ import {
   postDocumentSchema, handlePostDocument,
   unpostDocumentSchema, handleUnpostDocument,
   deleteDocumentSchema, handleDeleteDocument,
+  getDocumentLinesSchema, handleGetDocumentLines,
 } from "./tools/documents.js";
 import {
   getRegisterSchema, handleGetRegister,
@@ -77,7 +78,7 @@ export const VERSION = "3.1.0";
 export const MODULE_TOOL_COUNTS = {
   meta: 4,        // list_entities + get_document_by_number + get_metadata + describe_entity — always on
   catalogs: 3,    // get_catalogs + create_catalog_item + update_catalog_item
-  documents: 6,   // get/create/update + post/unpost/delete
+  documents: 7,   // get/create/update + post/unpost/delete + get_document_lines
   registers: 3,   // get_register + write_information_register + get_accumulation_balance
   reports: 1,     // get_report
   odata: 1,       // odata_query
@@ -253,6 +254,16 @@ export function createServer(): McpServer {
       deleteDocumentSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleDeleteDocument(params) }],
+      })),
+    );
+
+    server.tool(
+      "get_document_lines",
+      "Read a document's tabular section (строки / табличная часть, e.g. Товары) by Ref_Key " +
+      "via OData $expand. The section name is configuration-specific — discover it with get_metadata / describe_entity.",
+      getDocumentLinesSchema.shape,
+      withErrorHandling(async (params) => ({
+        content: [{ type: "text", text: await handleGetDocumentLines(params) }],
       })),
     );
   }

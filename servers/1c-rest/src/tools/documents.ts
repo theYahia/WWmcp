@@ -107,3 +107,32 @@ export async function handleDeleteDocument(params: z.infer<typeof deleteDocument
     2,
   );
 }
+
+// ──────────────────────────────────────────────────────────────
+// get_document_lines — табличная часть документа через OData $expand
+// ──────────────────────────────────────────────────────────────
+
+export const getDocumentLinesSchema = z.object({
+  document_type: z.string().describe("Тип документа (например, Document_РеализацияТоваровУслуг)"),
+  ref_key: refKeySchema.describe("Ref_Key документа (GUID)"),
+  tabular_section: z
+    .string()
+    .describe(
+      "Имя табличной части (например, Товары, Услуги). Имя конфиг-зависимо — " +
+      "проверьте через get_metadata / describe_entity, если не уверены.",
+    ),
+});
+
+export async function handleGetDocumentLines(
+  params: z.infer<typeof getDocumentLinesSchema>,
+): Promise<string> {
+  // 1C OData 3.0: табличные части — это collection navigation properties.
+  // $expand подтягивает строки; $select сужает документ до этой части.
+  const path = buildKeyedPath(params.document_type, params.ref_key, undefined, {
+    $format: "json",
+    $expand: params.tabular_section,
+    $select: params.tabular_section,
+  });
+  const result = await oneCGet(path);
+  return JSON.stringify(result, null, 2);
+}
