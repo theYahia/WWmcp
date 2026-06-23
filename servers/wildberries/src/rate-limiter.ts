@@ -1,9 +1,14 @@
 /**
  * Production-grade rate limiter for Wildberries Seller API.
  *
- * Wildberries rate limit rules:
- * - 300 requests per minute (token bucket)
- * - Minimum 200ms between requests
+ * Wildberries enforces rate limits *per API category* (each host has its own
+ * budget), not as one global pool. A single shared limiter therefore both
+ * over-throttles cheap categories and under-protects strict ones. Use one
+ * {@link RateLimiter} instance per category via {@link RateLimiterPool}.
+ *
+ * Per-instance rules (token bucket):
+ * - N requests per minute (token bucket, configurable per category)
+ * - Minimum interval between requests (configurable per category)
  * - HTTP 409 = PENALTY: 5-10 tokens deducted. Must read
  *   X-Ratelimit-Retry-After header and wait that duration.
  */
@@ -105,5 +110,45 @@ export class RateLimiter {
   get availableTokens(): number {
     this.refill();
     return this.tokens;
+  }
+}
+
+/** Per-category rate limit configuration. */
+export interface RateLimitConfig {
+  /** Max requests per minute (token bucket size + refill). */
+  rpm: number;
+  /** Minimum milliseconds between two consecutive requests. */
+  minIntervalMs: number;
+}
+
+/**
+ * Holds one {@link RateLimiter} per key (API category host, or a finer-grained
+ * per-endpoint key for endpoints with their own strict caps). Limiters are
+ * created lazily from `configs[key]`, falling back to `fallback` for unknown
+ * keys. This keeps 409 penalties and token budgets isolated per category,
+ * matching how Wildberries actually meters requests.
+ */
+export class RateLimiterPool {
+  private readonly limiters = new Map<string, RateLimiter>();
+
+  constructor(
+    private readonly configs: Record<string, RateLimitConfig> = {},
+    private readonly fallback: RateLimitConfig = { rpm: 300, minIntervalMs: 200 },
+  ) {}
+
+  /** Get (or lazily create) the limiter for a key. */
+  for(key: string): RateLimiter {
+    let limiter = this.limiters.get(key);
+    if (!limiter) {
+      const cfg = this.configs[key] ?? this.fallback;
+      limiter = new RateLimiter(cfg.rpm, cfg.minIntervalMs);
+      this.limiters.set(key, limiter);
+    }
+    return limiter;
+  }
+
+  /** Number of distinct limiters created so far (for testing/introspection). */
+  get size(): number {
+    return this.limiters.size;
   }
 }

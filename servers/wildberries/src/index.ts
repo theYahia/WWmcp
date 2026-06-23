@@ -3,9 +3,9 @@
 /**
  * @theyahia/wildberries-mcp — MCP server for Wildberries Seller API
  *
- * 14 tools: products, prices, stocks, orders, sales, supplies, FBS pickups,
- * feedbacks, ABC analysis. Production-grade rate limiting (300 req/min,
- * 200ms min interval, X-Ratelimit-Retry-After + 409 penalty handling).
+ * 30 tools: products, prices, stocks, orders, sales, FBS supplies, analytics,
+ * feedbacks, questions, returns, ads, ABC analysis. Per-category host routing
+ * with rate limiting (X-Ratelimit-Retry-After + 409 penalty handling).
  *
  * Auth: Bearer token (WB_API_TOKEN env var).
  *
@@ -26,7 +26,7 @@ if (!process.env["WB_API_TOKEN"]) {
 
 runServer(createServer, {
   name: "wildberries-mcp",
-  version: "2.0.0",
+  version: "3.1.0",
   toolCount: TOOL_COUNT,
   logger,
 }).catch((error) => {

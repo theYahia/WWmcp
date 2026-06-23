@@ -3,8 +3,9 @@
 /**
  * @theyahia/salla-mcp — MCP server for Salla e-commerce platform (Saudi Arabia)
  *
- * 9 tools: list_products, get_product, create_product, update_product,
- * list_orders, get_order, update_order_status, list_customers, get_store_info.
+ * 22 tools across products (incl. delete, by-SKU, bulk quantities), categories,
+ * brands, orders (incl. statuses, histories), customers, coupons, abandoned carts,
+ * branches, and store info.
  *
  * Auth: OAuth 2.0 Bearer token (SALLA_ACCESS_TOKEN env var).
  *
@@ -14,11 +15,11 @@
  */
 
 import { runServer } from "@theyahia/mcp-core";
-import { createServer, TOOL_COUNT, logger } from "./server.js";
+import { createServer, TOOL_COUNT, VERSION, logger } from "./server.js";
 
 runServer(createServer, {
   name: "salla-mcp",
-  version: "2.0.0",
+  version: VERSION,
   toolCount: TOOL_COUNT,
   logger,
 }).catch((error) => {

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { RateLimiter } from "../src/rate-limiter.js";
+import { RateLimiter, RateLimiterPool } from "../src/rate-limiter.js";
 
 describe("RateLimiter", () => {
   let limiter: RateLimiter;
@@ -56,5 +56,37 @@ describe("RateLimiter", () => {
   it("should not go below 0 tokens on penalty", () => {
     limiter.applyPenalty(1000);
     expect(limiter.availableTokens).toBeGreaterThanOrEqual(0);
+  });
+});
+
+describe("RateLimiterPool", () => {
+  it("returns the same limiter instance for the same key", () => {
+    const pool = new RateLimiterPool();
+    expect(pool.for("a")).toBe(pool.for("a"));
+  });
+
+  it("isolates limiters per key", () => {
+    const pool = new RateLimiterPool();
+    expect(pool.for("a")).not.toBe(pool.for("b"));
+    expect(pool.size).toBe(2);
+  });
+
+  it("applies per-key config and falls back for unknown keys", () => {
+    const pool = new RateLimiterPool(
+      { strict: { rpm: 1, minIntervalMs: 1000 } },
+      { rpm: 300, minIntervalMs: 200 },
+    );
+    expect(pool.for("strict").availableTokens).toBeLessThanOrEqual(1);
+    expect(pool.for("unknown").availableTokens).toBeGreaterThanOrEqual(299);
+  });
+
+  it("isolates a 409 penalty to a single key's bucket", () => {
+    const pool = new RateLimiterPool();
+    const a = pool.for("a");
+    const b = pool.for("b");
+    const bBefore = b.availableTokens;
+    a.applyPenalty(50);
+    expect(a.availableTokens).toBeLessThan(bBefore);
+    expect(b.availableTokens).toBeGreaterThanOrEqual(bBefore - 1); // tolerate refill jitter
   });
 });
