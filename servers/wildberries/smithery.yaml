@@ -1,5 +1,5 @@
 name: wildberries-mcp
-description: MCP server for Wildberries Seller API — 14 tools, production-grade rate limiting with 409 penalty protection (Russia, v2.0.0)
+description: MCP server for Wildberries Seller API — 30 tools across products, prices, stocks, orders, sales, FBS supplies, analytics, feedbacks, questions, returns, ads. Per-category host routing + rate limiting with 409 penalty protection (Russia)
 icon: https://raw.githubusercontent.com/theYahia/wildberries-mcp/main/icon.png
 startCommand:
   type: stdio

@@ -1,13 +1,13 @@
 /**
  * Wildberries MCP server factory.
  *
- * Note: tools.ts uses raw JSON Schema (not Zod) — preserved as-is in v2.0.0.
- * Migration to Zod-defined schemas is deferred (no functional benefit; both
- * formats are accepted by McpServer.tool()).
+ * Tools are declared as JSON Schema in tools.ts and converted to a Zod raw
+ * shape here (`jsonPropToZod` honours enum / integer / min / max / min-maxItems),
+ * which is what McpServer.tool() expects and which validates tool inputs for free.
  *
- * Note: WBClient + RateLimiter from v1 are preserved as-is — they implement
- * Wildberries-specific 409 penalty handling (X-Ratelimit-Retry-After header)
- * that doesn't fit @theyahia/mcp-core's BaseHttpClient generic retry pattern.
+ * Note: WBClient + RateLimiter are kept custom (not @theyahia/mcp-core's
+ * BaseHttpClient) — they implement Wildberries' per-category rate limiting and
+ * 409 penalty handling (X-Ratelimit-Retry-After), and per-host routing.
  */
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
@@ -32,18 +32,31 @@ function jsonPropToZod(prop: Record<string, unknown>): ZodTypeAny {
   let zodType: ZodTypeAny;
 
   switch (type) {
-    case "string":
-      zodType = z.string();
+    case "string": {
+      const enumVals = prop["enum"] as string[] | undefined;
+      zodType =
+        enumVals && enumVals.length > 0
+          ? z.enum(enumVals as [string, ...string[]])
+          : z.string();
       break;
+    }
     case "number":
-      zodType = z.number();
+    case "integer": {
+      let n = type === "integer" ? z.number().int() : z.number();
+      if (typeof prop["minimum"] === "number") n = n.min(prop["minimum"] as number);
+      if (typeof prop["maximum"] === "number") n = n.max(prop["maximum"] as number);
+      zodType = n;
       break;
+    }
     case "boolean":
       zodType = z.boolean();
       break;
     case "array": {
       const items = prop["items"] as Record<string, unknown> | undefined;
-      zodType = z.array(items ? jsonPropToZod(items) : z.unknown());
+      let arr = z.array(items ? jsonPropToZod(items) : z.unknown());
+      if (typeof prop["minItems"] === "number") arr = arr.min(prop["minItems"] as number);
+      if (typeof prop["maxItems"] === "number") arr = arr.max(prop["maxItems"] as number);
+      zodType = arr;
       break;
     }
     case "object": {
@@ -96,7 +109,7 @@ export function createServer(client?: WBClient): McpServer {
 
   const server = new McpServer({
     name: "wildberries-mcp",
-    version: "2.0.0",
+    version: "3.1.0",
   });
 
   for (const [name, def] of Object.entries(toolDefinitions)) {

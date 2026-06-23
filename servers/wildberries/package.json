@@ -1,7 +1,7 @@
 {
   "name": "@theyahia/wildberries-mcp",
   "version": "3.0.0",
-  "description": "MCP server for Wildberries Seller API — 15 tools: products, prices, stocks, orders, sales, supplies, ABC analysis. Production-grade rate limiting (409 penalty protection).",
+  "description": "MCP server for Wildberries Seller API — 30 tools across products, prices, stocks, orders, sales, FBS supplies, analytics, feedbacks, questions, returns, ads, ABC analysis. Per-category host routing + rate limiting with 409 penalty protection.",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
