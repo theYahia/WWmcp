@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { oneCGet, oneCPatch, buildODataPath, buildKeyedPath } from "../client.js";
+import { oneCGet, oneCPatch, buildODataPath, buildKeyedPath, escapeODataString } from "../client.js";
+import { refKeySchema } from "../validation.js";
 
 // ──────────────────────────────────────────────────────────────
 // find_by_description — нечёткий поиск элементов по Description
@@ -15,7 +16,7 @@ export const findByDescriptionSchema = z.object({
 export async function handleFindByDescription(
   params: z.infer<typeof findByDescriptionSchema>,
 ): Promise<string> {
-  const safe = params.query.replace(/'/g, "''");
+  const safe = escapeODataString(params.query);
   const path = buildODataPath(params.entity, {
     $format: "json",
     $filter: `substringof('${safe}',Description)`,
@@ -31,7 +32,7 @@ export async function handleFindByDescription(
 
 export const getByKeySchema = z.object({
   entity: z.string().describe("Сущность (например, Catalog_Номенклатура)"),
-  ref_key: z.string().describe("Ref_Key (GUID)"),
+  ref_key: refKeySchema.describe("Ref_Key (GUID)"),
   select: z.string().optional().describe("OData $select"),
 });
 
@@ -74,7 +75,7 @@ export async function handleCountEntities(
 
 export const setDeletionMarkSchema = z.object({
   entity: z.string().describe("Сущность (Catalog_* или Document_*)"),
-  ref_key: z.string().describe("Ref_Key (GUID)"),
+  ref_key: refKeySchema.describe("Ref_Key (GUID)"),
   mark: z.boolean().default(true).describe("true — пометить на удаление, false — снять пометку"),
 });
 

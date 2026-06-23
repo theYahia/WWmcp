@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { oneCGet, oneCPost, oneCPatch, buildODataPath, buildKeyedPath } from "../client.js";
+import { refKeySchema } from "../validation.js";
 
 export const getCatalogsSchema = z.object({
   catalog_name: z.string().describe("Имя справочника (например, Catalog_Номенклатура)"),
@@ -46,7 +47,7 @@ export async function handleCreateCatalogItem(params: z.infer<typeof createCatal
 
 export const updateCatalogItemSchema = z.object({
   catalog_name: z.string().describe("Имя справочника"),
-  ref_key: z.string().describe("Ref_Key элемента (GUID)"),
+  ref_key: refKeySchema.describe("Ref_Key элемента (GUID)"),
   data: z.record(z.string(), z.unknown()).describe("Обновляемые поля"),
 });
 

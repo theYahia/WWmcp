@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { oneCGet, buildODataPath } from "../client.js";
+import { oneCGet, buildODataPath, escapeODataString } from "../client.js";
+import { odataDate } from "../validation.js";
 
 // ──────────────────────────────────────────────────────────────
 // list_entities — discovery: список всех сущностей базы 1С
@@ -69,8 +70,7 @@ export const getDocumentByNumberSchema = z.object({
     .string()
     .describe("Тип документа (например, Document_РеализацияТоваровУслуг)"),
   number: z.string().describe("Номер документа"),
-  date: z
-    .string()
+  date: odataDate
     .optional()
     .describe("Дата создания документа в формате YYYY-MM-DD (необязательно, сужает поиск)"),
   select: z
@@ -82,7 +82,7 @@ export const getDocumentByNumberSchema = z.object({
 export async function handleGetDocumentByNumber(
   params: z.infer<typeof getDocumentByNumberSchema>,
 ): Promise<string> {
-  let filter = `Number eq '${params.number}'`;
+  let filter = `Number eq '${escapeODataString(params.number)}'`;
   if (params.date) {
     filter += ` and Date ge datetime'${params.date}T00:00:00'`;
     filter += ` and Date lt datetime'${params.date}T23:59:59'`;

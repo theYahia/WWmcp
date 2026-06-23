@@ -3,6 +3,7 @@ import {
   oneCGet, oneCPost, oneCPatch, oneCDelete,
   buildODataPath, buildKeyedPath,
 } from "../client.js";
+import { refKeySchema } from "../validation.js";
 
 export const getDocumentsSchema = z.object({
   document_type: z.string().describe("Тип документа (например, Document_РеализацияТоваровУслуг)"),
@@ -41,15 +42,12 @@ export async function handleCreateDocument(params: z.infer<typeof createDocument
 
 export const updateDocumentSchema = z.object({
   document_type: z.string().describe("Тип документа"),
-  ref_key: z.string().describe("Ref_Key документа (GUID)"),
+  ref_key: refKeySchema.describe("Ref_Key документа (GUID)"),
   data: z.record(z.string(), z.unknown()).describe("Обновляемые поля"),
 });
 
 export async function handleUpdateDocument(params: z.infer<typeof updateDocumentSchema>): Promise<string> {
-  const path = buildODataPath(
-    `${params.document_type}(guid'${params.ref_key}')`,
-    { $format: "json" },
-  );
+  const path = buildKeyedPath(params.document_type, params.ref_key, undefined, { $format: "json" });
   const result = await oneCPatch(path, params.data);
   return JSON.stringify(result, null, 2);
 }
@@ -60,7 +58,7 @@ export async function handleUpdateDocument(params: z.infer<typeof updateDocument
 
 export const postDocumentSchema = z.object({
   document_type: z.string().describe("Тип документа (например, Document_РеализацияТоваровУслуг)"),
-  ref_key: z.string().describe("Ref_Key документа (GUID)"),
+  ref_key: refKeySchema.describe("Ref_Key документа (GUID)"),
   operational: z
     .boolean()
     .default(false)
@@ -82,7 +80,7 @@ export async function handlePostDocument(params: z.infer<typeof postDocumentSche
 
 export const unpostDocumentSchema = z.object({
   document_type: z.string().describe("Тип документа"),
-  ref_key: z.string().describe("Ref_Key документа (GUID)"),
+  ref_key: refKeySchema.describe("Ref_Key документа (GUID)"),
 });
 
 export async function handleUnpostDocument(params: z.infer<typeof unpostDocumentSchema>): Promise<string> {
@@ -97,7 +95,7 @@ export async function handleUnpostDocument(params: z.infer<typeof unpostDocument
 
 export const deleteDocumentSchema = z.object({
   document_type: z.string().describe("Тип документа"),
-  ref_key: z.string().describe("Ref_Key документа (GUID)"),
+  ref_key: refKeySchema.describe("Ref_Key документа (GUID)"),
 });
 
 export async function handleDeleteDocument(params: z.infer<typeof deleteDocumentSchema>): Promise<string> {

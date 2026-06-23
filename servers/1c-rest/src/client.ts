@@ -55,6 +55,19 @@ export function resetClient(): void {
 }
 
 /**
+ * Escape a value for safe use inside an OData string literal ('…').
+ * OData/1C escape a single quote by doubling it; this stops a quote in
+ * user- or LLM-supplied data from breaking out of the literal ($filter injection).
+ */
+export function escapeODataString(value: string): string {
+  return value.replace(/'/g, "''");
+}
+
+/** A 1C Ref_Key is a standard UUID; used to validate keyed-path input. */
+export const GUID_RE =
+  /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+
+/**
  * Build OData path with optional query parameters.
  * Preserves $-prefixed keys (OData system options) without URL-encoding the $.
  */
@@ -101,6 +114,13 @@ export function buildKeyedPath(
   action?: string,
   query?: Record<string, string>,
 ): string {
+  // Guard: refKey is interpolated into the path inside guid'…'. Validating it as
+  // a GUID makes OData injection through the key impossible, regardless of caller.
+  if (!GUID_RE.test(refKey)) {
+    throw new Error(
+      `Invalid Ref_Key (expected a GUID like 01234567-89ab-cdef-0123-456789abcdef): ${refKey}`,
+    );
+  }
   const keyed = `${encodeURIComponent(entity)}(guid'${refKey}')`;
   const tail = action ? `/${action}` : "";
   const qs =

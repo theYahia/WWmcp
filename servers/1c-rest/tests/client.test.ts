@@ -1,5 +1,13 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { buildODataPath, oneCGet, oneCPost, oneCPatch, resetClient } from "../src/client.js";
+import {
+  buildODataPath,
+  buildKeyedPath,
+  escapeODataString,
+  oneCGet,
+  oneCPost,
+  oneCPatch,
+  resetClient,
+} from "../src/client.js";
 
 describe("buildODataPath", () => {
   it("builds path without query params", () => {
@@ -17,6 +25,44 @@ describe("buildODataPath", () => {
   it("encodes Cyrillic entity names", () => {
     const path = buildODataPath("Document_Счёт");
     expect(path).toContain(encodeURIComponent("Document_Счёт"));
+  });
+});
+
+describe("buildKeyedPath", () => {
+  const GUID = "5c8d9e2f-1a2b-3c4d-5e6f-7a8b9c0d1e2f";
+
+  it("builds a keyed path with a bound action and query", () => {
+    const path = buildKeyedPath("Document_Test", GUID, "Post", { $format: "json" });
+    expect(path).toBe(
+      `/odata/standard.odata/Document_Test(guid'${GUID}')/Post?$format=json`,
+    );
+  });
+
+  it("builds a keyed path without an action", () => {
+    const path = buildKeyedPath("Catalog_Test", GUID);
+    expect(path).toBe(`/odata/standard.odata/Catalog_Test(guid'${GUID}')`);
+  });
+
+  it("encodes a Cyrillic entity but keeps the guid tuple structural", () => {
+    const path = buildKeyedPath("Document_Счёт", GUID);
+    expect(path).toContain(encodeURIComponent("Document_Счёт"));
+    expect(path).toContain(`(guid'${GUID}')`);
+  });
+
+  it("rejects a non-GUID Ref_Key (injection guard)", () => {
+    expect(() => buildKeyedPath("Document_Test", "x') and 1 eq 1--")).toThrow(/Invalid Ref_Key/);
+    expect(() => buildKeyedPath("Document_Test", "abc-123")).toThrow(/Invalid Ref_Key/);
+  });
+});
+
+describe("escapeODataString", () => {
+  it("doubles single quotes", () => {
+    expect(escapeODataString("O'Brien")).toBe("O''Brien");
+    expect(escapeODataString("a'b'c")).toBe("a''b''c");
+  });
+
+  it("leaves clean strings unchanged", () => {
+    expect(escapeODataString("Молоко")).toBe("Молоко");
   });
 });
 

@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { oneCGet, oneCPost, buildODataPath } from "../client.js";
+import { oneCGet, oneCPost, buildODataPath, escapeODataString } from "../client.js";
+import { odataDateTime } from "../validation.js";
 
 export const getRegisterSchema = z.object({
   register_type: z.enum(["InformationRegister", "AccumulationRegister"]).describe("Тип регистра"),
@@ -52,8 +53,7 @@ export async function handleWriteInformationRegister(
 
 export const getAccumulationBalanceSchema = z.object({
   register_name: z.string().describe("Имя регистра накопления (например, ОстаткиТоваровНаСкладах)"),
-  period: z
-    .string()
+  period: odataDateTime
     .optional()
     .describe("Дата среза остатков YYYY-MM-DDTHH:MM:SS (Period). Без указания — текущие остатки."),
   condition: z
@@ -68,7 +68,7 @@ export async function handleGetAccumulationBalance(
   // Виртуальный ресурс: AccumulationRegister_<name>/Balance(Period=…,Condition=…)
   const args: string[] = [];
   if (params.period) args.push(`Period=datetime'${params.period}'`);
-  if (params.condition) args.push(`Condition='${params.condition.replace(/'/g, "''")}'`);
+  if (params.condition) args.push(`Condition='${escapeODataString(params.condition)}'`);
   const entity = encodeURIComponent(`AccumulationRegister_${params.register_name}`);
   const call = args.length ? `(${args.join(",")})` : "()";
   const path = `/odata/standard.odata/${entity}/Balance${call}?$format=json`;
