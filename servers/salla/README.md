@@ -1,7 +1,7 @@
 # @theyahia/salla-mcp
 
-> MCP server for **Salla** e-commerce platform (Saudi Arabia) — products, orders, customers, catalog ops, and webhook security.
-> **15 tools.** OAuth 2.0 with auto-refresh. HMAC-SHA256 webhook verification. Stdio + Streamable HTTP transports.
+> MCP server for **Salla** e-commerce platform (Saudi Arabia) — products, categories, brands, orders, customers, coupons, branches, catalog ops, and webhook security.
+> **24 tools.** OAuth 2.0 with auto-refresh. HMAC-SHA256 webhook verification. Stdio + Streamable HTTP transports.
 
 [![npm](https://img.shields.io/npm/v/@theyahia/salla-mcp)](https://www.npmjs.com/package/@theyahia/salla-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -24,12 +24,13 @@ See [Gulf SaaS stack — combined use case](#gulf-saas-stack-combined-flow) belo
 - **Webhook signature verification** (`verify_webhook_signature` tool) — HMAC-SHA256 against `X-Salla-Signature` with timing-safe comparison. Supports both Salla strategies (`Signature` default + `Token`). Zero new dependencies (Node `crypto`).
 - **OAuth auto-refresh** — set `SALLA_OAUTH_CLIENT_ID` + `SALLA_OAUTH_CLIENT_SECRET` + `SALLA_REFRESH_TOKEN` and the client refreshes its access token transparently. The new refresh token (Salla rotates them) is propagated to an optional persistence callback.
 - **5 new catalog tools**: `get_product_variants`, `update_product_price`, `bulk_inventory_adjust` (up to 1000 items), `get_categories`, `get_brands`.
+- **9 coverage tools**: `get_product_by_sku`, `delete_product`, `create_category`, `get_customer`, `list_order_statuses`, `get_order_histories`, `list_coupons`, `list_abandoned_carts`, `list_branches` (all endpoints verified against docs.salla.dev).
 
 Backward-compatible: existing `SALLA_ACCESS_TOKEN` static mode and all 9 original tool names/arguments are unchanged.
 
 ---
 
-## Tools (15)
+## Tools (24)
 
 ### Products & Catalog
 
@@ -37,12 +38,15 @@ Backward-compatible: existing `SALLA_ACCESS_TOKEN` static mode and all 9 origina
 |------|-------------|
 | `list_products` | List products with pagination. Optional `status` filter (sale, out, hidden, deleted). |
 | `get_product` | Get full product details by ID. |
+| `get_product_by_sku` | Get full product details by SKU code. |
 | `create_product` | Create a new product (name, price, product_type, optional quantity/SKU/description). |
 | `update_product` | Update name, price, quantity, or status. |
+| `delete_product` | Permanently delete a product by ID. |
 | `update_product_price` | Set base price plus optional `sale_price` + `sale_end`. |
 | `get_product_variants` | Return options + variants for a product (size, color, etc.). |
 | `bulk_inventory_adjust` | Bulk adjust quantities (overwrite/increment/decrement) by ID, variant ID, or SKU. Up to 1000 items. |
 | `get_categories` | List categories with pagination + keyword filter. |
+| `create_category` | Create a category (name, optional status/parent_id/sort_order/image). |
 | `get_brands` | List brands with pagination + keyword filter (requires `brands.read` scope). |
 
 ### Orders
@@ -52,13 +56,19 @@ Backward-compatible: existing `SALLA_ACCESS_TOKEN` static mode and all 9 origina
 | `list_orders` | List orders with pagination. Optional `status` filter. |
 | `get_order` | Get full order details (customer, items, totals). |
 | `update_order_status` | Set order fulfillment status (completed, in_progress, under_review, cancelled, restoring, refunded). |
+| `list_order_statuses` | List valid order statuses/sub-statuses for the store. |
+| `get_order_histories` | Get an order's status-change timeline. |
 
-### Customers & Store
+### Customers, store & operations
 
 | Tool | Description |
 |------|-------------|
 | `list_customers` | List customers with pagination. |
+| `get_customer` | Get a single customer by ID (incl. groups). |
 | `get_store_info` | Get store information (name, currency, timezone, plan). |
+| `list_coupons` | List discount coupons with pagination. |
+| `list_abandoned_carts` | List abandoned carts for recovery workflows. |
+| `list_branches` | List store branches (locations / pickup points). |
 
 ### Security
 
