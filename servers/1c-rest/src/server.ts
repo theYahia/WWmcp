@@ -8,19 +8,46 @@
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { createLogger, withErrorHandling } from "@theyahia/mcp-core";
-import { getCatalogsSchema, handleGetCatalogs } from "./tools/catalogs.js";
+import {
+  getCatalogsSchema, handleGetCatalogs,
+  createCatalogItemSchema, handleCreateCatalogItem,
+  updateCatalogItemSchema, handleUpdateCatalogItem,
+} from "./tools/catalogs.js";
 import {
   getDocumentsSchema, handleGetDocuments,
   createDocumentSchema, handleCreateDocument,
   updateDocumentSchema, handleUpdateDocument,
+  postDocumentSchema, handlePostDocument,
+  unpostDocumentSchema, handleUnpostDocument,
+  deleteDocumentSchema, handleDeleteDocument,
 } from "./tools/documents.js";
-import { getRegisterSchema, handleGetRegister } from "./tools/registers.js";
+import {
+  getRegisterSchema, handleGetRegister,
+  writeInformationRegisterSchema, handleWriteInformationRegister,
+  getAccumulationBalanceSchema, handleGetAccumulationBalance,
+} from "./tools/registers.js";
 import { getReportSchema, handleGetReport } from "./tools/reports.js";
 import { odataQuerySchema, handleODataQuery } from "./tools/odata-query.js";
 import {
   listEntitiesSchema, handleListEntities,
   getDocumentByNumberSchema, handleGetDocumentByNumber,
+  getMetadataSchema, handleGetMetadata,
+  describeEntitySchema, handleDescribeEntity,
 } from "./tools/metadata.js";
+import {
+  getConstantSchema, handleGetConstant,
+  setConstantSchema, handleSetConstant,
+} from "./tools/constants.js";
+import {
+  getAccountingRegisterSchema, handleGetAccountingRegister,
+} from "./tools/accounting.js";
+import {
+  findByDescriptionSchema, handleFindByDescription,
+  getByKeySchema, handleGetByKey,
+  countEntitiesSchema, handleCountEntities,
+  setDeletionMarkSchema, handleSetDeletionMark,
+  getRecentDocumentsSchema, handleGetRecentDocuments,
+} from "./tools/shortcuts.js";
 
 export const logger = createLogger("1c-rest-mcp");
 
@@ -32,20 +59,27 @@ export const logger = createLogger("1c-rest-mcp");
  * navigate an unfamiliar 1C database.
  */
 export const MODULE_TOOL_COUNTS = {
-  meta: 2,        // list_entities + get_document_by_number — always on
-  catalogs: 1,    // get_catalogs
-  documents: 3,   // get_documents + create_document + update_document
-  registers: 1,   // get_register
+  meta: 4,        // list_entities + get_document_by_number + get_metadata + describe_entity — always on
+  catalogs: 3,    // get_catalogs + create_catalog_item + update_catalog_item
+  documents: 6,   // get/create/update + post/unpost/delete
+  registers: 3,   // get_register + write_information_register + get_accumulation_balance
   reports: 1,     // get_report
   odata: 1,       // odata_query
+  constants: 2,   // get_constant + set_constant
+  accounting: 1,  // get_accounting_register
+  shortcuts: 5,   // find_by_description + get_by_key + count_entities + set_deletion_mark + get_recent_documents
 } as const;
 
 export type ModuleName = keyof typeof MODULE_TOOL_COUNTS;
-const OPTIONAL_MODULES: ModuleName[] = ["catalogs", "documents", "registers", "reports", "odata"];
+const OPTIONAL_MODULES: ModuleName[] = [
+  "catalogs", "documents", "registers", "reports", "odata",
+  "constants", "accounting", "shortcuts",
+];
 
 /**
  * ONEC_SERVICES env var filters which tool groups are registered.
- * Comma-separated list of: catalogs, documents, registers, reports, odata, meta.
+ * Comma-separated list of: catalogs, documents, registers, reports, odata,
+ * constants, accounting, shortcuts, meta.
  * Default ("all" or unset) — all tools registered.
  */
 export function getEnabledModules(): Set<ModuleName> {
@@ -71,7 +105,7 @@ export function countRegisteredTools(modules: Set<ModuleName>): number {
 export function createServer(): McpServer {
   const server = new McpServer({
     name: "1c-rest-mcp",
-    version: "2.0.0",
+    version: "3.1.0",
   });
 
   const modules = getEnabledModules();
@@ -98,6 +132,26 @@ export function createServer(): McpServer {
     })),
   );
 
+  server.tool(
+    "get_metadata",
+    "Return the raw 1C OData $metadata document (EDMX/XML) describing every entity, " +
+    "field and type in the database. Use for exact schema; for a quick field list prefer describe_entity.",
+    getMetadataSchema.shape,
+    withErrorHandling(async (params) => ({
+      content: [{ type: "text", text: await handleGetMetadata(params) }],
+    })),
+  );
+
+  server.tool(
+    "describe_entity",
+    "List the fields of a 1C entity by inspecting one sample record ($top=1). " +
+    "Cheaper than reading full $metadata when you only need field names of one entity.",
+    describeEntitySchema.shape,
+    withErrorHandling(async (params) => ({
+      content: [{ type: "text", text: await handleDescribeEntity(params) }],
+    })),
+  );
+
   if (modules.has("catalogs")) {
     server.tool(
       "get_catalogs",
@@ -105,6 +159,24 @@ export function createServer(): McpServer {
       getCatalogsSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleGetCatalogs(params) }],
+      })),
+    );
+
+    server.tool(
+      "create_catalog_item",
+      "Create a new catalog item via OData POST (e.g. add a Контрагент or Номенклатура).",
+      createCatalogItemSchema.shape,
+      withErrorHandling(async (params) => ({
+        content: [{ type: "text", text: await handleCreateCatalogItem(params) }],
+      })),
+    );
+
+    server.tool(
+      "update_catalog_item",
+      "Update an existing catalog item via OData PATCH (by Ref_Key GUID).",
+      updateCatalogItemSchema.shape,
+      withErrorHandling(async (params) => ({
+        content: [{ type: "text", text: await handleUpdateCatalogItem(params) }],
       })),
     );
   }
@@ -136,6 +208,35 @@ export function createServer(): McpServer {
         content: [{ type: "text", text: await handleUpdateDocument(params) }],
       })),
     );
+
+    server.tool(
+      "post_document",
+      "Post (провести) a 1C document via the OData bound action Post(). " +
+      "Set operational=true for оперативное проведение.",
+      postDocumentSchema.shape,
+      withErrorHandling(async (params) => ({
+        content: [{ type: "text", text: await handlePostDocument(params) }],
+      })),
+    );
+
+    server.tool(
+      "unpost_document",
+      "Unpost (отменить проведение) a 1C document via the OData bound action Unpost().",
+      unpostDocumentSchema.shape,
+      withErrorHandling(async (params) => ({
+        content: [{ type: "text", text: await handleUnpostDocument(params) }],
+      })),
+    );
+
+    server.tool(
+      "delete_document",
+      "Physically delete a 1C document via OData DELETE (by Ref_Key). " +
+      "Prefer set_deletion_mark for a recoverable soft delete.",
+      deleteDocumentSchema.shape,
+      withErrorHandling(async (params) => ({
+        content: [{ type: "text", text: await handleDeleteDocument(params) }],
+      })),
+    );
   }
 
   if (modules.has("registers")) {
@@ -145,6 +246,25 @@ export function createServer(): McpServer {
       getRegisterSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleGetRegister(params) }],
+      })),
+    );
+
+    server.tool(
+      "write_information_register",
+      "Write a record into an independent information register (OData POST on InformationRegister_*).",
+      writeInformationRegisterSchema.shape,
+      withErrorHandling(async (params) => ({
+        content: [{ type: "text", text: await handleWriteInformationRegister(params) }],
+      })),
+    );
+
+    server.tool(
+      "get_accumulation_balance",
+      "Get accumulation-register balances (остатки) via the 1C OData virtual method " +
+      "Balance(Period=…,Condition=…). Omit period for current balances.",
+      getAccumulationBalanceSchema.shape,
+      withErrorHandling(async (params) => ({
+        content: [{ type: "text", text: await handleGetAccumulationBalance(params) }],
       })),
     );
   }
@@ -167,6 +287,84 @@ export function createServer(): McpServer {
       odataQuerySchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleODataQuery(params) }],
+      })),
+    );
+  }
+
+  if (modules.has("constants")) {
+    server.tool(
+      "get_constant",
+      "Read a 1C constant value (Constant_*).",
+      getConstantSchema.shape,
+      withErrorHandling(async (params) => ({
+        content: [{ type: "text", text: await handleGetConstant(params) }],
+      })),
+    );
+
+    server.tool(
+      "set_constant",
+      "Write a 1C constant value via OData PATCH (Value field).",
+      setConstantSchema.shape,
+      withErrorHandling(async (params) => ({
+        content: [{ type: "text", text: await handleSetConstant(params) }],
+      })),
+    );
+  }
+
+  if (modules.has("accounting")) {
+    server.tool(
+      "get_accounting_register",
+      "Read accounting-register records (AccountingRegister_*, e.g. Хозрасчетный — проводки) via OData.",
+      getAccountingRegisterSchema.shape,
+      withErrorHandling(async (params) => ({
+        content: [{ type: "text", text: await handleGetAccountingRegister(params) }],
+      })),
+    );
+  }
+
+  if (modules.has("shortcuts")) {
+    server.tool(
+      "find_by_description",
+      "Fuzzy-find items by a substring of their Description (OData substringof).",
+      findByDescriptionSchema.shape,
+      withErrorHandling(async (params) => ({
+        content: [{ type: "text", text: await handleFindByDescription(params) }],
+      })),
+    );
+
+    server.tool(
+      "get_by_key",
+      "Fetch a single 1C record by its Ref_Key (GUID).",
+      getByKeySchema.shape,
+      withErrorHandling(async (params) => ({
+        content: [{ type: "text", text: await handleGetByKey(params) }],
+      })),
+    );
+
+    server.tool(
+      "count_entities",
+      "Count records of an entity ($inlinecount, $top=0) with an optional filter.",
+      countEntitiesSchema.shape,
+      withErrorHandling(async (params) => ({
+        content: [{ type: "text", text: await handleCountEntities(params) }],
+      })),
+    );
+
+    server.tool(
+      "set_deletion_mark",
+      "Set or clear the DeletionMark on a catalog item or document (recoverable soft delete).",
+      setDeletionMarkSchema.shape,
+      withErrorHandling(async (params) => ({
+        content: [{ type: "text", text: await handleSetDeletionMark(params) }],
+      })),
+    );
+
+    server.tool(
+      "get_recent_documents",
+      "Get the most recent documents of a type, ordered by Date desc (optionally posted only).",
+      getRecentDocumentsSchema.shape,
+      withErrorHandling(async (params) => ({
+        content: [{ type: "text", text: await handleGetRecentDocuments(params) }],
       })),
     );
   }

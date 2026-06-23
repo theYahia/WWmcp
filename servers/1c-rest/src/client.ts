@@ -82,3 +82,33 @@ export async function oneCPost(path: string, body: unknown): Promise<unknown> {
 export async function oneCPatch(path: string, body: unknown): Promise<unknown> {
   return getClient().request({ method: "PATCH", path, body });
 }
+
+export async function oneCDelete(path: string): Promise<unknown> {
+  return getClient().request({ method: "DELETE", path });
+}
+
+/**
+ * Build a keyed OData path: `Entity(guid'GUID')[/Action][?query]`.
+ *
+ * The entity name is URL-encoded (Cyrillic-safe), but the key tuple `(guid'…')`
+ * and bound action segment (`/Post`, `/Unpost`) are structural and left intact —
+ * `buildODataPath` can't be reused here because it would percent-encode the `/`
+ * of the action. Matches 1C:Enterprise OData 3.0 addressing.
+ */
+export function buildKeyedPath(
+  entity: string,
+  refKey: string,
+  action?: string,
+  query?: Record<string, string>,
+): string {
+  const keyed = `${encodeURIComponent(entity)}(guid'${refKey}')`;
+  const tail = action ? `/${action}` : "";
+  const qs =
+    query && Object.keys(query).length > 0
+      ? "?" +
+        Object.entries(query)
+          .map(([k, v]) => `${k}=${encodeURIComponent(v)}`)
+          .join("&")
+      : "";
+  return `/odata/standard.odata/${keyed}${tail}${qs}`;
+}

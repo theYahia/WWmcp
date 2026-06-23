@@ -22,46 +22,87 @@ Tool names, arguments, return formats, and the `ONEC_*` env vars are unchanged.
 
 ---
 
-## Tools (9)
+## Tools (26)
 
-### Discovery (always enabled)
+> Tools are grouped into modules. All are registered by default; the `ONEC_SERVICES`
+> env var filters which optional modules load (discovery `meta` is always on). See
+> [Environment Variables](#environment-variables).
+
+### Discovery — `meta` (always enabled)
 
 | Tool | Description |
 |------|-------------|
 | `list_entities` | List all available 1C OData entities (catalogs / documents / registers / reports). Use this first when working with an unfamiliar database. |
 | `get_document_by_number` | Locate a 1C document by its number (e.g. invoice ТД-00123 dated 2026-03-01). Convenience wrapper over `$filter`. |
+| `get_metadata` | Return the raw OData `$metadata` (EDMX/XML) describing every entity, field and type. |
+| `describe_entity` | List an entity's fields by inspecting one sample record (`$top=1`) — cheaper than full `$metadata`. |
 
-### Catalogs
+### Catalogs — `catalogs`
 
 | Tool | Description |
 |------|-------------|
 | `get_catalogs` | Read 1C catalog data. Supports `$filter`, `$select`, `$orderby`, `$top`, `$skip`. |
+| `create_catalog_item` | Create a new catalog item via OData POST (e.g. add a Контрагент or Номенклатура). |
+| `update_catalog_item` | Update a catalog item via OData PATCH (by `Ref_Key` GUID). |
 
-### Documents
+### Documents — `documents`
 
 | Tool | Description |
 |------|-------------|
 | `get_documents` | Read 1C documents with full OData filtering. |
 | `create_document` | Create a new document via OData POST. |
 | `update_document` | Update an existing document via OData PATCH (by `Ref_Key` GUID). |
+| `post_document` | Post (провести) a document via the OData bound action `Post()`. `operational` toggles оперативное проведение. |
+| `unpost_document` | Unpost (отменить проведение) a document via `Unpost()`. |
+| `delete_document` | Physically delete a document via OData DELETE. Prefer `set_deletion_mark` for a recoverable soft delete. |
 
-### Registers
+### Registers — `registers`
 
 | Tool | Description |
 |------|-------------|
 | `get_register` | Read information or accumulation register data. |
+| `write_information_register` | Write a record into an independent information register (POST on `InformationRegister_*`). |
+| `get_accumulation_balance` | Accumulation-register balances (остатки) via the OData virtual method `Balance(Period=…,Condition=…)`. |
 
-### Reports
+### Accounting — `accounting`
 
 | Tool | Description |
 |------|-------------|
-| `get_report` | Get a 1C report from an arbitrary HTTP service URL (`/hs/...`). |
+| `get_accounting_register` | Read accounting-register records (`AccountingRegister_*`, e.g. Хозрасчетный — проводки). |
 
-### Generic OData
+### Constants — `constants`
+
+| Tool | Description |
+|------|-------------|
+| `get_constant` | Read a 1C constant value (`Constant_*`). |
+| `set_constant` | Write a 1C constant value via OData PATCH (`Value` field). |
+
+### Shortcuts — `shortcuts`
+
+| Tool | Description |
+|------|-------------|
+| `find_by_description` | Fuzzy-find items by a substring of `Description` (OData `substringof`). |
+| `get_by_key` | Fetch a single record by its `Ref_Key` (GUID). |
+| `count_entities` | Count records of an entity (`$inlinecount`, `$top=0`) with an optional filter. |
+| `set_deletion_mark` | Set/clear the `DeletionMark` on a catalog item or document (recoverable soft delete). |
+| `get_recent_documents` | Most recent documents of a type, ordered by `Date desc` (optionally posted only). |
+
+### Reports — `reports`
+
+| Tool | Description |
+|------|-------------|
+| `get_report` | Get a 1C report from a relative HTTP service URL (`/hs/...`). Restricted to the configured `ONEC_BASE_URL` origin. |
+
+### Generic OData — `odata`
 
 | Tool | Description |
 |------|-------------|
 | `odata_query` | Run an arbitrary OData 3.0 query. Supports `$filter`, `$select`, `$expand`, `$orderby`, `$top`, `$skip`, `$inlinecount`. |
+
+> **Note on write/posting tools.** `post_document`/`unpost_document`/`delete_document`,
+> `get_accumulation_balance` (virtual `Balance`) and `write_information_register` follow the
+> 1C:Enterprise OData 3.0 spec. URL/parameter shapes should be validated against your specific
+> 1C configuration's `$metadata` (use `get_metadata`) before relying on them in production.
 
 ---
 
@@ -148,13 +189,15 @@ Includes session management (`mcp-session-id` header), CORS, graceful shutdown.
 
 ### Module filtering (`ONEC_SERVICES`)
 
-Limit registered tools to save LLM context. Modules: `catalogs`, `documents`, `registers`, `reports`, `odata`, `meta`.
+Limit registered tools to save LLM context. Modules: `catalogs`, `documents`, `registers`, `accounting`, `constants`, `shortcuts`, `reports`, `odata` (plus always-on `meta`).
 
 ```bash
 ONEC_SERVICES=catalogs,documents npx @theyahia/1c-rest-mcp
 ```
 
-The discovery tools (`list_entities`, `get_document_by_number`) are always registered — without them an agent cannot discover the database structure.
+The discovery module `meta` (`list_entities`, `get_document_by_number`, `get_metadata`, `describe_entity`) is always registered — without it an agent cannot discover the database structure.
+
+**Safety:** set `MCP_DISABLE_SANITIZE=true` only if you trust the data source — by default tool output is scanned for prompt-injection patterns. The HTTP client refuses absolute URLs whose origin differs from `ONEC_BASE_URL`.
 
 ---
 

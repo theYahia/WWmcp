@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { oneCGet, buildODataPath } from "../client.js";
+import { oneCGet, oneCPost, oneCPatch, buildODataPath, buildKeyedPath } from "../client.js";
 
 export const getCatalogsSchema = z.object({
   catalog_name: z.string().describe("Имя справочника (например, Catalog_Номенклатура)"),
@@ -22,5 +22,36 @@ export async function handleGetCatalogs(params: z.infer<typeof getCatalogsSchema
 
   const path = buildODataPath(params.catalog_name, query);
   const result = await oneCGet(path);
+  return JSON.stringify(result, null, 2);
+}
+
+// ──────────────────────────────────────────────────────────────
+// create_catalog_item — создать элемент справочника (OData POST)
+// ──────────────────────────────────────────────────────────────
+
+export const createCatalogItemSchema = z.object({
+  catalog_name: z.string().describe("Имя справочника (например, Catalog_Номенклатура)"),
+  data: z.record(z.string(), z.unknown()).describe("Поля нового элемента в формате JSON (например, {\"Description\":\"Молоко\"})"),
+});
+
+export async function handleCreateCatalogItem(params: z.infer<typeof createCatalogItemSchema>): Promise<string> {
+  const path = buildODataPath(params.catalog_name, { $format: "json" });
+  const result = await oneCPost(path, params.data);
+  return JSON.stringify(result, null, 2);
+}
+
+// ──────────────────────────────────────────────────────────────
+// update_catalog_item — обновить элемент справочника (OData PATCH by Ref_Key)
+// ──────────────────────────────────────────────────────────────
+
+export const updateCatalogItemSchema = z.object({
+  catalog_name: z.string().describe("Имя справочника"),
+  ref_key: z.string().describe("Ref_Key элемента (GUID)"),
+  data: z.record(z.string(), z.unknown()).describe("Обновляемые поля"),
+});
+
+export async function handleUpdateCatalogItem(params: z.infer<typeof updateCatalogItemSchema>): Promise<string> {
+  const path = buildKeyedPath(params.catalog_name, params.ref_key, undefined, { $format: "json" });
+  const result = await oneCPatch(path, params.data);
   return JSON.stringify(result, null, 2);
 }

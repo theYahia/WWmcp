@@ -99,3 +99,48 @@ export async function handleGetDocumentByNumber(
   const result = await oneCGet(path);
   return JSON.stringify(result, null, 2);
 }
+
+// ──────────────────────────────────────────────────────────────
+// get_metadata — сырой EDMX ($metadata) всей базы 1С
+// ──────────────────────────────────────────────────────────────
+
+export const getMetadataSchema = z.object({});
+
+export async function handleGetMetadata(
+  _params: z.infer<typeof getMetadataSchema>,
+): Promise<string> {
+  // $metadata возвращает XML (EDMX) — oneCGet вернёт его строкой (JSON.parse упадёт → текст).
+  const result = await oneCGet("/odata/standard.odata/$metadata");
+  return typeof result === "string" ? result : JSON.stringify(result, null, 2);
+}
+
+// ──────────────────────────────────────────────────────────────
+// describe_entity — список полей сущности по образцу записи
+// (прагматично: $top=1 вместо парсинга EDMX)
+// ──────────────────────────────────────────────────────────────
+
+export const describeEntitySchema = z.object({
+  entity: z
+    .string()
+    .describe("Имя сущности (например, Catalog_Номенклатура, Document_РеализацияТоваровУслуг)"),
+});
+
+export async function handleDescribeEntity(
+  params: z.infer<typeof describeEntitySchema>,
+): Promise<string> {
+  const path = buildODataPath(params.entity, { $format: "json", $top: "1" });
+  const raw = (await oneCGet(path)) as { value?: Array<Record<string, unknown>> };
+  const sample = raw.value?.[0];
+  if (!sample) {
+    return JSON.stringify(
+      { entity: params.entity, fields: [], note: "Сущность пуста — полей по образцу не извлечь. Используйте get_metadata для EDMX." },
+      null,
+      2,
+    );
+  }
+  const fields = Object.keys(sample).map((name) => ({
+    name,
+    type: sample[name] === null ? "null" : typeof sample[name],
+  }));
+  return JSON.stringify({ entity: params.entity, field_count: fields.length, fields }, null, 2);
+}

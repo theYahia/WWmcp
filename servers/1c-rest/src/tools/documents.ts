@@ -1,5 +1,8 @@
 import { z } from "zod";
-import { oneCGet, oneCPost, oneCPatch, buildODataPath } from "../client.js";
+import {
+  oneCGet, oneCPost, oneCPatch, oneCDelete,
+  buildODataPath, buildKeyedPath,
+} from "../client.js";
 
 export const getDocumentsSchema = z.object({
   document_type: z.string().describe("Тип документа (например, Document_РеализацияТоваровУслуг)"),
@@ -49,4 +52,60 @@ export async function handleUpdateDocument(params: z.infer<typeof updateDocument
   );
   const result = await oneCPatch(path, params.data);
   return JSON.stringify(result, null, 2);
+}
+
+// ──────────────────────────────────────────────────────────────
+// post_document — провести документ (1C OData bound action Post)
+// ──────────────────────────────────────────────────────────────
+
+export const postDocumentSchema = z.object({
+  document_type: z.string().describe("Тип документа (например, Document_РеализацияТоваровУслуг)"),
+  ref_key: z.string().describe("Ref_Key документа (GUID)"),
+  operational: z
+    .boolean()
+    .default(false)
+    .describe("Оперативное проведение (PostingModeOperational). По умолчанию false — неоперативное."),
+});
+
+export async function handlePostDocument(params: z.infer<typeof postDocumentSchema>): Promise<string> {
+  const path = buildKeyedPath(params.document_type, params.ref_key, "Post", {
+    $format: "json",
+    PostingModeOperational: String(params.operational),
+  });
+  const result = await oneCPost(path, {});
+  return JSON.stringify(result, null, 2);
+}
+
+// ──────────────────────────────────────────────────────────────
+// unpost_document — отменить проведение (bound action Unpost)
+// ──────────────────────────────────────────────────────────────
+
+export const unpostDocumentSchema = z.object({
+  document_type: z.string().describe("Тип документа"),
+  ref_key: z.string().describe("Ref_Key документа (GUID)"),
+});
+
+export async function handleUnpostDocument(params: z.infer<typeof unpostDocumentSchema>): Promise<string> {
+  const path = buildKeyedPath(params.document_type, params.ref_key, "Unpost", { $format: "json" });
+  const result = await oneCPost(path, {});
+  return JSON.stringify(result, null, 2);
+}
+
+// ──────────────────────────────────────────────────────────────
+// delete_document — физическое удаление документа (OData DELETE)
+// ──────────────────────────────────────────────────────────────
+
+export const deleteDocumentSchema = z.object({
+  document_type: z.string().describe("Тип документа"),
+  ref_key: z.string().describe("Ref_Key документа (GUID)"),
+});
+
+export async function handleDeleteDocument(params: z.infer<typeof deleteDocumentSchema>): Promise<string> {
+  const path = buildKeyedPath(params.document_type, params.ref_key);
+  await oneCDelete(path);
+  return JSON.stringify(
+    { deleted: true, document_type: params.document_type, ref_key: params.ref_key },
+    null,
+    2,
+  );
 }

@@ -4,14 +4,26 @@ import {
   handleGetDocuments,
   handleCreateDocument,
   handleUpdateDocument,
+  handlePostDocument,
+  handleDeleteDocument,
 } from "../src/tools/documents.js";
-import { handleGetRegister } from "../src/tools/registers.js";
+import {
+  handleGetRegister,
+  handleGetAccumulationBalance,
+} from "../src/tools/registers.js";
 import { handleGetReport } from "../src/tools/reports.js";
 import { handleODataQuery } from "../src/tools/odata-query.js";
 import {
   handleListEntities,
   handleGetDocumentByNumber,
+  handleGetMetadata,
+  handleDescribeEntity,
 } from "../src/tools/metadata.js";
+import {
+  handleFindByDescription,
+  handleCountEntities,
+  handleSetDeletionMark,
+} from "../src/tools/shortcuts.js";
 import { resetClient } from "../src/client.js";
 
 function mockFetchOk(data: unknown) {
@@ -189,5 +201,123 @@ describe("tool handlers", () => {
     const [url] = fetchMock.mock.calls[0];
     expect(url).toContain("Number");
     expect(url).toContain("00123");
+  });
+
+  it("handlePostDocument calls the Post() bound action via POST", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve(JSON.stringify({ Ref_Key: "abc", Posted: true })),
+      headers: new Map(),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    await handlePostDocument({
+      document_type: "Document_Test",
+      ref_key: "abc-123",
+      operational: false,
+    });
+    const [url, opts] = fetchMock.mock.calls[0];
+    expect(opts.method).toBe("POST");
+    expect(url).toContain("guid'abc-123'");
+    expect(url).toContain("/Post");
+    expect(url).toContain("PostingModeOperational=false");
+  });
+
+  it("handleDeleteDocument issues DELETE on the keyed URL", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve(""),
+      headers: new Map(),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await handleDeleteDocument({ document_type: "Document_Test", ref_key: "abc-123" });
+    const [url, opts] = fetchMock.mock.calls[0];
+    expect(opts.method).toBe("DELETE");
+    expect(url).toContain("guid'abc-123'");
+    expect(JSON.parse(result).deleted).toBe(true);
+  });
+
+  it("handleGetAccumulationBalance hits the Balance virtual method", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve(JSON.stringify({ value: [{ КоличествоBalance: 5 }] })),
+      headers: new Map(),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    await handleGetAccumulationBalance({
+      register_name: "ОстаткиТоваровНаСкладах",
+      period: "2026-06-01T00:00:00",
+    });
+    const [url] = fetchMock.mock.calls[0];
+    expect(url).toContain("AccumulationRegister_");
+    expect(url).toContain("/Balance(");
+    expect(url).toContain("Period=datetime");
+  });
+
+  it("handleCountEntities extracts odata.count via $inlinecount", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve(JSON.stringify({ value: [], "odata.count": "42" })),
+      headers: new Map(),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await handleCountEntities({ entity: "Document_Test" });
+    const [url] = fetchMock.mock.calls[0];
+    expect(url).toContain("$inlinecount=allpages");
+    expect(url).toContain("$top=0");
+    expect(JSON.parse(result).count).toBe("42");
+  });
+
+  it("handleSetDeletionMark PATCHes DeletionMark", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve(JSON.stringify({ Ref_Key: "abc", DeletionMark: true })),
+      headers: new Map(),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    await handleSetDeletionMark({ entity: "Catalog_Номенклатура", ref_key: "abc-123", mark: true });
+    const [url, opts] = fetchMock.mock.calls[0];
+    expect(opts.method).toBe("PATCH");
+    expect(url).toContain("guid'abc-123'");
+    expect(JSON.parse(opts.body).DeletionMark).toBe(true);
+  });
+
+  it("handleFindByDescription uses substringof filter", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve(JSON.stringify({ value: [] })),
+      headers: new Map(),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    await handleFindByDescription({ entity: "Catalog_Контрагенты", query: "ООО Ромашка", top: 20 });
+    const [url] = fetchMock.mock.calls[0];
+    expect(decodeURIComponent(url)).toContain("substringof('ООО Ромашка',Description)");
+  });
+
+  it("handleGetMetadata returns raw EDMX/XML as text", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve("<edmx:Edmx Version=\"1.0\"></edmx:Edmx>"),
+      headers: new Map(),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await handleGetMetadata({});
+    const [url] = fetchMock.mock.calls[0];
+    expect(url).toContain("$metadata");
+    expect(result).toContain("edmx:Edmx");
+  });
+
+  it("handleDescribeEntity infers fields from a sample record", async () => {
+    mockFetchOk({ value: [{ Ref_Key: "x", Description: "Y", Code: "001" }] });
+    const result = await handleDescribeEntity({ entity: "Catalog_Номенклатура" });
+    const parsed = JSON.parse(result) as { field_count: number; fields: Array<{ name: string }> };
+    expect(parsed.field_count).toBe(3);
+    expect(parsed.fields.map((f) => f.name)).toContain("Description");
   });
 });
