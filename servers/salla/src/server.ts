@@ -35,11 +35,21 @@ import {
   verifyWebhookSignatureSchema,
   handleVerifyWebhookSignature,
 } from "./tools/verify-webhook-signature.js";
+// Coverage additions
+import { getProductBySkuSchema, handleGetProductBySku } from "./tools/get-product-by-sku.js";
+import { deleteProductSchema, handleDeleteProduct } from "./tools/delete-product.js";
+import { createCategorySchema, handleCreateCategory } from "./tools/create-category.js";
+import { getCustomerSchema, handleGetCustomer } from "./tools/get-customer.js";
+import { listOrderStatusesSchema, handleListOrderStatuses } from "./tools/list-order-statuses.js";
+import { getOrderHistoriesSchema, handleGetOrderHistories } from "./tools/get-order-histories.js";
+import { listCouponsSchema, handleListCoupons } from "./tools/list-coupons.js";
+import { listAbandonedCartsSchema, handleListAbandonedCarts } from "./tools/list-abandoned-carts.js";
+import { listBranchesSchema, handleListBranches } from "./tools/list-branches.js";
 
 export const logger = createLogger("salla-mcp");
 
-// 9 base tools + 5 catalog ops + 1 webhook verifier = 15
-export const TOOL_COUNT = 15;
+// 9 base tools + 5 catalog ops + 1 webhook verifier + 9 coverage additions = 24
+export const TOOL_COUNT = 24;
 
 export function createServer(): McpServer {
   const server = new McpServer({
@@ -191,6 +201,89 @@ export function createServer(): McpServer {
       content: [
         { type: "text", text: await handleVerifyWebhookSignature(params) },
       ],
+    })),
+  );
+
+  // --- Coverage additions (product/order/customer/marketing reads + writes) ---
+
+  server.tool(
+    "get_product_by_sku",
+    "Get full product details from Salla by SKU code.",
+    getProductBySkuSchema.shape,
+    withErrorHandling(async (params) => ({
+      content: [{ type: "text", text: await handleGetProductBySku(params) }],
+    })),
+  );
+
+  server.tool(
+    "delete_product",
+    "Permanently delete a product from a Salla store by product ID.",
+    deleteProductSchema.shape,
+    withErrorHandling(async (params) => ({
+      content: [{ type: "text", text: await handleDeleteProduct(params) }],
+    })),
+  );
+
+  server.tool(
+    "create_category",
+    "Create a new product category in a Salla store. Required: name. Optional: status, parent_id, sort_order, image.",
+    createCategorySchema.shape,
+    withErrorHandling(async (params) => ({
+      content: [{ type: "text", text: await handleCreateCategory(params) }],
+    })),
+  );
+
+  server.tool(
+    "get_customer",
+    "Get details of a single Salla customer by ID, including their groups.",
+    getCustomerSchema.shape,
+    withErrorHandling(async (params) => ({
+      content: [{ type: "text", text: await handleGetCustomer(params) }],
+    })),
+  );
+
+  server.tool(
+    "list_order_statuses",
+    "List all order statuses and sub-statuses configured for the store. Use to find valid values for update_order_status.",
+    listOrderStatusesSchema.shape,
+    withErrorHandling(async (params) => ({
+      content: [{ type: "text", text: await handleListOrderStatuses(params) }],
+    })),
+  );
+
+  server.tool(
+    "get_order_histories",
+    "List the status-change history (timeline) of a single Salla order.",
+    getOrderHistoriesSchema.shape,
+    withErrorHandling(async (params) => ({
+      content: [{ type: "text", text: await handleGetOrderHistories(params) }],
+    })),
+  );
+
+  server.tool(
+    "list_coupons",
+    "List the discount coupons configured in a Salla store with pagination.",
+    listCouponsSchema.shape,
+    withErrorHandling(async (params) => ({
+      content: [{ type: "text", text: await handleListCoupons(params) }],
+    })),
+  );
+
+  server.tool(
+    "list_abandoned_carts",
+    "List abandoned shopping carts for revenue-recovery workflows, with pagination.",
+    listAbandonedCartsSchema.shape,
+    withErrorHandling(async (params) => ({
+      content: [{ type: "text", text: await handleListAbandonedCarts(params) }],
+    })),
+  );
+
+  server.tool(
+    "list_branches",
+    "List the store's branches (physical locations / pickup points), with pagination.",
+    listBranchesSchema.shape,
+    withErrorHandling(async (params) => ({
+      content: [{ type: "text", text: await handleListBranches(params) }],
     })),
   );
 
