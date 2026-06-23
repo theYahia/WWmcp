@@ -67,7 +67,7 @@ export const logger = createLogger("1c-rest-mcp");
  * (MCP handshake) here and `runServer` (the /health endpoint) in index.ts,
  * so the two can never drift apart again. Keep in sync with package.json.
  */
-export const VERSION = "3.1.0";
+export const VERSION = "3.2.0";
 
 /**
  * Single source of truth for module → tool count mapping.

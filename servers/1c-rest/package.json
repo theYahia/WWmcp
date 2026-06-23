@@ -1,7 +1,7 @@
 {
   "name": "@theyahia/1c-rest-mcp",
-  "version": "3.1.0",
-  "description": "MCP server for 1C:Enterprise — 26 tools: catalogs & documents CRUD, post/unpost, registers & accumulation balances, accounting, constants, metadata discovery and shortcuts via OData 3.0. Basic auth.",
+  "version": "3.2.0",
+  "description": "MCP server for 1C:Enterprise — 32 tools across 11 modules: catalogs & documents CRUD, post/unpost, registers & accumulation balances, accounting, constants, batch ops, change-tracking, metadata discovery, shortcuts (+ 3 guided prompts) via OData 3.0. Basic auth.",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
