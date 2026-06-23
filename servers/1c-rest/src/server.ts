@@ -7,6 +7,7 @@
  */
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { z } from "zod";
 import { createLogger, withErrorHandling } from "@theyahia/mcp-core";
 import {
   getCatalogsSchema, handleGetCatalogs,
@@ -451,6 +452,104 @@ export function createServer(): McpServer {
       })),
     );
   }
+
+  // ── Prompts — guided multi-tool workflows over the tools above ──
+  // Always registered (independent of ONEC_SERVICES); ship with the npm package
+  // so any MCP client gets them without a separate skill install.
+
+  server.prompt(
+    "inventory-database",
+    "Inventory an unfamiliar 1C database — discover entities, counts and key fields.",
+    {},
+    async () => ({
+      messages: [
+        {
+          role: "user" as const,
+          content: {
+            type: "text" as const,
+            text:
+              "Inventory this 1C database step by step:\n" +
+              "1. Call `list_entities` to list every OData entity.\n" +
+              "2. Group them by prefix: Catalog_ (справочники), Document_ (документы), " +
+              "InformationRegister_/AccumulationRegister_ (регистры), AccountingRegister_ (бухгалтерия), " +
+              "Constant_ (константы), Report_ (отчёты).\n" +
+              "3. For the 5-10 most relevant entities, call `count_entities` to get row counts.\n" +
+              "4. Call `describe_entity` on the key catalogs and document types to learn their fields " +
+              "(use `get_metadata` only if you need exact OData types).\n" +
+              "Finish with a compact summary: a table of entity groups with counts, then the field " +
+              "lists of the most important entities.",
+          },
+        },
+      ],
+    }),
+  );
+
+  server.prompt(
+    "find-and-post-document",
+    "Find a 1C document and post (провести) it — with a mandatory human confirmation before the write.",
+    {
+      query: z
+        .string()
+        .describe("Document number (e.g. ТД-00123) or a Description substring to search for"),
+      document_type: z
+        .string()
+        .optional()
+        .describe("Document_* type if known — narrows the search"),
+    },
+    async ({ query, document_type }) => ({
+      messages: [
+        {
+          role: "user" as const,
+          content: {
+            type: "text" as const,
+            text:
+              `Find and then post a 1C document. Search term: "${query}".\n` +
+              (document_type
+                ? `Document type: ${document_type}.\n`
+                : "First ask me which Document_* type to search if it's not obvious.\n") +
+              "1. Locate it: if the term is a number use `get_document_by_number`; if it's text use `find_by_description`.\n" +
+              "2. Show me its key fields and its tabular sections via `get_document_lines` so I can verify it's the right, complete document.\n" +
+              "3. STOP and ask me to confirm — do NOT call `post_document` without my explicit 'yes'. Also ask whether to use operational posting (operational=true).\n" +
+              "4. After I confirm, call `post_document`. Report the result; if it fails, read the 1C error hint and propose a fix.",
+          },
+        },
+      ],
+    }),
+  );
+
+  server.prompt(
+    "reconcile-balances",
+    "Reconcile accumulation-register balances (остатки) against the underlying movements.",
+    {
+      register_name: z
+        .string()
+        .describe("Accumulation register name, e.g. ОстаткиТоваровНаСкладах"),
+      period: z
+        .string()
+        .optional()
+        .describe("Snapshot date YYYY-MM-DDTHH:MM:SS; omit for current balances"),
+    },
+    async ({ register_name, period }) => ({
+      messages: [
+        {
+          role: "user" as const,
+          content: {
+            type: "text" as const,
+            text:
+              `Reconcile the accumulation register "${register_name}".\n` +
+              `1. Call \`get_accumulation_balance\` (register_name="${register_name}"` +
+              (period ? `, period="${period}"` : "") +
+              ") to get the остатки.\n" +
+              `2. Call \`get_register\` (register_type="AccumulationRegister", register_name="${register_name}") ` +
+              "to read the movements (приход/расход).\n" +
+              "3. Aggregate the movements per dimension and compare against the balance.\n" +
+              "4. Report any discrepancies (balance ≠ sum of movements) as a table; if everything reconciles, say so. " +
+              "Treat the Balance() result as authoritative and flag movement rows that don't add up.",
+          },
+        },
+      ],
+    }),
+  );
 
   return server;
 }

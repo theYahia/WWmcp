@@ -129,6 +129,18 @@ Tool names, arguments, return formats, and the `ONEC_*` env vars are unchanged.
 
 ---
 
+## Prompts
+
+The server ships three MCP **prompts** — guided multi-tool workflows your client can invoke directly (they travel with the npm package, no separate skill install):
+
+| Prompt | Arguments | What it does |
+|--------|-----------|--------------|
+| `inventory-database` | — | `list_entities` → group by prefix → `count_entities` → `describe_entity` to map an unfamiliar base. |
+| `find-and-post-document` | `query`, `document_type?` | Finds a document, shows its fields + lines, then posts it **only after explicit human confirmation**. |
+| `reconcile-balances` | `register_name`, `period?` | Compares `get_accumulation_balance` (остатки) against `get_register` movements and reports discrepancies. |
+
+---
+
 ## Quick Start
 
 ### Claude Desktop
