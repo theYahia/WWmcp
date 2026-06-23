@@ -1,5 +1,10 @@
 # @theyahia/1c-rest-mcp
 
+> ℹ️ **Canonical home:** active development and npm releases of `@theyahia/1c-rest-mcp` live in
+> **[theYahia/1c-rest-mcp](https://github.com/theYahia/1c-rest-mcp)**. This copy is part of the
+> WWmcp catalog and is **not published from here** (`private`) — open issues & PRs in the
+> standalone repo.
+
 > MCP server for **1C:Enterprise** REST API via OData 3.0 — catalogs, documents, registers,
 > accounting, constants, reports, batch ops & change-tracking + metadata discovery.
 > 32 tools across 11 modules. HTTP Basic auth. Stdio + Streamable HTTP transports.
