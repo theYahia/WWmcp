@@ -48,6 +48,15 @@ import {
   setDeletionMarkSchema, handleSetDeletionMark,
   getRecentDocumentsSchema, handleGetRecentDocuments,
 } from "./tools/shortcuts.js";
+import {
+  batchCreateDocumentsSchema, handleBatchCreateDocuments,
+  batchUpdateCatalogItemsSchema, handleBatchUpdateCatalogItems,
+  batchQuerySchema, handleBatchQuery,
+} from "./tools/batch.js";
+import {
+  pollChangesSinceSchema, handlePollChangesSince,
+  listSubscriptionsSchema, handleListSubscriptions,
+} from "./tools/change-tracking.js";
 
 export const logger = createLogger("1c-rest-mcp");
 
@@ -75,18 +84,20 @@ export const MODULE_TOOL_COUNTS = {
   constants: 2,   // get_constant + set_constant
   accounting: 1,  // get_accounting_register
   shortcuts: 5,   // find_by_description + get_by_key + count_entities + set_deletion_mark + get_recent_documents
+  batch: 3,       // batch_create_documents + batch_update_catalog_items + batch_query
+  changes: 2,     // poll_changes_since + list_subscriptions
 } as const;
 
 export type ModuleName = keyof typeof MODULE_TOOL_COUNTS;
 const OPTIONAL_MODULES: ModuleName[] = [
   "catalogs", "documents", "registers", "reports", "odata",
-  "constants", "accounting", "shortcuts",
+  "constants", "accounting", "shortcuts", "batch", "changes",
 ];
 
 /**
  * ONEC_SERVICES env var filters which tool groups are registered.
  * Comma-separated list of: catalogs, documents, registers, reports, odata,
- * constants, accounting, shortcuts, meta.
+ * constants, accounting, shortcuts, batch, changes, meta.
  * Default ("all" or unset) — all tools registered.
  */
 export function getEnabledModules(): Set<ModuleName> {
@@ -372,6 +383,60 @@ export function createServer(): McpServer {
       getRecentDocumentsSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleGetRecentDocuments(params) }],
+      })),
+    );
+  }
+
+  if (modules.has("batch")) {
+    server.tool(
+      "batch_create_documents",
+      "Create N 1C documents in parallel (1..100 per call). 1C does NOT support OData $batch — " +
+      "this is client-side parallel batching with concurrency cap and per-item success/failure reporting.",
+      batchCreateDocumentsSchema.shape,
+      withErrorHandling(async (params) => ({
+        content: [{ type: "text", text: await handleBatchCreateDocuments(params) }],
+      })),
+    );
+
+    server.tool(
+      "batch_update_catalog_items",
+      "Update N 1C catalog items in parallel (1..100). Each item updated via OData PATCH on its Ref_Key. " +
+      "Per-item success/failure reported; partial failures do not abort the batch.",
+      batchUpdateCatalogItemsSchema.shape,
+      withErrorHandling(async (params) => ({
+        content: [{ type: "text", text: await handleBatchUpdateCatalogItems(params) }],
+      })),
+    );
+
+    server.tool(
+      "batch_query",
+      "Run N 1C OData queries in parallel (1..50). Each query reported individually. " +
+      "No server-side join (1C does not support $batch) — combine results client-side.",
+      batchQuerySchema.shape,
+      withErrorHandling(async (params) => ({
+        content: [{ type: "text", text: await handleBatchQuery(params) }],
+      })),
+    );
+  }
+
+  if (modules.has("changes")) {
+    server.tool(
+      "poll_changes_since",
+      "Poll a 1C entity for rows modified since a timestamp cursor. 1C does NOT support webhooks — " +
+      "use this on a schedule (every 30-300s). Returns rows + a `next_cursor` for the next poll.",
+      pollChangesSinceSchema.shape,
+      withErrorHandling(async (params) => ({
+        content: [{ type: "text", text: await handlePollChangesSince(params) }],
+      })),
+    );
+
+    server.tool(
+      "list_subscriptions",
+      "Documents that 1C does NOT support webhook subscriptions. Returns empty list + workaround hints " +
+      "(use poll_changes_since instead). Prevents LLMs from hallucinating subscribe_to_event flows.",
+      listSubscriptionsSchema.shape,
+      withErrorHandling(async (params) => ({
+        content: [{ type: "text", text: await handleListSubscriptions(params) }],
       })),
     );
   }
