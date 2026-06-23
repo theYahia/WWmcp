@@ -1,8 +1,8 @@
 # @theyahia/1c-rest-mcp
 
 > MCP server for **1C:Enterprise** REST API via OData 3.0 — catalogs, documents, registers,
-> accounting, constants, reports + metadata discovery.
-> 26 tools across 9 modules. HTTP Basic auth. Stdio + Streamable HTTP transports.
+> accounting, constants, reports, batch ops & change-tracking + metadata discovery.
+> 31 tools across 11 modules. HTTP Basic auth. Stdio + Streamable HTTP transports.
 
 [![npm](https://img.shields.io/npm/v/@theyahia/1c-rest-mcp)](https://www.npmjs.com/package/@theyahia/1c-rest-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -23,7 +23,7 @@ Tool names, arguments, return formats, and the `ONEC_*` env vars are unchanged.
 
 ---
 
-## Tools (26)
+## Tools (31)
 
 > Tools are grouped into modules. All are registered by default; the `ONEC_SERVICES`
 > env var filters which optional modules load (discovery `meta` is always on). See
@@ -99,6 +99,27 @@ Tool names, arguments, return formats, and the `ONEC_*` env vars are unchanged.
 | Tool | Description |
 |------|-------------|
 | `odata_query` | Run an arbitrary OData 3.0 query. Supports `$filter`, `$select`, `$expand`, `$orderby`, `$top`, `$skip`, `$inlinecount`. |
+
+### Batch — `batch`
+
+> 1C has **no** native OData `$batch` endpoint. These tools dispatch N requests in
+> parallel (bounded concurrency) and report per-item success/failure — a partial
+> failure never aborts the batch.
+
+| Tool | Description |
+|------|-------------|
+| `batch_create_documents` | Create N documents (1..100) of one type in parallel. |
+| `batch_update_catalog_items` | PATCH N catalog items by `Ref_Key` in parallel. |
+| `batch_query` | Run N OData GET queries (1..50) in parallel; combine results client-side. |
+
+### Change tracking — `changes`
+
+> 1C has **no** webhooks / event subscriptions — only polling.
+
+| Tool | Description |
+|------|-------------|
+| `poll_changes_since` | Pull rows modified since a timestamp cursor (`$filter` on a date field); returns a `next_cursor` for the next poll. |
+| `list_subscriptions` | Explicit no-op documenting the absence of 1C webhooks; redirects to `poll_changes_since`. |
 
 > **Note on write/posting tools.** `post_document`/`unpost_document`/`delete_document`,
 > `get_accumulation_balance` (virtual `Balance`) and `write_information_register` follow the
@@ -190,7 +211,7 @@ Includes session management (`mcp-session-id` header), CORS, graceful shutdown.
 
 ### Module filtering (`ONEC_SERVICES`)
 
-Limit registered tools to save LLM context. Modules: `catalogs`, `documents`, `registers`, `accounting`, `constants`, `shortcuts`, `reports`, `odata` (plus always-on `meta`).
+Limit registered tools to save LLM context. Modules: `catalogs`, `documents`, `registers`, `accounting`, `constants`, `shortcuts`, `reports`, `odata`, `batch`, `changes` (plus always-on `meta`).
 
 ```bash
 ONEC_SERVICES=catalogs,documents npx @theyahia/1c-rest-mcp
@@ -198,7 +219,7 @@ ONEC_SERVICES=catalogs,documents npx @theyahia/1c-rest-mcp
 
 The discovery module `meta` (`list_entities`, `get_document_by_number`, `get_metadata`, `describe_entity`) is always registered — without it an agent cannot discover the database structure.
 
-**Safety:** set `MCP_DISABLE_SANITIZE=true` only if you trust the data source — by default tool output is scanned for prompt-injection patterns. The HTTP client refuses absolute URLs whose origin differs from `ONEC_BASE_URL`.
+**Safety:** set `MCP_DISABLE_SANITIZE=true` only if you trust the data source — by default tool output is scanned for prompt-injection patterns. The HTTP client refuses absolute URLs whose origin differs from `ONEC_BASE_URL`. `Ref_Key` arguments are validated as GUIDs and string values in `get_document_by_number` are OData-escaped; the raw `$filter`/`$select`/`$orderby` passthroughs are intentional, so scope what the server can read or write via the **1C user's role**, not via these arguments.
 
 ---
 
@@ -249,20 +270,22 @@ Project layout:
 ```
 servers/1c-rest/
 ├── src/
-│   ├── index.ts            — entry point, runServer, tool registration
-│   ├── client.ts           — BaseHttpClient + BasicAuthStrategy + functional API
+│   ├── index.ts            — entry point (runServer; version + docstring)
+│   ├── server.ts           — server factory, module config, tool registration
+│   ├── client.ts           — functional API + buildKeyedPath + escapeODataString + GUID guard
+│   ├── validation.ts       — shared zod field schemas (refKeySchema, odataDate, odataDateTime)
 │   ├── types.ts            — OData TypeScript types
+│   ├── lib/
+│   │   └── errors.ts       — parse Russian 1C errors → category + recovery hint
 │   └── tools/
-│       ├── catalogs.ts
-│       ├── documents.ts
-│       ├── metadata.ts     — discovery (list_entities, get_document_by_number)
-│       ├── odata-query.ts
-│       ├── registers.ts
-│       └── reports.ts
+│       ├── catalogs.ts     ├── documents.ts    ├── registers.ts
+│       ├── accounting.ts   ├── constants.ts    ├── shortcuts.ts
+│       ├── metadata.ts     — discovery (list_entities, get_document_by_number, get_metadata, describe_entity)
+│       ├── batch.ts        ├── change-tracking.ts
+│       ├── odata-query.ts  └── reports.ts
 └── tests/
-    ├── client.test.ts
-    ├── server.test.ts
-    └── tools.test.ts
+    ├── client.test.ts      ├── server.test.ts        ├── tools.test.ts
+    ├── batch.test.ts       ├── change-tracking.test.ts └── error-parsing.test.ts
 ```
 
 ---

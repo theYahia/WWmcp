@@ -4,7 +4,7 @@
 
 ### Major Changes
 
-- 54cb308: Production-grade rewrite to v2.0.0. Promoted from `pipeline/finance/` to `servers/` workspace. Now built on `@theyahia/mcp-core` (`BaseHttpClient` + `BasicAuthStrategy` + `runServer` dual transport).
+- 54cb308: Production-grade rewrite (v3.0.0 line). Promoted from `pipeline/finance/` to `servers/` workspace. Now built on `@theyahia/mcp-core` (`BaseHttpClient` + `BasicAuthStrategy` + `runServer` dual transport).
 
   Breaking changes:
 
