@@ -19,7 +19,11 @@ export interface ServerConfig {
 
 export interface HttpServerConfig {
   port: number;
-  /** CORS allowed origins. Use ["*"] for development only. */
+  /**
+   * CORS allowed origins. Default — deny-all (empty): no browser cross-origin
+   * access. Pass explicit origins to opt in, or ["*"] for development only.
+   * Note: non-browser MCP clients (Claude Desktop/Cursor) are unaffected by CORS.
+   */
   corsOrigins?: string[];
 }
 
@@ -78,11 +82,19 @@ export async function startHttp(
   const app = express();
   app.use(express.json());
 
-  // CORS
-  const origins = config.corsOrigins ?? ["*"];
+  // CORS — default deny-all (empty allowlist). Opt in via corsOrigins.
+  // "*" allows any origin (dev only); otherwise the request Origin is echoed
+  // only if explicitly allow-listed, so unknown origins get no ACAO header
+  // and browsers block them. Same-origin and non-browser clients are unaffected.
+  const origins = config.corsOrigins ?? [];
   app.use((_req: any, res: any, next: any) => {
-    const origin = origins.includes("*") ? "*" : origins[0];
-    res.header("Access-Control-Allow-Origin", origin);
+    const reqOrigin = _req.headers["origin"] as string | undefined;
+    if (origins.includes("*")) {
+      res.header("Access-Control-Allow-Origin", "*");
+    } else if (reqOrigin && origins.includes(reqOrigin)) {
+      res.header("Access-Control-Allow-Origin", reqOrigin);
+      res.header("Vary", "Origin");
+    }
     res.header("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS");
     res.header(
       "Access-Control-Allow-Headers",
