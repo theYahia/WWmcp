@@ -82,9 +82,24 @@ export class BaseHttpClient {
     const query = opts.params
       ? "?" + new URLSearchParams(opts.params).toString()
       : "";
-    const url = opts.path.startsWith("http")
-      ? `${opts.path}${query}`
-      : `${this.baseUrl}${opts.path}${query}`;
+    // SSRF guard: an absolute URL in `path` is only allowed if its origin matches
+    // the configured baseUrl. Without this, a tool taking a user-supplied URL
+    // (e.g. 1c-rest get_report's /hs/... path) could be coerced into fetching an
+    // attacker-controlled host WITH the server's auth credentials attached.
+    let url: string;
+    if (/^https?:\/\//i.test(opts.path)) {
+      const target = new URL(opts.path);
+      const base = new URL(this.baseUrl);
+      if (target.origin !== base.origin) {
+        throw new ApiError(
+          0,
+          `Заблокирован запрос на сторонний хост ${target.origin}: разрешён только ${base.origin}.`,
+        );
+      }
+      url = `${opts.path}${query}`;
+    } else {
+      url = `${this.baseUrl}${opts.path}${query}`;
+    }
     const requestTimeout = opts.timeout ?? this.timeout;
 
     for (let attempt = 1; attempt <= this.maxRetries; attempt++) {

@@ -1,0 +1,14 @@
+import { describe, it, expect } from "vitest";
+import { createServer, TOOL_COUNT } from "../src/server.js";
+
+describe("avito server factory", () => {
+  it("createServer returns a connectable McpServer", () => {
+    const server = createServer();
+    expect(server).toBeDefined();
+    expect(typeof server.connect).toBe("function");
+  });
+
+  it("TOOL_COUNT matches the 3 tools registered in v0.1.0", () => {
+    expect(TOOL_COUNT).toBe(3);
+  });
+});

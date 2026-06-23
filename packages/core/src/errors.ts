@@ -8,6 +8,7 @@
 
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { ZodError } from "zod";
+import { sanitizeApiResponse, truncateResponse } from "./sanitize.js";
 
 export type ErrorCategory =
   | "validation"
@@ -147,15 +148,37 @@ export function createToolError(error: unknown): CallToolResult {
 }
 
 /**
- * Wraps a tool handler with automatic error handling.
- * Returns `isError: true` result instead of throwing.
+ * Applies output sanitization (prompt-injection stripping) + truncation to the
+ * text content blocks of a successful tool result. Runs for ALL servers via
+ * `withErrorHandling`, so external API data never reaches the LLM unfiltered.
+ *
+ * Escape hatch: set `MCP_DISABLE_SANITIZE=true` for trusted public-data servers
+ * (e.g. cbr/cbu central-bank rates) where `[filtered]` substitution could corrupt
+ * legitimate output. Read at call time so tests can toggle it per-case.
+ */
+function sanitizeResult(result: CallToolResult): CallToolResult {
+  if (process.env["MCP_DISABLE_SANITIZE"] === "true" || !result.content) {
+    return result;
+  }
+  for (const block of result.content) {
+    if (block.type === "text" && typeof block.text === "string") {
+      block.text = truncateResponse(sanitizeApiResponse(block.text));
+    }
+  }
+  return result;
+}
+
+/**
+ * Wraps a tool handler with automatic error handling + output sanitization.
+ * Returns `isError: true` result instead of throwing; successful results pass
+ * through `sanitizeResult` (prompt-injection guard + truncation).
  */
 export function withErrorHandling<T = Record<string, unknown>>(
   handler: (params: T) => Promise<CallToolResult>,
 ): (params: T) => Promise<CallToolResult> {
   return async (params: T): Promise<CallToolResult> => {
     try {
-      return await handler(params);
+      return sanitizeResult(await handler(params));
     } catch (error) {
       return createToolError(error);
     }

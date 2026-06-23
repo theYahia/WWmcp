@@ -1,11 +1,11 @@
 {
-  "name": "@theyahia/1c-rest-mcp",
-  "version": "3.2.0",
-  "description": "MCP server for 1C:Enterprise — 32 tools across 11 modules: catalogs & documents CRUD, post/unpost, registers & accumulation balances, accounting, constants, batch ops, change-tracking, metadata discovery, shortcuts (+ 3 guided prompts) via OData 3.0. Basic auth.",
+  "name": "@theyahia/avito-mcp",
+  "version": "0.1.0",
+  "description": "MCP server for Avito — Russia's #1 classifieds platform (50M+ MAU). 3 tools: list seller's items, get item details, list messenger chats. OAuth 2.0 Client Credentials with auto-refresh.",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "1c-rest-mcp": "dist/index.js"
+    "avito-mcp": "dist/index.js"
   },
   "files": [
     "dist",
@@ -20,14 +20,13 @@
     "start": "node dist/index.js",
     "test": "vitest run",
     "test:watch": "vitest",
-    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "@theyahia/mcp-core": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.12.1",
-    "express": "^5.2.1",
     "zod": "^4.4.3"
   },
   "devDependencies": {
@@ -39,28 +38,26 @@
   "publishConfig": {
     "access": "public"
   },
-  "mcpName": "io.github.theYahia/1c-rest-mcp",
+  "mcpName": "io.github.theYahia/avito-mcp",
   "keywords": [
     "mcp",
     "mcp-server",
     "model-context-protocol",
     "claude",
     "ai",
-    "russian-api",
-    "1c",
-    "1c-enterprise",
-    "erp",
-    "odata",
-    "documents",
-    "catalogs",
-    "registers"
+    "avito",
+    "russia",
+    "classifieds",
+    "marketplace",
+    "emerging-markets",
+    "russian-api"
   ],
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/theYahia/mcp-servers.git",
-    "directory": "servers/1c-rest"
+    "directory": "servers/avito"
   },
-  "homepage": "https://github.com/theYahia/mcp-servers/tree/main/servers/1c-rest",
+  "homepage": "https://github.com/theYahia/mcp-servers/tree/main/servers/avito",
   "author": "theYahia (https://github.com/theYahia)"
 }

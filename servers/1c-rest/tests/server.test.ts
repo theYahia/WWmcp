@@ -14,15 +14,17 @@ describe("getEnabledModules", () => {
   it("default (no env var) enables all modules", () => {
     delete process.env["ONEC_SERVICES"];
     const modules = getEnabledModules();
-    expect(modules.size).toBe(6);
+    expect(modules.size).toBe(11);
     expect(modules.has("meta")).toBe(true);
     expect(modules.has("catalogs")).toBe(true);
     expect(modules.has("odata")).toBe(true);
+    expect(modules.has("constants")).toBe(true);
+    expect(modules.has("shortcuts")).toBe(true);
   });
 
   it('explicit "all" enables all modules', () => {
     process.env["ONEC_SERVICES"] = "all";
-    expect(getEnabledModules().size).toBe(6);
+    expect(getEnabledModules().size).toBe(11);
   });
 
   it("partial filter enables meta + listed modules only", () => {
@@ -56,19 +58,19 @@ describe("countRegisteredTools", () => {
     process.env = { ...originalEnv };
   });
 
-  it("default config = 9 tools (2 meta + 7 optional)", () => {
+  it("default config = 32 tools (4 meta + 28 optional)", () => {
     delete process.env["ONEC_SERVICES"];
-    expect(countRegisteredTools(getEnabledModules())).toBe(9);
+    expect(countRegisteredTools(getEnabledModules())).toBe(32);
   });
 
-  it("ONEC_SERVICES=catalogs = 3 tools (2 meta + 1 catalog)", () => {
+  it("ONEC_SERVICES=catalogs = 7 tools (4 meta + 3 catalog)", () => {
     process.env["ONEC_SERVICES"] = "catalogs";
-    expect(countRegisteredTools(getEnabledModules())).toBe(3);
+    expect(countRegisteredTools(getEnabledModules())).toBe(7);
   });
 
-  it("ONEC_SERVICES=documents = 5 tools (2 meta + 3 documents)", () => {
+  it("ONEC_SERVICES=documents = 11 tools (4 meta + 7 documents)", () => {
     process.env["ONEC_SERVICES"] = "documents";
-    expect(countRegisteredTools(getEnabledModules())).toBe(5);
+    expect(countRegisteredTools(getEnabledModules())).toBe(11);
   });
 });
 

@@ -1,5 +1,9 @@
 import { z } from "zod";
-import { oneCGet, oneCPost, oneCPatch, buildODataPath } from "../client.js";
+import {
+  oneCGet, oneCPost, oneCPatch, oneCDelete,
+  buildODataPath, buildKeyedPath,
+} from "../client.js";
+import { refKeySchema } from "../validation.js";
 
 export const getDocumentsSchema = z.object({
   document_type: z.string().describe("Тип документа (например, Document_РеализацияТоваровУслуг)"),
@@ -38,15 +42,97 @@ export async function handleCreateDocument(params: z.infer<typeof createDocument
 
 export const updateDocumentSchema = z.object({
   document_type: z.string().describe("Тип документа"),
-  ref_key: z.string().describe("Ref_Key документа (GUID)"),
+  ref_key: refKeySchema.describe("Ref_Key документа (GUID)"),
   data: z.record(z.string(), z.unknown()).describe("Обновляемые поля"),
 });
 
 export async function handleUpdateDocument(params: z.infer<typeof updateDocumentSchema>): Promise<string> {
-  const path = buildODataPath(
-    `${params.document_type}(guid'${params.ref_key}')`,
-    { $format: "json" },
-  );
+  const path = buildKeyedPath(params.document_type, params.ref_key, undefined, { $format: "json" });
   const result = await oneCPatch(path, params.data);
+  return JSON.stringify(result, null, 2);
+}
+
+// ──────────────────────────────────────────────────────────────
+// post_document — провести документ (1C OData bound action Post)
+// ──────────────────────────────────────────────────────────────
+
+export const postDocumentSchema = z.object({
+  document_type: z.string().describe("Тип документа (например, Document_РеализацияТоваровУслуг)"),
+  ref_key: refKeySchema.describe("Ref_Key документа (GUID)"),
+  operational: z
+    .boolean()
+    .default(false)
+    .describe("Оперативное проведение (PostingModeOperational). По умолчанию false — неоперативное."),
+});
+
+export async function handlePostDocument(params: z.infer<typeof postDocumentSchema>): Promise<string> {
+  const path = buildKeyedPath(params.document_type, params.ref_key, "Post", {
+    $format: "json",
+    PostingModeOperational: String(params.operational),
+  });
+  const result = await oneCPost(path, {});
+  return JSON.stringify(result, null, 2);
+}
+
+// ──────────────────────────────────────────────────────────────
+// unpost_document — отменить проведение (bound action Unpost)
+// ──────────────────────────────────────────────────────────────
+
+export const unpostDocumentSchema = z.object({
+  document_type: z.string().describe("Тип документа"),
+  ref_key: refKeySchema.describe("Ref_Key документа (GUID)"),
+});
+
+export async function handleUnpostDocument(params: z.infer<typeof unpostDocumentSchema>): Promise<string> {
+  const path = buildKeyedPath(params.document_type, params.ref_key, "Unpost", { $format: "json" });
+  const result = await oneCPost(path, {});
+  return JSON.stringify(result, null, 2);
+}
+
+// ──────────────────────────────────────────────────────────────
+// delete_document — физическое удаление документа (OData DELETE)
+// ──────────────────────────────────────────────────────────────
+
+export const deleteDocumentSchema = z.object({
+  document_type: z.string().describe("Тип документа"),
+  ref_key: refKeySchema.describe("Ref_Key документа (GUID)"),
+});
+
+export async function handleDeleteDocument(params: z.infer<typeof deleteDocumentSchema>): Promise<string> {
+  const path = buildKeyedPath(params.document_type, params.ref_key);
+  await oneCDelete(path);
+  return JSON.stringify(
+    { deleted: true, document_type: params.document_type, ref_key: params.ref_key },
+    null,
+    2,
+  );
+}
+
+// ──────────────────────────────────────────────────────────────
+// get_document_lines — табличная часть документа через OData $expand
+// ──────────────────────────────────────────────────────────────
+
+export const getDocumentLinesSchema = z.object({
+  document_type: z.string().describe("Тип документа (например, Document_РеализацияТоваровУслуг)"),
+  ref_key: refKeySchema.describe("Ref_Key документа (GUID)"),
+  tabular_section: z
+    .string()
+    .describe(
+      "Имя табличной части (например, Товары, Услуги). Имя конфиг-зависимо — " +
+      "проверьте через get_metadata / describe_entity, если не уверены.",
+    ),
+});
+
+export async function handleGetDocumentLines(
+  params: z.infer<typeof getDocumentLinesSchema>,
+): Promise<string> {
+  // 1C OData 3.0: табличные части — это collection navigation properties.
+  // $expand подтягивает строки; $select сужает документ до этой части.
+  const path = buildKeyedPath(params.document_type, params.ref_key, undefined, {
+    $format: "json",
+    $expand: params.tabular_section,
+    $select: params.tabular_section,
+  });
+  const result = await oneCGet(path);
   return JSON.stringify(result, null, 2);
 }

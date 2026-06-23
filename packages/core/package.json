@@ -1,6 +1,6 @@
 {
   "name": "@theyahia/mcp-core",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Shared core library for @theyahia MCP servers — client, auth, errors, formatting, logging, CLI, server factory",
   "type": "module",
   "main": "dist/index.js",
@@ -43,7 +43,9 @@
       "default": "./dist/testing/smoke.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "engines": {
     "node": ">=18.0.0"
   },

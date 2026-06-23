@@ -1,6 +1,5 @@
 name: 1c-rest-mcp
-description: MCP server for 1C:Enterprise REST API — catalogs, documents, registers, reports via OData 3.0 (v2.0.0)
-icon: https://raw.githubusercontent.com/theYahia/1c-rest-mcp/main/icon.png
+description: MCP server for 1C:Enterprise REST API via OData 3.0 — catalogs, documents, registers, accounting, constants, batch ops, change-tracking + metadata discovery
 startCommand:
   type: stdio
   configSchema:
@@ -21,7 +20,7 @@ startCommand:
         description: "1C user password for HTTP Basic auth"
       ONEC_SERVICES:
         type: string
-        description: "Comma-separated module list to register (default: all). Modules: catalogs, documents, registers, reports, odata, meta"
+        description: "Comma-separated module list to register (default: all). Modules: catalogs, documents, registers, accounting, constants, shortcuts, reports, odata, batch, changes, meta"
         default: "all"
   commandFunction: |-
     (config) => ({

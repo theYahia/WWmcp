@@ -1,17 +1,41 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { handleGetCatalogs } from "../src/tools/catalogs.js";
+import {
+  handleGetCatalogs,
+  handleCreateCatalogItem,
+  handleUpdateCatalogItem,
+} from "../src/tools/catalogs.js";
 import {
   handleGetDocuments,
   handleCreateDocument,
   handleUpdateDocument,
+  handlePostDocument,
+  handleUnpostDocument,
+  handleDeleteDocument,
+  handleGetDocumentLines,
 } from "../src/tools/documents.js";
-import { handleGetRegister } from "../src/tools/registers.js";
+import {
+  handleGetRegister,
+  handleWriteInformationRegister,
+  handleGetAccumulationBalance,
+} from "../src/tools/registers.js";
 import { handleGetReport } from "../src/tools/reports.js";
 import { handleODataQuery } from "../src/tools/odata-query.js";
 import {
   handleListEntities,
   handleGetDocumentByNumber,
+  handleGetMetadata,
+  handleDescribeEntity,
 } from "../src/tools/metadata.js";
+import {
+  handleFindByDescription,
+  handleGetByKey,
+  handleCountEntities,
+  handleSetDeletionMark,
+  handleGetRecentDocuments,
+} from "../src/tools/shortcuts.js";
+import { handleGetConstant, handleSetConstant } from "../src/tools/constants.js";
+import { handleGetAccountingRegister } from "../src/tools/accounting.js";
+import { refKeySchema, odataDate } from "../src/validation.js";
 import { resetClient } from "../src/client.js";
 
 function mockFetchOk(data: unknown) {
@@ -99,7 +123,7 @@ describe("tool handlers", () => {
 
     await handleUpdateDocument({
       document_type: "Document_Test",
-      ref_key: "abc-123",
+      ref_key: "5c8d9e2f-1a2b-3c4d-5e6f-7a8b9c0d1e2f",
       data: { Posted: true },
     });
     const [url, opts] = fetchMock.mock.calls[0];
@@ -189,5 +213,297 @@ describe("tool handlers", () => {
     const [url] = fetchMock.mock.calls[0];
     expect(url).toContain("Number");
     expect(url).toContain("00123");
+  });
+
+  it("handlePostDocument calls the Post() bound action via POST", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve(JSON.stringify({ Ref_Key: "abc", Posted: true })),
+      headers: new Map(),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    await handlePostDocument({
+      document_type: "Document_Test",
+      ref_key: "5c8d9e2f-1a2b-3c4d-5e6f-7a8b9c0d1e2f",
+      operational: false,
+    });
+    const [url, opts] = fetchMock.mock.calls[0];
+    expect(opts.method).toBe("POST");
+    expect(url).toContain("guid'5c8d9e2f-1a2b-3c4d-5e6f-7a8b9c0d1e2f'");
+    expect(url).toContain("/Post");
+    expect(url).toContain("PostingModeOperational=false");
+  });
+
+  it("handleDeleteDocument issues DELETE on the keyed URL", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve(""),
+      headers: new Map(),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await handleDeleteDocument({ document_type: "Document_Test", ref_key: "5c8d9e2f-1a2b-3c4d-5e6f-7a8b9c0d1e2f" });
+    const [url, opts] = fetchMock.mock.calls[0];
+    expect(opts.method).toBe("DELETE");
+    expect(url).toContain("guid'5c8d9e2f-1a2b-3c4d-5e6f-7a8b9c0d1e2f'");
+    expect(JSON.parse(result).deleted).toBe(true);
+  });
+
+  it("handleGetDocumentLines expands the tabular section by GUID", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve(JSON.stringify({ Ref_Key: "5c8d9e2f-1a2b-3c4d-5e6f-7a8b9c0d1e2f", Товары: [{ Номенклатура: "x" }] })),
+      headers: new Map(),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    await handleGetDocumentLines({
+      document_type: "Document_РеализацияТоваровУслуг",
+      ref_key: "5c8d9e2f-1a2b-3c4d-5e6f-7a8b9c0d1e2f",
+      tabular_section: "Товары",
+    });
+    const [url] = fetchMock.mock.calls[0];
+    expect(url).toContain("guid'5c8d9e2f-1a2b-3c4d-5e6f-7a8b9c0d1e2f'");
+    expect(decodeURIComponent(url)).toContain("$expand=Товары");
+  });
+
+  it("handleGetAccumulationBalance hits the Balance virtual method", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve(JSON.stringify({ value: [{ КоличествоBalance: 5 }] })),
+      headers: new Map(),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    await handleGetAccumulationBalance({
+      register_name: "ОстаткиТоваровНаСкладах",
+      period: "2026-06-01T00:00:00",
+    });
+    const [url] = fetchMock.mock.calls[0];
+    expect(url).toContain("AccumulationRegister_");
+    expect(url).toContain("/Balance(");
+    expect(url).toContain("Period=datetime");
+  });
+
+  it("handleCountEntities extracts odata.count via $inlinecount", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve(JSON.stringify({ value: [], "odata.count": "42" })),
+      headers: new Map(),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await handleCountEntities({ entity: "Document_Test" });
+    const [url] = fetchMock.mock.calls[0];
+    expect(url).toContain("$inlinecount=allpages");
+    expect(url).toContain("$top=0");
+    expect(JSON.parse(result).count).toBe("42");
+  });
+
+  it("handleSetDeletionMark PATCHes DeletionMark", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve(JSON.stringify({ Ref_Key: "abc", DeletionMark: true })),
+      headers: new Map(),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    await handleSetDeletionMark({ entity: "Catalog_Номенклатура", ref_key: "5c8d9e2f-1a2b-3c4d-5e6f-7a8b9c0d1e2f", mark: true });
+    const [url, opts] = fetchMock.mock.calls[0];
+    expect(opts.method).toBe("PATCH");
+    expect(url).toContain("guid'5c8d9e2f-1a2b-3c4d-5e6f-7a8b9c0d1e2f'");
+    expect(JSON.parse(opts.body).DeletionMark).toBe(true);
+  });
+
+  it("handleFindByDescription uses substringof filter", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve(JSON.stringify({ value: [] })),
+      headers: new Map(),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    await handleFindByDescription({ entity: "Catalog_Контрагенты", query: "ООО Ромашка", top: 20 });
+    const [url] = fetchMock.mock.calls[0];
+    expect(decodeURIComponent(url)).toContain("substringof('ООО Ромашка',Description)");
+  });
+
+  it("handleGetMetadata returns raw EDMX/XML as text", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve("<edmx:Edmx Version=\"1.0\"></edmx:Edmx>"),
+      headers: new Map(),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await handleGetMetadata({});
+    const [url] = fetchMock.mock.calls[0];
+    expect(url).toContain("$metadata");
+    expect(result).toContain("edmx:Edmx");
+  });
+
+  it("handleDescribeEntity infers fields from a sample record", async () => {
+    mockFetchOk({ value: [{ Ref_Key: "x", Description: "Y", Code: "001" }] });
+    const result = await handleDescribeEntity({ entity: "Catalog_Номенклатура" });
+    const parsed = JSON.parse(result) as { field_count: number; fields: Array<{ name: string }> };
+    expect(parsed.field_count).toBe(3);
+    expect(parsed.fields.map((f) => f.name)).toContain("Description");
+  });
+
+  // ── security: $filter injection escaping ──
+  it("handleGetDocumentByNumber escapes a single quote in number", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve(JSON.stringify({ value: [] })),
+      headers: new Map(),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    await handleGetDocumentByNumber({ document_type: "Document_Test", number: "O'Brien" });
+    const [url] = fetchMock.mock.calls[0];
+    expect(decodeURIComponent(url)).toContain("Number eq 'O''Brien'");
+  });
+
+  // ── previously-untested handlers ──
+  it("handleCreateCatalogItem POSTs a new item", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve(JSON.stringify({ Ref_Key: "new" })),
+      headers: new Map(),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    const result = await handleCreateCatalogItem({
+      catalog_name: "Catalog_Номенклатура",
+      data: { Description: "Молоко" },
+    });
+    expect(fetchMock.mock.calls[0][1].method).toBe("POST");
+    expect(result).toContain("new");
+  });
+
+  it("handleUpdateCatalogItem PATCHes the keyed URL", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve(JSON.stringify({ Ref_Key: "x" })),
+      headers: new Map(),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    await handleUpdateCatalogItem({
+      catalog_name: "Catalog_Номенклатура",
+      ref_key: "5c8d9e2f-1a2b-3c4d-5e6f-7a8b9c0d1e2f",
+      data: { Description: "Кефир" },
+    });
+    const [url, opts] = fetchMock.mock.calls[0];
+    expect(opts.method).toBe("PATCH");
+    expect(url).toContain("guid'5c8d9e2f-1a2b-3c4d-5e6f-7a8b9c0d1e2f'");
+  });
+
+  it("handleUnpostDocument calls the Unpost() bound action", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve(JSON.stringify({ Posted: false })),
+      headers: new Map(),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    await handleUnpostDocument({
+      document_type: "Document_Test",
+      ref_key: "5c8d9e2f-1a2b-3c4d-5e6f-7a8b9c0d1e2f",
+    });
+    const [url, opts] = fetchMock.mock.calls[0];
+    expect(opts.method).toBe("POST");
+    expect(url).toContain("/Unpost");
+  });
+
+  it("handleWriteInformationRegister POSTs to InformationRegister_*", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve(JSON.stringify({})),
+      headers: new Map(),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    await handleWriteInformationRegister({
+      register_name: "ЦеныНоменклатуры",
+      data: { Period: "2026-01-01T00:00:00", Цена: 100 },
+    });
+    const [url, opts] = fetchMock.mock.calls[0];
+    expect(opts.method).toBe("POST");
+    expect(url).toContain("InformationRegister_");
+  });
+
+  it("handleGetConstant normalises a bare constant name to Constant_*", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve(JSON.stringify({ Value: "RUB" })),
+      headers: new Map(),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    const result = await handleGetConstant({ constant_name: "ОсновнаяВалюта" });
+    const [url] = fetchMock.mock.calls[0];
+    expect(url).toContain(encodeURIComponent("Constant_ОсновнаяВалюта"));
+    expect(result).toContain("RUB");
+  });
+
+  it("handleSetConstant PATCHes the Value field", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve(JSON.stringify({ Value: "USD" })),
+      headers: new Map(),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    await handleSetConstant({ constant_name: "Constant_ОсновнаяВалюта", value: "USD" });
+    const [, opts] = fetchMock.mock.calls[0];
+    expect(opts.method).toBe("PATCH");
+    expect(JSON.parse(opts.body).Value).toBe("USD");
+  });
+
+  it("handleGetAccountingRegister reads AccountingRegister_* (default Хозрасчетный)", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve(JSON.stringify({ value: [] })),
+      headers: new Map(),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    await handleGetAccountingRegister({ register_name: "Хозрасчетный", top: 100, skip: 0 });
+    const [url] = fetchMock.mock.calls[0];
+    expect(url).toContain(encodeURIComponent("AccountingRegister_Хозрасчетный"));
+  });
+
+  it("handleGetByKey GETs a single record by GUID", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve(JSON.stringify({ Ref_Key: "5c8d9e2f-1a2b-3c4d-5e6f-7a8b9c0d1e2f" })),
+      headers: new Map(),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    await handleGetByKey({
+      entity: "Catalog_Номенклатура",
+      ref_key: "5c8d9e2f-1a2b-3c4d-5e6f-7a8b9c0d1e2f",
+    });
+    const [url, opts] = fetchMock.mock.calls[0];
+    expect(opts.method).toBe("GET");
+    expect(url).toContain("guid'5c8d9e2f-1a2b-3c4d-5e6f-7a8b9c0d1e2f'");
+  });
+
+  it("handleGetRecentDocuments orders by Date desc and can filter posted only", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve(JSON.stringify({ value: [] })),
+      headers: new Map(),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    await handleGetRecentDocuments({ document_type: "Document_Test", top: 5, posted_only: true });
+    const [url] = fetchMock.mock.calls[0];
+    expect(decodeURIComponent(url)).toContain("$orderby=Date desc");
+    expect(decodeURIComponent(url)).toContain("Posted eq true");
+  });
+
+  // ── schema-level validation ──
+  it("refKeySchema rejects a non-GUID and accepts a GUID", () => {
+    expect(refKeySchema.safeParse("abc-123").success).toBe(false);
+    expect(refKeySchema.safeParse("5c8d9e2f-1a2b-3c4d-5e6f-7a8b9c0d1e2f").success).toBe(true);
+  });
+
+  it("odataDate rejects a non-date shape, accepts YYYY-MM-DD", () => {
+    expect(odataDate.safeParse("not-a-date").success).toBe(false);
+    expect(odataDate.safeParse("2026-01-01").success).toBe(true);
   });
 });

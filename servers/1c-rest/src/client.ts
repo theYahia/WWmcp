@@ -7,8 +7,18 @@
  */
 
 import { BaseHttpClient, BasicAuthStrategy, createLogger } from "@theyahia/mcp-core";
+import { enrichOneCError } from "./lib/errors.js";
 
 const logger = createLogger("1c-rest-mcp");
+
+/** Wrap a request promise to enrich 1C errors with Russian-aware hints. */
+async function withOneCErrorEnrichment<T>(p: Promise<T>): Promise<T> {
+  try {
+    return await p;
+  } catch (e) {
+    throw enrichOneCError(e);
+  }
+}
 
 function getBaseUrl(): string {
   const url = process.env["ONEC_BASE_URL"] ?? process.env["1C_BASE_URL"];
@@ -55,6 +65,19 @@ export function resetClient(): void {
 }
 
 /**
+ * Escape a value for safe use inside an OData string literal ('…').
+ * OData/1C escape a single quote by doubling it; this stops a quote in
+ * user- or LLM-supplied data from breaking out of the literal ($filter injection).
+ */
+export function escapeODataString(value: string): string {
+  return value.replace(/'/g, "''");
+}
+
+/** A 1C Ref_Key is a standard UUID; used to validate keyed-path input. */
+export const GUID_RE =
+  /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+
+/**
  * Build OData path with optional query parameters.
  * Preserves $-prefixed keys (OData system options) without URL-encoding the $.
  */
@@ -72,13 +95,50 @@ export function buildODataPath(
 }
 
 export async function oneCGet(path: string): Promise<unknown> {
-  return getClient().request({ method: "GET", path });
+  return withOneCErrorEnrichment(getClient().request({ method: "GET", path }));
 }
 
 export async function oneCPost(path: string, body: unknown): Promise<unknown> {
-  return getClient().request({ method: "POST", path, body });
+  return withOneCErrorEnrichment(getClient().request({ method: "POST", path, body }));
 }
 
 export async function oneCPatch(path: string, body: unknown): Promise<unknown> {
-  return getClient().request({ method: "PATCH", path, body });
+  return withOneCErrorEnrichment(getClient().request({ method: "PATCH", path, body }));
+}
+
+export async function oneCDelete(path: string): Promise<unknown> {
+  return withOneCErrorEnrichment(getClient().request({ method: "DELETE", path }));
+}
+
+/**
+ * Build a keyed OData path: `Entity(guid'GUID')[/Action][?query]`.
+ *
+ * The entity name is URL-encoded (Cyrillic-safe), but the key tuple `(guid'…')`
+ * and bound action segment (`/Post`, `/Unpost`) are structural and left intact —
+ * `buildODataPath` can't be reused here because it would percent-encode the `/`
+ * of the action. Matches 1C:Enterprise OData 3.0 addressing.
+ */
+export function buildKeyedPath(
+  entity: string,
+  refKey: string,
+  action?: string,
+  query?: Record<string, string>,
+): string {
+  // Guard: refKey is interpolated into the path inside guid'…'. Validating it as
+  // a GUID makes OData injection through the key impossible, regardless of caller.
+  if (!GUID_RE.test(refKey)) {
+    throw new Error(
+      `Invalid Ref_Key (expected a GUID like 01234567-89ab-cdef-0123-456789abcdef): ${refKey}`,
+    );
+  }
+  const keyed = `${encodeURIComponent(entity)}(guid'${refKey}')`;
+  const tail = action ? `/${action}` : "";
+  const qs =
+    query && Object.keys(query).length > 0
+      ? "?" +
+        Object.entries(query)
+          .map(([k, v]) => `${k}=${encodeURIComponent(v)}`)
+          .join("&")
+      : "";
+  return `/odata/standard.odata/${keyed}${tail}${qs}`;
 }
