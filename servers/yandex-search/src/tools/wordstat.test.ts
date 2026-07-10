@@ -23,4 +23,10 @@ describe("handleWordstatTopRequests", () => {
     cloudPost.mockResolvedValue({ results: [] });
     await expect(handleWordstatTopRequests({ phrase: "щьжкх", limit: 5 })).resolves.toMatch(/не нашёл/);
   });
+
+  // Регресс: у нулевой частотности API отдаёт 200 вообще без поля results → .slice() кидал TypeError.
+  it("ответ без поля results → сообщение, не TypeError", async () => {
+    cloudPost.mockResolvedValue({});
+    await expect(handleWordstatTopRequests({ phrase: "ночной рой агентов", limit: 3 })).resolves.toMatch(/не нашёл/);
+  });
 });
