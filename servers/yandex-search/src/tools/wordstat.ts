@@ -25,8 +25,13 @@ export const wordstatTopRequestsSchema = z.object({
 export async function handleWordstatTopRequests(
   params: z.infer<typeof wordstatTopRequestsSchema>
 ): Promise<string> {
-  const data = await cloudPost<TopRequestsResult>("/v2/wordstat/topRequests", { phrase: params.phrase });
-  const results = data.results.slice(0, params.limit);
+  // num_phrases обязателен (API: «Value must be in the range of 1 to 2000»); без него — HTTP 400.
+  const data = await cloudPost<TopRequestsResult>("/v2/wordstat/topRequests", {
+    phrase: params.phrase,
+    num_phrases: params.limit,
+  });
+  // Нулевая частотность → API отдаёт 200 БЕЗ поля results (не пустой массив) → .slice() падал.
+  const results = (data.results ?? []).slice(0, params.limit);
 
   if (!results.length) {
     return `Wordstat не нашёл связанных запросов для фразы "${params.phrase}". Попробуйте более общий запрос.`;
@@ -56,6 +61,7 @@ const REGION_NAMES: Record<string, string> = {
   "15": "Саратов", "20": "Волгоград", "51": "Челябинск",
   "54": "Тюмень", "62": "Тула", "63": "Тольятти",
   "213": "Москва (область)", "10243": "Беларусь", "187": "Украина",
+  "225": "Россия (вся)", // агрегат по стране — обычно первый по объёму, без имени читался как регион
 };
 
 export const wordstatRegionsSchema = z.object({
@@ -116,7 +122,7 @@ export async function handleWordstatDynamics(
     to_date: toDate,
   });
 
-  const withData = data.results.filter(r => r.count);
+  const withData = (data.results ?? []).filter(r => r.count); // как в topRequests: поля может не быть вовсе
 
   if (!withData.length) {
     return [
