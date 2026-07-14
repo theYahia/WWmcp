@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "vacancy-mcp": {
+      "command": "node",
+      "args": ["./dist/index.js"],
+      "env": {
+        "VACANCY_DB_PATH": "./data/vacancies.db"
+      }
+    }
+  }
+}

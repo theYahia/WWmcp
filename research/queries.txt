@@ -1,0 +1,7 @@
+indie_multi_project|indie hacker multiple projects tracking dashboard best practices 2024 2025
+pkm_projects|obsidian personal project management multiple projects workflow
+public_roadmap_site|public project roadmap site template open source changelog
+roadmap_frameworks|project roadmap website builder static site minimalist founder
+obsidian_publish|obsidian publish quartz digital garden public site projects tracking
+efrogs_style|ethereum public roadmap website single page minimal timeline
+github_dashboard|github projects dashboard portfolio all repos status live update
