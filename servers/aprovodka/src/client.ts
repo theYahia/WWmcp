@@ -9,7 +9,7 @@
 import { BaseHttpClient, BasicAuthStrategy, createLogger } from "@theyahia/mcp-core";
 import { enrichOneCError } from "./lib/errors.js";
 
-const logger = createLogger("1c-rest-mcp");
+const logger = createLogger("aprovodka");
 
 /** Wrap a request promise to enrich 1C errors with Russian-aware hints. */
 async function withOneCErrorEnrichment<T>(p: Promise<T>): Promise<T> {

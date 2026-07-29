@@ -1,5 +1,35 @@
 # Changelog
 
+## 4.0.0
+
+### Renamed
+
+The package is renamed from `@theyahia/1c-rest-mcp` to **`@theyahia/aprovodka`**. The old package is
+deprecated and frozen at 3.2.0.
+
+Reason is regulatory, not technical: «1С» is a registered trademark and its use in a product **name**
+is prohibited without the vendor's consent (Infostart publication rules § 2.2.11). The old name
+blocked both publication on Infostart and certification for «1С:Совместимо».
+
+### Breaking Changes
+
+- **Package name:** `@theyahia/1c-rest-mcp` → `@theyahia/aprovodka`.
+- **Binary:** `1c-rest-mcp` → `aprovodka`.
+- **Server name in the MCP handshake:** `1c-rest-mcp` → `aprovodka`.
+- **MCP Registry id:** `io.github.theYahia/1c-rest-mcp` → `io.github.theYahia/aprovodka`.
+- **Smithery slug:** `1c-rest-mcp` → `aprovodka`.
+
+### Unchanged — no config migration needed
+
+All 32 tool names, their arguments and return shapes, the 3 prompts, the `ONEC_*` env vars and the
+`1C_*` backward-compat aliases are untouched. Existing configuration keeps working; only the command
+that launches the server changes.
+
+### Fixed
+
+- `repository.url` pointed at `theYahia/mcp-servers`, archived since April. Now points at
+  `theYahia/WWmcp`, where the code actually lives.
+
 ## 3.2.0
 
 ### Minor Changes

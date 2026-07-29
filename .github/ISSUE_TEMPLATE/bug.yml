@@ -18,8 +18,8 @@ body:
       options:
         - "@theyahia/mcp-core"
         - "@theyahia/wwmcp-telemetry"
-        - "@theyahia/1c-rest-mcp"
         - "@theyahia/2gis-mcp"
+        - "@theyahia/aprovodka"
         - "@theyahia/bitrix24-mcp"
         - "@theyahia/bkash-mcp"
         - "@theyahia/cbr-mcp"

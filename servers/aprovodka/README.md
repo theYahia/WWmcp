@@ -1,20 +1,30 @@
-# @theyahia/1c-rest-mcp
+# @theyahia/aprovodka
 
 > MCP server for **1C:Enterprise** REST API via OData 3.0 — catalogs, documents, registers,
 > accounting, constants, reports, batch ops & change-tracking + metadata discovery.
 > 32 tools across 11 modules. HTTP Basic auth. Stdio + Streamable HTTP transports.
 
-[![npm](https://img.shields.io/npm/v/@theyahia/1c-rest-mcp)](https://www.npmjs.com/package/@theyahia/1c-rest-mcp)
+[![npm](https://img.shields.io/npm/v/@theyahia/aprovodka)](https://www.npmjs.com/package/@theyahia/aprovodka)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ---
 
+### Migrating from @theyahia/1c-rest-mcp (v3.x → v4.0.0)
+
+The package was **renamed to `@theyahia/aprovodka`**. `@theyahia/1c-rest-mcp` is deprecated and frozen at v3.2.0.
+
+- **Install the new package:** `npx -y @theyahia/aprovodka`.
+- **Binary renamed:** `1c-rest-mcp` → `aprovodka`. `aprovodka --http` and `HTTP_PORT=3000 aprovodka` work as before.
+- **Server name in the MCP handshake** is now `aprovodka` — update the key in your client config if you pinned it.
+
+Everything else is unchanged: all 32 tool names, their arguments and return formats, the 3 prompts, and the `ONEC_*` env vars (plus the `1C_*` backward-compat aliases). Renaming the package does **not** require touching your existing config beyond the command itself.
+
 ### Migrating from v1.x
 
-If you starred or used v1.x, the v2.0.0 release introduces a few breaking changes:
+If you starred or used v1.x, the v2.0.0 release introduced a few breaking changes:
 
 - **HTTP transport env var renamed:** `PORT=3000` → `HTTP_PORT=3000`.
-- **Removed separate HTTP binary:** `1c-rest-mcp-http` is gone. Use `1c-rest-mcp --http` or `HTTP_PORT=3000 1c-rest-mcp` instead.
+- **Removed separate HTTP binary:** `1c-rest-mcp-http` is gone. Use `aprovodka --http` or `HTTP_PORT=3000 aprovodka` instead.
 - **Single `bin` entrypoint:** `dist/http.js` is no longer published.
 - **Internal client:** now extends `@theyahia/mcp-core`'s `BaseHttpClient` with `BasicAuthStrategy`. The exported functional API (`oneCGet/oneCPost/oneCPatch/buildODataPath`) is unchanged, so tool code keeps working.
 - **Tool errors:** now returned as MCP-spec `CallToolResult` with `isError: true` (via `withErrorHandling` from `@theyahia/mcp-core`). Compatible with all MCP clients.
@@ -150,9 +160,9 @@ Add to `claude_desktop_config.json`:
 ```json
 {
   "mcpServers": {
-    "1c": {
+    "aprovodka": {
       "command": "npx",
-      "args": ["-y", "@theyahia/1c-rest-mcp"],
+      "args": ["-y", "@theyahia/aprovodka"],
       "env": {
         "ONEC_BASE_URL": "http://server:8080/base",
         "ONEC_LOGIN": "your_login",
@@ -174,9 +184,9 @@ Add to `.vscode/mcp.json`:
 ```json
 {
   "servers": {
-    "1c": {
+    "aprovodka": {
       "command": "npx",
-      "args": ["-y", "@theyahia/1c-rest-mcp"],
+      "args": ["-y", "@theyahia/aprovodka"],
       "env": {
         "ONEC_BASE_URL": "http://server:8080/base",
         "ONEC_LOGIN": "your_login",
@@ -196,8 +206,8 @@ HTTP_PORT=3000 \
 ONEC_BASE_URL=http://server:8080/base \
 ONEC_LOGIN=admin \
 ONEC_PASSWORD=secret \
-npx @theyahia/1c-rest-mcp
-# or: npx @theyahia/1c-rest-mcp --http
+npx @theyahia/aprovodka
+# or: npx @theyahia/aprovodka --http
 ```
 
 Endpoints:
@@ -227,7 +237,7 @@ Includes session management (`mcp-session-id` header), CORS, graceful shutdown.
 Limit registered tools to save LLM context. Modules: `catalogs`, `documents`, `registers`, `accounting`, `constants`, `shortcuts`, `reports`, `odata`, `batch`, `changes` (plus always-on `meta`).
 
 ```bash
-ONEC_SERVICES=catalogs,documents npx @theyahia/1c-rest-mcp
+ONEC_SERVICES=catalogs,documents npx @theyahia/aprovodka
 ```
 
 The discovery module `meta` (`list_entities`, `get_document_by_number`, `get_metadata`, `describe_entity`) is always registered — without it an agent cannot discover the database structure.
@@ -273,15 +283,15 @@ Try these natural-language prompts in your MCP client:
 
 ```bash
 pnpm install
-pnpm --filter @theyahia/1c-rest-mcp build
-pnpm --filter @theyahia/1c-rest-mcp test
-pnpm --filter @theyahia/1c-rest-mcp dev   # tsx watch mode
+pnpm --filter @theyahia/aprovodka build
+pnpm --filter @theyahia/aprovodka test
+pnpm --filter @theyahia/aprovodka dev   # tsx watch mode
 ```
 
 Project layout:
 
 ```
-servers/1c-rest/
+servers/aprovodka/
 ├── src/
 │   ├── index.ts            — entry point (runServer; version + docstring)
 │   ├── server.ts           — server factory, module config, tool registration

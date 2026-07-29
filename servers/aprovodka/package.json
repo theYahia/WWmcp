@@ -1,11 +1,11 @@
 {
-  "name": "@theyahia/1c-rest-mcp",
-  "version": "3.2.0",
+  "name": "@theyahia/aprovodka",
+  "version": "4.0.0",
   "description": "MCP server for 1C:Enterprise — 32 tools across 11 modules: catalogs & documents CRUD, post/unpost, registers & accumulation balances, accounting, constants, batch ops, change-tracking, metadata discovery, shortcuts (+ 3 guided prompts) via OData 3.0. Basic auth.",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "1c-rest-mcp": "dist/index.js"
+    "aprovodka": "dist/index.js"
   },
   "files": [
     "dist",
@@ -39,7 +39,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "mcpName": "io.github.theYahia/1c-rest-mcp",
+  "mcpName": "io.github.theYahia/aprovodka",
   "keywords": [
     "mcp",
     "mcp-server",
@@ -58,9 +58,9 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/theYahia/mcp-servers.git",
-    "directory": "servers/1c-rest"
+    "url": "https://github.com/theYahia/WWmcp.git",
+    "directory": "servers/aprovodka"
   },
-  "homepage": "https://github.com/theYahia/mcp-servers/tree/main/servers/1c-rest",
+  "homepage": "https://github.com/theYahia/WWmcp/tree/main/servers/aprovodka",
   "author": "theYahia (https://github.com/theYahia)"
 }

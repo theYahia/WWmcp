@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * @theyahia/1c-rest-mcp — MCP server for 1C:Enterprise REST/OData API
+ * @theyahia/aprovodka — MCP server for 1C:Enterprise REST/OData API
  *
  * 32 tools across 11 modules: meta (always on), catalogs, documents, registers,
  * accounting, constants, shortcuts, batch, changes, reports, odata. Use
@@ -24,7 +24,7 @@ import {
 } from "./server.js";
 
 runServer(createServer, {
-  name: "1c-rest-mcp",
+  name: "aprovodka",
   version: VERSION,
   toolCount: countRegisteredTools(getEnabledModules()),
   logger,

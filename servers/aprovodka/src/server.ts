@@ -60,14 +60,14 @@ import {
   listSubscriptionsSchema, handleListSubscriptions,
 } from "./tools/change-tracking.js";
 
-export const logger = createLogger("1c-rest-mcp");
+export const logger = createLogger("aprovodka");
 
 /**
  * Single source of truth for the server version. Used by both `McpServer`
  * (MCP handshake) here and `runServer` (the /health endpoint) in index.ts,
  * so the two can never drift apart again. Keep in sync with package.json.
  */
-export const VERSION = "3.2.0";
+export const VERSION = "4.0.0";
 
 /**
  * Single source of truth for module → tool count mapping.
@@ -124,7 +124,7 @@ export function countRegisteredTools(modules: Set<ModuleName>): number {
 
 export function createServer(): McpServer {
   const server = new McpServer({
-    name: "1c-rest-mcp",
+    name: "aprovodka",
     version: VERSION,
   });
 
