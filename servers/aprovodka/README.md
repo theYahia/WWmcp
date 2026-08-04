@@ -1,9 +1,13 @@
 # @theyahia/aprovodka
 
-> ℹ️ **Canonical home:** active development and npm releases of `@theyahia/1c-rest-mcp` live in
-> **[theYahia/1c-rest-mcp](https://github.com/theYahia/1c-rest-mcp)**. This copy is part of the
-> WWmcp catalog and is **not published from here** (`private`) — open issues & PRs in the
-> standalone repo.
+> ℹ️ **Where the code lives:** this is the canonical source — development, tests and npm releases
+> of `@theyahia/aprovodka` all happen here, in the WWmcp monorepo. The standalone repo
+> **[theYahia/aprovodka](https://github.com/theYahia/aprovodka)** is the project's landing page
+> (it redirects from the former `theYahia/1c-rest-mcp` URL); the tree it still carries is the
+> pre-rename 3.2.0 code. Open issues & PRs here.
+>
+> **Renamed in 4.0.0:** `@theyahia/1c-rest-mcp` → `@theyahia/aprovodka`. The old package is
+> deprecated and frozen at 3.2.0. Reason is regulatory, not technical — see [CHANGELOG](./CHANGELOG.md).
 
 > MCP server for **1C:Enterprise** REST API via OData 3.0 — catalogs, documents, registers,
 > accounting, constants, reports, batch ops & change-tracking + metadata discovery.
@@ -127,7 +131,7 @@ Tool names, arguments, return formats, and the `ONEC_*` env vars are unchanged.
 | Tool | Description |
 |------|-------------|
 | `batch_create_documents` | Create N documents (1..100) of one type in parallel. |
-| `batch_update_catalog_items` | PATCH N catalog items by `Ref_Key` in parallel. |
+| `batch_update_catalog_items` | PATCH N catalog items (1..100) by `Ref_Key` in parallel. |
 | `batch_query` | Run N OData GET queries (1..50) in parallel; combine results client-side. |
 
 ### Change tracking — `changes`
@@ -251,7 +255,7 @@ Limit registered tools to save LLM context. Modules: `catalogs`, `documents`, `r
 ONEC_SERVICES=catalogs,documents npx @theyahia/aprovodka
 ```
 
-The discovery module `meta` (`list_entities`, `get_document_by_number`, `get_metadata`, `describe_entity`) is always registered — without it an agent cannot discover the database structure.
+The discovery module `meta` (`list_entities`, `get_document_by_number`, `get_metadata`, `describe_entity`, `get_config_preset`) is always registered — without it an agent cannot discover the database structure. `get_config_preset` is the one tool that needs no `ONEC_BASE_URL` at all.
 
 **Safety:** set `MCP_DISABLE_SANITIZE=true` only if you trust the data source — by default tool output is scanned for prompt-injection patterns. The HTTP client refuses absolute URLs whose origin differs from `ONEC_BASE_URL`. `Ref_Key` arguments are validated as GUIDs and string values in `get_document_by_number` are OData-escaped; the raw `$filter`/`$select`/`$orderby` passthroughs are intentional, so scope what the server can read or write via the **1C user's role**, not via these arguments.
 
@@ -335,20 +339,34 @@ servers/aprovodka/
 ├── src/
 │   ├── index.ts            — entry point (runServer; version + docstring)
 │   ├── server.ts           — server factory, module config, tool registration
-│   ├── client.ts           — functional API + buildKeyedPath + escapeODataString + GUID guard
-│   ├── validation.ts       — shared zod field schemas (refKeySchema, odataDate, odataDateTime)
+│   ├── client.ts           — functional API + buildKeyedPath + buildVirtualTablePath
+│   │                         + escapeODataString + GUID guard; the single write choke point
+│   ├── validation.ts       — shared zod schemas + normaliseEntity (bare ↔ prefixed names)
 │   ├── types.ts            — OData TypeScript types
 │   ├── lib/
-│   │   └── errors.ts       — parse Russian 1C errors → category + recovery hint
+│   │   ├── errors.ts       — parse Russian 1C errors → category + recovery hint
+│   │   └── write-safety.ts — preview / approval gate, audit ledger, rollback tokens
+│   ├── presets/            — curated schemas per 1C configuration (data only, no I/O)
+│   │   ├── types.ts        ├── common.ts   — platform-wide knowledge, prefixes, pitfalls
+│   │   ├── bp30.ts         ├── ut11.ts     ├── zup31.ts   ├── erp2.ts
+│   │   └── index.ts        — loader: PRESETS, listPresets, getPreset
 │   └── tools/
 │       ├── catalogs.ts     ├── documents.ts    ├── registers.ts
 │       ├── accounting.ts   ├── constants.ts    ├── shortcuts.ts
-│       ├── metadata.ts     — discovery (list_entities, get_document_by_number, get_metadata, describe_entity)
+│       ├── metadata.ts     — discovery + ENTITY_PREFIX_FILTERS (list_entities type map)
 │       ├── batch.ts        ├── change-tracking.ts
-│       ├── odata-query.ts  └── reports.ts
+│       ├── odata-query.ts  ├── reports.ts
+│       ├── presets.ts      — get_config_preset
+│       └── safety.ts       — approve_write, rollback_write (only while the gate is on)
+├── scripts/
+│   └── build-mcpb.mjs      — build the .mcpb bundle for Smithery
+├── docs/
+│   ├── PUBLISH.md          — release runbook
+│   └── manual/             — Russian user manual (vendor track)
 └── tests/
     ├── client.test.ts      ├── server.test.ts        ├── tools.test.ts
-    ├── batch.test.ts       ├── change-tracking.test.ts └── error-parsing.test.ts
+    ├── batch.test.ts       ├── change-tracking.test.ts ├── error-parsing.test.ts
+    ├── presets.test.ts     └── write-safety.test.ts
 ```
 
 ---

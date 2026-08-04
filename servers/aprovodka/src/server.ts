@@ -369,7 +369,8 @@ export function createServer(): McpServer {
     server.tool(
       "get_accounting_balance",
       "Accounting-register VIRTUAL tables (AccountingRegister_*): Balance / Turnovers / " +
-      "BalanceAndTurnovers / ExtDimensions. Not to be confused with get_accumulation_balance, " +
+      "BalanceAndTurnovers / RecordsWithExtDimensions / ExtDimensions. " +
+      "Not to be confused with get_accumulation_balance, " +
       "which serves AccumulationRegister_* — this one is the double-entry ledger (счета, субконто).",
       getAccountingBalanceSchema.shape,
       withErrorHandling(async (params) => ({

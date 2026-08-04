@@ -1,6 +1,6 @@
 /**
  * Write-safety tools — registered only when ONEC_WRITE_MODE != off,
- * so the default 32-tool surface is unchanged.
+ * so the default 34-tool surface is unchanged.
  */
 
 import { z } from "zod";
