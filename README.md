@@ -169,7 +169,7 @@ MoySklad → stock & pricing → CDEK → shipping rates → YooKassa → paymen
 | Package | Status | Tools | Description |
 |---------|--------|-------|-------------|
 | [@theyahia/sber-mcp](https://www.npmjs.com/package/@theyahia/sber-mcp) | v1.0.0 | 5 tools | Sberbank — accounts, statements |
-| [@theyahia/alfa-bank-mcp](https://www.npmjs.com/package/@theyahia/alfa-bank-mcp) | v1.0.0 | 8 tools | Alfa-Bank Business — accounts, payments, statements, exchange rates |
+| [@theyahia/alfa-bank-mcp](https://www.npmjs.com/package/@theyahia/alfa-bank-mcp) | v1.1.0 | 8 tools | Alfa-Bank Business — accounts, balances, statements, payment orders, counterparties, FX rates, payroll |
 | [@theyahia/tochka-bank-mcp](https://www.npmjs.com/package/@theyahia/tochka-bank-mcp) | v1.0.0 | 8 tools | Tochka Bank — accounts, payments, counterparties, company info |
 | [@theyahia/aprovodka](https://www.npmjs.com/package/@theyahia/aprovodka) | v4.0.0 | 32 tools | 1C:Enterprise REST/OData — catalogs, documents, registers, accounting, batch, change-tracking |
 | [@theyahia/atol-online-mcp](https://www.npmjs.com/package/@theyahia/atol-online-mcp) | v1.0.0 | 8 tools | ATOL Online — fiscal receipts (54-FZ compliance) |
