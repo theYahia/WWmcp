@@ -111,7 +111,7 @@ export const zup31: ConfigPreset = {
     {
       name: "CalculationRegister_Начисления",
       kind: "calculation_register",
-      ru: "Регистр расчёта начислений — фактические суммы по сотрудникам и периодам. ⚠ Префикс CalculationRegister_ типовой фильтр list_entities не знает.",
+      ru: "Регистр расчёта начислений — фактические суммы по сотрудникам и периодам. Отдаётся list_entities с type=\"registers\".",
       confidence: "common",
     },
     {

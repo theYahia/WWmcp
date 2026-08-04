@@ -43,7 +43,8 @@ export const pollChangesSinceSchema = z.object({
     .describe(
       "ISO timestamp cursor (YYYY-MM-DDTHH:mm:ss). Rows with `Date` >= since are returned. " +
       "On first poll, pass a recent timestamp. Subsequent polls should use `next_cursor` " +
-      "from the previous response.",
+      "from the previous response. Rows exactly on the cursor timestamp are returned again " +
+      "(at-least-once by design) — dedupe by Ref_Key.",
     ),
   date_field: z
     .string()
@@ -72,7 +73,16 @@ export interface PollChangesEnvelope {
   date_field: string;
   count: number;
   rows: unknown[];
-  /** Cursor for the next poll: max(date_field) across returned rows + 1ms. */
+  /**
+   * Cursor for the next poll: max(date_field) across the returned rows, as-is.
+   *
+   * Deliberately NOT max+1: the filter is `ge`, so rows sharing that exact
+   * timestamp come back once more on the next poll. That is at-least-once
+   * delivery — dedupe by `Ref_Key` on your side. The alternative (advancing the
+   * cursor past the boundary) would silently DROP rows written in the same
+   * instant, and the cursor format itself is second-granular
+   * (YYYY-MM-DDTHH:mm:ss), so there is no sub-second value to advance to.
+   */
   next_cursor: string | null;
   /** True if hit the `top` limit — more rows likely available. */
   has_more: boolean;
