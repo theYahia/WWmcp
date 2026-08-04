@@ -59,6 +59,11 @@ import {
   pollChangesSinceSchema, handlePollChangesSince,
   listSubscriptionsSchema, handleListSubscriptions,
 } from "./tools/change-tracking.js";
+import {
+  approveWriteSchema, handleApproveWrite,
+  rollbackWriteSchema, handleRollbackWrite,
+} from "./tools/safety.js";
+import { getWriteMode } from "./lib/write-safety.js";
 
 export const logger = createLogger("aprovodka");
 
@@ -119,6 +124,8 @@ export function getEnabledModules(): Set<ModuleName> {
 export function countRegisteredTools(modules: Set<ModuleName>): number {
   let count = 0;
   for (const m of modules) count += MODULE_TOOL_COUNTS[m];
+  // approve_write + rollback_write exist only while the write gate is on.
+  if (getWriteMode() !== "off") count += 2;
   return count;
 }
 
@@ -449,6 +456,32 @@ export function createServer(): McpServer {
       listSubscriptionsSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleListSubscriptions(params) }],
+      })),
+    );
+  }
+
+  // ── Write-safety gate (ONEC_WRITE_MODE=preview|approval) ──
+  // Off by default: writes behave exactly as before and these tools do not exist.
+  if (getWriteMode() !== "off") {
+    server.tool(
+      "approve_write",
+      "Approve ONE pending 1C write, identified by the op_hash returned in its preview. " +
+      "Single-use and time-limited: after approving, re-run the identical write tool call to execute it. " +
+      "Only call this after an explicit human 'yes' — never approve your own preview unattended.",
+      approveWriteSchema.shape,
+      withErrorHandling(async (params) => ({
+        content: [{ type: "text", text: await handleApproveWrite(params) }],
+      })),
+    );
+
+    server.tool(
+      "rollback_write",
+      "Undo a completed reversible write using the rollback token from its result " +
+      "(post→unpost, unpost→post, field update→restore previous values, DeletionMark toggle). " +
+      "One-shot. Physical deletes and record creation have no rollback token — they are irreversible.",
+      rollbackWriteSchema.shape,
+      withErrorHandling(async (params) => ({
+        content: [{ type: "text", text: await handleRollbackWrite(params) }],
       })),
     );
   }

@@ -4,6 +4,7 @@ import {
   buildODataPath, buildKeyedPath,
 } from "../client.js";
 import { refKeySchema } from "../validation.js";
+import { isSafetyEnvelope } from "../lib/write-safety.js";
 
 export const getDocumentsSchema = z.object({
   document_type: z.string().describe("Тип документа (например, Document_РеализацияТоваровУслуг)"),
@@ -100,7 +101,11 @@ export const deleteDocumentSchema = z.object({
 
 export async function handleDeleteDocument(params: z.infer<typeof deleteDocumentSchema>): Promise<string> {
   const path = buildKeyedPath(params.document_type, params.ref_key);
-  await oneCDelete(path);
+  const res = await oneCDelete(path);
+  // With write-safety active the call returns a preview / executed envelope that
+  // already reports the outcome (and that the delete is irreversible) — passing
+  // it through beats claiming `deleted: true` after a dry-run.
+  if (isSafetyEnvelope(res)) return JSON.stringify(res, null, 2);
   return JSON.stringify(
     { deleted: true, document_type: params.document_type, ref_key: params.ref_key },
     null,

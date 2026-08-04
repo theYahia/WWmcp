@@ -8,6 +8,7 @@
 
 import { BaseHttpClient, BasicAuthStrategy, createLogger } from "@theyahia/mcp-core";
 import { enrichOneCError } from "./lib/errors.js";
+import { guardWrite } from "./lib/write-safety.js";
 
 const logger = createLogger("aprovodka");
 
@@ -98,16 +99,30 @@ export async function oneCGet(path: string): Promise<unknown> {
   return withOneCErrorEnrichment(getClient().request({ method: "GET", path }));
 }
 
+/**
+ * Unguarded write. Every 1C mutation in this server goes through here, so the
+ * write-safety guard (preview / approval / audit / rollback) wraps exactly this
+ * one function in oneCPost/oneCPatch/oneCDelete below — a new write tool cannot
+ * accidentally bypass it.
+ */
+export async function oneCRawWrite(
+  method: "POST" | "PATCH" | "DELETE",
+  path: string,
+  body?: unknown,
+): Promise<unknown> {
+  return withOneCErrorEnrichment(getClient().request({ method, path, body }));
+}
+
 export async function oneCPost(path: string, body: unknown): Promise<unknown> {
-  return withOneCErrorEnrichment(getClient().request({ method: "POST", path, body }));
+  return guardWrite({ method: "POST", path, body }, () => oneCRawWrite("POST", path, body), oneCGet);
 }
 
 export async function oneCPatch(path: string, body: unknown): Promise<unknown> {
-  return withOneCErrorEnrichment(getClient().request({ method: "PATCH", path, body }));
+  return guardWrite({ method: "PATCH", path, body }, () => oneCRawWrite("PATCH", path, body), oneCGet);
 }
 
 export async function oneCDelete(path: string): Promise<unknown> {
-  return withOneCErrorEnrichment(getClient().request({ method: "DELETE", path }));
+  return guardWrite({ method: "DELETE", path }, () => oneCRawWrite("DELETE", path), oneCGet);
 }
 
 /**
