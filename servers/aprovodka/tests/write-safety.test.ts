@@ -14,6 +14,7 @@ import {
   handleRollbackWrite,
 } from "../src/tools/safety.js";
 import { handlePostDocument, handleDeleteDocument } from "../src/tools/documents.js";
+import { handleUpdateCatalogItem } from "../src/tools/catalogs.js";
 import { countRegisteredTools, getEnabledModules } from "../src/server.js";
 
 const GUID = "5c8d9e2f-1a2b-3c4d-5e6f-7a8b9c0d1e2f";
@@ -84,9 +85,9 @@ describe("write-safety", () => {
 
   it("safety tools are not counted while the gate is off", () => {
     delete process.env["ONEC_SERVICES"];
-    expect(countRegisteredTools(getEnabledModules())).toBe(32);
-    process.env["ONEC_WRITE_MODE"] = "approval";
     expect(countRegisteredTools(getEnabledModules())).toBe(34);
+    process.env["ONEC_WRITE_MODE"] = "approval";
+    expect(countRegisteredTools(getEnabledModules())).toBe(36);
   });
 
   // ── preview mode ──
@@ -321,5 +322,48 @@ describe("write-safety", () => {
     const fetchMock = mockFetch();
     await expect(oneCDelete("/odata/standard.odata/Document_Test")).rejects.toThrow();
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+});
+
+/**
+ * normaliseEntity сделал инструменты толерантными к префиксу. Путь входит в
+ * op_hash, значит одобрение, выданное на "Номенклатура", теперь примет и
+ * "Catalog_Номенклатура". Это правильно — гейт привязывает одобрение к ЭФФЕКТУ,
+ * а не к написанию, — но выглядит как обход, поэтому зафиксировано тестом.
+ * До normaliseEntity голая форма просто давала 404, так что одобрения на неё
+ * не существовало вовсе: поведение сузило неожиданность, а не расширило.
+ */
+describe("write gate is bound to the effect, not the spelling", () => {
+  const originalEnv = { ...process.env };
+  beforeEach(() => {
+    process.env["ONEC_BASE_URL"] = "http://1c.test/base";
+    process.env["ONEC_LOGIN"] = "u";
+    process.env["ONEC_PASSWORD"] = "p";
+    process.env["ONEC_WRITE_MODE"] = "preview";
+    resetClient();
+  });
+  afterEach(() => {
+    process.env = { ...originalEnv };
+    vi.unstubAllGlobals();
+  });
+
+  it("bare and prefixed catalog_name yield the same op_hash", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        text: () => Promise.resolve(JSON.stringify({ Ref_Key: "x" })),
+        headers: new Map(),
+      }),
+    );
+    const ref = "5c8d9e2f-1a2b-3c4d-5e6f-7a8b9c0d1e2f";
+    const bare = JSON.parse(
+      await handleUpdateCatalogItem({ catalog_name: "Номенклатура", ref_key: ref, data: { Code: "1" } }),
+    );
+    const full = JSON.parse(
+      await handleUpdateCatalogItem({ catalog_name: "Catalog_Номенклатура", ref_key: ref, data: { Code: "1" } }),
+    );
+    expect(bare.op_hash).toBeDefined();
+    expect(bare.op_hash).toBe(full.op_hash);
   });
 });

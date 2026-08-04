@@ -1,6 +1,10 @@
 import { describe, it, expect } from "vitest";
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { PRESETS, listPresets, getPreset, COMMON } from "../src/presets/index.js";
 import { handleGetConfigPreset } from "../src/tools/presets.js";
+import { createServer } from "../src/server.js";
+import { ENTITY_PREFIX_FILTERS } from "../src/tools/metadata.js";
 
 /**
  * Пресеты — данные, поэтому тест проверяет ровно то, что в данных можно сломать:
@@ -16,7 +20,7 @@ const TOOL_NAMES = new Set([
   "unpost_document", "delete_document", "get_document_lines",
   "get_register", "write_information_register", "get_accumulation_balance",
   "get_report", "odata_query", "get_constant", "set_constant",
-  "get_accounting_register",
+  "get_accounting_register", "get_accounting_balance", "get_config_preset",
   "find_by_description", "get_by_key", "count_entities", "set_deletion_mark",
   "get_recent_documents",
   "batch_create_documents", "batch_update_catalog_items", "batch_query",
@@ -110,14 +114,19 @@ describe("presets — примеры исполнимы существующим
           expect(a["document_type"], where).toMatch(/^Document_/);
         }
 
-        // А эти — имя регистра БЕЗ префикса: инструмент добавляет его сам.
-        if (ex.tool === "get_accumulation_balance" || ex.tool === "get_register" || ex.tool === "get_accounting_register") {
-          expect(a["register_name"], where).not.toMatch(
-            /^(Accumulation|Information|Accounting)Register_/,
-          );
+        // А для регистров каноничная форма — БЕЗ префикса. С появлением
+        // normaliseEntity обе формы работают, так что это уже требование к стилю
+        // самих примеров, а не к инструменту: пресет учит одному написанию.
+        if (ex.tool === "get_accumulation_balance" || ex.tool === "get_register" ||
+            ex.tool === "get_accounting_register" || ex.tool === "get_accounting_balance") {
+          expect(a["register_name"], `${where} — в примерах держим каноничную форму без префикса`)
+            .not.toMatch(/^(Accumulation|Information|Accounting|Calculation)Register_/);
         }
 
-        // odata_query кодирует путь целиком → вызов виртуальной таблицы через него не выразить.
+        // odata_query кодирует путь целиком → вызов виртуальной таблицы через него
+        // не выразить. Подключать сюда buildVirtualTablePath СОЗНАТЕЛЬНО не будем:
+        // свободный вызов виртуальной таблицы без whitelist имени — поверхность
+        // инъекции. Для регистров есть get_accumulation_balance / get_accounting_balance.
         if (ex.tool === "odata_query") {
           expect(a["entity"], where).not.toMatch(/[/()]/);
         }
@@ -154,9 +163,27 @@ describe("get_config_preset — инструмент", () => {
     expect(bp.verified_entities).toBeLessThanOrEqual(bp.entities);
   });
 
-  it("COMMON знает все префиксы, которые использует list_entities", () => {
-    for (const prefix of ["Catalog_", "Document_", "AccumulationRegister_", "InformationRegister_"]) {
-      expect(COMMON.entity_prefixes).toHaveProperty(prefix);
+  it("COMMON знает каждый префикс из фильтра list_entities", () => {
+    // Итерируем реальную карту, а не её копию: две таблицы префиксов в разных
+    // файлах разъезжаются молча, и первым это увидит пользователь, а не тест.
+    for (const prefixes of Object.values(ENTITY_PREFIX_FILTERS)) {
+      for (const prefix of prefixes) {
+        const known = Object.keys(COMMON.entity_prefixes).some((p) => p.startsWith(prefix));
+        expect(known, `COMMON.entity_prefixes не знает ${prefix}`).toBe(true);
+      }
     }
+  });
+
+  it("TOOL_NAMES совпадает с тем, что реально регистрирует createServer", async () => {
+    // Ручной набор наверху файла — единственное, что не даёт примерам пресетов
+    // ссылаться на несуществующий инструмент. Здесь он сверяется с живым сервером,
+    // иначе устареет молча.
+    const server = createServer();
+    const [ct, st] = InMemoryTransport.createLinkedPair();
+    const client = new Client({ name: "test", version: "0" });
+    await Promise.all([server.connect(st), client.connect(ct)]);
+    const { tools } = await client.listTools();
+    await client.close();
+    expect(new Set(tools.map((t) => t.name))).toEqual(TOOL_NAMES);
   });
 });

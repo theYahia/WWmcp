@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import {
   buildODataPath,
   buildKeyedPath,
+  buildVirtualTablePath,
   escapeODataString,
   oneCGet,
   oneCPost,
@@ -200,5 +201,54 @@ describe("oneCGet / oneCPost / oneCPatch", () => {
 
     await expect(oneCGet("/missing")).rejects.toMatchObject({ status: 404 });
     expect(mockFetch).toHaveBeenCalledOnce();
+  });
+});
+
+describe("buildVirtualTablePath", () => {
+  it("keeps the call syntax literal and encodes the entity", () => {
+    const p = buildVirtualTablePath(
+      "AccumulationRegister_ОстаткиТоваров",
+      "Balance",
+      { Period: "datetime'2026-06-01T00:00:00'" },
+      { $format: "json" },
+    );
+    // buildODataPath не подошёл бы: encodeURIComponent съедает / = , : — вызов
+    // перестал бы быть вызовом.
+    expect(p).toContain("/Balance(");
+    expect(p).toContain("Period=datetime'2026-06-01T00:00:00'");
+    expect(p).toContain(":"); // время внутри datetime не покодировано
+    expect(p.endsWith("?$format=json")).toBe(true);
+    expect(p).toContain("%D0%9E"); // кириллица имени всё-таки закодирована
+  });
+
+  it("neutralises ? # & and space inside an argument value", () => {
+    // Регрессия на живую инъекцию: до появления encodePathLiteral значение с ?
+    // перебивало собственный $format=json инструмента, а # обрезал запрос.
+    const p = buildVirtualTablePath(
+      "AccumulationRegister_X",
+      "Balance",
+      { Condition: "'A eq 1?$format=xml&x=1#frag'" },
+      { $format: "json" },
+    );
+    const url = new URL("http://h" + p);
+    expect(url.search).toBe("?$format=json");
+    expect(url.hash).toBe("");
+    expect(url.pathname).toContain("Condition=");
+    expect(p).not.toMatch(/\?\$format=xml/);
+  });
+
+  it("rejects a table name that is not plain letters", () => {
+    expect(() => buildVirtualTablePath("X", "Balance(evil)/x")).toThrow(/Invalid virtual table/);
+    expect(() => buildVirtualTablePath("X", "")).toThrow(/Invalid virtual table/);
+  });
+
+  it("omits empty arguments instead of emitting Arg=", () => {
+    const p = buildVirtualTablePath("X", "Balance", { Period: "", Condition: "'a'" });
+    expect(p).toContain("Balance(Condition='a')");
+    expect(p).not.toContain("Period=");
+  });
+
+  it("emits an empty call when there are no arguments", () => {
+    expect(buildVirtualTablePath("X", "Turnovers")).toBe("/odata/standard.odata/X/Turnovers()");
   });
 });

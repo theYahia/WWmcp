@@ -42,6 +42,7 @@ import {
 } from "./tools/constants.js";
 import {
   getAccountingRegisterSchema, handleGetAccountingRegister,
+  getAccountingBalanceSchema, handleGetAccountingBalance,
 } from "./tools/accounting.js";
 import {
   findByDescriptionSchema, handleFindByDescription,
@@ -63,6 +64,7 @@ import {
   approveWriteSchema, handleApproveWrite,
   rollbackWriteSchema, handleRollbackWrite,
 } from "./tools/safety.js";
+import { registerPresetTools } from "./tools/presets.js";
 import { getWriteMode } from "./lib/write-safety.js";
 
 export const logger = createLogger("aprovodka");
@@ -72,7 +74,7 @@ export const logger = createLogger("aprovodka");
  * (MCP handshake) here and `runServer` (the /health endpoint) in index.ts,
  * so the two can never drift apart again. Keep in sync with package.json.
  */
-export const VERSION = "4.0.0";
+export const VERSION = "4.1.0";
 
 /**
  * Single source of truth for module → tool count mapping.
@@ -82,14 +84,14 @@ export const VERSION = "4.0.0";
  * navigate an unfamiliar 1C database.
  */
 export const MODULE_TOOL_COUNTS = {
-  meta: 4,        // list_entities + get_document_by_number + get_metadata + describe_entity — always on
+  meta: 5,        // list_entities + get_document_by_number + get_metadata + describe_entity + get_config_preset — always on
   catalogs: 3,    // get_catalogs + create_catalog_item + update_catalog_item
   documents: 7,   // get/create/update + post/unpost/delete + get_document_lines
   registers: 3,   // get_register + write_information_register + get_accumulation_balance
   reports: 1,     // get_report
   odata: 1,       // odata_query
   constants: 2,   // get_constant + set_constant
-  accounting: 1,  // get_accounting_register
+  accounting: 2,  // get_accounting_register + get_accounting_balance
   shortcuts: 5,   // find_by_description + get_by_key + count_entities + set_deletion_mark + get_recent_documents
   batch: 3,       // batch_create_documents + batch_update_catalog_items + batch_query
   changes: 2,     // poll_changes_since + list_subscriptions
@@ -138,10 +140,16 @@ export function createServer(): McpServer {
   const modules = getEnabledModules();
 
   // --- Discovery (meta) — always enabled ---
+  // Единственный инструмент, работающий без ONEC_BASE_URL, — поэтому он первый:
+  // порядок регистрации это единственный намёк модели, с чего начинать. Регистрация
+  // вынесена в helper (все остальные 33 объявлены здесь инлайн) — он же держит схему.
+  registerPresetTools(server);
+
   server.tool(
     "list_entities",
     "List all available 1C OData entities: catalogs (Catalog_*), documents (Document_*), " +
-    "registers (AccumulationRegister_*, InformationRegister_*), reports (Report_*). " +
+    "all four register kinds (Accumulation/Information/Accounting/CalculationRegister_*), " +
+    "charts (ChartOf*), constants (Constant_*), journals (DocumentJournal_*), reports (Report_*). " +
     "Use this first when working with an unfamiliar database.",
     listEntitiesSchema.shape,
     withErrorHandling(async (params) => ({
@@ -357,6 +365,17 @@ export function createServer(): McpServer {
         content: [{ type: "text", text: await handleGetAccountingRegister(params) }],
       })),
     );
+
+    server.tool(
+      "get_accounting_balance",
+      "Accounting-register VIRTUAL tables (AccountingRegister_*): Balance / Turnovers / " +
+      "BalanceAndTurnovers / ExtDimensions. Not to be confused with get_accumulation_balance, " +
+      "which serves AccumulationRegister_* — this one is the double-entry ledger (счета, субконто).",
+      getAccountingBalanceSchema.shape,
+      withErrorHandling(async (params) => ({
+        content: [{ type: "text", text: await handleGetAccountingBalance(params) }],
+      })),
+    );
   }
 
   if (modules.has("shortcuts")) {
@@ -502,10 +521,14 @@ export function createServer(): McpServer {
             type: "text" as const,
             text:
               "Inventory this 1C database step by step:\n" +
-              "1. Call `list_entities` to list every OData entity.\n" +
-              "2. Group them by prefix: Catalog_ (справочники), Document_ (документы), " +
-              "InformationRegister_/AccumulationRegister_ (регистры), AccountingRegister_ (бухгалтерия), " +
-              "Constant_ (константы), Report_ (отчёты).\n" +
+              "1. Call `get_config_preset` first — it works offline and tells you which " +
+              "configuration (БП / УТ / ЗУП / ERP) you are likely looking at, with its typical " +
+              "entity names and pitfalls. Treat entities marked confidence:\"common\" as hints " +
+              "to verify, never as confirmed names.\n" +
+              "2. Call `list_entities` per group instead of grouping by hand: " +
+              "type=catalogs, documents, registers (all four kinds), charts, constants, " +
+              "journals, reports. Use type=all only for what no filter covers " +
+              "(ExchangePlan_, BusinessProcess_, Task_).\n" +
               "3. For the 5-10 most relevant entities, call `count_entities` to get row counts.\n" +
               "4. Call `describe_entity` on the key catalogs and document types to learn their fields " +
               "(use `get_metadata` only if you need exact OData types).\n" +

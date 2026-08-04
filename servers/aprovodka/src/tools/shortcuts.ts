@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { oneCGet, oneCPatch, buildODataPath, buildKeyedPath, escapeODataString } from "../client.js";
-import { refKeySchema } from "../validation.js";
+import { refKeySchema, normaliseEntity } from "../validation.js";
 
 // ──────────────────────────────────────────────────────────────
 // find_by_description — нечёткий поиск элементов по Description
@@ -92,7 +92,7 @@ export async function handleSetDeletionMark(
 // ──────────────────────────────────────────────────────────────
 
 export const getRecentDocumentsSchema = z.object({
-  document_type: z.string().describe("Тип документа (например, Document_РеализацияТоваровУслуг)"),
+  document_type: z.string().describe("Тип документа — с префиксом Document_ или без него"),
   top: z.number().int().min(1).max(100).default(10).describe("Сколько последних документов"),
   posted_only: z.boolean().default(false).describe("Только проведённые (Posted eq true)"),
 });
@@ -106,7 +106,7 @@ export async function handleGetRecentDocuments(
     $top: String(params.top),
   };
   if (params.posted_only) query["$filter"] = "Posted eq true";
-  const path = buildODataPath(params.document_type, query);
+  const path = buildODataPath(normaliseEntity("Document_", params.document_type), query);
   const result = await oneCGet(path);
   return JSON.stringify(result, null, 2);
 }

@@ -7,7 +7,7 @@
 
 > MCP server for **1C:Enterprise** REST API via OData 3.0 — catalogs, documents, registers,
 > accounting, constants, reports, batch ops & change-tracking + metadata discovery.
-> 32 tools across 11 modules. HTTP Basic auth. Stdio + Streamable HTTP transports.
+> 34 tools across 11 modules. HTTP Basic auth. Stdio + Streamable HTTP transports.
 
 [![npm](https://img.shields.io/npm/v/@theyahia/aprovodka)](https://www.npmjs.com/package/@theyahia/aprovodka)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -38,7 +38,7 @@ Tool names, arguments, return formats, and the `ONEC_*` env vars are unchanged.
 
 ---
 
-## Tools (32)
+## Tools (34)
 
 > Tools are grouped into modules. All are registered by default; the `ONEC_SERVICES`
 > env var filters which optional modules load (discovery `meta` is always on). See
@@ -48,10 +48,11 @@ Tool names, arguments, return formats, and the `ONEC_*` env vars are unchanged.
 
 | Tool | Description |
 |------|-------------|
-| `list_entities` | List all available 1C OData entities (catalogs / documents / registers / reports). Use this first when working with an unfamiliar database. |
+| `list_entities` | List all available 1C OData entities. `type` filters by group: `catalogs`, `documents`, `registers` (all four kinds), `charts` (`ChartOf*`), `constants`, `journals`, `reports`, or `all`. Use this first on an unfamiliar database. |
 | `get_document_by_number` | Locate a 1C document by its number (e.g. invoice ТД-00123 dated 2026-03-01). Convenience wrapper over `$filter`. |
 | `get_metadata` | Return the raw OData `$metadata` (EDMX/XML) describing every entity, field and type. |
 | `describe_entity` | List an entity's fields by inspecting one sample record (`$top=1`) — cheaper than full `$metadata`. |
+| `get_config_preset` | Curated OData schema for a standard configuration (БП 3.0 / УТ 11 / ЗУП 3.1 / ERP 2): typical entity names, worked examples and per-configuration pitfalls. Works **offline** — no `ONEC_BASE_URL` needed. Each entity carries `confidence`: `verified` (name found in a cited source) or `common` (typical name, unconfirmed — check it with `list_entities` before use). |
 
 ### Catalogs — `catalogs`
 
@@ -86,6 +87,7 @@ Tool names, arguments, return formats, and the `ONEC_*` env vars are unchanged.
 | Tool | Description |
 |------|-------------|
 | `get_accounting_register` | Read accounting-register records (`AccountingRegister_*`, e.g. Хозрасчетный — проводки). |
+| `get_accounting_balance` | Accounting-register **virtual tables**: `Balance`, `Turnovers`, `BalanceAndTurnovers`, `RecordsWithExtDimensions`, `ExtDimensions`. Not to be confused with `get_accumulation_balance`, which serves `AccumulationRegister_*` — this one is the double-entry ledger. Dr/Cr turnover tables are deliberately absent: their exact name is not confirmed by any source we could read, so check `get_metadata` on your own database. |
 
 ### Constants — `constants`
 
@@ -233,6 +235,10 @@ Includes session management (`mcp-session-id` header), CORS, graceful shutdown.
 | `ONEC_LOGIN` | yes | Login for HTTP Basic auth. |
 | `ONEC_PASSWORD` | yes | Password for HTTP Basic auth. |
 | `ONEC_SERVICES` | no | Comma-separated module list (default: `all`). |
+| `ONEC_WRITE_MODE` | no | Write-safety gate: `off` (default) / `preview` / `approval`. See [Write safety](#write-safety). |
+| `ONEC_APPROVAL_TTL_SEC` | no | Lifetime of a pending approval, seconds (default `300`). |
+| `ONEC_AUDIT_LOG` | no | Path to a JSONL audit ledger for every gated write. Fail-closed: if it cannot be written, the write is refused. |
+| `ONEC_AUDIT_ACTOR` | no | Actor name recorded in the ledger (defaults to `ONEC_LOGIN`). |
 | `HTTP_PORT` | no | If set, server runs in HTTP mode on this port. |
 
 **Backward-compat:** `1C_BASE_URL`, `1C_LOGIN`, `1C_PASSWORD` are also accepted as fallback.
@@ -248,6 +254,35 @@ ONEC_SERVICES=catalogs,documents npx @theyahia/aprovodka
 The discovery module `meta` (`list_entities`, `get_document_by_number`, `get_metadata`, `describe_entity`) is always registered — without it an agent cannot discover the database structure.
 
 **Safety:** set `MCP_DISABLE_SANITIZE=true` only if you trust the data source — by default tool output is scanned for prompt-injection patterns. The HTTP client refuses absolute URLs whose origin differs from `ONEC_BASE_URL`. `Ref_Key` arguments are validated as GUIDs and string values in `get_document_by_number` are OData-escaped; the raw `$filter`/`$select`/`$orderby` passthroughs are intentional, so scope what the server can read or write via the **1C user's role**, not via these arguments.
+
+---
+
+## Write safety
+
+Off by default: with `ONEC_WRITE_MODE` unset the server behaves exactly as before,
+writes go straight to 1C. Two stricter modes exist because an LLM writing into live
+accounting is a different risk class from reading it.
+
+| Mode | Behaviour |
+|------|-----------|
+| `off` (default) | Writes execute immediately. Byte-for-byte the pre-4.1 behaviour. |
+| `preview` | **Nothing is ever written.** Every mutation returns a dry-run envelope: the method, the resolved path, the diff `from` → `to`, and an `op_hash`. |
+| `approval` | Every mutation is refused once with an `op_hash`, and executes only after `approve_write` is called with that hash. Approvals are single-use and expire (`ONEC_APPROVAL_TTL_SEC`). |
+
+Two extra tools appear while the gate is on (they are absent in `off`):
+
+| Tool | Description |
+|------|-------------|
+| `approve_write` | Consume an `op_hash` and execute the pending write once. |
+| `rollback_write` | Undo a previous write by its rollback token: post ↔ unpost, deletion mark, or a PATCH back to the recorded previous values. |
+
+The interception point is a single function in `client.ts`, so no tool — present or
+future — can write around the gate. Record creation and physical `DELETE` are honestly
+reported as `irreversible_reason` rather than given a rollback token they cannot honour.
+
+Set `ONEC_AUDIT_LOG` to append every gated operation to a JSONL ledger before it runs.
+The write is refused if the ledger cannot be written, so a missing entry never means a
+silent mutation.
 
 ---
 

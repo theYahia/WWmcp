@@ -157,3 +157,63 @@ export function buildKeyedPath(
       : "";
   return `/odata/standard.odata/${keyed}${tail}${qs}`;
 }
+
+/**
+ * Percent-encode only the characters that let a value escape its path segment.
+ *
+ * `escapeODataString` closes the OData literal (a quote can't break out), but it
+ * says nothing about the URL: a `?` or `#` inside an argument still terminates
+ * the path for the WHATWG parser inside fetch, so the value silently becomes a
+ * query string or a fragment and overrides the caller's own `$format=json`.
+ * That is a real injection, not a theoretical one — hence this second layer.
+ *
+ * OData call syntax (`' ( ) , = :`) must survive, so encodeURIComponent is not
+ * usable here: it would eat `= , :` and break the call.
+ */
+function encodePathLiteral(value: string): string {
+  return value.replace(
+    /[%?#/&\s]/g,
+    (c) => "%" + c.charCodeAt(0).toString(16).toUpperCase().padStart(2, "0"),
+  );
+}
+
+/**
+ * Build a virtual-table OData path:
+ * `Entity/Table(Arg=<literal>,…)[?query]` — register balances and turnovers.
+ *
+ * `buildODataPath` cannot be reused: it runs the whole entity through
+ * `encodeURIComponent`, which percent-encodes `/ = , :` and so cannot express a
+ * call at all. Here the entity name is still encoded (Cyrillic-safe) while the
+ * call syntax stays literal, and every argument value goes through
+ * `encodePathLiteral` so it cannot terminate the path or inject a query param.
+ * Values are expected to be ready OData literals (`datetime'…'`, `'…'`) —
+ * escape their contents with `escapeODataString` before passing them in.
+ *
+ * READ-ONLY by contract. `parsePath` in lib/write-safety.ts reads the segment
+ * after the entity as a bound action and `inverseOf` branches on `Post`/`Unpost`,
+ * so routing a write through a path of this shape would produce a bogus rollback.
+ */
+export function buildVirtualTablePath(
+  entity: string,
+  table: string,
+  args?: Record<string, string>,
+  query?: Record<string, string>,
+): string {
+  // Structural backstop — callers whitelist the table, this only guarantees the
+  // name cannot itself carry path syntax.
+  if (!/^[A-Za-z]+$/.test(table)) {
+    throw new Error(`Invalid virtual table name (expected letters only): ${table}`);
+  }
+  const argList = Object.entries(args ?? {})
+    .filter(([, v]) => v !== undefined && v !== "")
+    .map(([k, v]) => `${k}=${encodePathLiteral(v)}`)
+    .join(",");
+  const qs =
+    query && Object.keys(query).length > 0
+      ? "?" +
+        Object.entries(query)
+          .map(([k, v]) => `${k}=${encodeURIComponent(v)}`)
+          .join("&")
+      : "";
+  return `/odata/standard.odata/${encodeURIComponent(entity)}/${table}(${argList})${qs}`;
+}

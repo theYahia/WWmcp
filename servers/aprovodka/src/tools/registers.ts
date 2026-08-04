@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { oneCGet, oneCPost, buildODataPath, escapeODataString } from "../client.js";
-import { odataDateTime } from "../validation.js";
+import { oneCGet, oneCPost, buildODataPath, buildVirtualTablePath, escapeODataString } from "../client.js";
+import { odataDateTime, normaliseEntity, normaliseRegisterEntity } from "../validation.js";
 
 export const getRegisterSchema = z.object({
   register_type: z.enum(["InformationRegister", "AccumulationRegister"]).describe("Тип регистра"),
-  register_name: z.string().describe("Имя регистра (например, ЦеныНоменклатуры)"),
+  register_name: z.string().describe("Имя регистра — обычно без префикса (ЦеныНоменклатуры); полное имя тоже принимается, но должно совпадать с register_type"),
   filter: z.string().optional().describe("OData $filter"),
   select: z.string().optional().describe("OData $select"),
   top: z.number().int().min(1).max(5000).default(100).describe("$top"),
@@ -13,7 +13,7 @@ export const getRegisterSchema = z.object({
 });
 
 export async function handleGetRegister(params: z.infer<typeof getRegisterSchema>): Promise<string> {
-  const entity = `${params.register_type}_${params.register_name}`;
+  const entity = normaliseRegisterEntity(params.register_type, params.register_name);
   const query: Record<string, string> = {
     $format: "json",
     $top: String(params.top),
@@ -34,14 +34,14 @@ export async function handleGetRegister(params: z.infer<typeof getRegisterSchema
 // ──────────────────────────────────────────────────────────────
 
 export const writeInformationRegisterSchema = z.object({
-  register_name: z.string().describe("Имя регистра сведений (например, ЦеныНоменклатуры)"),
+  register_name: z.string().describe("Имя регистра сведений — с префиксом InformationRegister_ или без него"),
   data: z.record(z.string(), z.unknown()).describe("Запись регистра: измерения + ресурсы (например, {\"Period\":\"2024-01-01T00:00:00\",\"Номенклатура_Key\":\"...\",\"Цена\":100})"),
 });
 
 export async function handleWriteInformationRegister(
   params: z.infer<typeof writeInformationRegisterSchema>,
 ): Promise<string> {
-  const path = buildODataPath(`InformationRegister_${params.register_name}`, { $format: "json" });
+  const path = buildODataPath(normaliseEntity("InformationRegister_", params.register_name), { $format: "json" });
   const result = await oneCPost(path, params.data);
   return JSON.stringify(result, null, 2);
 }
@@ -52,7 +52,7 @@ export async function handleWriteInformationRegister(
 // ──────────────────────────────────────────────────────────────
 
 export const getAccumulationBalanceSchema = z.object({
-  register_name: z.string().describe("Имя регистра накопления (например, ОстаткиТоваровНаСкладах)"),
+  register_name: z.string().describe("Имя регистра накопления — с префиксом AccumulationRegister_ или без него"),
   period: odataDateTime
     .optional()
     .describe("Дата среза остатков YYYY-MM-DDTHH:MM:SS (Period). Без указания — текущие остатки."),
@@ -66,12 +66,15 @@ export async function handleGetAccumulationBalance(
   params: z.infer<typeof getAccumulationBalanceSchema>,
 ): Promise<string> {
   // Виртуальный ресурс: AccumulationRegister_<name>/Balance(Period=…,Condition=…)
-  const args: string[] = [];
-  if (params.period) args.push(`Period=datetime'${params.period}'`);
-  if (params.condition) args.push(`Condition='${escapeODataString(params.condition)}'`);
-  const entity = encodeURIComponent(`AccumulationRegister_${params.register_name}`);
-  const call = args.length ? `(${args.join(",")})` : "()";
-  const path = `/odata/standard.odata/${entity}/Balance${call}?$format=json`;
+  const args: Record<string, string> = {};
+  if (params.period) args["Period"] = `datetime'${params.period}'`;
+  if (params.condition) args["Condition"] = `'${escapeODataString(params.condition)}'`;
+  const path = buildVirtualTablePath(
+    normaliseEntity("AccumulationRegister_", params.register_name),
+    "Balance",
+    args,
+    { $format: "json" },
+  );
   const result = await oneCGet(path);
   return JSON.stringify(result, null, 2);
 }

@@ -23,6 +23,7 @@ export const COMMON = {
     "AccountingRegister_": "регистры бухгалтерии",
     "BusinessProcess_": "бизнес-процессы",
     "Task_": "задачи",
+    "Report_": "отчёты",
   } as Record<string, string>,
 
   /** Стандартные поля, которые есть почти у любого объекта. */
@@ -115,9 +116,10 @@ export const COMMON = {
     "Проведённость: Posted eq true. Непроведённый документ движений в регистрах НЕ имеет — " +
       "искать проводки по такому документу бессмысленно.",
     "1С НЕ поддерживает OData $batch — пакетность в aprovodka клиентская (batch_query и др.).",
-    "list_entities с type-фильтром знает только Catalog_/Document_/AccumulationRegister_/" +
-      "InformationRegister_/Report_. Для AccountingRegister_, CalculationRegister_, " +
-      "ChartOfAccounts_, Constant_ вызывать list_entities с type=\"all\".",
+    "list_entities с type-фильтром покрывает Catalog_/Document_/все четыре вида регистров/" +
+      "ChartOf*/Constant_/DocumentJournal_/Report_. Планы обмена (ExchangePlan_), " +
+      "бизнес-процессы (BusinessProcess_) и задачи (Task_) фильтром не выбираются — " +
+      "для них вызывать list_entities с type=\"all\".",
   ],
 
   sources: [

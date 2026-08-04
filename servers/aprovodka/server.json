@@ -2,19 +2,20 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.theYahia/aprovodka",
   "title": "aprovodka",
-  "description": "MCP server for 1C:Enterprise via OData 3.0 — catalogs & documents CRUD, post/unpost, registers & balances, accounting, constants, batch ops, change-tracking, metadata discovery. 32 tools. Basic auth.",
+  "description": "MCP server for 1C:Enterprise via OData 3.0 — catalogs & documents CRUD, post/unpost, registers & balances, accounting registers incl. virtual tables, constants, batch ops, change-tracking, metadata discovery, curated config presets. 34 tools. Basic auth.",
   "repository": {
-    "url": "https://github.com/theYahia/aprovodka",
-    "source": "github"
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/aprovodka"
   },
-  "version": "4.0.0",
+  "version": "4.1.0",
   "websiteUrl": "https://github.com/theYahia/aprovodka",
   "packages": [
     {
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "@theyahia/aprovodka",
-      "version": "4.0.0",
+      "version": "4.1.0",
       "transport": {
         "type": "stdio"
       },
@@ -41,6 +42,18 @@
         {
           "name": "ONEC_SERVICES",
           "description": "Comma-separated module list to register (default: all). Modules: catalogs, documents, registers, accounting, constants, shortcuts, reports, odata, batch, changes, meta",
+          "isRequired": false,
+          "format": "string"
+        },
+        {
+          "name": "ONEC_WRITE_MODE",
+          "description": "Write-safety gate: off (default, writes execute directly) | preview (dry-run only, nothing is written) | approval (each write needs a one-time approve_write)",
+          "isRequired": false,
+          "format": "string"
+        },
+        {
+          "name": "ONEC_AUDIT_LOG",
+          "description": "Path to a JSONL audit ledger. Every gated write is appended before execution; if the file cannot be written the operation is refused (fail-closed)",
           "isRequired": false,
           "format": "string"
         }

@@ -1,18 +1,49 @@
 import { z } from "zod";
 import { oneCGet, buildODataPath, escapeODataString } from "../client.js";
-import { odataDate } from "../validation.js";
+import { odataDate, normaliseEntity } from "../validation.js";
 
 // ──────────────────────────────────────────────────────────────
 // list_entities — discovery: список всех сущностей базы 1С
 // ──────────────────────────────────────────────────────────────
 
+/**
+ * Какие префиксы OData попадают под каждое значение фильтра `type`.
+ *
+ * Экспортируется, чтобы тест мог сверить карту с `COMMON.entity_prefixes`
+ * (`src/presets/common.ts`) вместо ручного дублирования списка. Обратный импорт
+ * — из `common.ts` сюда — сознательно не сделан: там форма `префикс → русское
+ * существительное`, а нужна `тип → префиксы[]`, и он затянул бы всё поддерево
+ * пресетов в путь discovery.
+ *
+ * `charts` намеренно один: в 1С три разных плана (ChartOfAccounts_,
+ * ChartOfCalculationTypes_, ChartOfCharacteristicTypes_), и дробить их на три
+ * значения enum ради полноты — менять одну ловушку на другую.
+ */
+export const ENTITY_PREFIX_FILTERS: Record<string, string[]> = {
+  catalogs:  ["Catalog_"],
+  documents: ["Document_"],
+  registers: [
+    "AccumulationRegister_",
+    "InformationRegister_",
+    "AccountingRegister_",
+    "CalculationRegister_",
+  ],
+  charts:    ["ChartOf"],
+  constants: ["Constant_"],
+  journals:  ["DocumentJournal_"],
+  reports:   ["Report_"],
+};
+
 export const listEntitiesSchema = z.object({
   type: z
-    .enum(["all", "catalogs", "documents", "registers", "reports"])
+    .enum(["all", "catalogs", "documents", "registers", "charts", "constants", "journals", "reports"])
     .default("all")
     .describe(
       "Фильтр по типу: all — все сущности, catalogs — справочники (Catalog_*), " +
-      "documents — документы (Document_*), registers — регистры (AccumulationRegister_*, InformationRegister_*), " +
+      "documents — документы (Document_*), registers — все четыре вида регистров " +
+      "(AccumulationRegister_*, InformationRegister_*, AccountingRegister_*, CalculationRegister_*), " +
+      "charts — планы счетов, видов расчёта и видов характеристик (ChartOf*), " +
+      "constants — константы (Constant_*), journals — журналы документов (DocumentJournal_*), " +
       "reports — отчёты (Report_*)",
     ),
   search: z
@@ -33,13 +64,7 @@ export async function handleListEntities(
 
   // Фильтрация по типу
   if (params.type !== "all") {
-    const prefixMap: Record<string, string[]> = {
-      catalogs:  ["Catalog_"],
-      documents: ["Document_"],
-      registers: ["AccumulationRegister_", "InformationRegister_"],
-      reports:   ["Report_"],
-    };
-    const prefixes = prefixMap[params.type] ?? [];
+    const prefixes = ENTITY_PREFIX_FILTERS[params.type] ?? [];
     entities = entities.filter((e) =>
       prefixes.some((p) => e.name.startsWith(p)),
     );
@@ -68,7 +93,7 @@ export async function handleListEntities(
 export const getDocumentByNumberSchema = z.object({
   document_type: z
     .string()
-    .describe("Тип документа (например, Document_РеализацияТоваровУслуг)"),
+    .describe("Тип документа — с префиксом Document_ или без него"),
   number: z.string().describe("Номер документа"),
   date: odataDate
     .optional()
@@ -95,7 +120,7 @@ export async function handleGetDocumentByNumber(
   };
   if (params.select) query["$select"] = params.select;
 
-  const path = buildODataPath(params.document_type, query);
+  const path = buildODataPath(normaliseEntity("Document_", params.document_type), query);
   const result = await oneCGet(path);
   return JSON.stringify(result, null, 2);
 }

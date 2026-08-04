@@ -22,6 +22,7 @@
 
 import { z } from "zod";
 import { oneCGet, oneCPost, oneCPatch, buildODataPath, buildKeyedPath } from "../client.js";
+import { normaliseEntity } from "../validation.js";
 
 // ──────────────────────────────────────────────────────────────────────────
 // Concurrency primitive — simple promise pool, no external deps
@@ -115,7 +116,7 @@ const NATIVE_BATCH_NOTE =
 export async function handleBatchCreateDocuments(
   params: z.infer<typeof batchCreateDocumentsSchema>,
 ): Promise<string> {
-  const path = buildODataPath(params.document_type, { $format: "json" });
+  const path = buildODataPath(normaliseEntity("Document_", params.document_type), { $format: "json" });
 
   const results = await runInPool(
     params.documents,
@@ -179,7 +180,7 @@ export async function handleBatchUpdateCatalogItems(
       // buildKeyedPath (not buildODataPath) so the (guid'…') tuple stays
       // structural — buildODataPath would percent-encode it — and the GUID
       // is validated per-item (a bad key fails just that item, not the batch).
-      const path = buildKeyedPath(params.catalog_name, u.ref_key, undefined, { $format: "json" });
+      const path = buildKeyedPath(normaliseEntity("Catalog_", params.catalog_name), u.ref_key, undefined, { $format: "json" });
       return oneCPatch(path, u.data);
     },
   );

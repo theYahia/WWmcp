@@ -14,8 +14,8 @@ export const zup31: ConfigPreset = {
   aliases: ["зуп", "зуп31", "зуп 3.1", "зарплата", "кадры", "hr", "payroll", "zup"],
   summary:
     "Кадровый учёт и расчёт зарплаты. Две принципиальные особенности: " +
-    "(1) суммы живут в РЕГИСТРАХ РАСЧЁТА (CalculationRegister_*) — префикс, которого нет " +
-    "в типовом фильтре list_entities, вызывать с type=\"all\"; " +
+    "(1) суммы живут в РЕГИСТРАХ РАСЧЁТА (CalculationRegister_*) — их отдаёт " +
+    "list_entities с type=\"registers\"; " +
     "(2) вся база — это персональные данные (152-ФЗ), включая специальные категории " +
     "(здоровье, дети, инвалидность). Выгрузка требует правового основания.",
 
@@ -138,8 +138,8 @@ export const zup31: ConfigPreset = {
     {
       title: "Шаг 0 на незнакомой базе ЗУП — увидеть регистры расчёта",
       tool: "list_entities",
-      args: { type: "all", search: "CalculationRegister" },
-      note: "Обязательно type=\"all\": фильтр registers покрывает только Accumulation/Information.",
+      args: { type: "registers", search: "CalculationRegister" },
+      note: "Фильтр registers покрывает все четыре вида регистров, включая CalculationRegister_.",
     },
     {
       title: "Проверить точное имя справочника подразделений",
