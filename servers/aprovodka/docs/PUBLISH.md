@@ -1,97 +1,89 @@
 # Публикация aprovodka — runbook
 
-Один файл на весь выпуск. Всё, что автоматизируемо, уже сделано в репозитории;
-здесь только шаги, требующие входа в аккаунт или решения человека.
+Один файл на весь выпуск. Всё, что автоматизируемо, сделано; здесь остались только
+шаги, требующие входа в аккаунт, денег или подписи человека.
 
-**Состояние на 2026-08-04.** `@theyahia/aprovodka` на npm отдаёт **404** — пакет
-никогда не публиковался. В MCP Registry живёт только старое имя
-`io.github.theYahia/1c-rest-mcp` (версии 1.0.1 и 1.2.1, обе `active`). Карточки
-Smithery нет ни под старым, ни под новым слугом.
+**Состояние на 2026-08-10.**
 
----
-
-## 0. Почему 404 держался так долго
-
-Не из-за 2FA. Причина была структурной, и её сняли в этой ветке:
-
-- на `main` пакет был **запрещён к публикации** с 23.06 (PR #51): `private: true`
-  в манифесте + `ignore: ["@theyahia/1c-rest-mcp"]` в `.changeset/config.json`;
-- посылка PR #51 («canonical home — отдельный репозиторий, он и публикует») не
-  выполнялась: в `theYahia/aprovodka` лежит код **v3.2.0 под старым именем**, а
-  релизного workflow там нет вообще, только `ci.yml`;
-- вся работа по aprovodka сидела на ветке `feat/wildberries-multi-host` вперемешку
-  с чужими коммитами, а блиц 04.08 вообще не был закоммичен.
-
-**Решение:** публикуем из монорепо — там новейший код, тесты и релизный CI.
-`theYahia/aprovodka` остаётся витриной (8★ и редирект со старого URL сохранены).
+| Канал | Состояние |
+|---|---|
+| npm `@theyahia/aprovodka` | ✅ **опубликован**, актуальная версия — см. `npm view @theyahia/aprovodka version` |
+| npm `@theyahia/1c-rest-mcp` | ⬜ живой, 439 загрузок/мес, **не** помечен устаревшим |
+| MCP Registry | ⬜ записи `aprovodka` нет; старая `io.github.theYahia/1c-rest-mcp` активна |
+| Smithery | ⬜ карточки нет ни под одним слугом |
+| Сайт продукта | ✅ https://theyahia.github.io/aprovodka/ — продукт, оферта, страница под поисковый запрос |
+| Домены `aprovodka.ru` / `.com` | ⬜ свободны, ~1 700 ₽/год |
 
 ---
 
-## 1. Проверено автоматикой — повторять не нужно
+## 0. Что уже проверено — повторять не нужно
 
 | Что | Результат |
 |---|---|
-| `workspace:*` резолвится при упаковке | ✅ в манифесте тарбола `"@theyahia/mcp-core": "1.1.0"`, а не `workspace:*` |
-| Тарбол ставится с нуля | ✅ `npm i` из `.tgz` → 95 пакетов, `mcp-core@1.1.0` тянется с npm |
-| Установленный пакет стартует | ✅ `/health` → `{"server":"aprovodka","version":"4.1.0","tools":34}` |
+| `workspace:*` резолвится при упаковке | ✅ в манифесте тарбола `"@theyahia/mcp-core": "1.1.0"` |
+| Пакет ставится с нуля из реестра | ✅ `npm i @theyahia/aprovodka` → 92 пакета, сервер стартует |
+| `tools/list` опубликованного пакета | ✅ 34 инструмента, все описания русские |
 | `private: true` в манифесте | ✅ отсутствует |
-| `.changeset/config.json` | ✅ `ignore` пуст, мёртвого `@theyahia/1c-rest-mcp` нет |
-| MCPB-бандл | ✅ `mcpb/aprovodka-4.1.0.mcpb`, 3.3 МБ, манифест проходит схему, 34 инструмента |
-| Сервер из распакованного бандла | ✅ стартует, отдаёт 34 инструмента |
+| `.changeset/config.json` | ✅ `ignore` пуст |
+| MCPB-бандл | ✅ `mcpb/aprovodka-4.2.0.mcpb`, манифест проходит схему, 34 инструмента |
 
-Пересобрать бандл после правок кода: `pnpm build && node scripts/build-mcpb.mjs`.
+Пересобрать бандл после правок кода — **обязательно перед публикацией в Smithery**,
+иначе в каталог уедет старая сборка:
+
+```bash
+cd ~/WWmcp && pnpm build && cd servers/aprovodka && node scripts/build-mcpb.mjs
+```
 
 ---
 
-## 2. npm — публикация
+## 1. npm — как это работает дальше
 
-`.changeset/` намеренно пуст, поэтому `changesets/action` на `main` **не** будет
-открывать промежуточный Version-Packages PR, а сразу выполнит `pnpm release`
-(= `turbo build && changeset publish`). `changeset publish` публикует любой пакет,
-чьей локальной версии нет в реестре, — то есть `aprovodka@4.1.0`.
+Релиз идёт через changesets и **не требует рук**:
 
-**Основной путь — просто смержить PR в `main`.** OTP не требуется: CI
-аутентифицируется секретом `NPM_TOKEN`.
+1. правка кода → в тот же PR кладётся файл `.changeset/<имя>.md` с уровнем (`patch` / `minor` / `major`);
+2. мерж PR в `main` → `changesets/action` открывает Version-PR «chore: version packages»;
+3. мерж Version-PR → сборка и публикация по секрету `NPM_TOKEN`, без OTP, плюс git-тег.
 
-⚠️ Валидность `NPM_TOKEN` снаружи проверить нельзя. Если Actions упадёт на
-`npm publish`, есть ручной путь:
+Без changeset **публикации не будет** — правки останутся в репозитории и до
+пользователей не доедут. Это самая частая ошибка в этой схеме.
+
+Запасной путь, если `NPM_TOKEN` протух:
 
 ```bash
-cd D:/Yahia/active/wwmcps/WWmcp/servers/aprovodka
+cd ~/WWmcp/servers/aprovodka
 # именно pnpm: npm publish НЕ понимает workspace: и опубликует битый манифест
 pnpm publish --access public --no-git-checks --otp=NNNNNN
 ```
 
-`--no-git-checks` обязателен: pnpm по умолчанию отказывается публиковать из
-грязного дерева и не с ветки `main`.
+---
 
-Проверка:
+## 2. Увести старое имя ⬜
 
-```bash
-npm view @theyahia/aprovodka version              # → 4.1.0
-npm view @theyahia/aprovodka dependencies         # → @theyahia/mcp-core: 1.1.0
-```
-
-### Увести старое имя
+439 загрузок в месяц продолжают идти на пакет, который больше не развивается.
+Это единственное действие, возвращающее их на новое имя.
 
 ```bash
+npm login                                  # на Маке учётки нет — вход через браузер
 npm deprecate @theyahia/1c-rest-mcp "Renamed to @theyahia/aprovodka. Install @theyahia/aprovodka instead."
+npm view @theyahia/1c-rest-mcp deprecated  # проверка
 ```
 
-Unpublish недоступен спустя 72 ч, поэтому старое имя останется на npm навсегда —
-задача только в том, чтобы оно указывало на новое. Alias-шима сознательно нет:
-он не дал бы ничего сверх указателя, зато потребовал бы вечной поддержки.
-Цена вопроса мала: у старого пакета 563 загрузки/мес, названных пользователей нет.
+Unpublish недоступен спустя 72 часа, поэтому старое имя останется на npm навсегда —
+задача только в том, чтобы оно указывало на новое. Alias-шима сознательно нет: он не
+дал бы ничего сверх указателя, зато потребовал бы вечной поддержки.
+
+> Альтернатива без `npm login`: выдать `gh` право на workflow (`gh auth refresh -s workflow`)
+> и провести операцию через Actions тем же секретом `NPM_TOKEN`, которым идёт публикация.
 
 ---
 
-## 3. MCP Registry
+## 3. MCP Registry ⬜
 
-Требует npm-публикации из шага 2 (реестр проверяет наличие пакета).
+Реестр проверяет наличие пакета в npm — шаг 1 уже пройден, ограничений нет.
 
 ```bash
-mcp-publisher login github
-mcp-publisher publish                     # читает server.json
+npx mcp-publisher login github             # OAuth в браузере
+npx mcp-publisher publish                  # читает server.json
 curl -s "https://registry.modelcontextprotocol.io/v0/servers?search=aprovodka"
 ```
 
@@ -100,58 +92,92 @@ curl -s "https://registry.modelcontextprotocol.io/v0/servers?search=aprovodka"
 смену статуса, и он требует лишь доступа `publish/edit`, admin не нужен:
 
 ```bash
-mcp-publisher status --status deprecated --all-versions -y io.github.theYahia/1c-rest-mcp
+npx mcp-publisher status --status deprecated --all-versions -y io.github.theYahia/1c-rest-mcp
 # убедиться, что новая запись отдаётся поиском, и только тогда:
-mcp-publisher status --status deleted    --all-versions -y io.github.theYahia/1c-rest-mcp
+npx mcp-publisher status --status deleted    --all-versions -y io.github.theYahia/1c-rest-mcp
 ```
 
 ---
 
-## 4. Smithery
+## 4. Smithery ⬜
 
 Карточки нет ни под одним слугом → это **первичная публикация**, а не обновление.
 `smithery.yaml` со `startCommand` платформой больше не читается: для stdio-сервера
 остался единственный путь — MCPB-бандл.
 
 ```bash
-smithery auth login                       # OAuth в браузере
-smithery auth whoami
-smithery namespace list                   # проверить, нет ли unlisted-карточки со старым слугом
-smithery namespace create theyahia        # если namespace ещё нет (Hobby-free = до 3)
-smithery mcp publish ./mcpb/aprovodka-4.1.0.mcpb -n theyahia/aprovodka
+npx @smithery/cli login                    # OAuth в браузере
+npx @smithery/cli namespace list           # проверить, нет ли unlisted-карточки со старым слугом
+npx @smithery/cli namespace create theyahia
+npx @smithery/cli mcp publish ./mcpb/aprovodka-4.2.0.mcpb -n theyahia/aprovodka
 ```
+
+⚠️ Перед публикацией сверить имя файла бандла с текущей версией пакета — в каталог
+должна уехать та же сборка, что лежит в npm.
 
 Проверка: `curl -s https://registry.smithery.ai/servers/theyahia/aprovodka` → 200.
 
-Если на шаге `namespace list` старая карточка `theyahia/1c-rest-mcp` всё-таки
-найдётся — вместо публикации делается перенос
-`POST /servers/theyahia/1c-rest-mcp/transfer` с `targetSlug: "aprovodka"`
-(`targetOrganizationId` виден только в аккаунте). Редирект со старого слуга нигде
-не документирован — считать, что его нет, и обновить ссылки.
+Если старая карточка `theyahia/1c-rest-mcp` всё-таки найдётся — вместо публикации
+делается перенос `POST /servers/theyahia/1c-rest-mcp/transfer` с `targetSlug: "aprovodka"`.
+Редирект со старого слуга нигде не документирован — считать, что его нет.
 
 ---
 
-## 5. Порядок и что от чего зависит
+## 5. Домены и сайт ⬜
 
-```
-мерж PR в main
-      ├─► npm publish (CI, автоматически)
-      │        ├─► npm deprecate старого имени        (руками, 1 мин)
-      │        ├─► MCP Registry publish → снять старую (руками, 15 мин)
-      │        └─► Smithery publish бандла             (руками, 15 мин)
-      └─► домены aprovodka.ru / .com                   (независимо, ~1 700 ₽)
-```
+Сайт живёт на GitHub Pages из репозитория-витрины `theYahia/aprovodka`, каталог `/docs`.
+Страницы: продукт, договор-оферта, разбор «как подключить ИИ-агента к базе 1С»,
+`sitemap.xml`, `robots.txt`.
 
-Домены стоит занять **до** того, как имя разойдётся по реестрам. На 04.08
-`aprovodka.ru`, `.com`, `.dev` и `апроводка.рф` свободны; `.ru` 199-200 ₽
-регистрация / 399-420 ₽ продление, `.com` 1490-1560 / 1790-1810 ₽. Цена `.dev`
-у российских регистраторов не подтверждена.
+Занять домены (перепроверено 10.08 — свободны, ~1 700 ₽/год), затем:
+
+1. в репозитории-витрине создать `docs/CNAME` со строкой `aprovodka.ru`;
+2. у регистратора прописать записи `A` на адреса GitHub Pages и `www` → `theyahia.github.io`;
+3. в настройках Pages включить проверку домена и `Enforce HTTPS`;
+4. заменить абсолютные ссылки в `sitemap.xml`, `robots.txt` и `<link rel="canonical">`.
+
+> ⚠️ GitHub Pages — зарубежная инфраструктура. Для подачи в реестр Минцифры это
+> слабый сигнал: зависимость от зарубежных сервисов названа реальным риском отказа.
+> Перед подачей сайт стоит перенести на российский хостинг.
 
 ---
 
-## 6. После публикации
+## 6. Реквизиты правообладателя ⬜
 
-- В `theYahia/aprovodka` поправить `package.json` — он до сих пор объявляет себя
-  `@theyahia/1c-rest-mcp` v3.2.0. Репозиторий — витрина; код живёт в монорепо.
-- Обновить `ROADMAP.md`: пункты «npm publish», «MCP Registry — публикация»,
-  «Smithery — публикация» закрываются, дашборд `:4444/#1c` читает их оттуда.
+Девять полей руководства не заполняются автоматически — их нет ни в коде, ни в
+дистрибутиве. Без них документ не примет **ни один** вендорский трек: это
+обязательные пункты состава, а не пожелание.
+
+- `docs/manual/01-vvedenie.md` — титул: ФИО, ОПФ, ИНН, ОГРНИП, адрес, e-mail, сайт продукта;
+  там же наименование службы поддержки и адрес для обращений;
+- `docs/manual/12-prilozheniya.md` §11.3 — правообладатель и каналы обращения;
+- `docs/oferta.html` в репозитории-витрине — раздел 12 и срок гарантии.
+
+После правки — `node scripts/build-manual.mjs`. В `MANUAL.ru.md` руками не писать:
+файл собирается из `docs/manual/*.md` и будет перезатёрт.
+
+Поле «Сайт продукта» закрывается только шагом 5.
+
+---
+
+## 7. Порядок и что от чего зависит
+
+```
+npm publish ✅ (сделано)
+      ├─► npm deprecate старого имени         ⬜ 1 мин   — нужен npm login
+      ├─► MCP Registry publish → снять старую ⬜ 15 мин  — нужен OAuth
+      └─► Smithery publish бандла             ⬜ 15 мин  — нужен OAuth
+домены ⬜ ~1 700 ₽
+      └─► CNAME + канонические ссылки
+            └─► реквизиты в руководство и оферту ⬜
+                  ├─► реестр Минцифры (ПП №1937, ~30 раб. дней)
+                  └─► «1С:Совместимо» → sovmestimo@1c.ru
+```
+
+Домены и реквизиты — на критическом пути вендорского трека: без сайта и реквизитов
+руководство недоводимо до подачи в принципе. Публикации в реестрах от них не зависят
+и делаются в любой момент.
+
+Черновики писем в обе площадки готовы — `docs/checklist-2026-08-04/letters.md`.
+Статья для Инфостарта готова — `docs/article-infostart.md`, заголовок уже без «1С»
+(правила площадки запрещают товарный знак в наименовании и в заголовке публикации).
