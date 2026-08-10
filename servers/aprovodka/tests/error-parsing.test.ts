@@ -24,7 +24,7 @@ describe("parseOneCError", () => {
     const body = '{"odata.error":{"code":"-1","message":{"value":"Поле Контрагент не заполнено"}}}';
     const r = parseOneCError(body)!;
     expect(r.category).toBe("field_required");
-    expect(r.suggestion).toMatch(/mandatory|required/i);
+    expect(r.suggestion).toMatch(/обязательн|реквизит/i);
   });
 
   it("recognises type-mismatch", () => {
@@ -37,7 +37,7 @@ describe("parseOneCError", () => {
     const body = '{"odata.error":{"message":{"value":"Нарушение прав доступа к объекту"}}}';
     const r = parseOneCError(body)!;
     expect(r.category).toBe("permission_denied");
-    expect(r.suggestion).toMatch(/administrator|role/i);
+    expect(r.suggestion).toMatch(/администратор|рол/i);
   });
 
   it("recognises posting-failed", () => {
@@ -92,7 +92,7 @@ describe("formatOneCErrorHint", () => {
     const line = formatOneCErrorHint(r);
     expect(line).toMatch(/^\[1C object_not_found\]/);
     expect(line).toContain("Объект не найден");
-    expect(line).toContain("Suggestion:");
+    expect(line).toContain("Подсказка:");
   });
 });
 
