@@ -15,6 +15,10 @@
     "build:core": "turbo build --filter=@theyahia/mcp-core",
     "dev": "turbo dev",
     "test": "turbo test",
+    "catalog:refresh": "node scripts/catalog-refresh.mjs",
+    "catalog": "node scripts/gen-catalog.mjs",
+    "catalog:check": "node scripts/gen-catalog.mjs --check",
+    "catalog:verify": "node scripts/verify-catalog.mjs",
     "test:e2e": "turbo test:e2e",
     "lint": "turbo lint",
     "clean": "turbo clean",
@@ -27,6 +31,7 @@
   "devDependencies": {
     "@changesets/cli": "^2.31.0",
     "turbo": "^2.9.12",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "^4.1.10"
   }
 }

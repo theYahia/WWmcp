@@ -1,0 +1,65 @@
+# Servers by other people that beat ours, or that cover ground we deliberately
+# do not. Rendered into both READMEs by scripts/gen-catalog.mjs.
+#
+# This section exists because a catalog that only ever recommends its own
+# packages is a storefront, not a catalog. Sending a user to a better server is
+# the cheapest trust we can buy — and the one thing a vendor selling its own
+# MCP servers structurally cannot copy.
+#
+# verifiedOn is the date the repo was last confirmed live via the GitHub API.
+alternatives:
+  - area: Avito
+    repo: elchin92/avito-mcp
+    why_en: 148 tools from Avito's 18 official swagger files, OAuth 2.1 remote transport, dry-run and idempotency keys. Ours has 3 tools.
+    why_ru: 148 инструментов из 18 официальных swagger-файлов Avito, OAuth 2.1, dry-run и ключи идемпотентности. У нас — 3 инструмента.
+    verifiedOn: 2026-08-10
+  - area: Wildberries + Ozon (full API surface)
+    repo: ilyautov/marketplaces-mcp-ru
+    why_en: 793 methods from the official OpenAPI specs behind 8 meta-tools, with a read/write/destructive confirmation ladder and one-click installers.
+    why_ru: 793 метода из официальных OpenAPI-спек через 8 мета-инструментов, лестница подтверждений read/write/destructive и установщики в один клик.
+    verifiedOn: 2026-08-10
+  - area: RU marketplaces without any API key
+    repo: Vladimir-Human/ru-marketplace-mcp
+    why_en: Nine Russian marketplaces plus Taobao with zero credentials required — anonymous HTTP or your own browser. Start here if you just want to read prices.
+    why_ru: Девять российских маркетплейсов и Taobao вообще без учётных данных — анонимный HTTP или ваш собственный браузер. Начните отсюда, если нужно просто читать цены.
+    verifiedOn: 2026-08-10
+  - area: Ozon Seller + Performance
+    repo: PCDCK/ozon-mcp
+    why_en: 466 methods behind 15 meta-tools with bilingual BM25 search, per-endpoint semaphores and curated safety warnings.
+    why_ru: 466 методов через 15 мета-инструментов, двуязычный BM25-поиск, семафоры на эндпоинт и выверенные предупреждения об опасных операциях.
+    verifiedOn: 2026-08-10
+  - area: Yandex Search
+    repo: yandex/yandex-search-mcp-server
+    why_en: Official, from Yandex. Use it instead of ours.
+    why_ru: Официальный, от Яндекса. Используйте его вместо нашего.
+    verifiedOn: 2026-08-10
+  - area: Yandex Cloud
+    repo: yandex-cloud/mcp
+    why_en: Official suite of 10 servers plus a hosted endpoint. An npm wrapper cannot compete with that.
+    why_ru: Официальный набор из 10 серверов и хостед-endpoint. Обёртка на npm с этим конкурировать не может.
+    verifiedOn: 2026-08-10
+  - area: Yandex Tracker
+    repo: aikts/yandex-tracker-mcp
+    why_en: 39 tools, OAuth with refresh, Redis caching, one-click .mcpb install, EN+RU docs. The quality bar for this whole category.
+    why_ru: 39 инструментов, OAuth с обновлением токена, кэш на Redis, установка в один клик через .mcpb, документация на двух языках. Планка качества для всей категории.
+    verifiedOn: 2026-08-10
+  - area: Yandex Direct / Metrika / Wordstat
+    repo: Yurich-ru/yandex-ads-mcp
+    why_en: 150 tools covering Direct, Metrika, Audience and Wordstat in one server.
+    why_ru: 150 инструментов — Директ, Метрика, Аудитории и Вордстат в одном сервере.
+    verifiedOn: 2026-08-10
+  - area: 1C developer tooling (metadata, BSL, tests)
+    repo: vladimir-kharin/1c_mcp
+    why_en: The reference approach for driving 1C from an agent. We deliberately stay in the data lane and do not compete here.
+    why_ru: Эталонный подход к работе с 1С из агента. Мы сознательно остаёмся в линии данных и здесь не конкурируем.
+    verifiedOn: 2026-08-10
+  - area: 1C MCP servers — the catalog
+    repo: Untru/1c-mcp
+    why_en: The curated list every 1C developer reads before choosing a server.
+    why_ru: Курируемый список, который читает каждый 1С-разработчик перед выбором сервера.
+    verifiedOn: 2026-08-10
+  - area: Telegram Bot API
+    repo: timoncool/telegram-api-mcp
+    why_en: Full Bot API coverage. We do not ship a Telegram server and do not intend to.
+    why_ru: Полное покрытие Bot API. Своего Telegram-сервера у нас нет и не планируется.
+    verifiedOn: 2026-08-10

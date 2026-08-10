@@ -1,0 +1,39 @@
+name: Catalog
+
+# The catalog is generated from what is actually published. Hand-editing the
+# README tables is how this repo ended up advertising versions that were never
+# released and a package that does not exist. This job makes that impossible.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  drift:
+    name: README matches catalog/servers.yaml
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Catalog heuristics still correct
+        run: pnpm exec vitest run scripts/lib/npm.test.mjs
+      - name: README is in sync with the catalog
+        run: node scripts/gen-catalog.mjs --check
+
+  truth:
+    name: Catalog matches npm (scheduled)
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: Every advertised package resolves on npm at the stated version
+        run: node scripts/verify-catalog.mjs
