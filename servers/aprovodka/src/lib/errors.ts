@@ -10,7 +10,7 @@
  * Both contain Russian text like "Объект не найден" or "Поле не заполнено".
  * For an LLM caller, surfacing the raw Russian is fine but it cannot self-recover
  * without a hint about what to try next.  This module maps the most common
- * error patterns to English-language recovery suggestions.
+ * error patterns to Russian-language recovery suggestions.
  *
  * NOTE: This is NOT a replacement for `@theyahia/mcp-core`'s `createToolError`
  * which categorises by HTTP status. This is an *additional* layer that runs
@@ -37,7 +37,7 @@ export interface OneCErrorParseResult {
     | "unknown";
   /** Human-readable English summary. */
   summary: string;
-  /** Actionable next-step suggestion for the LLM/operator. */
+  /** Подсказка о следующем шаге для модели или оператора. */
   suggestion: string;
 }
 
@@ -55,74 +55,74 @@ const PATTERNS: Array<{
   {
     re: /Объект не найден|Object not found|по ссылке не найден/i,
     category: "object_not_found",
-    summary: "1C object not found by reference / Ref_Key",
+    summary: "Объект 1С не найден по ссылке Ref_Key",
     suggestion:
-      "The Ref_Key (GUID) does not match any object in the database. " +
-      "Call `list_entities` to verify the entity name, then `get_documents` or `get_catalogs` to find a valid Ref_Key.",
+      "GUID в `Ref_Key` не соответствует ни одному объекту базы. " +
+      "Проверить имя сущности через `list_entities`, затем найти действительный `Ref_Key` через `get_documents` или `get_catalogs`.",
   },
   {
     re: /Поле .*? не заполнено|Field .*? is required|Не заполнено значение/i,
     category: "field_required",
-    summary: "Required field missing in 1C object",
+    summary: "Не заполнен обязательный реквизит объекта 1С",
     suggestion:
-      "1C rejected the payload because a mandatory field was empty. " +
-      "Inspect the error text for the field name and add it to `data`. " +
-      "Use `list_entities` + metadata exploration to discover required fields.",
+      "1С отклонила запись из-за пустого обязательного реквизита. " +
+      "Имя реквизита указано в тексте ошибки — добавить его в `data`. " +
+      "Состав полей смотреть через `list_entities` и разбор метаданных.",
   },
   {
     re: /несоответствие типов|Type mismatch|Несоответствие типа/i,
     category: "type_mismatch",
-    summary: "Field value has wrong type",
+    summary: "Значение реквизита имеет неверный тип",
     suggestion:
-      "A field was sent with the wrong type. Common cases: dates must be `datetime'YYYY-MM-DDTHH:mm:ss'`, " +
-      "Ref values must be objects `{Ref_Key, Type}`, booleans must be true/false (not 0/1).",
+      "Значение отправлено не того типа. Типовые случаи: даты — `datetime'ГГГГ-ММ-ДДTчч:мм:сс'`, " +
+      "ссылки — объект `{Ref_Key, Type}`, булево — `true`/`false`, а не 0/1.",
   },
   {
     re: /Нарушение прав доступа|Permission denied|Недостаточно прав/i,
     category: "permission_denied",
-    summary: "1C user lacks required role/permissions",
+    summary: "У пользователя 1С нет нужной роли или прав",
     suggestion:
-      "The 1C user has no permission for this entity/operation. " +
-      "Ask the 1C administrator to grant the required role; the API key/user itself is valid.",
+      "У пользователя 1С нет права на этот объект или операцию. " +
+      "Учётные данные при этом верны — нужна выдача роли администратором 1С.",
   },
   {
     re: /Документ не может быть проведен|Posting failed|Не удалось провести/i,
     category: "posting_failed",
-    summary: "Document posting failed (business logic rejection)",
+    summary: "Проведение документа отклонено бизнес-логикой",
     suggestion:
-      "1C posting rules rejected the document. Check that referenced entities (counterparty, organization, " +
-      "warehouse) are valid and active, and that posting period is open.",
+      "Проведение отклонено бизнес-логикой конфигурации. Проверить, что контрагент, организация " +
+      "и склад действительны и не помечены на удаление, а период не закрыт.",
   },
   {
     re: /пометка удаления|Cannot delete|удаление запрещено/i,
     category: "deletion_locked",
-    summary: "Object is locked or referenced elsewhere",
+    summary: "Объект заблокирован или используется другими документами",
     suggestion:
-      "1C refuses deletion because the object is referenced by other documents. " +
-      "Set `DeletionMark: true` via `update_document` instead of hard-delete.",
+      "1С отказывает в удалении: объект используется другими документами. " +
+      "Вместо физического удаления выставить `DeletionMark: true` — инструмент `set_deletion_mark`.",
   },
   {
     re: /Неверный.*?GUID|Invalid GUID|guid'.*?'.*?invalid|неправильный формат идентификатора/i,
     category: "invalid_guid",
-    summary: "Malformed GUID/Ref_Key",
+    summary: "Некорректный GUID в Ref_Key",
     suggestion:
-      "Ref_Key must be a 36-character UUID (e.g. `bd5a3c14-...`). Check the value passed to `ref_key`.",
+      "`Ref_Key` должен быть 36-символьным UUID (например, `bd5a3c14-…`). Проверить значение аргумента `ref_key`.",
   },
   {
     re: /сеанс.*?(заблокирован|locked)|database is locked|Блокировка/i,
     category: "session_locked",
-    summary: "1C database/session is temporarily locked",
+    summary: "База или сеанс 1С временно заблокированы",
     suggestion:
-      "Another 1C session holds a lock (e.g. background scheduled job, restore, configuration update). " +
-      "Wait 10-60 seconds and retry. If persists — contact 1C administrator.",
+      "Блокировку держит другой сеанс: регламентное задание, обновление конфигурации, восстановление. " +
+      "Подождать 10–60 секунд и повторить; если не проходит — к администратору 1С.",
   },
   {
     re: /Ошибка валидации|Validation error|Bad Request|неверный запрос/i,
     category: "validation_failed",
-    summary: "Request validation failed at 1C side",
+    summary: "1С отклонила запрос на своей стороне",
     suggestion:
-      "1C rejected the OData query syntax. Common issues: unbalanced quotes in $filter, " +
-      "wrong field name, mixed case (1C metadata is case-sensitive in some configs).",
+      "1С не приняла синтаксис OData-запроса. Обычные причины: незакрытая кавычка в `$filter`, " +
+      "опечатка в имени реквизита, несовпадение регистра — в части конфигураций метаданные регистрозависимы.",
   },
 ];
 
@@ -183,10 +183,10 @@ export function parseOneCError(body: string): OneCErrorParseResult | null {
     return {
       raw_message: rawMessage,
       category: "unknown",
-      summary: "Unrecognised 1C error",
+      summary: "Нераспознанная ошибка 1С",
       suggestion:
-        "1C returned an error not in the known pattern set. Read the raw Russian message and " +
-        "decide whether to retry, change parameters, or escalate to a human operator.",
+        "1С вернула ошибку, не попавшую ни под один известный шаблон. Прочитать исходный " +
+        "русский текст и решить: повторить, изменить параметры или передать оператору.",
     };
   }
 
@@ -199,7 +199,7 @@ export function parseOneCError(body: string): OneCErrorParseResult | null {
 export function formatOneCErrorHint(parsed: OneCErrorParseResult): string {
   const head = `[1C ${parsed.category}] ${parsed.summary}`;
   const raw = parsed.raw_message ? ` — "${parsed.raw_message.slice(0, 200)}"` : "";
-  return `${head}${raw}. Suggestion: ${parsed.suggestion}`;
+  return `${head}${raw}. Подсказка: ${parsed.suggestion}`;
 }
 
 /**
