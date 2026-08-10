@@ -1,6 +1,6 @@
 {
   "name": "@theyahia/aprovodka",
-  "version": "4.2.0",
+  "version": "4.3.0",
   "description": "MCP server for 1C:Enterprise — 34 tools across 11 modules: catalogs & documents CRUD, post/unpost, registers & balances, accounting registers incl. virtual tables, constants, batch ops, change-tracking, metadata discovery, curated config presets, optional write-safety gate (+ 3 guided prompts) via OData 3.0. Basic auth.",
   "type": "module",
   "main": "dist/index.js",
