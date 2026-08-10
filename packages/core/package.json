@@ -65,7 +65,7 @@
     "express": "^5.2.1"
   },
   "devDependencies": {
-    "@types/node": "^22.19.18",
+    "@types/node": "^22.20.1",
     "typescript": "^5.8.3",
     "vitest": "^4.1.2"
   },
