@@ -1,0 +1,63 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/aprovodka",
+  "title": "aprovodka",
+  "description": "MCP server for 1C:Enterprise via OData 3.0 — catalogs & documents CRUD, post/unpost, registers & balances, accounting registers incl. virtual tables, constants, batch ops, change-tracking, metadata discovery, curated config presets. 34 tools. Basic auth.",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/aprovodka"
+  },
+  "version": "4.1.0",
+  "websiteUrl": "https://github.com/theYahia/aprovodka",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/aprovodka",
+      "version": "4.1.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "ONEC_BASE_URL",
+          "description": "Base URL of the 1C HTTP server (e.g. http://server:8080/base)",
+          "isRequired": true,
+          "format": "string"
+        },
+        {
+          "name": "ONEC_LOGIN",
+          "description": "1C user login for HTTP Basic auth",
+          "isRequired": true,
+          "format": "string"
+        },
+        {
+          "name": "ONEC_PASSWORD",
+          "description": "1C user password for HTTP Basic auth",
+          "isRequired": true,
+          "format": "string",
+          "isSecret": true
+        },
+        {
+          "name": "ONEC_SERVICES",
+          "description": "Comma-separated module list to register (default: all). Modules: catalogs, documents, registers, accounting, constants, shortcuts, reports, odata, batch, changes, meta",
+          "isRequired": false,
+          "format": "string"
+        },
+        {
+          "name": "ONEC_WRITE_MODE",
+          "description": "Write-safety gate: off (default, writes execute directly) | preview (dry-run only, nothing is written) | approval (each write needs a one-time approve_write)",
+          "isRequired": false,
+          "format": "string"
+        },
+        {
+          "name": "ONEC_AUDIT_LOG",
+          "description": "Path to a JSONL audit ledger. Every gated write is appended before execution; if the file cannot be written the operation is refused (fail-closed)",
+          "isRequired": false,
+          "format": "string"
+        }
+      ]
+    }
+  ]
+}

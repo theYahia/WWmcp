@@ -1,0 +1,35 @@
+name: aprovodka
+description: MCP server for 1C:Enterprise REST API via OData 3.0 — catalogs, documents, registers, accounting, constants, batch ops, change-tracking + metadata discovery
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - ONEC_BASE_URL
+      - ONEC_LOGIN
+      - ONEC_PASSWORD
+    properties:
+      ONEC_BASE_URL:
+        type: string
+        description: "Base URL of the 1C HTTP server (e.g. http://server:8080/base)"
+      ONEC_LOGIN:
+        type: string
+        description: "1C user login for HTTP Basic auth"
+      ONEC_PASSWORD:
+        type: string
+        description: "1C user password for HTTP Basic auth"
+      ONEC_SERVICES:
+        type: string
+        description: "Comma-separated module list to register (default: all). Modules: catalogs, documents, registers, accounting, constants, shortcuts, reports, odata, batch, changes, meta"
+        default: "all"
+  commandFunction: |-
+    (config) => ({
+      command: "npx",
+      args: ["-y", "@theyahia/aprovodka"],
+      env: {
+        ONEC_BASE_URL: config.ONEC_BASE_URL,
+        ONEC_LOGIN: config.ONEC_LOGIN,
+        ONEC_PASSWORD: config.ONEC_PASSWORD,
+        ...(config.ONEC_SERVICES ? { ONEC_SERVICES: config.ONEC_SERVICES } : {}),
+      }
+    })

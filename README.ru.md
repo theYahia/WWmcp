@@ -2,7 +2,7 @@
 
 [English](README.md) | **Русский**
 
-> **114 серверов · 910+ инструментов · 15+ стран · npm @theyahia**
+> **23 сервера (22 published) · 172 инструмента · 15+ стран · 1000+ API в карте · npm @theyahia**
 >
 > Крупнейший open-source каталог MCP-серверов для СНГ, MENA, Африки, Латинской Америки и Юго-Восточной Азии.
 
@@ -10,8 +10,8 @@
 [![CI](https://github.com/theYahia/WWmcp/actions/workflows/ci.yml/badge.svg)](https://github.com/theYahia/WWmcp/actions/workflows/ci.yml)
 [![npm downloads](https://img.shields.io/npm/dm/@theyahia/mcp-core?label=downloads)](https://www.npmjs.com/org/theyahia)
 [![GitHub stars](https://img.shields.io/github/stars/theYahia/WWmcp?style=social)](https://github.com/theYahia/WWmcp/stargazers)
-![Серверы](https://img.shields.io/badge/MCP_Servers-114-blue)
-![Инструменты](https://img.shields.io/badge/Tools-910+-green)
+![Серверы](https://img.shields.io/badge/MCP_Servers-23-blue)
+![Инструменты](https://img.shields.io/badge/Tools-172-green)
 [![npm org](https://img.shields.io/badge/npm-@theyahia-red)](https://www.npmjs.com/org/theyahia)
 
 > **🎯 40+ готовых скиллов** для этих серверов: [mcp-skills](https://github.com/theYahia/mcp-skills) — workflow для e-commerce, HR-конвейеры, маркетинг-отчёты, финансовые аудиты
@@ -171,7 +171,7 @@
 | [@theyahia/sber-mcp](https://www.npmjs.com/package/@theyahia/sber-mcp) | v1.0.0 | 5 tools | Sberbank — accounts, statements |
 | [@theyahia/alfa-bank-mcp](https://www.npmjs.com/package/@theyahia/alfa-bank-mcp) | v1.1.0 | 8 tools | Alfa-Bank Business — accounts, balances, statements, payment orders, counterparties, FX rates, payroll |
 | [@theyahia/tochka-bank-mcp](https://www.npmjs.com/package/@theyahia/tochka-bank-mcp) | v1.0.0 | 8 tools | Tochka Bank — accounts, payments, counterparties, company info |
-| [@theyahia/1c-rest-mcp](https://www.npmjs.com/package/@theyahia/1c-rest-mcp) | v1.0.0 | 6 tools | 1C REST API — catalogs, documents |
+| [@theyahia/aprovodka](https://www.npmjs.com/package/@theyahia/aprovodka) | v4.0.0 | 32 tools | 1C:Enterprise REST/OData — catalogs, documents, registers, accounting, batch, change-tracking |
 | [@theyahia/atol-online-mcp](https://www.npmjs.com/package/@theyahia/atol-online-mcp) | v1.0.0 | 8 tools | ATOL Online — fiscal receipts (54-FZ compliance) |
 | [@theyahia/kontur-diadoc-mcp](https://www.npmjs.com/package/@theyahia/kontur-diadoc-mcp) | v1.0.0 | 8 tools | Kontur.Diadoc — electronic document interchange |
 

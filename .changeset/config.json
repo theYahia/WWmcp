@@ -7,5 +7,5 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["@theyahia/1c-rest-mcp"]
+  "ignore": []
 }

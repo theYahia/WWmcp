@@ -30,3 +30,6 @@ content/
 
 # Local artifact pkg dir
 package/
+
+# MCPB bundles — сборочный артефакт, пересобирается scripts/build-mcpb.mjs
+mcpb/*.mcpb

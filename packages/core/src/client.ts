@@ -84,7 +84,7 @@ export class BaseHttpClient {
       : "";
     // SSRF guard: an absolute URL in `path` is only allowed if its origin matches
     // the configured baseUrl. Without this, a tool taking a user-supplied URL
-    // (e.g. 1c-rest get_report's /hs/... path) could be coerced into fetching an
+    // (e.g. aprovodka get_report's /hs/... path) could be coerced into fetching an
     // attacker-controlled host WITH the server's auth credentials attached.
     let url: string;
     if (/^https?:\/\//i.test(opts.path)) {

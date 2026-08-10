@@ -15,7 +15,7 @@ mcp-servers/
 │   ├── comms/              jivosite, mango-office, sms-ru, etc.
 │   ├── crm/                amocrm, elma365, kaiten, megaplan
 │   ├── data/               dadata, 2gis, chestnyznak, etc.
-│   ├── finance/            1c-rest, alfa-bank, atol, kontur, sber
+│   ├── finance/            aprovodka, alfa-bank, atol, kontur, sber
 │   ├── hr/                 hh, huntflow, superjob
 │   ├── logistics/          boxberry, pochta-russia, delovye-linii, etc.
 │   ├── marketing/          appmetrica, mindbox, roistat, sendpulse, etc.
