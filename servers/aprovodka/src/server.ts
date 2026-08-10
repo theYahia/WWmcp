@@ -149,10 +149,10 @@ export function createServer(): McpServer {
 
   server.tool(
     "list_entities",
-    "List all available 1C OData entities: catalogs (Catalog_*), documents (Document_*), " +
-    "all four register kinds (Accumulation/Information/Accounting/CalculationRegister_*), " +
-    "charts (ChartOf*), constants (Constant_*), journals (DocumentJournal_*), reports (Report_*). " +
-    "Use this first when working with an unfamiliar database.",
+    "Список всех доступных сущностей 1С в OData: справочники (Catalog_*), документы (Document_*), все " +
+    "четыре вида регистров (Accumulation/Information/Accounting/CalculationRegister_*), планы видов " +
+    "характеристик и счетов (ChartOf*), константы (Constant_*), журналы документов " +
+    "(DocumentJournal_*), отчёты (Report_*). Вызывать первым при работе с незнакомой базой.",
     listEntitiesSchema.shape,
     withErrorHandling(async (params) => ({
       content: [{ type: "text", text: await handleListEntities(params) }],
@@ -161,8 +161,8 @@ export function createServer(): McpServer {
 
   server.tool(
     "get_document_by_number",
-    "Find a 1C document by its number. Convenience wrapper over OData $filter. " +
-    "Example: locate invoice ТД-00123 dated 2025-03-01.",
+    "Поиск документа 1С по номеру. Обёртка над OData $filter. Пример: найти реализацию ТД-00123 от " +
+    "2025-03-01.",
     getDocumentByNumberSchema.shape,
     withErrorHandling(async (params) => ({
       content: [{ type: "text", text: await handleGetDocumentByNumber(params) }],
@@ -171,8 +171,9 @@ export function createServer(): McpServer {
 
   server.tool(
     "get_metadata",
-    "Return the raw 1C OData $metadata document (EDMX/XML) describing every entity, " +
-    "field and type in the database. Use for exact schema; for a quick field list prefer describe_entity.",
+    "Возвращает исходный документ $metadata базы 1С (EDMX/XML) с описанием всех сущностей, полей и " +
+    "типов. Нужен для точной схемы; если требуется только список полей одной сущности, дешевле " +
+    "describe_entity.",
     getMetadataSchema.shape,
     withErrorHandling(async (params) => ({
       content: [{ type: "text", text: await handleGetMetadata(params) }],
@@ -181,8 +182,8 @@ export function createServer(): McpServer {
 
   server.tool(
     "describe_entity",
-    "List the fields of a 1C entity by inspecting one sample record ($top=1). " +
-    "Cheaper than reading full $metadata when you only need field names of one entity.",
+    "Список полей сущности 1С по одной образцовой записи ($top=1). Дешевле полного $metadata, когда " +
+    "нужны только имена полей одной сущности.",
     describeEntitySchema.shape,
     withErrorHandling(async (params) => ({
       content: [{ type: "text", text: await handleDescribeEntity(params) }],
@@ -192,7 +193,8 @@ export function createServer(): McpServer {
   if (modules.has("catalogs")) {
     server.tool(
       "get_catalogs",
-      "Read 1C catalog data via OData 3.0. Supports $filter, $select, $orderby, $top, $skip.",
+      "Чтение данных справочников 1С через OData 3.0. Поддерживает $filter, $select, $orderby, $top, " +
+      "$skip.",
       getCatalogsSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleGetCatalogs(params) }],
@@ -201,7 +203,8 @@ export function createServer(): McpServer {
 
     server.tool(
       "create_catalog_item",
-      "Create a new catalog item via OData POST (e.g. add a Контрагент or Номенклатура).",
+      "Создание нового элемента справочника через OData POST (например, добавить Контрагента или " +
+      "позицию Номенклатуры).",
       createCatalogItemSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleCreateCatalogItem(params) }],
@@ -210,7 +213,7 @@ export function createServer(): McpServer {
 
     server.tool(
       "update_catalog_item",
-      "Update an existing catalog item via OData PATCH (by Ref_Key GUID).",
+      "Изменение существующего элемента справочника через OData PATCH (по Ref_Key, GUID).",
       updateCatalogItemSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleUpdateCatalogItem(params) }],
@@ -221,7 +224,7 @@ export function createServer(): McpServer {
   if (modules.has("documents")) {
     server.tool(
       "get_documents",
-      "Read 1C documents via OData 3.0. Filter by date, type, or arbitrary fields.",
+      "Чтение документов 1С через OData 3.0. Отбор по дате, виду документа или произвольным полям.",
       getDocumentsSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleGetDocuments(params) }],
@@ -230,7 +233,7 @@ export function createServer(): McpServer {
 
     server.tool(
       "create_document",
-      "Create a new 1C document via OData POST.",
+      "Создание нового документа 1С через OData POST.",
       createDocumentSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleCreateDocument(params) }],
@@ -239,7 +242,7 @@ export function createServer(): McpServer {
 
     server.tool(
       "update_document",
-      "Update an existing 1C document via OData PATCH (by Ref_Key GUID).",
+      "Изменение существующего документа 1С через OData PATCH (по Ref_Key, GUID).",
       updateDocumentSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleUpdateDocument(params) }],
@@ -248,8 +251,8 @@ export function createServer(): McpServer {
 
     server.tool(
       "post_document",
-      "Post (провести) a 1C document via the OData bound action Post(). " +
-      "Set operational=true for оперативное проведение.",
+      "Проведение документа 1С через связанное действие OData Post(). Для оперативного проведения " +
+      "указать operational=true.",
       postDocumentSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handlePostDocument(params) }],
@@ -258,7 +261,7 @@ export function createServer(): McpServer {
 
     server.tool(
       "unpost_document",
-      "Unpost (отменить проведение) a 1C document via the OData bound action Unpost().",
+      "Отмена проведения документа 1С через связанное действие OData Unpost().",
       unpostDocumentSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleUnpostDocument(params) }],
@@ -267,8 +270,8 @@ export function createServer(): McpServer {
 
     server.tool(
       "delete_document",
-      "Physically delete a 1C document via OData DELETE (by Ref_Key). " +
-      "Prefer set_deletion_mark for a recoverable soft delete.",
+      "Физическое удаление документа 1С через OData DELETE (по Ref_Key). Для обратимого удаления " +
+      "предпочтительнее set_deletion_mark — он ставит пометку на удаление.",
       deleteDocumentSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleDeleteDocument(params) }],
@@ -277,8 +280,9 @@ export function createServer(): McpServer {
 
     server.tool(
       "get_document_lines",
-      "Read a document's tabular section (строки / табличная часть, e.g. Товары) by Ref_Key " +
-      "via OData $expand. The section name is configuration-specific — discover it with get_metadata / describe_entity.",
+      "Чтение табличной части документа (строки, например Товары) по Ref_Key через OData $expand. Имя " +
+      "табличной части зависит от конфигурации — узнать его можно через get_metadata или " +
+      "describe_entity.",
       getDocumentLinesSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleGetDocumentLines(params) }],
@@ -289,7 +293,7 @@ export function createServer(): McpServer {
   if (modules.has("registers")) {
     server.tool(
       "get_register",
-      "Read 1C information or accumulation register data via OData 3.0.",
+      "Чтение данных регистров сведений и накопления 1С через OData 3.0.",
       getRegisterSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleGetRegister(params) }],
@@ -298,7 +302,7 @@ export function createServer(): McpServer {
 
     server.tool(
       "write_information_register",
-      "Write a record into an independent information register (OData POST on InformationRegister_*).",
+      "Запись в независимый регистр сведений (OData POST на InformationRegister_*).",
       writeInformationRegisterSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleWriteInformationRegister(params) }],
@@ -307,8 +311,8 @@ export function createServer(): McpServer {
 
     server.tool(
       "get_accumulation_balance",
-      "Get accumulation-register balances (остатки) via the 1C OData virtual method " +
-      "Balance(Period=…,Condition=…). Omit period for current balances.",
+      "Остатки регистра накопления через виртуальный метод OData Balance(Period=…,Condition=…). Без " +
+      "указания периода возвращает текущие остатки.",
       getAccumulationBalanceSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleGetAccumulationBalance(params) }],
@@ -319,7 +323,7 @@ export function createServer(): McpServer {
   if (modules.has("reports")) {
     server.tool(
       "get_report",
-      "Get a 1C report via an arbitrary HTTP service URL (/hs/...).",
+      "Получение отчёта 1С через произвольный URL HTTP-сервиса (/hs/...).",
       getReportSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleGetReport(params) }],
@@ -330,7 +334,8 @@ export function createServer(): McpServer {
   if (modules.has("odata")) {
     server.tool(
       "odata_query",
-      "Run an arbitrary OData 3.0 query against any 1C entity. Supports $filter, $select, $expand, $orderby, $top, $skip, $inlinecount.",
+      "Произвольный запрос OData 3.0 к любой сущности 1С. Поддерживает $filter, $select, $expand, " +
+      "$orderby, $top, $skip, $inlinecount.",
       odataQuerySchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleODataQuery(params) }],
@@ -341,7 +346,7 @@ export function createServer(): McpServer {
   if (modules.has("constants")) {
     server.tool(
       "get_constant",
-      "Read a 1C constant value (Constant_*).",
+      "Чтение значения константы 1С (Constant_*).",
       getConstantSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleGetConstant(params) }],
@@ -350,7 +355,7 @@ export function createServer(): McpServer {
 
     server.tool(
       "set_constant",
-      "Write a 1C constant value via OData PATCH (Value field).",
+      "Запись значения константы 1С через OData PATCH (поле Value).",
       setConstantSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleSetConstant(params) }],
@@ -361,7 +366,8 @@ export function createServer(): McpServer {
   if (modules.has("accounting")) {
     server.tool(
       "get_accounting_register",
-      "Read accounting-register records (AccountingRegister_*, e.g. Хозрасчетный — проводки) via OData.",
+      "Чтение записей регистра бухгалтерии (AccountingRegister_*, например Хозрасчетный — проводки) " +
+      "через OData.",
       getAccountingRegisterSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleGetAccountingRegister(params) }],
@@ -370,10 +376,10 @@ export function createServer(): McpServer {
 
     server.tool(
       "get_accounting_balance",
-      "Accounting-register VIRTUAL tables (AccountingRegister_*): Balance / Turnovers / " +
-      "BalanceAndTurnovers / RecordsWithExtDimensions / ExtDimensions. " +
-      "Not to be confused with get_accumulation_balance, " +
-      "which serves AccumulationRegister_* — this one is the double-entry ledger (счета, субконто).",
+      "Виртуальные таблицы регистра бухгалтерии (AccountingRegister_*): Balance / Turnovers / " +
+      "BalanceAndTurnovers / RecordsWithExtDimensions / ExtDimensions. Не путать с " +
+      "get_accumulation_balance — тот работает с AccumulationRegister_*, а этот с двойной записью " +
+      "(счета, субконто).",
       getAccountingBalanceSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleGetAccountingBalance(params) }],
@@ -384,7 +390,7 @@ export function createServer(): McpServer {
   if (modules.has("shortcuts")) {
     server.tool(
       "find_by_description",
-      "Fuzzy-find items by a substring of their Description (OData substringof).",
+      "Нечёткий поиск элементов по подстроке наименования (OData substringof по полю Description).",
       findByDescriptionSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleFindByDescription(params) }],
@@ -393,7 +399,7 @@ export function createServer(): McpServer {
 
     server.tool(
       "get_by_key",
-      "Fetch a single 1C record by its Ref_Key (GUID).",
+      "Получение одной записи 1С по её Ref_Key (GUID).",
       getByKeySchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleGetByKey(params) }],
@@ -402,7 +408,7 @@ export function createServer(): McpServer {
 
     server.tool(
       "count_entities",
-      "Count records of an entity ($inlinecount, $top=0) with an optional filter.",
+      "Подсчёт количества записей сущности ($inlinecount, $top=0) с необязательным отбором.",
       countEntitiesSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleCountEntities(params) }],
@@ -411,7 +417,8 @@ export function createServer(): McpServer {
 
     server.tool(
       "set_deletion_mark",
-      "Set or clear the DeletionMark on a catalog item or document (recoverable soft delete).",
+      "Установка или снятие пометки на удаление (DeletionMark) у элемента справочника или документа — " +
+      "обратимое удаление.",
       setDeletionMarkSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleSetDeletionMark(params) }],
@@ -420,7 +427,8 @@ export function createServer(): McpServer {
 
     server.tool(
       "get_recent_documents",
-      "Get the most recent documents of a type, ordered by Date desc (optionally posted only).",
+      "Последние документы указанного вида, отсортированные по дате по убыванию (при необходимости — " +
+      "только проведённые).",
       getRecentDocumentsSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleGetRecentDocuments(params) }],
@@ -431,8 +439,9 @@ export function createServer(): McpServer {
   if (modules.has("batch")) {
     server.tool(
       "batch_create_documents",
-      "Create N 1C documents in parallel (1..100 per call). 1C does NOT support OData $batch — " +
-      "this is client-side parallel batching with concurrency cap and per-item success/failure reporting.",
+      "Параллельное создание N документов 1С (от 1 до 100 за вызов). 1С не поддерживает OData $batch " +
+      "— пакет собирается на стороне клиента, с ограничением параллелизма и отчётом об успехе или " +
+      "ошибке по каждой позиции.",
       batchCreateDocumentsSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleBatchCreateDocuments(params) }],
@@ -441,8 +450,9 @@ export function createServer(): McpServer {
 
     server.tool(
       "batch_update_catalog_items",
-      "Update N 1C catalog items in parallel (1..100). Each item updated via OData PATCH on its Ref_Key. " +
-      "Per-item success/failure reported; partial failures do not abort the batch.",
+      "Параллельное изменение N элементов справочников (от 1 до 100). Каждый элемент правится через " +
+      "OData PATCH по своему Ref_Key. По каждой позиции отдельно сообщается успех или ошибка; отказ " +
+      "части позиций не прерывает пакет.",
       batchUpdateCatalogItemsSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleBatchUpdateCatalogItems(params) }],
@@ -451,8 +461,9 @@ export function createServer(): McpServer {
 
     server.tool(
       "batch_query",
-      "Run N 1C OData queries in parallel (1..50). Each query reported individually. " +
-      "No server-side join (1C does not support $batch) — combine results client-side.",
+      "Параллельное выполнение N запросов OData к 1С (от 1 до 50). Результат по каждому запросу " +
+      "возвращается отдельно. Соединения на стороне сервера нет (1С не поддерживает $batch) — " +
+      "объединять результаты нужно на стороне клиента.",
       batchQuerySchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleBatchQuery(params) }],
@@ -463,8 +474,9 @@ export function createServer(): McpServer {
   if (modules.has("changes")) {
     server.tool(
       "poll_changes_since",
-      "Poll a 1C entity for rows modified since a timestamp cursor. 1C does NOT support webhooks — " +
-      "use this on a schedule (every 30-300s). Returns rows + a `next_cursor` for the next poll.",
+      "Опрос сущности 1С на предмет строк, изменённых после указанной отметки времени. 1С не " +
+      "поддерживает webhooks — вызывать по расписанию (каждые 30–300 с). Возвращает строки и " +
+      "`next_cursor` для следующего опроса.",
       pollChangesSinceSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handlePollChangesSince(params) }],
@@ -473,8 +485,9 @@ export function createServer(): McpServer {
 
     server.tool(
       "list_subscriptions",
-      "Documents that 1C does NOT support webhook subscriptions. Returns empty list + workaround hints " +
-      "(use poll_changes_since instead). Prevents LLMs from hallucinating subscribe_to_event flows.",
+      "Фиксирует, что 1С не поддерживает подписку на события через webhooks. Возвращает пустой список " +
+      "и подсказку обходного пути (использовать poll_changes_since). Нужен, чтобы модель не " +
+      "выдумывала несуществующие сценарии подписки.",
       listSubscriptionsSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleListSubscriptions(params) }],
@@ -487,9 +500,10 @@ export function createServer(): McpServer {
   if (getWriteMode() !== "off") {
     server.tool(
       "approve_write",
-      "Approve ONE pending 1C write, identified by the op_hash returned in its preview. " +
-      "Single-use and time-limited: after approving, re-run the identical write tool call to execute it. " +
-      "Only call this after an explicit human 'yes' — never approve your own preview unattended.",
+      "Одобрение ОДНОЙ отложенной операции записи в 1С по значению op_hash из её предпросмотра. " +
+      "Одобрение одноразовое и с ограниченным сроком: после него нужно повторить тот же самый вызов " +
+      "инструмента записи, чтобы операция выполнилась. Вызывать только после явного согласия человека " +
+      "— никогда не одобрять собственный предпросмотр без участия пользователя.",
       approveWriteSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleApproveWrite(params) }],
@@ -498,9 +512,10 @@ export function createServer(): McpServer {
 
     server.tool(
       "rollback_write",
-      "Undo a completed reversible write using the rollback token from its result " +
-      "(post→unpost, unpost→post, field update→restore previous values, DeletionMark toggle). " +
-      "One-shot. Physical deletes and record creation have no rollback token — they are irreversible.",
+      "Отмена уже выполненной обратимой записи по токену отката из её результата (проведение → отмена " +
+      "проведения, отмена → проведение, изменение полей → восстановление прежних значений, снятие или " +
+      "установка DeletionMark). Действует один раз. У физического удаления и создания записи токена " +
+      "отката нет — эти операции необратимы.",
       rollbackWriteSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleRollbackWrite(params) }],
