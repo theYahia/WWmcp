@@ -1,57 +1,16 @@
 # @theyahia/vk-ads-mcp
 
-> MCP server for **VK Ads** API — campaigns, ads, statistics, targeting, budgets.
-> 8 tools. Bearer auth. Stdio + Streamable HTTP transports.
+MCP-сервер для **VK Ads API v2** (`ads.vk.com/api/v2`) — кампании, группы объявлений, объявления, статистика, баланс. 8 инструментов.
 
 [![npm](https://img.shields.io/npm/v/@theyahia/vk-ads-mcp)](https://www.npmjs.com/package/@theyahia/vk-ads-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
----
+> Модель данных VK Ads: **`ad_plans` (кампании) → `ad_groups` (группы) → `banners` (объявления)**.
+> Имена инструментов оставлены дружелюбными (`list_campaigns`, `list_ads`), но обращаются к реальным v2-ресурсам.
 
-### Migrating from v1.x
-
-If you used v1.x, the v2.0.0 release adds Streamable HTTP transport and is built on `@theyahia/mcp-core`. Breaking changes:
-
-- **Internal client:** now extends `BaseHttpClient` with `ApiKeyStrategy`. The exported `apiGet`/`apiPost` functional API is unchanged, so tool code keeps working.
-- **Tool errors:** now returned as MCP-spec `CallToolResult` with `isError: true` (via `withErrorHandling`). Compatible with all MCP clients.
-- **Single bin entrypoint:** previously stdio-only via `dist/index.js`. v2 adds HTTP via `--http` flag or `HTTP_PORT` env on the same binary.
-
-Tool names, arguments, return formats, and the `VK_ADS_TOKEN` env var are unchanged.
-
----
-
-## Tools (8)
-
-### Campaigns
-
-| Tool | Description |
-|------|-------------|
-| `list_campaigns` | List campaigns in an account. Supports `status` filter (active / blocked / deleted). |
-| `create_campaign` | Create a new campaign (name, type, budget in kopecks). |
-| `update_campaign` | Update name, budget, or status (start/stop). |
-
-### Ads
-
-| Tool | Description |
-|------|-------------|
-| `list_ads` | List ads inside one or more campaigns. |
-| `create_ad` | Create an ad — text/image/video format with title, description, link URL. |
-
-### Reporting
-
-| Tool | Description |
-|------|-------------|
-| `get_statistics` | Impressions, clicks, spend over a date range — grouped by day/week/month/overall. |
-| `list_targeting_groups` | List targeting groups for a campaign. |
-| `get_budget` | Account budget — remaining balance and spending limits. |
-
----
-
-## Quick Start
+## Установка
 
 ### Claude Desktop
-
-Add to `claude_desktop_config.json`:
 
 ```json
 {
@@ -60,123 +19,97 @@ Add to `claude_desktop_config.json`:
       "command": "npx",
       "args": ["-y", "@theyahia/vk-ads-mcp"],
       "env": {
-        "VK_ADS_TOKEN": "your_token"
+        "VK_ADS_TOKEN": "ваш_токен"
       }
     }
   }
 }
 ```
 
-### Cursor / Windsurf
-
-Same configuration block under `mcpServers` in the IDE's MCP settings.
-
-### VS Code (Copilot)
-
-Add to `.vscode/mcp.json`:
-
-```json
-{
-  "servers": {
-    "vk-ads": {
-      "command": "npx",
-      "args": ["-y", "@theyahia/vk-ads-mcp"],
-      "env": { "VK_ADS_TOKEN": "your_token" }
-    }
-  }
-}
-```
-
-### Streamable HTTP transport
-
-For remote/multi-tenant deployments:
+### Claude Code
 
 ```bash
-HTTP_PORT=3000 VK_ADS_TOKEN=your_token npx @theyahia/vk-ads-mcp
-# or: npx @theyahia/vk-ads-mcp --http
+claude mcp add vk-ads -e VK_ADS_TOKEN=ваш_токен -- npx -y @theyahia/vk-ads-mcp
 ```
 
-Endpoints:
-- `POST /mcp` — MCP requests
-- `GET /mcp` — SSE event stream (per session)
-- `DELETE /mcp` — session termination
-- `GET /health` — `{ status: "ok", version, tools, uptime, memory_mb }`
+## Авторизация
 
-Includes session management (`mcp-session-id` header), CORS, graceful shutdown.
+| Переменная | Обязательна | Назначение |
+|---|---|---|
+| `VK_ADS_TOKEN` | ✅ | OAuth2 Bearer access_token VK Ads API |
+| `VK_ADS_CLIENT_ID` | — | для авто-обновления токена (refresh) |
+| `VK_ADS_CLIENT_SECRET` | — | для авто-обновления токена (refresh) |
+| `VK_ADS_REFRESH_TOKEN` | — | для авто-обновления токена (refresh) |
 
----
+`access_token` живёт ~1 день. Если заданы все три refresh-переменные, сервер на `401` сам обновит токен
+через `grant_type=refresh_token`. Иначе — обновляйте `VK_ADS_TOKEN` вручную.
 
-## Environment Variables
+**Кабинет выбирается токеном, а не параметром.** В VK Ads v2 нет `account_id` в запросах: агентство/менеджер
+получает отдельный per-client токен (`agency_client_credentials`) и подписывает им запросы нужного кабинета.
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `VK_ADS_TOKEN` | yes | Bearer token from your VK Ads account. |
-| `HTTP_PORT` | no | If set, server runs in HTTP mode on this port. |
+## Инструменты (8)
 
----
+| Инструмент | Метод | Описание |
+|------------|-------|----------|
+| `list_campaigns` | `GET /ad_plans.json` | Кампании (ad_plans), фильтр по статусу, авто-пагинация |
+| `create_campaign` | `POST /ad_plans.json` | Создать кампанию: `name`, `objective`, `budget_limit`, `budget_limit_day` |
+| `update_campaign` | `POST /ad_plans/{id}.json` | Обновить: `name`/бюджет/`action` (activate/stop/delete) |
+| `list_ad_groups` | `GET /ad_groups.json` | Группы объявлений с таргетингом (delivery), фильтр по кампаниям |
+| `list_ads` | `GET /banners.json` | Объявления (banners), фильтр по группам, авто-пагинация |
+| `create_ad` | `POST /banners.json` | Создать объявление: `ad_group_id`, `textblocks`, `urls`, `content` |
+| `get_statistics` | `GET /statistics/{type}/{period}.json` | Показы (`shows`), клики, расход; `period` = day/summary |
+| `get_account` | `GET /user.json` | Кабинет и баланс (нужен scope `read_payments`) |
 
-## Authentication
+Все инструменты используют MCP-аннотации (`readOnlyHint`/`destructiveHint`/`idempotentHint`), а read-инструменты —
+`outputSchema` + `structuredContent` для типизированного и компактного ответа. Списки пагинируются автоматически
+(до 200 объектов; больше — флаг `truncated` в ответе).
 
-Get your VK Ads API token:
+## Примеры запросов
 
-1. Log in to [ads.vk.com](https://ads.vk.com).
-2. Open **Tools → API access** in your VK Ads account.
-3. Generate a new token with permissions for the operations you need (read/write campaigns, statistics, etc.).
-4. Use the token as `VK_ADS_TOKEN`.
+```
+Покажи активные кампании
+Создай кампанию "Осенняя акция" с целью traffic и бюджетом 50000
+Останови кампанию 12345
+Какие группы объявлений в кампании 12345?
+Статистика кампании 12345 за январь 2026 по дням
+Покажи баланс кабинета
+```
 
----
+## Миграция 1.x → 2.0 (breaking)
 
-## Demo Prompts
+Версия 1.x обращалась к **легаси** API (`/campaigns.json`, `/ads.json`, плоский `/statistics.json`, `account_id`,
+числовые статусы) и фактически не работала против `ads.vk.com/api/v2`. В 2.0 переписан весь API-слой:
 
-Try these natural-language prompts in your MCP client:
+- `account_id` **удалён** из всех инструментов — кабинет задаётся токеном.
+- `update_campaign`: вместо `status: 1/0` → `action: activate|stop|delete` (строковые статусы `active/blocked/deleted`).
+- Бюджет: `all_limit` → `budget_limit` / `budget_limit_day` (валюта кабинета, не копейки).
+- `create_campaign`: `type` → `objective` (цель кампании).
+- `create_ad`: вместо `{ad_format,title,description,link_url}` → `{ad_group_id, textblocks, urls, content}`.
+- `get_statistics`: `ids_type`/`period=week|month|overall` → `object_type` и `period=day|summary` в пути URL.
+- `list_targeting_groups` → **`list_ad_groups`** (таргетинг живёт на группе объявлений).
+- `get_budget` → **`get_account`** (баланс читается из `/user.json`).
 
-> "List all active campaigns in account 12345."
+## Точность API
 
-> "Create a campaign 'Summer 2026 Sale' in account 12345 with a budget of 500 rubles (50000 kopecks)."
+Эндпоинты и поля подтверждены официальной документацией `target.vk.ru` и 5 независимыми рабочими клиентами.
+Несколько деталей помечены в коде `// VERIFY:` (единицы бюджета, поле баланса, полный enum `objective`, путь update)
+и требуют подтверждения живым токеном — см. **[`docs/VERIFICATION.md`](docs/VERIFICATION.md)** (~10 минут).
 
-> "Show me statistics for campaign 67890 from January 1 to March 31, 2026 — daily breakdown."
+## Возможный follow-up (вне текущего объёма)
 
-> "Pause campaign 67890."
+Массовые действия (`mass_action`), список клиентов агентства (`agency/clients`), загрузка креативов
+(`upload_creative`), состояние лимитов (`throttling`), справочники таргетинга (`regions`/`interests`),
+конверсии и remarketing-аудитории.
 
-> "What's the remaining budget on account 12345?"
-
-> "List all ads in campaigns 67890 and 67891 — I want to compare formats."
-
-> "Show me targeting groups for campaign 67890."
-
----
-
-## Development
+## Разработка
 
 ```bash
-pnpm install
-pnpm --filter @theyahia/vk-ads-mcp build
-pnpm --filter @theyahia/vk-ads-mcp test
-pnpm --filter @theyahia/vk-ads-mcp dev   # tsx watch mode
+npm install
+npm run build      # tsc
+npm test           # vitest
+npm run dev        # tsx src/index.ts (читает .env — см. .env.example)
 ```
 
-Project layout:
+## Лицензия
 
-```
-servers/vk-ads/
-├── src/
-│   ├── index.ts          — bin entry, runServer
-│   ├── server.ts         — createServer factory + tool registration
-│   ├── client.ts         — BaseHttpClient + ApiKeyStrategy + apiGet/apiPost helpers
-│   └── tools/
-│       ├── ads.ts
-│       ├── budget.ts
-│       ├── campaigns.ts
-│       ├── statistics.ts
-│       └── targeting.ts
-└── tests/
-    ├── client.test.ts
-    ├── server.test.ts
-    └── tools.test.ts
-```
-
----
-
-## License
-
-MIT — see [LICENSE](./LICENSE).
+MIT

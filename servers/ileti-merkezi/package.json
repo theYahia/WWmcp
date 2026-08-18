@@ -1,7 +1,7 @@
 {
   "name": "@theyahia/ileti-merkezi-mcp",
-  "version": "3.0.0",
-  "description": "MCP server for Ileti Merkezi SMS API (Turkey) — 8 tools: SMS, bulk SMS, reports, contacts, blacklist. HMAC auth.",
+  "version": "4.0.0",
+  "description": "Type-safe MCP server for the İletiMerkezi SMS API (Turkey) — send SMS/OTP, bulk, delivery reports, sender headers, blacklist, İYS consent",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -18,16 +18,14 @@
     "build": "tsc",
     "dev": "tsx src/index.ts",
     "start": "node dist/index.js",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "clean": "rm -rf dist tsconfig.tsbuildinfo",
-    "typecheck": "tsc --noEmit",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo"
   },
   "dependencies": {
-    "@theyahia/mcp-core": "workspace:*",
-    "@modelcontextprotocol/sdk": "^1.12.1",
-    "express": "^5.2.1",
+    "@modelcontextprotocol/sdk": "^1.12.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
@@ -46,20 +44,22 @@
     "model-context-protocol",
     "claude",
     "ai",
-    "turkey",
-    "turkish-api",
+    "turkey-api",
     "ileti-merkezi",
+    "iletimerkezi",
     "sms",
-    "bulk-sms",
+    "otp",
+    "iys",
     "messaging",
-    "otp"
+    "typescript",
+    "api"
   ],
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/theYahia/mcp-servers.git",
+    "url": "https://github.com/theYahia/WWmcp.git",
     "directory": "servers/ileti-merkezi"
   },
-  "homepage": "https://github.com/theYahia/mcp-servers/tree/main/servers/ileti-merkezi",
+  "homepage": "https://github.com/theYahia/WWmcp/tree/main/servers/ileti-merkezi",
   "author": "theYahia (https://github.com/theYahia)"
 }

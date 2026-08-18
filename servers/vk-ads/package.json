@@ -1,7 +1,7 @@
 {
   "name": "@theyahia/vk-ads-mcp",
-  "version": "3.0.0",
-  "description": "MCP server for VK Ads API — 8 tools: campaigns, ads, statistics, targeting, budgets. Bearer auth.",
+  "version": "4.0.0",
+  "description": "MCP server for VK Ads API v2 — ad_plans, ad_groups, banners, statistics, account (Russia)",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -15,19 +15,18 @@
     "node": ">=18.0.0"
   },
   "scripts": {
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "typecheck": "tsc --noEmit",
     "build": "tsc",
     "dev": "tsx src/index.ts",
     "start": "node dist/index.js",
     "test": "vitest run",
     "test:watch": "vitest",
-    "clean": "rm -rf dist tsconfig.tsbuildinfo",
-    "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@theyahia/mcp-core": "workspace:*",
-    "@modelcontextprotocol/sdk": "^1.12.1",
-    "express": "^5.2.1",
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "dotenv": "^16.6.1",
     "zod": "^4.4.3"
   },
   "devDependencies": {
@@ -44,21 +43,28 @@
     "mcp",
     "mcp-server",
     "model-context-protocol",
+    "modelcontextprotocol",
     "claude",
     "ai",
+    "llm",
+    "anthropic",
+    "cursor",
+    "ai-tools",
+    "ai-agent",
     "russian-api",
     "vk",
     "vk-ads",
     "advertising",
     "marketing",
-    "campaigns"
+    "typescript",
+    "api"
   ],
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/theYahia/mcp-servers.git",
+    "url": "https://github.com/theYahia/WWmcp.git",
     "directory": "servers/vk-ads"
   },
-  "homepage": "https://github.com/theYahia/mcp-servers/tree/main/servers/vk-ads",
+  "homepage": "https://github.com/theYahia/WWmcp/tree/main/servers/vk-ads",
   "author": "theYahia (https://github.com/theYahia)"
 }

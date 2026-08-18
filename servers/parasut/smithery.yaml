@@ -1,0 +1,38 @@
+name: parasut-mcp
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - PARASUT_CLIENT_ID
+      - PARASUT_CLIENT_SECRET
+      - PARASUT_USERNAME
+      - PARASUT_PASSWORD
+    properties:
+      PARASUT_CLIENT_ID:
+        type: string
+        description: OAuth client ID from your Parasut API application
+      PARASUT_CLIENT_SECRET:
+        type: string
+        description: OAuth client secret from your Parasut API application
+      PARASUT_USERNAME:
+        type: string
+        description: Parasut account email (used for the OAuth password grant)
+      PARASUT_PASSWORD:
+        type: string
+        description: Parasut account password (used for the OAuth password grant)
+      PARASUT_COMPANY_ID:
+        type: string
+        description: Company ID (optional — resolved via GET /me when omitted)
+  commandFunction: |
+    (config) => ({
+      command: "npx",
+      args: ["-y", "@theyahia/parasut-mcp"],
+      env: {
+        PARASUT_CLIENT_ID: config.PARASUT_CLIENT_ID,
+        PARASUT_CLIENT_SECRET: config.PARASUT_CLIENT_SECRET,
+        PARASUT_USERNAME: config.PARASUT_USERNAME,
+        PARASUT_PASSWORD: config.PARASUT_PASSWORD,
+        ...(config.PARASUT_COMPANY_ID ? { PARASUT_COMPANY_ID: config.PARASUT_COMPANY_ID } : {}),
+      },
+    })

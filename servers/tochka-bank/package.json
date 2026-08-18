@@ -1,0 +1,60 @@
+{
+  "name": "@theyahia/tochka-bank-mcp",
+  "version": "2.0.0",
+  "description": "MCP server for the real Tochka Bank business API (Russia) — accounts, balances, statements, payments, customers.",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "tochka-bank-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check src",
+    "lint:fix": "biome check --write src",
+    "format": "biome format --write src",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "tochka-bank",
+    "tochka",
+    "russian-api",
+    "open-banking",
+    "banking",
+    "business",
+    "payments",
+    "typescript"
+  ],
+  "author": "theYahia",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/theYahia/tochka-bank-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/theYahia/tochka-bank-mcp/issues"
+  },
+  "homepage": "https://github.com/theYahia/tochka-bank-mcp#readme",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "zod": "^3.24.4"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.1",
+    "@types/node": "^25.5.0",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.1"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18"
+  }
+}

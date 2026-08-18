@@ -1,7 +1,7 @@
 {
   "name": "@theyahia/megaplan-mcp",
-  "version": "3.0.0",
-  "description": "MCP server for Megaplan project management — 8 tools for tasks, deals, projects, employees, comments + 2 MCP prompts.",
+  "version": "4.0.0",
+  "description": "MCP server for Megaplan — tasks, deals, project management (Russia)",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -18,19 +18,20 @@
     "build": "tsc",
     "dev": "tsx src/index.ts",
     "start": "node dist/index.js",
+    "prepublishOnly": "npm run build",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "clean": "rm -rf dist tsconfig.tsbuildinfo",
-    "typecheck": "tsc --noEmit",
-    "prepublishOnly": "npm run build"
+    "start:http": "node dist/index.js --http",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo"
   },
   "dependencies": {
-    "@theyahia/mcp-core": "workspace:*",
-    "@modelcontextprotocol/sdk": "^1.12.1",
+    "@modelcontextprotocol/sdk": "^1.12.0",
     "express": "^5.2.1",
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@types/express": "^5.0.0",
     "@types/node": "^22.19.18",
     "tsx": "^4.19.0",
     "typescript": "^5.8.3",
@@ -48,17 +49,19 @@
     "ai",
     "russian-api",
     "megaplan",
-    "crm",
-    "project-management",
     "tasks",
-    "deals"
+    "deals",
+    "project-management",
+    "api",
+    "typescript",
+    "crm"
   ],
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/theYahia/mcp-servers.git",
+    "url": "https://github.com/theYahia/WWmcp.git",
     "directory": "servers/megaplan"
   },
-  "homepage": "https://github.com/theYahia/mcp-servers/tree/main/servers/megaplan",
+  "homepage": "https://github.com/theYahia/WWmcp/tree/main/servers/megaplan",
   "author": "theYahia (https://github.com/theYahia)"
 }

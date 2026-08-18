@@ -1,29 +1,43 @@
 #!/usr/bin/env node
 
-/**
- * @theyahia/ileti-merkezi-mcp — MCP server for Ileti Merkezi SMS API (Turkey)
- *
- * 8 tools: send_sms, send_bulk_sms, get_sms_report, get_balance, list_senders,
- * create_contact_group, add_contacts, get_blacklist.
- *
- * Auth: API Key + HMAC SHA256 (ILETI_API_KEY + ILETI_SECRET env vars).
- *
- * Transports:
- *   - stdio (default) — for Claude Desktop / Cursor / Windsurf
- *   - Streamable HTTP — --http flag or HTTP_PORT env (port 3000 default)
- */
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { IletiMerkeziClient, MissingCredentialsError, readCredentials } from "./client.js";
+import { buildTools } from "./tools.js";
+import { SERVER_NAME, VERSION } from "./version.js";
 
-import { runServer } from "@theyahia/mcp-core";
-import { createServer, TOOL_COUNT, logger } from "./server.js";
+async function main(): Promise<void> {
+  // Fail fast on missing credentials so the server never starts half-configured.
+  let creds;
+  try {
+    creds = readCredentials();
+  } catch (error) {
+    if (error instanceof MissingCredentialsError) {
+      console.error(`[${SERVER_NAME}] ${error.message}`);
+      process.exit(1);
+    }
+    throw error;
+  }
 
-runServer(createServer, {
-  name: "ileti-merkezi-mcp",
-  version: "2.0.0",
-  toolCount: TOOL_COUNT,
-  logger,
-}).catch((error) => {
-  logger.error("Fatal error", {
-    error: error instanceof Error ? error.message : String(error),
-  });
+  const client = new IletiMerkeziClient(creds);
+  const server = new McpServer({ name: SERVER_NAME, version: VERSION });
+
+  const tools = buildTools(client);
+  for (const tool of tools) {
+    server.registerTool(
+      tool.name,
+      tool.config,
+      tool.handler as Parameters<typeof server.registerTool>[2],
+    );
+  }
+
+  const transport = new StdioServerTransport();
+  await server.connect(transport);
+  // stdout is reserved for the JSON-RPC stream; all logging goes to stderr.
+  console.error(`[${SERVER_NAME}] v${VERSION} started — ${tools.length} tools available.`);
+}
+
+main().catch((error) => {
+  console.error(`[${SERVER_NAME}] Fatal:`, error);
   process.exit(1);
 });

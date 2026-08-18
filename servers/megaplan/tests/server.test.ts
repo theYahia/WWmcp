@@ -1,14 +1,12 @@
 import { describe, it, expect } from "vitest";
-import { createServer, TOOL_COUNT } from "../src/server.js";
+import { createServer } from "../src/index.js";
 
-describe("megaplan server factory", () => {
-  it("createServer returns a connectable McpServer", () => {
+describe("createServer", () => {
+  it("returns an McpServer instance", () => {
     const server = createServer();
     expect(server).toBeDefined();
     expect(typeof server.connect).toBe("function");
-  });
-
-  it("TOOL_COUNT is 8", () => {
-    expect(TOOL_COUNT).toBe(8);
+    expect(typeof server.tool).toBe("function");
+    expect(typeof server.prompt).toBe("function");
   });
 });

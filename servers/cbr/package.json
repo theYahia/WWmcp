@@ -1,26 +1,32 @@
 {
   "name": "@theyahia/cbr-mcp",
-  "version": "1.1.0",
-  "description": "MCP server for Central Bank of Russia API — currency rates, key rate, precious metals, conversion. 5 tools. No auth required.",
+  "version": "1.2.0",
+  "description": "MCP server for Central Bank of Russia — currency rates, currency dynamics, key rate (+history), precious metals, conversion (Russia)",
   "type": "module",
   "main": "dist/index.js",
-  "bin": { "cbr-mcp": "dist/index.js" },
-  "files": ["dist"],
-  "engines": { "node": ">=18.0.0" },
+  "bin": {
+    "cbr-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "smithery.yaml"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/index.ts",
     "start": "node dist/index.js",
+    "pretest": "npm run build",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "vitest run --config vitest.e2e.config.ts",
+    "prepublishOnly": "npm run build",
     "clean": "rm -rf dist tsconfig.tsbuildinfo",
-    "typecheck": "tsc --noEmit",
-    "prepublishOnly": "npm run build"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@theyahia/mcp-core": "workspace:*",
-    "@modelcontextprotocol/sdk": "^1.12.1",
+    "@modelcontextprotocol/sdk": "^1.12.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
@@ -29,10 +35,39 @@
     "typescript": "^5.8.3",
     "vitest": "^4.1.2"
   },
-  "publishConfig": { "access": "public" },
+  "publishConfig": {
+    "access": "public"
+  },
   "mcpName": "io.github.theYahia/cbr-mcp",
-  "keywords": ["mcp", "mcp-server", "model-context-protocol", "claude", "ai", "russian-api", "cbr", "central-bank", "currency", "exchange-rate", "ruble"],
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "modelcontextprotocol",
+    "claude",
+    "ai",
+    "llm",
+    "anthropic",
+    "cursor",
+    "ai-tools",
+    "ai-agent",
+    "russian-api",
+    "cbr",
+    "central-bank",
+    "currency",
+    "exchange-rate",
+    "ruble",
+    "api",
+    "typescript",
+    "finance",
+    "banking"
+  ],
   "license": "MIT",
-  "repository": { "type": "git", "url": "https://github.com/theYahia/mcp-servers.git", "directory": "servers/cbr" },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/theYahia/WWmcp.git",
+    "directory": "servers/cbr"
+  },
+  "homepage": "https://github.com/theYahia/WWmcp/tree/main/servers/cbr",
   "author": "theYahia (https://github.com/theYahia)"
 }

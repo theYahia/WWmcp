@@ -1,53 +1,53 @@
 # Changelog
 
-## 3.0.0
+All notable changes to this project are documented here. The format is based on
+[Keep a Changelog](https://keepachangelog.com/), and this project adheres to
+[Semantic Versioning](https://semver.org/).
 
-### Major Changes
+## [4.0.0] - 2026-06-23
 
-- 54cb308: Production-grade rewrite to v2.0.0. Promoted from `pipeline/cis/` to `servers/` workspace. Now built on `@theyahia/mcp-core` with a custom `IletiHmacStrategy` (SHA256(apiKey + secret + ISO_timestamp), sent as `X-API-Key` + `X-API-Hash` headers).
+Complete rewrite against the **real** İletiMerkezi v1 JSON API. Every prior npm
+release — 1.0.x and 3.0.0 — targeted a fabricated API surface (header-based
+SHA256/HMAC auth + REST-style `/send-sms`, `/send-bulk-sms`, `/contacts/...`
+paths) and did not work against the live provider. This release is verified
+against the official İletiMerkezi SDK and the live API manifest.
 
-  Breaking changes:
+> Versioned **4.0.0** to supersede the broken **3.0.0** that was published to npm
+> (2026-05-03) but never committed to this repository — `latest` must move
+> forward, not back.
 
-  - `IletiMerkeziClient` now wraps `BaseHttpClient`. Public `request(method, path, body?)` shape unchanged.
-  - Tool errors return MCP-spec `CallToolResult` with `isError: true`.
-  - Adds Streamable HTTP transport (previously stdio-only).
-  - Lazy client init: `new IletiMerkeziClient()` no longer throws at construction without env vars.
+### ⚠️ Breaking changes
 
-  Tool names, arguments, return formats, and `ILETI_API_KEY`/`ILETI_SECRET` env vars are unchanged.
-
-## 2.0.0 — 2026-04-22
-
-Production-grade rewrite. Promoted from `pipeline/cis/` to `servers/` workspace with full integration into `@theyahia/mcp-core`.
-
-### Breaking
-
-- **Internal client class:** `IletiMerkeziClient` now wraps `@theyahia/mcp-core`'s `BaseHttpClient` with a custom `IletiHmacStrategy`. Public `request(method, path, body?)` shape unchanged.
-- **Error responses:** tool errors now return MCP-spec `CallToolResult` with `isError: true` (via `withErrorHandling`) instead of throwing.
+- **Authentication moved into the request body.** Credentials are now sent as
+  `request.authentication.{key, hash}` (JSON body), not as `X-API-Key` /
+  `X-API-Hash` HTTP headers. All client-side hashing was removed — the `hash` is
+  the value the panel precomputes and is passed through unchanged.
+- **Environment variables changed.** Use `ILETIMERKEZI_API_KEY` +
+  `ILETIMERKEZI_API_HASH` (the panel issues both). The old `ILETI_SECRET` is gone
+  (there is no runtime secret/hashing). `ILETI_API_KEY` / `ILETI_API_HASH` are
+  accepted as migration aliases.
+- **Tool set revised to match the real API.** Removed fabricated tools that have
+  no real endpoint (`send_bulk_sms`, `create_contact_group`, `add_contacts`, and
+  the separate OTP tool). Bulk sending is now `send_sms` with an array of numbers;
+  OTP is a normal single-recipient `send_sms`.
 
 ### Added
 
-- Streamable HTTP transport via `@theyahia/mcp-core`'s `runServer` — includes session management (`mcp-session-id`), CORS, graceful shutdown, `GET /health` endpoint.
-- Structured JSON logging via `createLogger("ileti-merkezi-mcp")`.
-- ErrorCategory-based error responses with self-recovery hints for the LLM.
-- English README with cross-IDE configuration (Claude Desktop, Cursor, Windsurf, VS Code Copilot).
-- **Lazy client initialization:** `new IletiMerkeziClient()` no longer throws at construction time when `ILETI_API_KEY` or `ILETI_SECRET` is missing — env vars are read on the first request.
+- Real, verified endpoints: `send_sms`, `cancel_order`, `get_report`,
+  `get_reports`, `get_balance`, `get_sender`, `get_blacklist`, `add_blacklist`,
+  `delete_blacklist`, `iys_register`, `iys_check` (11 tools).
+- **İYS compliance ergonomics**: `send_sms` exposes `message_type`
+  (`transactional` | `commercial`) which drives the İYS consent flag, so callers
+  don't have to reason about Turkey's Law 6563 directly.
+- İYS consent tools (`iys_register` / `iys_check`) for commercial-message consent.
+- Proper MCP error reporting: every tool returns `isError` with actionable
+  guidance (e.g. 401 → check credentials + "Allow API access") instead of throwing.
+- zod validation of all inputs; type-safe response highlights alongside raw JSON.
+- Tooling: ESLint + Prettier, GitHub Actions CI (Node 18/20/22), `.env.example`,
+  `SECURITY.md`.
 
-### Improved
+### Changed
 
-- HMAC-signed requests now share the battle-tested `BaseHttpClient` retry/timeout logic (3 retries, exponential backoff on 5xx/429).
-- Tests (`tests/client.test.ts`, `tests/server.test.ts`) — vitest with mock fetch, covering HMAC header generation, lazy init, and POST body serialization. Verifies that `X-API-Hash` differs across requests (timestamp recomputed each time).
-- `tsconfig.json` extends the workspace `tsconfig.base.json`.
-- Server factory (`src/server.ts`) split out from `src/index.ts` so tests don't trigger the side-effect `runServer()` call.
-
-### Unchanged
-
-- Tool names, arguments, return formats — fully backward-compatible.
-- `ILETI_API_KEY` and `ILETI_SECRET` env vars.
-- HMAC formula: SHA256(apiKey + secret + ISO_timestamp), sent as `X-API-Key` + `X-API-Hash` headers.
-- npm package name `@theyahia/ileti-merkezi-mcp`.
-
----
-
-## 1.0.1 — 2026-04-01
-
-Last release of the v1.x line. See git history for details.
+- Server version is now read from `package.json` (no more hardcoded drift).
+- Zero runtime dependencies beyond `@modelcontextprotocol/sdk` and `zod`
+  (native `fetch`, no remote manifest fetch on boot).

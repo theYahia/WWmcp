@@ -1,0 +1,31 @@
+name: kaiten-mcp
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - domain
+      - token
+    properties:
+      domain:
+        type: string
+        title: Kaiten Domain
+        description: "Your Kaiten subdomain (e.g. 'acme' for acme.kaiten.ru) or a full host (e.g. acme.kaiten.io)"
+      token:
+        type: string
+        title: API Token
+        description: "Bearer token from Kaiten Profile > API tokens"
+      base_url:
+        type: string
+        title: Base URL (self-hosted)
+        description: "Optional full API base for self-hosted Kaiten, e.g. https://kaiten.mycorp.ru/api/latest"
+  commandFunction: |-
+    (config) => ({
+      command: "npx",
+      args: ["-y", "@theyahia/kaiten-mcp"],
+      env: {
+        KAITEN_DOMAIN: config.domain,
+        KAITEN_TOKEN: config.token,
+        ...(config.base_url ? { KAITEN_BASE_URL: config.base_url } : {}),
+      },
+    })

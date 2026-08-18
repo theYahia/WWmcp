@@ -1,33 +1,34 @@
-name: megaplan-mcp
-description: MCP server for Megaplan — tasks, deals, projects, employees, comments + 2 MCP prompts (v2.0.0)
-icon: https://raw.githubusercontent.com/theYahia/megaplan-mcp/main/icon.png
 startCommand:
   type: stdio
   configSchema:
     type: object
     required:
-      - MEGAPLAN_DOMAIN
+      - domain
     properties:
-      MEGAPLAN_DOMAIN:
+      domain:
         type: string
-        description: "Your Megaplan subdomain (e.g. 'mycompany' for mycompany.megaplan.ru)"
-      MEGAPLAN_TOKEN:
+        title: Megaplan Domain
+        description: "Your Megaplan subdomain (e.g. yourcompany)"
+      token:
         type: string
-        description: "Bearer access token (preferred). If omitted, MEGAPLAN_LOGIN+MEGAPLAN_PASSWORD must be set."
-      MEGAPLAN_LOGIN:
+        title: Access Token
+        description: "Bearer token from Megaplan API settings"
+      login:
         type: string
-        description: "Login email (used with MEGAPLAN_PASSWORD if MEGAPLAN_TOKEN is not set)"
-      MEGAPLAN_PASSWORD:
+        title: Login
+        description: "Megaplan login (email) — used if no token"
+      password:
         type: string
-        description: "Password (used with MEGAPLAN_LOGIN if MEGAPLAN_TOKEN is not set)"
+        title: Password
+        description: "Megaplan password — used if no token"
   commandFunction: |-
     (config) => ({
-      command: "npx",
-      args: ["-y", "@theyahia/megaplan-mcp"],
+      command: "node",
+      args: ["dist/index.js"],
       env: {
-        MEGAPLAN_DOMAIN: config.MEGAPLAN_DOMAIN,
-        ...(config.MEGAPLAN_TOKEN ? { MEGAPLAN_TOKEN: config.MEGAPLAN_TOKEN } : {}),
-        ...(config.MEGAPLAN_LOGIN ? { MEGAPLAN_LOGIN: config.MEGAPLAN_LOGIN } : {}),
-        ...(config.MEGAPLAN_PASSWORD ? { MEGAPLAN_PASSWORD: config.MEGAPLAN_PASSWORD } : {}),
-      }
+        MEGAPLAN_DOMAIN: config.domain,
+        ...(config.token ? { MEGAPLAN_TOKEN: config.token } : {}),
+        ...(config.login ? { MEGAPLAN_LOGIN: config.login } : {}),
+        ...(config.password ? { MEGAPLAN_PASSWORD: config.password } : {}),
+      },
     })
