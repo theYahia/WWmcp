@@ -1,0 +1,27 @@
+name: delovye-linii-mcp
+description: >
+  MCP-сервер для API Деловых Линий (Dellin) — расчёт стоимости грузоперевозок,
+  поиск городов и терминалов, создание заказов, отслеживание.
+icon: truck
+color: "#E31E24"
+tools: 6
+
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - DELLIN_API_KEY
+    properties:
+      DELLIN_API_KEY:
+        type: string
+        description: "API-ключ Деловых Линий (https://dev.dellin.ru/)"
+  commandFunction:
+    |-
+    (config) => ({
+      command: "node",
+      args: ["dist/index.js"],
+      env: {
+        DELLIN_API_KEY: config.DELLIN_API_KEY
+      }
+    })

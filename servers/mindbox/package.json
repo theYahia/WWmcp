@@ -1,0 +1,77 @@
+{
+  "name": "@theyahia/mindbox-mcp",
+  "version": "1.2.0",
+  "description": "MCP server for Mindbox — CDP, customer profiles, orders, segmentation (Russia)",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "mindbox-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "skills",
+    "smithery.yaml",
+    "server.json"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "dev:http": "tsx src/index.ts --http",
+    "start": "node dist/index.js",
+    "start:http": "node dist/index.js --http",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@theyahia/mcp-core": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.18",
+    "tsx": "^4.19.0",
+    "typescript": "^5.8.3",
+    "vitest": "^4.1.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "mcpName": "io.github.theYahia/mindbox-mcp",
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "modelcontextprotocol",
+    "claude",
+    "ai",
+    "llm",
+    "anthropic",
+    "cursor",
+    "ai-tools",
+    "ai-agent",
+    "russian-api",
+    "mindbox",
+    "cdp",
+    "crm",
+    "customer",
+    "marketing-automation",
+    "streamable-http",
+    "api",
+    "typescript",
+    "marketing"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/theYahia/WWmcp.git",
+    "directory": "servers/mindbox"
+  },
+  "homepage": "https://github.com/theYahia/WWmcp/tree/main/servers/mindbox",
+  "author": "theYahia (https://github.com/theYahia)"
+}

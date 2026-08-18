@@ -1,0 +1,25 @@
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - PLANFIX_ACCOUNT
+      - PLANFIX_API_KEY
+    properties:
+      PLANFIX_ACCOUNT:
+        type: string
+        title: Planfix Account
+        description: "Субдомен вашего аккаунта Planfix (например: mycompany из mycompany.planfix.com)"
+      PLANFIX_API_KEY:
+        type: string
+        title: Planfix API Key
+        description: "API-ключ Planfix. Получите в Настройки > Интеграции > API."
+  commandFunction: |-
+    (config) => ({
+      command: 'node',
+      args: ['dist/index.js'],
+      env: {
+        PLANFIX_ACCOUNT: config.PLANFIX_ACCOUNT,
+        PLANFIX_API_KEY: config.PLANFIX_API_KEY,
+      },
+    })

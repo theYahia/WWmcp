@@ -1,0 +1,25 @@
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - YOOKASSA_SHOP_ID
+      - YOOKASSA_SECRET_KEY
+    properties:
+      YOOKASSA_SHOP_ID:
+        type: string
+        title: Shop ID
+        description: ID магазина из личного кабинета ЮKassa (Настройки → Магазин)
+      YOOKASSA_SECRET_KEY:
+        type: string
+        title: Secret Key
+        description: Секретный ключ API (Интеграция → Ключи API)
+  commandFunction: |-
+    (config) => ({
+      command: "npx",
+      args: ["-y", "@theyahia/yookassa-mcp"],
+      env: {
+        YOOKASSA_SHOP_ID: config.YOOKASSA_SHOP_ID,
+        YOOKASSA_SECRET_KEY: config.YOOKASSA_SECRET_KEY,
+      },
+    })

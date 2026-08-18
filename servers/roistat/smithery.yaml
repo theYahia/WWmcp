@@ -1,0 +1,25 @@
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - ROISTAT_API_KEY
+      - ROISTAT_PROJECT_ID
+    properties:
+      ROISTAT_API_KEY:
+        type: string
+        title: Roistat API Key
+        description: API-ключ проекта Roistat (из личного кабинета)
+      ROISTAT_PROJECT_ID:
+        type: string
+        title: Roistat Project ID
+        description: ID проекта в Roistat
+  commandFunction: |-
+    (config) => ({
+      command: "npx",
+      args: ["-y", "@theyahia/roistat-mcp"],
+      env: {
+        ROISTAT_API_KEY: config.ROISTAT_API_KEY,
+        ROISTAT_PROJECT_ID: config.ROISTAT_PROJECT_ID,
+      },
+    })

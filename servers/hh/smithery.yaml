@@ -1,0 +1,21 @@
+# Smithery configuration for hh-mcp
+# https://smithery.ai/docs/config
+
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    properties:
+      HH_ACCESS_TOKEN:
+        type: string
+        title: "hh.ru Access Token"
+        description: "OAuth 2.0 токен для доступа к резюме (опционально). Получить: https://dev.hh.ru/admin"
+    required: []
+  commandFunction: |-
+    (config) => ({
+      command: "npx",
+      args: ["-y", "@theyahia/hh-mcp"],
+      env: {
+        ...(config.HH_ACCESS_TOKEN ? { HH_ACCESS_TOKEN: config.HH_ACCESS_TOKEN } : {}),
+      },
+    })

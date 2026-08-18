@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "elma365": {
+      "command": "npx",
+      "args": ["-y", "@theyahia/elma365-mcp"],
+      "env": {
+        "ELMA365_DOMAIN": "",
+        "ELMA365_TOKEN": ""
+      }
+    }
+  }
+}

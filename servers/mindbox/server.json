@@ -1,0 +1,37 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/mindbox-mcp",
+  "description": "MCP server for Mindbox — CDP, customer profiles, orders, segmentation (Russia)",
+  "title": "Mindbox",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/mindbox",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/mindbox"
+  },
+  "version": "1.2.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/mindbox-mcp",
+      "version": "1.2.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "MINDBOX_API_KEY",
+          "description": "Секретный ключ API Mindbox (server-side secretKey). Также принимается MINDBOX_SECRET_KEY.",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "MINDBOX_ENDPOINT_ID",
+          "description": "ID точки интеграции (endpointId) в Mindbox.",
+          "isRequired": true
+        }
+      ]
+    }
+  ]
+}

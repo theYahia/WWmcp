@@ -1,0 +1,38 @@
+name: amocrm-mcp
+description: "Lightweight MCP server for amoCRM — 10 tools, OAuth 2.0, auto-refresh. Plug & play."
+
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - AMOCRM_DOMAIN
+      - AMOCRM_ACCESS_TOKEN
+    properties:
+      AMOCRM_DOMAIN:
+        type: string
+        description: "Your amoCRM domain (e.g. mycompany.amocrm.ru)"
+      AMOCRM_ACCESS_TOKEN:
+        type: string
+        description: "OAuth access token"
+      AMOCRM_REFRESH_TOKEN:
+        type: string
+        description: "OAuth refresh token (for auto-renewal)"
+      AMOCRM_CLIENT_ID:
+        type: string
+        description: "OAuth Client ID"
+      AMOCRM_CLIENT_SECRET:
+        type: string
+        description: "OAuth Client Secret"
+  commandFunction: |-
+    (config) => ({
+      command: "npx",
+      args: ["-y", "@theyahia/amocrm-mcp"],
+      env: {
+        AMOCRM_DOMAIN: config.AMOCRM_DOMAIN,
+        AMOCRM_ACCESS_TOKEN: config.AMOCRM_ACCESS_TOKEN,
+        AMOCRM_REFRESH_TOKEN: config.AMOCRM_REFRESH_TOKEN || "",
+        AMOCRM_CLIENT_ID: config.AMOCRM_CLIENT_ID || "",
+        AMOCRM_CLIENT_SECRET: config.AMOCRM_CLIENT_SECRET || ""
+      }
+    })

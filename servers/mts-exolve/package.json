@@ -1,0 +1,68 @@
+{
+  "name": "@theyahia/mts-exolve-mcp",
+  "version": "3.0.1",
+  "description": "MCP server for MTS Exolve — SMS, calls, recordings, Viber messaging (Russia)",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "mts-exolve-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "smithery.yaml"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@theyahia/mcp-core": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.18",
+    "tsx": "^4.19.0",
+    "typescript": "^5.8.3",
+    "vitest": "^4.1.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "mcpName": "io.github.theYahia/mts-exolve-mcp",
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "claude",
+    "ai",
+    "russian-api",
+    "mts",
+    "exolve",
+    "sms",
+    "telephony",
+    "viber",
+    "voice",
+    "mts-exolve",
+    "api",
+    "typescript",
+    "cpaas"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/theYahia/WWmcp.git",
+    "directory": "servers/mts-exolve"
+  },
+  "homepage": "https://github.com/theYahia/WWmcp/tree/main/servers/mts-exolve",
+  "author": "theYahia (https://github.com/theYahia)"
+}

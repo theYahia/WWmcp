@@ -1,0 +1,72 @@
+{
+  "name": "@theyahia/elma365-mcp",
+  "version": "2.0.0",
+  "description": "MCP server for ELMA365 — BPM tasks, business processes, app items, schema discovery (Russia). 20 tools.",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "elma365-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "start:http": "node dist/index.js --http",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src tests",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "prepublishOnly": "npm run build && npm run test"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "@types/node": "^22.0.0",
+    "@vitest/coverage-v8": "^3.0.0",
+    "eslint": "^9.0.0",
+    "globals": "^15.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0",
+    "typescript-eslint": "^8.0.0",
+    "vitest": "^3.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "mcpName": "io.github.theYahia/elma365-mcp",
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "claude",
+    "ai",
+    "russian-api",
+    "elma365",
+    "bpm",
+    "low-code",
+    "streamable-http",
+    "api",
+    "typescript",
+    "crm",
+    "business-process",
+    "workflow",
+    "wwmcp"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/theYahia/elma365-mcp.git"
+  },
+  "homepage": "https://github.com/theYahia/elma365-mcp#readme",
+  "author": "theYahia (https://github.com/theYahia)"
+}

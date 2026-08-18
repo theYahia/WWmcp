@@ -1,0 +1,68 @@
+{
+  "name": "@theyahia/amocrm-mcp",
+  "version": "2.0.2",
+  "description": "MCP server for amoCRM — leads, contacts, pipelines, tasks (Russia)",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": { "amocrm-mcp": "dist/index.js" },
+  "files": ["dist", "smithery.yaml"],
+  "engines": { "node": ">=18.0.0" },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@theyahia/mcp-core": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.18",
+    "tsx": "^4.19.0",
+    "typescript": "^5.8.3",
+    "vitest": "^4.1.2"
+  },
+  "publishConfig": { "access": "public" },
+  "mcpName": "io.github.theYahia/amocrm-mcp",
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "modelcontextprotocol",
+    "claude",
+    "ai",
+    "llm",
+    "anthropic",
+    "cursor",
+    "ai-tools",
+    "ai-agent",
+    "russian-api",
+    "amocrm",
+    "crm",
+    "leads",
+    "contacts",
+    "sales",
+    "companies",
+    "pipelines",
+    "tasks",
+    "events",
+    "oauth",
+    "smithery",
+    "api",
+    "typescript"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/theYahia/WWmcp.git",
+    "directory": "servers/amocrm"
+  },
+  "homepage": "https://github.com/theYahia/WWmcp/tree/main/servers/amocrm#readme",
+  "author": "theYahia (https://github.com/theYahia)"
+}

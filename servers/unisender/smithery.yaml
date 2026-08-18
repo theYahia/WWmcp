@@ -1,0 +1,24 @@
+name: unisender-mcp
+description: MCP server for UniSender email marketing API — lists, contacts, campaigns, templates, statistics
+icon: https://www.unisender.com/favicon.ico
+author: theYahia
+
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - UNISENDER_API_KEY
+    properties:
+      UNISENDER_API_KEY:
+        type: string
+        description: "API key from UniSender (https://www.unisender.com/ru/support/api/common/api-key/)"
+  commandFunction:
+    |-
+    (config) => ({
+      command: "npx",
+      args: ["-y", "@theyahia/unisender-mcp"],
+      env: {
+        UNISENDER_API_KEY: config.UNISENDER_API_KEY
+      }
+    })

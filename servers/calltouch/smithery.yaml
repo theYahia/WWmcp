@@ -1,0 +1,23 @@
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - CALLTOUCH_TOKEN
+      - CALLTOUCH_SITE_ID
+    properties:
+      CALLTOUCH_TOKEN:
+        type: string
+        description: "API-токен из личного кабинета Calltouch"
+      CALLTOUCH_SITE_ID:
+        type: string
+        description: "ID сайта в системе Calltouch"
+  commandFunction: |-
+    (config) => ({
+      command: "npx",
+      args: ["-y", "@theyahia/calltouch-mcp"],
+      env: {
+        CALLTOUCH_TOKEN: config.CALLTOUCH_TOKEN,
+        CALLTOUCH_SITE_ID: config.CALLTOUCH_SITE_ID
+      }
+    })

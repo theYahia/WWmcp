@@ -1,0 +1,38 @@
+name: mango-office-mcp
+description: MCP server for Mango Office telephony API — calls, users, recordings, SMS, statistics.
+version: 1.1.1
+
+config:
+  required:
+    MANGO_API_KEY:
+      type: string
+      description: API key from Mango Office dashboard
+    MANGO_API_SALT:
+      type: string
+      description: API salt (secret) from Mango Office dashboard
+
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - MANGO_API_KEY
+      - MANGO_API_SALT
+    properties:
+      MANGO_API_KEY:
+        type: string
+        title: Mango Office API Key
+        description: Get from https://www.mango-office.ru dashboard → Settings → API
+      MANGO_API_SALT:
+        type: string
+        title: Mango Office API Salt
+        description: Secret key for HMAC signing, paired with API Key
+  commandFunction: |-
+    (config) => ({
+      command: "npx",
+      args: ["-y", "@theyahia/mango-office-mcp"],
+      env: {
+        MANGO_API_KEY: config.MANGO_API_KEY,
+        MANGO_API_SALT: config.MANGO_API_SALT
+      }
+    })

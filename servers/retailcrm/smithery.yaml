@@ -1,0 +1,29 @@
+name: retailcrm-mcp
+description: MCP server for RetailCRM e-commerce CRM — orders, customers, products, statuses via API v5
+author: Yahia
+license: MIT
+repository: https://github.com/theYahia/WWmcp
+
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    properties:
+      RETAILCRM_DOMAIN:
+        type: string
+        description: "RetailCRM domain (e.g. yourstore.retailcrm.ru)"
+      RETAILCRM_API_KEY:
+        type: string
+        description: "API key from RetailCRM Settings > Integration > API keys"
+    required:
+      - RETAILCRM_DOMAIN
+      - RETAILCRM_API_KEY
+  commandFunction: |-
+    (config) => ({
+      command: "npx",
+      args: ["-y", "@theyahia/retailcrm-mcp"],
+      env: {
+        RETAILCRM_DOMAIN: config.RETAILCRM_DOMAIN,
+        RETAILCRM_API_KEY: config.RETAILCRM_API_KEY
+      }
+    })

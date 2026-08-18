@@ -1,0 +1,66 @@
+{
+  "name": "@theyahia/planfix-mcp",
+  "version": "1.2.0",
+  "description": "MCP server for Planfix — tasks, contacts, project management (Russia). 20 tools + 2 MCP prompts.",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "planfix-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "smithery.yaml"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@theyahia/mcp-core": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "express": "^5.2.1",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.18",
+    "tsx": "^4.19.0",
+    "typescript": "^5.8.3",
+    "vitest": "^4.1.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "mcpName": "io.github.theYahia/planfix-mcp",
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "claude",
+    "ai",
+    "russian-api",
+    "planfix",
+    "project-management",
+    "crm",
+    "streamable-http",
+    "smithery",
+    "api",
+    "typescript"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/theYahia/WWmcp.git",
+    "directory": "servers/planfix"
+  },
+  "homepage": "https://github.com/theYahia/WWmcp/tree/main/servers/planfix",
+  "author": "theYahia (https://github.com/theYahia)"
+}
