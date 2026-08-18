@@ -16,6 +16,7 @@
     "start:http": "node dist/index.js --http",
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
