@@ -4,7 +4,7 @@
 
 If you discover a security vulnerability in any `@theyahia/*-mcp` package, please report it privately. **Do not open a public GitHub issue.**
 
-**Contact:** open a [GitHub Security Advisory](https://github.com/theYahia/WWmcp/security/advisories/new) (preferred), or email `security@theyahia.dev` with:
+**Contact:** open a [GitHub Security Advisory](https://github.com/theYahia/WWmcp/security/advisories/new) (preferred), or email `leadmanager81@yandex.ru` with:
 
 - Affected package(s) and version(s)
 - Steps to reproduce
