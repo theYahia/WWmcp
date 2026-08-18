@@ -6,6 +6,7 @@ function mockFetch(body: unknown, status = 200) {
   return vi.fn(async () => ({
     ok: status === 200,
     status,
+    headers: new Headers(),
     json: async () => body,
     text: async () => JSON.stringify(body),
   }));
@@ -19,6 +20,7 @@ function mockFetchSequence(responses: Array<{ status: number; body: unknown }>) 
     return {
       ok: resp.status === 200,
       status: resp.status,
+      headers: new Headers(),
       json: async () => resp.body,
       text: async () => JSON.stringify(resp.body),
     };

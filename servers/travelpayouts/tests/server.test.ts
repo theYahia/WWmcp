@@ -1,33 +1,39 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
+import { createServer, TOOL_COUNT } from "../src/server.js";
 
-vi.mock("@modelcontextprotocol/sdk/server/stdio.js", () => ({
-  StdioServerTransport: vi.fn(),
-}));
+const EXPECTED_TOOLS = [
+  "search_flights_prices",
+  "get_cheapest_month",
+  "get_calendar_prices",
+  "get_popular_directions",
+  "get_airline_directions",
+  "get_special_offers",
+  "search_hotels",
+  "get_hotel_prices",
+  "lookup_airports",
+  "lookup_airlines",
+  "lookup_cities",
+  "get_direct_routes",
+  "get_nearest_prices",
+];
 
-vi.spyOn(process, "exit").mockImplementation((() => {}) as any);
+describe("travelpayouts server factory", () => {
+  it("createServer returns a connectable McpServer", () => {
+    const server = createServer();
+    expect(server).toBeDefined();
+    expect(typeof server.connect).toBe("function");
+  });
 
-describe("server smoke test", () => {
-  it("registers exactly 11 tools", async () => {
-    const { server } = await import("../src/index.js");
-    const s = server as any;
-    expect(s._registeredTools).toBeDefined();
-    const toolNames = Object.keys(s._registeredTools);
-    expect(toolNames.length).toBe(11);
-    const expected = [
-      "search_flights_prices",
-      "get_cheapest_month",
-      "get_calendar_prices",
-      "get_popular_directions",
-      "get_airline_directions",
-      "get_special_offers",
-      "search_hotels",
-      "get_hotel_prices",
-      "lookup_airports",
-      "lookup_airlines",
-      "lookup_cities",
-    ];
-    for (const n of expected) {
-      expect(toolNames).toContain(n);
-    }
+  it("TOOL_COUNT is 13", () => {
+    expect(TOOL_COUNT).toBe(13);
+    expect(EXPECTED_TOOLS).toHaveLength(TOOL_COUNT);
+  });
+
+  it("registers every documented tool", () => {
+    const registered = Object.keys(
+      (createServer() as unknown as { _registeredTools: Record<string, unknown> })
+        ._registeredTools,
+    );
+    expect(registered.sort()).toEqual([...EXPECTED_TOOLS].sort());
   });
 });

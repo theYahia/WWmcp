@@ -15,7 +15,7 @@ export const createPaymentSchema = z.object({
     "bank_card", "sbp", "yoo_money", "sberbank", "tinkoff_bank",
     "mobile_balance", "cash", "installments"
   ]).optional().describe("Payment method"),
-  metadata: z.record(z.string()).optional().describe("Arbitrary metadata (key-value)"),
+  metadata: z.record(z.string(), z.string()).optional().describe("Arbitrary metadata (key-value)"),
   receipt_email: z.string().email().optional().describe("Customer email for the receipt"),
   receipt_tax_system_code: z.number().int().min(1).max(6).optional().describe("Receipt tax system code, tag 1055 (only if the shop has multiple tax systems / FFD 1.2)"),
   receipt_items: z.array(z.object({
@@ -84,7 +84,7 @@ export const createSplitPaymentSchema = z.object({
     amount: moneyAmount.describe("Amount for this recipient"),
     platform_fee_amount: moneyAmount.optional().describe("Platform commission withheld from this transfer (API field platform_fee_amount)"),
     description: z.string().optional().describe("Transfer description"),
-    metadata: z.record(z.string()).optional().describe("Transfer metadata"),
+    metadata: z.record(z.string(), z.string()).optional().describe("Transfer metadata"),
   })).min(1).describe("Recipients (splits). The sum of transfers must equal amount. Requires the Split Payments product"),
 });
 

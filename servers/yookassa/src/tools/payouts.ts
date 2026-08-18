@@ -9,7 +9,7 @@ export const createPayoutSchema = z.object({
   destination_value: z.string().optional().describe("Recipient: card number (bank_card), wallet number (yoo_money), or phone 79XXXXXXXXX (sbp)"),
   bank_id: z.string().optional().describe("SBP participant bank id (required for destination_type=sbp)"),
   description: z.string().max(128).optional().describe("Payout description"),
-  metadata: z.record(z.string()).optional().describe("Arbitrary metadata"),
+  metadata: z.record(z.string(), z.string()).optional().describe("Arbitrary metadata"),
 });
 
 export const getPayoutSchema = z.object({
