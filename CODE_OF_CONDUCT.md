@@ -13,7 +13,7 @@ This Code applies to all project spaces — GitHub issues, pull requests, discus
 
 If you experience or witness unacceptable behavior, please report it privately to the project maintainer:
 
-- **Email:** `conduct@theyahia.dev`
+- **Email:** `leadmanager81@yandex.ru`
 - **GitHub:** [@theYahia](https://github.com/theYahia) (DM via any contact link on the profile)
 
 All reports are reviewed and investigated promptly and fairly. The maintainer is obligated to respect the privacy and security of the reporter.
