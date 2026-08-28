@@ -1,0 +1,38 @@
+{
+  "name": "@theyahia/travelpayouts-mcp",
+  "version": "2.0.1",
+  "description": "MCP server for Travelpayouts (Aviasales) API — 13 tools: flight prices, price calendar, special offers, hotels, airport/airline/city lookup. Token as query param.",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": { "travelpayouts-mcp": "dist/index.js" },
+  "files": ["dist"],
+  "engines": { "node": ">=18.0.0" },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "vitest run --config vitest.e2e.config.ts",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@theyahia/mcp-core": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.18",
+    "tsx": "^4.19.0",
+    "typescript": "^5.8.3",
+    "vitest": "^4.1.2"
+  },
+  "publishConfig": { "access": "public" },
+  "mcpName": "io.github.theYahia/travelpayouts-mcp",
+  "keywords": ["mcp", "mcp-server", "model-context-protocol", "claude", "ai", "russian-api", "travelpayouts", "aviasales", "flights", "hotels", "travel"],
+  "license": "MIT",
+  "repository": { "type": "git", "url": "https://github.com/theYahia/WWmcp.git", "directory": "servers/travelpayouts" },
+  "author": "theYahia (https://github.com/theYahia)"
+}

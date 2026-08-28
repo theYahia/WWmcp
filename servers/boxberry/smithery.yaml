@@ -1,0 +1,18 @@
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - BOXBERRY_API_TOKEN
+    properties:
+      BOXBERRY_API_TOKEN:
+        type: string
+        description: "API token from Boxberry personal account (https://account.boxberry.ru)"
+  commandFunction: |-
+    (config) => ({
+      command: 'node',
+      args: ['dist/index.js'],
+      env: {
+        BOXBERRY_API_TOKEN: config.BOXBERRY_API_TOKEN
+      }
+    })

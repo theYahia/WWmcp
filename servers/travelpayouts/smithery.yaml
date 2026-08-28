@@ -1,0 +1,20 @@
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - TRAVELPAYOUTS_TOKEN
+    properties:
+      TRAVELPAYOUTS_TOKEN:
+        type: string
+        title: "Travelpayouts API Token"
+        description: "API token for Travelpayouts flight search. Get it from your Travelpayouts dashboard → API → Your token."
+  commandFunction:
+    |-
+    (config) => ({
+      command: 'npx',
+      args: ['-y', '@theyahia/travelpayouts-mcp'],
+      env: {
+        ...config
+      }
+    })

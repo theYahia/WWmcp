@@ -1,0 +1,53 @@
+name: pochta-russia-mcp
+description: MCP server for Russian Post (Почта России) — tracking, tariffs, delivery time, offices, zip codes, address normalization
+version: 2.0.0
+license: MIT
+
+tools:
+  - name: track
+    description: Track a Russian Post shipment by barcode (needs login + password)
+  - name: calculate
+    description: Calculate shipping cost and delivery time
+  - name: delivery_time
+    description: Estimate delivery time between two zip codes
+  - name: get_offices
+    description: Search post offices by zip code or city
+  - name: zip_lookup
+    description: Look up information by postal code
+  - name: normalize_address
+    description: Normalize a free-form address via Russian Post API
+
+auth:
+  type: env
+  variables:
+    - name: POCHTA_TOKEN
+      description: Access token from otpravka.pochta.ru (sent as Authorization AccessToken header)
+      required: true
+    - name: POCHTA_LOGIN
+      description: Cabinet login (part of X-User-Authorization Basic)
+      required: true
+    - name: POCHTA_PASSWORD
+      description: Cabinet password (part of X-User-Authorization Basic)
+      required: true
+
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    properties:
+      POCHTA_TOKEN:
+        type: string
+        description: Access token
+      POCHTA_LOGIN:
+        type: string
+        description: Cabinet login
+      POCHTA_PASSWORD:
+        type: string
+        description: Cabinet password
+    required:
+      - POCHTA_TOKEN
+      - POCHTA_LOGIN
+      - POCHTA_PASSWORD
+  commandFunction:
+    |-
+    (config) => ({ command: 'npx', args: ['-y', '@theyahia/pochta-russia-mcp'], env: { POCHTA_TOKEN: config.POCHTA_TOKEN, POCHTA_LOGIN: config.POCHTA_LOGIN, POCHTA_PASSWORD: config.POCHTA_PASSWORD } })

@@ -1,0 +1,35 @@
+# smithery.yaml — Smithery registry configuration
+# https://smithery.ai/docs/config
+
+name: salutespeech-mcp
+displayName: SaluteSpeech MCP
+description: MCP server for Sber SaluteSpeech API — speech recognition (STT) and synthesis (TTS)
+icon: microphone
+license: MIT
+author: theYahia
+
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    properties:
+      SALUTESPEECH_API_KEY:
+        type: string
+        description: "Base64-encoded client_id:client_secret from developers.sber.ru"
+    required:
+      - SALUTESPEECH_API_KEY
+  commandFunction:
+    |-
+    (config) => ({ command: 'npx', args: ['-y', '@theyahia/salutespeech-mcp'], env: { SALUTESPEECH_API_KEY: config.SALUTESPEECH_API_KEY } })
+
+tools:
+  - name: recognize_speech
+    description: Speech recognition from Base64 audio
+  - name: synthesize_speech
+    description: Text-to-speech synthesis
+  - name: list_models
+    description: List available STT/TTS models and voices
+  - name: get_task_status
+    description: Check async recognition task status
+  - name: recognize_file
+    description: Recognize speech from a local audio file

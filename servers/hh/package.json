@@ -1,0 +1,40 @@
+{
+  "name": "@theyahia/hh-mcp",
+  "version": "2.1.0",
+  "description": "MCP server for HeadHunter — vacancy search, resumes, salary stats (Russia)",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": { "hh-mcp": "dist/index.js" },
+  "files": ["dist"],
+  "engines": { "node": ">=18.0.0" },
+  "scripts": {
+    "clean": "node -e \"for (const p of ['dist','tsconfig.tsbuildinfo']) require('fs').rmSync(p,{recursive:true,force:true})\"",
+    "prebuild": "npm run clean",
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "start:http": "node dist/index.js --http",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@theyahia/mcp-core": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.18",
+    "tsx": "^4.19.0",
+    "typescript": "^5.8.3",
+    "vitest": "^4.1.2"
+  },
+  "publishConfig": { "access": "public" },
+  "mcpName": "io.github.theYahia/hh-mcp",
+  "keywords": ["mcp", "mcp-server", "model-context-protocol", "claude", "ai", "russian-api", "hh", "headhunter", "jobs", "vacancies", "salary", "resume", "employers", "api", "typescript", "hr"],
+  "license": "MIT",
+  "repository": { "type": "git", "url": "https://github.com/theYahia/WWmcp.git", "directory": "servers/hh" },
+  "homepage": "https://github.com/theYahia/WWmcp/tree/main/servers/hh",
+  "author": "theYahia (https://github.com/theYahia)"
+}

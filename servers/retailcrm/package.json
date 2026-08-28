@@ -1,0 +1,69 @@
+{
+  "name": "@theyahia/retailcrm-mcp",
+  "version": "3.0.0",
+  "description": "MCP server for RetailCRM — orders, customers, inventory, payments, tasks & e-commerce analytics (Russia)",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "retailcrm-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "start:http": "node dist/index.js --http",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@theyahia/mcp-core": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.13.3",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.18",
+    "tsx": "^4.19.0",
+    "typescript": "^5.8.3",
+    "vitest": "^4.1.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "mcpName": "io.github.theYahia/retailcrm-mcp",
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "claude",
+    "ai",
+    "russian-api",
+    "retailcrm",
+    "crm",
+    "orders",
+    "customers",
+    "products",
+    "ecommerce",
+    "analytics",
+    "delivery",
+    "streamable-http",
+    "api",
+    "typescript",
+    "e-commerce"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/theYahia/WWmcp.git",
+    "directory": "servers/retailcrm"
+  },
+  "author": "theYahia (https://github.com/theYahia)"
+}

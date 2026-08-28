@@ -1,0 +1,26 @@
+# Smithery configuration for mindbox-mcp
+# https://smithery.ai/docs/config
+
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - MINDBOX_API_KEY
+      - MINDBOX_ENDPOINT_ID
+    properties:
+      MINDBOX_API_KEY:
+        type: string
+        description: "Mindbox API secret key (from Mindbox dashboard)"
+      MINDBOX_ENDPOINT_ID:
+        type: string
+        description: "Mindbox endpoint ID"
+  commandFunction: |-
+    (config) => ({
+      command: "npx",
+      args: ["-y", "@theyahia/mindbox-mcp"],
+      env: {
+        MINDBOX_API_KEY: config.MINDBOX_API_KEY,
+        MINDBOX_ENDPOINT_ID: config.MINDBOX_ENDPOINT_ID,
+      }
+    })

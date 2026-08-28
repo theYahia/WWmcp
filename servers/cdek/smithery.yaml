@@ -1,0 +1,25 @@
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - CDEK_CLIENT_ID
+      - CDEK_CLIENT_SECRET
+    properties:
+      CDEK_CLIENT_ID:
+        type: string
+        title: "CDEK Client ID"
+        description: "OAuth2 Client ID for CDEK API. Get it from your CDEK personal account → Integration settings."
+      CDEK_CLIENT_SECRET:
+        type: string
+        title: "CDEK Client Secret"
+        description: "OAuth2 Client Secret for CDEK API. Get it from your CDEK personal account → Integration settings."
+  commandFunction:
+    |-
+    (config) => ({
+      command: 'npx',
+      args: ['-y', '@theyahia/cdek-mcp'],
+      env: {
+        ...config
+      }
+    })
