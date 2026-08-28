@@ -112,7 +112,7 @@
 |---------|--------|-------|-------------|
 | [@theyahia/yandex-metrika-mcp](https://www.npmjs.com/package/@theyahia/yandex-metrika-mcp) | v2.1.0 | 15 tools | Yandex.Metrika — counters, goals, reports, logs, traffic analysis |
 | [@theyahia/yandex-direct-mcp](https://www.npmjs.com/package/@theyahia/yandex-direct-mcp) | v3.0.0 | 12 tools | Yandex.Direct — campaigns, ad groups, ads, keywords, statistics, account |
-| [@theyahia/yandex-webmaster-mcp](https://www.npmjs.com/package/@theyahia/yandex-webmaster-mcp) | v1.0.1 | 5 tools | Yandex.Webmaster — hosts, search queries, indexing status |
+| [@theyahia/yandex-webmaster-mcp](https://www.npmjs.com/package/@theyahia/yandex-webmaster-mcp) | v2.0.0 | 13 tools | Yandex.Webmaster — hosts, indexing, search queries, sitemaps, diagnostics, recrawl |
 | [@theyahia/appmetrica-mcp](https://www.npmjs.com/package/@theyahia/appmetrica-mcp) | v1.0.0 | 8 tools | AppMetrica — mobile analytics, reports, cohorts, profiles, push campaigns, crashes |
 | [@theyahia/unisender-mcp](https://www.npmjs.com/package/@theyahia/unisender-mcp) | v1.0.1 | 7 tools | UniSender — email lists, campaigns, contacts |
 | [@theyahia/sendpulse-mcp](https://www.npmjs.com/package/@theyahia/sendpulse-mcp) | v1.0.2 | 6 tools | SendPulse — mailing lists, email sending, statistics |
