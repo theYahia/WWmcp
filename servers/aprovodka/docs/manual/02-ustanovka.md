@@ -45,7 +45,7 @@ aprovodka авторизуется в 1С по HTTP Basic: логин и пар�
 
 ### 3.3 Установка пакета
 
-Требования к среде: **Node.js 18.0.0 или выше** (поле `engines` пакета). Пакет — `@theyahia/aprovodka`, исполняемый файл — `aprovodka`, версия — 4.2.0.
+Требования к среде: **Node.js 18.0.0 или выше** (поле `engines` пакета). Пакет — `@theyahia/aprovodka`, исполняемый файл — `aprovodka`, версия — 4.3.0.
 
 **Вариант 1 — запуск через `npx` (контур с доступом к npmjs.com).** Эта команда прописывается в конфигурациях клиентов ниже; доступ к реестру npm нужен при каждом запуске.
 
@@ -63,13 +63,13 @@ npm install -g @theyahia/aprovodka
 
 ```bash
 npm pack @theyahia/aprovodka
-# получится файл вида theyahia-aprovodka-4.2.0.tgz
+# получится файл вида theyahia-aprovodka-4.3.0.tgz
 ```
 
 Архив переносится в закрытый контур и устанавливается локально:
 
 ```bash
-npm install -g ./theyahia-aprovodka-4.2.0.tgz
+npm install -g ./theyahia-aprovodka-4.3.0.tgz
 ```
 
 В конфигурации MCP-клиента после этого указывается команда `aprovodka` вместо `npx` — обращений к npmjs.com при запуске не будет. Тот же архив годится для внутреннего зеркала реестра.
@@ -160,7 +160,7 @@ npx @theyahia/aprovodka
 {
   "status": "ok",
   "server": "aprovodka",
-  "version": "4.2.0",
+  "version": "4.3.0",
   "uptime": 137,
   "memory_mb": 62,
   "tools": 34
