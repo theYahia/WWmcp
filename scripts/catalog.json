@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-09-02T19:05:37.376Z",
+  "generatedAt": "2026-09-02T19:24:50.901Z",
   "servers": 46,
   "serversConnected": 46,
-  "totalTools": 501,
+  "totalTools": 503,
   "entries": [
     {
       "dir": "2gis",
@@ -208,16 +208,18 @@
     {
       "dir": "cbr",
       "name": "@theyahia/cbr-mcp",
-      "version": "1.1.0",
-      "description": "Central Bank of Russia (ЦБ РФ) rates for AI agents: daily FX rates, rate on a given date, key rate, precious metals, currency conversion (5 tools, Russia)",
+      "version": "1.2.0",
+      "description": "Central Bank of Russia (ЦБ РФ) rates for AI agents: daily FX rates, rate on a given date, rate dynamics over a period, key rate and its change history, precious metals, currency conversion (7 tools, Russia)",
       "connected": true,
-      "toolCount": 5,
+      "toolCount": 7,
       "tools": [
         "convert_currency",
         "get_currency_rate",
         "get_daily_rates",
         "get_key_rate",
-        "get_precious_metals"
+        "get_key_rate_history",
+        "get_precious_metals",
+        "get_rate_dynamics"
       ],
       "declaredToolCount": null,
       "envDependent": false,
