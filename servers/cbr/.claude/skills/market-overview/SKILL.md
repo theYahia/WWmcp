@@ -2,9 +2,6 @@
 name: market-overview
 description: Обзор финансового рынка — курсы топ-валют, ключевая ставка, драгметаллы. Использует инструменты ЦБ РФ MCP
 argument-hint: "[дата в формате YYYY-MM-DD, необязательно]"
-allowed-tools:
-  - Bash
-  - Read
 ---
 
 # /market-overview — Обзор финансового рынка

@@ -3,8 +3,8 @@
 /**
  * @theyahia/cbr-mcp — MCP server for Central Bank of Russia API
  *
- * 5 tools: get_daily_rates, get_currency_rate, get_key_rate,
- * get_precious_metals, convert_currency.
+ * 7 tools: get_daily_rates, get_currency_rate, get_rate_dynamics, get_key_rate,
+ * get_key_rate_history, get_precious_metals, convert_currency.
  * No auth required.
  *
  * Transports: stdio (default), Streamable HTTP (--http or HTTP_PORT)
@@ -20,14 +20,19 @@ import {
 } from "./tools/rates.js";
 import { getPreciousMetalsSchema, handleGetPreciousMetals } from "./tools/metals.js";
 import { convertCurrencySchema, handleConvertCurrency } from "./tools/convert.js";
-import { handleGetKeyRate } from "./tools/keyrate.js";
+import {
+  handleGetKeyRate,
+  getKeyRateHistorySchema,
+  handleGetKeyRateHistory,
+} from "./tools/keyrate.js";
+import { getRateDynamicsSchema, handleGetRateDynamics } from "./tools/dynamics.js";
 
 const logger = createLogger("cbr-mcp");
 
 function createServer(): McpServer {
   const server = new McpServer({
     name: "cbr-mcp",
-    version: "1.1.0",
+    version: "1.2.0",
   });
 
   server.tool(
@@ -49,11 +54,29 @@ function createServer(): McpServer {
   );
 
   server.tool(
+    "get_rate_dynamics",
+    "Динамика курса валюты к рублю за период по данным ЦБ РФ: ряд значений плюс сводка (min/max/avg, изменение за период абсолютное и в процентах). Для курса на одну дату используйте get_currency_rate.",
+    getRateDynamicsSchema.shape,
+    withErrorHandling(async (params) => ({
+      content: [{ type: "text", text: await handleGetRateDynamics(params) }],
+    })),
+  );
+
+  server.tool(
     "get_key_rate",
-    "Текущая ключевая ставка ЦБ РФ в процентах. Возвращает ставку и дату последнего изменения. Авторизация не требуется.",
+    "Текущая ключевая ставка ЦБ РФ в процентах и дата, с которой она действует. Для истории изменений используйте get_key_rate_history. Авторизация не требуется.",
     {},
     withErrorHandling(async () => ({
       content: [{ type: "text", text: await handleGetKeyRate() }],
+    })),
+  );
+
+  server.tool(
+    "get_key_rate_history",
+    "История изменений ключевой ставки ЦБ РФ за период: даты вступления в силу и значения. По умолчанию — последний год. Для текущей ставки используйте get_key_rate.",
+    getKeyRateHistorySchema.shape,
+    withErrorHandling(async (params) => ({
+      content: [{ type: "text", text: await handleGetKeyRateHistory(params) }],
     })),
   );
 
@@ -80,8 +103,8 @@ function createServer(): McpServer {
 
 runServer(createServer, {
   name: "cbr-mcp",
-  version: "1.1.0",
-  toolCount: 5,
+  version: "1.2.0",
+  toolCount: 7,
   logger,
 }).catch((error) => {
   logger.error("Fatal error", {

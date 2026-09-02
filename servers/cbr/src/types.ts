@@ -36,3 +36,27 @@ export interface ConversionResult {
   to_rate: number;
   date: string;
 }
+
+/** Точка ряда ключевой ставки: дата и значение в %. */
+export interface KeyRatePoint {
+  date: string;
+  rate: number;
+}
+
+export interface KeyRateInfo {
+  rate: number;
+  /** Дата, на которую актуальна ставка (последняя в ряду). */
+  date: string;
+  /** Дата, с которой действует текущая ставка. */
+  since: string;
+}
+
+/** Точка ряда динамики курса валюты. */
+export interface DynamicsPoint {
+  date: string;
+  nominal: number;
+  /** Курс за `nominal` единиц валюты. */
+  value: number;
+  /** Курс за 1 единицу валюты (VunitRate). */
+  rate: number;
+}

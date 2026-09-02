@@ -1,5 +1,18 @@
 import { BaseHttpClient, NoAuthStrategy, createLogger } from "@theyahia/mcp-core";
-import type { CbrDailyResponse } from "./types.js";
+import {
+  isoFromDate,
+  isoToCbrDate,
+  keyRateChanges,
+  keyRateSince,
+  parseDynamicsXml,
+  parseKeyRateHtml,
+} from "./parsers.js";
+import type {
+  CbrDailyResponse,
+  DynamicsPoint,
+  KeyRateInfo,
+  KeyRatePoint,
+} from "./types.js";
 
 const logger = createLogger("cbr-mcp");
 
@@ -33,28 +46,84 @@ export async function getDailyRates(date?: string): Promise<CbrDailyResponse> {
   return (await client.get(path)) as CbrDailyResponse;
 }
 
-export async function getKeyRate(): Promise<{ rate: number; date: string }> {
-  const xml = (await cbrClient.get("/scripts/XML_KeyRate.asp")) as string;
+/**
+ * Страница официальной таблицы ключевой ставки. XML-эндпоинт
+ * `/scripts/XML_KeyRate.asp` ЦБ снял (302 → /Error/404), HTML остался.
+ */
+function keyRateUrl(fromIso: string, toIso: string): string {
+  const from = isoToCbrDate(fromIso, ".");
+  const to = isoToCbrDate(toIso, ".");
+  return `/hd_base/KeyRate/?UniDbQuery.Posted=True&UniDbQuery.From=${from}&UniDbQuery.To=${to}`;
+}
 
-  const records = xml.match(
-    /<Record\s+Date="([^"]+)"\s+Id="[^"]*">\s*<Rate>([^<]+)<\/Rate>\s*<\/Record>/g,
+function daysAgoIso(days: number): string {
+  return isoFromDate(new Date(Date.now() - days * 86_400_000));
+}
+
+async function fetchKeyRatePoints(fromIso: string, toIso: string): Promise<KeyRatePoint[]> {
+  const html = (await cbrClient.get(keyRateUrl(fromIso, toIso))) as string;
+  return parseKeyRateHtml(html);
+}
+
+/** Текущая ключевая ставка ЦБ РФ + дата, с которой она действует. */
+export async function getKeyRate(): Promise<KeyRateInfo> {
+  // 400 дней назад — чтобы начало текущей серии (since) попало в выборку даже
+  // после года без пересмотра ставки.
+  const points = await fetchKeyRatePoints(daysAgoIso(400), isoFromDate(new Date()));
+  if (points.length === 0) {
+    throw new Error("Не удалось получить ключевую ставку ЦБ РФ (пустая таблица hd_base/KeyRate).");
+  }
+  return { rate: points[0].rate, date: points[0].date, since: keyRateSince(points) };
+}
+
+/** История изменений ключевой ставки за период (по умолчанию — последний год). */
+export async function getKeyRateHistory(
+  fromDate?: string,
+  toDate?: string,
+): Promise<KeyRatePoint[]> {
+  const points = await fetchKeyRatePoints(
+    fromDate ?? daysAgoIso(365),
+    toDate ?? isoFromDate(new Date()),
   );
-  if (!records || records.length === 0) {
-    throw new Error("Не удалось получить ключевую ставку ЦБ РФ");
+  return keyRateChanges(points);
+}
+
+export interface RateDynamics {
+  code: string;
+  id: string;
+  points: DynamicsPoint[];
+}
+
+/** Динамика курса валюты за период. ID валюты берётся из актуального справочника ЦБ. */
+export async function getRateDynamics(
+  currencyCode: string,
+  fromDate: string,
+  toDate: string,
+): Promise<RateDynamics> {
+  const code = currencyCode.toUpperCase();
+  if (code === "RUB") {
+    throw new Error("Динамика для RUB недоступна (рубль — базовая валюта).");
+  }
+  const from = isoToCbrDate(fromDate, "/");
+  const to = isoToCbrDate(toDate, "/");
+  if (fromDate > toDate) {
+    throw new Error("from_date должна быть не позже to_date.");
   }
 
-  const last = records[records.length - 1];
-  const dateMatch = last.match(/Date="([^"]+)"/);
-  const rateMatch = last.match(/<Rate>([^<]+)<\/Rate>/);
-
-  if (!dateMatch || !rateMatch) {
-    throw new Error("Не удалось распарсить ключевую ставку");
+  const daily = await getDailyRates();
+  const currency = Object.values(daily.Valute).find((v) => v.CharCode === code);
+  if (!currency) {
+    const available = Object.values(daily.Valute)
+      .map((v) => v.CharCode)
+      .join(", ");
+    throw new Error(`Валюта ${code} не найдена. Доступные: ${available}`);
   }
 
-  return {
-    rate: parseFloat(rateMatch[1].replace(",", ".")),
-    date: dateMatch[1],
-  };
+  const xml = (await cbrClient.get(
+    `/scripts/XML_dynamic.asp?date_req1=${from}&date_req2=${to}&VAL_NM_RQ=${currency.ID}`,
+  )) as string;
+
+  return { code, id: currency.ID, points: parseDynamicsXml(xml) };
 }
 
 export async function getPreciousMetals(

@@ -5,21 +5,21 @@ import { runSmokeTest } from "@theyahia/mcp-core/testing/smoke.js";
 const SERVER_PATH = resolve(import.meta.dirname, "../../dist/index.js");
 
 describe("CBR MCP E2E Smoke Test", () => {
-  it("starts and lists 5 tools", async () => {
+  it("starts and lists 7 tools", async () => {
     const result = await runSmokeTest({
       serverPath: SERVER_PATH,
-      expectedToolCount: 5,
+      expectedToolCount: 7,
     });
 
     expect(result.connected).toBe(true);
-    expect(result.toolCount).toBe(5);
+    expect(result.toolCount).toBe(7);
     expect(result.errors).toHaveLength(0);
   }, 15_000);
 
   it("all tools have quality descriptions (20+ chars)", async () => {
     const result = await runSmokeTest({
       serverPath: SERVER_PATH,
-      expectedToolCount: 5,
+      expectedToolCount: 7,
     });
 
     for (const tool of result.tools) {
@@ -31,7 +31,7 @@ describe("CBR MCP E2E Smoke Test", () => {
   it("has expected tool names", async () => {
     const result = await runSmokeTest({
       serverPath: SERVER_PATH,
-      expectedToolCount: 5,
+      expectedToolCount: 7,
     });
 
     const names = result.tools.map((t) => t.name).sort();
@@ -40,7 +40,9 @@ describe("CBR MCP E2E Smoke Test", () => {
       "get_currency_rate",
       "get_daily_rates",
       "get_key_rate",
+      "get_key_rate_history",
       "get_precious_metals",
+      "get_rate_dynamics",
     ]);
   }, 15_000);
 });

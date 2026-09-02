@@ -1,7 +1,7 @@
 {
   "name": "@theyahia/cbr-mcp",
-  "version": "1.1.0",
-  "description": "Central Bank of Russia (ЦБ РФ) rates for AI agents: daily FX rates, rate on a given date, key rate, precious metals, currency conversion (5 tools, Russia)",
+  "version": "1.2.0",
+  "description": "Central Bank of Russia (ЦБ РФ) rates for AI agents: daily FX rates, rate on a given date, rate dynamics over a period, key rate and its change history, precious metals, currency conversion (7 tools, Russia)",
   "type": "module",
   "main": "dist/index.js",
   "bin": { "cbr-mcp": "dist/index.js" },
@@ -49,6 +49,8 @@
     "ruble",
     "rub",
     "key-rate",
+    "rate-dynamics",
+    "динамика-курса",
     "ключевая-ставка",
     "russia",
     "russian-api"
