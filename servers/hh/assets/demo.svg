@@ -7,18 +7,18 @@
   <text x="96" y="33" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" fill="#8B97A8">@theyahia/hh-mcp</text>
   <rect x="620" y="15" width="156" height="26" rx="13" fill="#232B36"/>
   <text x="698" y="32" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" text-anchor="middle" fill="#8B97A8">данные — пример</text>
-  <text x="28" y="90" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12.5" fill="#8B97A8">Вы</text>
-  <text x="28" y="112" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#D9E0EA">Найди Python-вакансии в Москве от 250 000 ₽ на удалёнке.</text>
+  <text xml:space="preserve" x="28" y="90" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12.5" fill="#8B97A8">Вы</text>
+  <text xml:space="preserve" x="28" y="112" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#D9E0EA">Найди Python-вакансии в Москве от 250 000 ₽ на удалёнке.</text>
   <rect x="16" y="135" width="768" height="66" rx="8" fill="#232B36"/>
-  <text x="28" y="153" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" fill="#E38FA8">→ hh-mcp · search_vacancies(text: "python", area: 1, salary: 250000,</text>
-  <text x="28" y="175" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" fill="#E38FA8">                            work_format: "REMOTE")</text>
-  <text x="28" y="239" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12.5" fill="#8B97A8">Claude</text>
-  <text x="28" y="261" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">Найдено вакансий: 128 (страница 1 из 7, показано 3)</text>
-  <text x="28" y="298" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">1. Senior Python Developer — Пример Софт</text>
-  <text x="28" y="323" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#8B97A8">   от 250 000 ₽ · Москва · Удалённо · От 3 до 6 лет</text>
-  <text x="28" y="348" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">2. Backend-разработчик Python — Пример Технологии</text>
-  <text x="28" y="373" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#8B97A8">   250 000 – 320 000 ₽ · Москва · Удалённо · От 3 до 6 лет</text>
-  <text x="28" y="398" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">3. Team Lead Python — Пример Банк</text>
-  <text x="28" y="423" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#8B97A8">   от 300 000 ₽ · Москва · Удалённо · Более 6 лет</text>
-  <text x="28" y="456" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">Развернуть описание и контакты — get_vacancy(vacancy_id).</text>
+  <text xml:space="preserve" x="28" y="153" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" fill="#E38FA8">→ hh-mcp · search_vacancies(text: "python", area: 1, salary: 250000,</text>
+  <text xml:space="preserve" x="28" y="175" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" fill="#E38FA8">                            work_format: "REMOTE")</text>
+  <text xml:space="preserve" x="28" y="239" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12.5" fill="#8B97A8">Claude</text>
+  <text xml:space="preserve" x="28" y="261" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">Найдено вакансий: 128 (страница 1 из 7, показано 3)</text>
+  <text xml:space="preserve" x="28" y="298" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">1. Senior Python Developer — Пример Софт</text>
+  <text xml:space="preserve" x="28" y="323" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#8B97A8">   от 250 000 ₽ · Москва · Удалённо · От 3 до 6 лет</text>
+  <text xml:space="preserve" x="28" y="348" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">2. Backend-разработчик Python — Пример Технологии</text>
+  <text xml:space="preserve" x="28" y="373" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#8B97A8">   250 000 – 320 000 ₽ · Москва · Удалённо · От 3 до 6 лет</text>
+  <text xml:space="preserve" x="28" y="398" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">3. Team Lead Python — Пример Банк</text>
+  <text xml:space="preserve" x="28" y="423" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#8B97A8">   от 300 000 ₽ · Москва · Удалённо · Более 6 лет</text>
+  <text xml:space="preserve" x="28" y="456" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">Развернуть описание и контакты — get_vacancy(vacancy_id).</text>
 </svg>

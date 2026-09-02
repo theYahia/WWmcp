@@ -1,6 +1,6 @@
 name: vk-ads-mcp
 description: MCP server for VK Ads API — campaigns, ads, statistics, targeting, budgets (v2.0.0)
-icon: https://raw.githubusercontent.com/theYahia/vk-ads-mcp/main/icon.png
+icon: https://raw.githubusercontent.com/theYahia/WWmcp/main/servers/vk-ads/assets/icon.svg
 startCommand:
   type: stdio
   configSchema:

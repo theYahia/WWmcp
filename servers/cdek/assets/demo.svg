@@ -7,31 +7,31 @@
   <text x="96" y="33" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" fill="#8B97A8">@theyahia/cdek-mcp</text>
   <rect x="620" y="15" width="156" height="26" rx="13" fill="#232B36"/>
   <text x="698" y="32" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" text-anchor="middle" fill="#8B97A8">данные — пример</text>
-  <text x="28" y="90" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12.5" fill="#8B97A8">Вы</text>
-  <text x="28" y="112" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#D9E0EA">Сколько стоит и как долго везти 2 кг из Москвы в Казань?</text>
+  <text xml:space="preserve" x="28" y="90" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12.5" fill="#8B97A8">Вы</text>
+  <text xml:space="preserve" x="28" y="112" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#D9E0EA">Сколько стоит и как долго везти 2 кг из Москвы в Казань?</text>
   <rect x="16" y="135" width="768" height="88" rx="8" fill="#232B36"/>
-  <text x="28" y="153" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" fill="#DBA850">→ cdek-mcp · calculate_tariff_list(from_location: { postal_code: "101000" },</text>
-  <text x="28" y="175" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" fill="#DBA850">                                  to_location: { postal_code: "420111" },</text>
-  <text x="28" y="197" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" fill="#DBA850">                                  packages: [{ weight: 2000 }])</text>
-  <text x="28" y="261" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12.5" fill="#8B97A8">Claude</text>
-  <text x="28" y="283" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">Доступно 3 тарифа на этот маршрут:</text>
-  <text x="28" y="320" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8B97A8">код_тарифа</text>
-  <text x="170" y="320" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8B97A8">название</text>
-  <text x="500" y="320" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8B97A8">стоимость</text>
-  <text x="630" y="320" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8B97A8">срок</text>
+  <text xml:space="preserve" x="28" y="153" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" fill="#DBA850">→ cdek-mcp · calculate_tariff_list(from_location: { postal_code: "101000" },</text>
+  <text xml:space="preserve" x="28" y="175" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" fill="#DBA850">                                  to_location: { postal_code: "420111" },</text>
+  <text xml:space="preserve" x="28" y="197" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" fill="#DBA850">                                  packages: [{ weight: 2000 }])</text>
+  <text xml:space="preserve" x="28" y="261" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12.5" fill="#8B97A8">Claude</text>
+  <text xml:space="preserve" x="28" y="283" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">Доступно 3 тарифа на этот маршрут:</text>
+  <text xml:space="preserve" x="28" y="320" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8B97A8">код_тарифа</text>
+  <text xml:space="preserve" x="170" y="320" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8B97A8">название</text>
+  <text xml:space="preserve" x="500" y="320" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8B97A8">стоимость</text>
+  <text xml:space="preserve" x="630" y="320" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8B97A8">срок</text>
   <path d="M28 330 H772" stroke="#333C4A" stroke-width="1.5"/>
-  <text x="28" y="352" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">136</text>
-  <text x="170" y="352" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">Посылка склад-склад</text>
-  <text x="500" y="352" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">415 ₽</text>
-  <text x="630" y="352" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">2–3 дня</text>
-  <text x="28" y="377" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">137</text>
-  <text x="170" y="377" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">Посылка склад-дверь</text>
-  <text x="500" y="377" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">555 ₽</text>
-  <text x="630" y="377" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">2–3 дня</text>
-  <text x="28" y="402" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">139</text>
-  <text x="170" y="402" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">Посылка дверь-дверь</text>
-  <text x="500" y="402" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">690 ₽</text>
-  <text x="630" y="402" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">2–4 дня</text>
-  <text x="28" y="435" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">Дешевле всего 136 — забрать в ПВЗ.</text>
-  <text x="28" y="460" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">Адреса пунктов в Казани покажет list_delivery_points.</text>
+  <text xml:space="preserve" x="28" y="352" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">136</text>
+  <text xml:space="preserve" x="170" y="352" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">Посылка склад-склад</text>
+  <text xml:space="preserve" x="500" y="352" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">415 ₽</text>
+  <text xml:space="preserve" x="630" y="352" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">2–3 дня</text>
+  <text xml:space="preserve" x="28" y="377" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">137</text>
+  <text xml:space="preserve" x="170" y="377" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">Посылка склад-дверь</text>
+  <text xml:space="preserve" x="500" y="377" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">555 ₽</text>
+  <text xml:space="preserve" x="630" y="377" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">2–3 дня</text>
+  <text xml:space="preserve" x="28" y="402" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">139</text>
+  <text xml:space="preserve" x="170" y="402" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">Посылка дверь-дверь</text>
+  <text xml:space="preserve" x="500" y="402" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">690 ₽</text>
+  <text xml:space="preserve" x="630" y="402" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">2–4 дня</text>
+  <text xml:space="preserve" x="28" y="435" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">Дешевле всего 136 — забрать в ПВЗ.</text>
+  <text xml:space="preserve" x="28" y="460" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">Адреса пунктов в Казани покажет list_delivery_points.</text>
 </svg>

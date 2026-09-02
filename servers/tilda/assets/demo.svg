@@ -7,25 +7,25 @@
   <text x="96" y="33" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" fill="#8B97A8">@theyahia/tilda-mcp</text>
   <rect x="620" y="15" width="156" height="26" rx="13" fill="#232B36"/>
   <text x="698" y="32" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" text-anchor="middle" fill="#8B97A8">данные — пример</text>
-  <text x="28" y="90" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12.5" fill="#8B97A8">Вы</text>
-  <text x="28" y="112" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#D9E0EA">Что за страницы в проекте и когда их публиковали?</text>
+  <text xml:space="preserve" x="28" y="90" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12.5" fill="#8B97A8">Вы</text>
+  <text xml:space="preserve" x="28" y="112" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#D9E0EA">Что за страницы в проекте и когда их публиковали?</text>
   <rect x="16" y="135" width="768" height="44" rx="8" fill="#232B36"/>
-  <text x="28" y="153" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" fill="#6FB8E8">→ tilda-mcp · get_pages(projectid: "1234567")</text>
-  <text x="28" y="217" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12.5" fill="#8B97A8">Claude</text>
-  <text x="28" y="239" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">В проекте 3 опубликованные страницы:</text>
-  <text x="28" y="276" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8B97A8">title</text>
-  <text x="300" y="276" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8B97A8">alias</text>
-  <text x="540" y="276" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8B97A8">published</text>
+  <text xml:space="preserve" x="28" y="153" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" fill="#6FB8E8">→ tilda-mcp · get_pages(projectid: "1234567")</text>
+  <text xml:space="preserve" x="28" y="217" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12.5" fill="#8B97A8">Claude</text>
+  <text xml:space="preserve" x="28" y="239" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">В проекте 3 опубликованные страницы:</text>
+  <text xml:space="preserve" x="28" y="276" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8B97A8">title</text>
+  <text xml:space="preserve" x="300" y="276" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8B97A8">alias</text>
+  <text xml:space="preserve" x="540" y="276" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8B97A8">published</text>
   <path d="M28 286 H772" stroke="#333C4A" stroke-width="1.5"/>
-  <text x="28" y="308" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">Главная</text>
-  <text x="300" y="308" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">main</text>
-  <text x="540" y="308" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">2026-08-28</text>
-  <text x="28" y="333" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">Тарифы</text>
-  <text x="300" y="333" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">pricing</text>
-  <text x="540" y="333" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">2026-08-21</text>
-  <text x="28" y="358" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">5 приёмов Tilda</text>
-  <text x="300" y="358" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">blog-5-priemov</text>
-  <text x="540" y="358" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">2026-08-14</text>
-  <text x="28" y="391" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">Свежее всех — «Главная». Полный HTML любой страницы:</text>
-  <text x="28" y="416" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">get_page(pageid, metadata_only: false).</text>
+  <text xml:space="preserve" x="28" y="308" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">Главная</text>
+  <text xml:space="preserve" x="300" y="308" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">main</text>
+  <text xml:space="preserve" x="540" y="308" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">2026-08-28</text>
+  <text xml:space="preserve" x="28" y="333" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">Тарифы</text>
+  <text xml:space="preserve" x="300" y="333" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">pricing</text>
+  <text xml:space="preserve" x="540" y="333" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">2026-08-21</text>
+  <text xml:space="preserve" x="28" y="358" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">5 приёмов Tilda</text>
+  <text xml:space="preserve" x="300" y="358" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">blog-5-priemov</text>
+  <text xml:space="preserve" x="540" y="358" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">2026-08-14</text>
+  <text xml:space="preserve" x="28" y="391" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">Свежее всех — «Главная». Полный HTML любой страницы:</text>
+  <text xml:space="preserve" x="28" y="416" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">get_page(pageid, metadata_only: false).</text>
 </svg>

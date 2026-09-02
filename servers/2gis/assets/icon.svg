@@ -3,12 +3,7 @@
   <title>Map location</title>
   <rect x="8" y="8" width="240" height="240" rx="52" fill="#3B82B8" fill-opacity="0.14"/>
   <g fill="none" stroke="#3B82B8" stroke-width="15" stroke-linecap="round" stroke-linejoin="round">
-    <g stroke-width="9" opacity="0.55">
-      <path d="M54 78 H202"/><path d="M54 182 H202"/>
-      <path d="M78 54 V202"/><path d="M178 54 V202"/>
-    </g>
-    <path d="M128 60 A46 46 0 0 1 174 106 C174 140 128 200 128 200 C128 200 82 140 82 106 A46 46 0 0 1 128 60 Z"
-          fill="none" stroke="#3B82B8"/>
-    <circle cx="128" cy="106" r="17"/>
+    <path d="M128 50 A50 50 0 0 1 178 100 C178 140 128 210 128 210 C128 210 78 140 78 100 A50 50 0 0 1 128 50 Z"/>
+    <circle cx="128" cy="100" r="19"/>
   </g>
 </svg>
