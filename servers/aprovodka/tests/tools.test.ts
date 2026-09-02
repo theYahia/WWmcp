@@ -93,7 +93,8 @@ describe("tool handlers", () => {
     const [url] = fetchMock.mock.calls[0];
     expect(url).toContain("Document_%D0%A0%D0%B5%D0%B0%D0%BB%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D1%8F");
     expect(url).toContain("$filter=");
-    expect(url).toContain("$top=100");
+    // top+1: лишняя запись — признак незавершённой выдачи, в ответ она не попадает
+    expect(url).toContain("$top=101");
   });
 
   it("handleCreateDocument sends POST with body", async () => {

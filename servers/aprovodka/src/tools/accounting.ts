@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { oneCGet, buildODataPath, buildVirtualTablePath, escapeODataString } from "../client.js";
 import { normaliseEntity, odataDateTime } from "../validation.js";
+import { probeTop, toPage } from "../lib/paging.js";
 
 // ──────────────────────────────────────────────────────────────
 // get_accounting_register — записи регистра бухгалтерии
@@ -27,7 +28,7 @@ export async function handleGetAccountingRegister(
 ): Promise<string> {
   const query: Record<string, string> = {
     $format: "json",
-    $top: String(params.top),
+    $top: probeTop(params.top),
   };
   if (params.skip) query["$skip"] = String(params.skip);
   if (params.filter) query["$filter"] = params.filter;
@@ -36,7 +37,7 @@ export async function handleGetAccountingRegister(
 
   const path = buildODataPath(normaliseEntity("AccountingRegister_", params.register_name), query);
   const result = await oneCGet(path);
-  return JSON.stringify(result, null, 2);
+  return JSON.stringify(toPage(result, params.top, params.skip), null, 2);
 }
 
 // ──────────────────────────────────────────────────────────────

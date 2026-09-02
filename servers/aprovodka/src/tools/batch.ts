@@ -23,6 +23,7 @@
 import { z } from "zod";
 import { oneCGet, oneCPost, oneCPatch, buildODataPath, buildKeyedPath } from "../client.js";
 import { normaliseEntity } from "../validation.js";
+import { probeTop, toPage } from "../lib/paging.js";
 
 // ──────────────────────────────────────────────────────────────────────────
 // Concurrency primitive — simple promise pool, no external deps
@@ -240,7 +241,7 @@ export async function handleBatchQuery(
     (q) => {
       const query: Record<string, string> = {
         $format: "json",
-        $top: String(q.top),
+        $top: probeTop(q.top),
       };
       if (q.skip) query["$skip"] = String(q.skip);
       if (q.filter) query["$filter"] = q.filter;
@@ -248,7 +249,7 @@ export async function handleBatchQuery(
       if (q.expand) query["$expand"] = q.expand;
       if (q.orderby) query["$orderby"] = q.orderby;
       const path = buildODataPath(q.entity, query);
-      return oneCGet(path);
+      return oneCGet(path).then((r) => toPage(r, q.top, q.skip));
     },
   );
 

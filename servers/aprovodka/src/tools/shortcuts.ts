@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { oneCGet, oneCPatch, buildODataPath, buildKeyedPath, escapeODataString } from "../client.js";
 import { refKeySchema, normaliseEntity } from "../validation.js";
+import { probeTop, toPage } from "../lib/paging.js";
 
 // ──────────────────────────────────────────────────────────────
 // find_by_description — нечёткий поиск элементов по Description
@@ -20,10 +21,10 @@ export async function handleFindByDescription(
   const path = buildODataPath(params.entity, {
     $format: "json",
     $filter: `substringof('${safe}',Description)`,
-    $top: String(params.top),
+    $top: probeTop(params.top),
   });
   const result = await oneCGet(path);
-  return JSON.stringify(result, null, 2);
+  return JSON.stringify(toPage(result, params.top), null, 2);
 }
 
 // ──────────────────────────────────────────────────────────────
@@ -103,10 +104,10 @@ export async function handleGetRecentDocuments(
   const query: Record<string, string> = {
     $format: "json",
     $orderby: "Date desc",
-    $top: String(params.top),
+    $top: probeTop(params.top),
   };
   if (params.posted_only) query["$filter"] = "Posted eq true";
   const path = buildODataPath(normaliseEntity("Document_", params.document_type), query);
   const result = await oneCGet(path);
-  return JSON.stringify(result, null, 2);
+  return JSON.stringify(toPage(result, params.top), null, 2);
 }

@@ -5,6 +5,7 @@ import {
 } from "../client.js";
 import { refKeySchema, normaliseEntity } from "../validation.js";
 import { isSafetyEnvelope } from "../lib/write-safety.js";
+import { probeTop, toPage } from "../lib/paging.js";
 
 export const getDocumentsSchema = z.object({
   document_type: z.string().describe("Тип документа — с префиксом Document_ или без него (Document_РеализацияТоваровУслуг / РеализацияТоваровУслуг)"),
@@ -18,7 +19,7 @@ export const getDocumentsSchema = z.object({
 export async function handleGetDocuments(params: z.infer<typeof getDocumentsSchema>): Promise<string> {
   const query: Record<string, string> = {
     $format: "json",
-    $top: String(params.top),
+    $top: probeTop(params.top),
   };
   if (params.skip) query["$skip"] = String(params.skip);
   if (params.filter) query["$filter"] = params.filter;
@@ -27,7 +28,7 @@ export async function handleGetDocuments(params: z.infer<typeof getDocumentsSche
 
   const path = buildODataPath(normaliseEntity("Document_", params.document_type), query);
   const result = await oneCGet(path);
-  return JSON.stringify(result, null, 2);
+  return JSON.stringify(toPage(result, params.top, params.skip), null, 2);
 }
 
 export const createDocumentSchema = z.object({

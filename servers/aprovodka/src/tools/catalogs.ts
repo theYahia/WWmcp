@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { oneCGet, oneCPost, oneCPatch, buildODataPath, buildKeyedPath } from "../client.js";
 import { refKeySchema, normaliseEntity } from "../validation.js";
+import { probeTop, toPage } from "../lib/paging.js";
 
 export const getCatalogsSchema = z.object({
   catalog_name: z.string().describe("Имя справочника — с префиксом Catalog_ или без него (Catalog_Номенклатура / Номенклатура)"),
@@ -14,7 +15,7 @@ export const getCatalogsSchema = z.object({
 export async function handleGetCatalogs(params: z.infer<typeof getCatalogsSchema>): Promise<string> {
   const query: Record<string, string> = {
     $format: "json",
-    $top: String(params.top),
+    $top: probeTop(params.top),
   };
   if (params.skip) query["$skip"] = String(params.skip);
   if (params.filter) query["$filter"] = params.filter;
@@ -23,7 +24,7 @@ export async function handleGetCatalogs(params: z.infer<typeof getCatalogsSchema
 
   const path = buildODataPath(normaliseEntity("Catalog_", params.catalog_name), query);
   const result = await oneCGet(path);
-  return JSON.stringify(result, null, 2);
+  return JSON.stringify(toPage(result, params.top, params.skip), null, 2);
 }
 
 // ──────────────────────────────────────────────────────────────

@@ -139,6 +139,22 @@ export function createServer(): McpServer {
 
   const modules = getEnabledModules();
 
+  // Описания читает модель: без явной строки про has_more она не поймёт, что выдача
+  // обрезана и что делать дальше. Держим одной константой, чтобы формулировка не
+  // разъехалась между инструментами.
+  const PAGING_NOTE =
+    " Ответ — конверт `{ value, returned, has_more, next_skip }`. `has_more: true` значит, что " +
+    "записей в базе больше, чем вернул $top: считать по такой выборке итоги, суммы, максимумы " +
+    "и \"сколько всего\" НЕЛЬЗЯ — либо дозапросите следующую страницу со `skip: next_skip`, либо " +
+    "сузьте отбор, либо посчитайте count_entities.";
+
+  // Те же поля, но без next_skip: у инструмента нет параметра skip, подсказка была бы в никуда.
+  const PAGING_NOTE_NO_SKIP =
+    " Ответ — конверт `{ value, returned, has_more }`. `has_more: true` значит, что подходящих " +
+    "записей больше, чем вернул $top: выборка неполная, сузьте запрос или возьмите инструмент " +
+    "с параметром skip (get_documents / get_catalogs / odata_query).";
+
+
   // --- Discovery (meta) — always enabled ---
   // Первым — потому что он офлайновый (в базу не ходит, ONEC_BASE_URL не требует) и
   // отвечает на вопрос «что это вообще за конфигурация» до первого запроса; порядок
@@ -194,7 +210,7 @@ export function createServer(): McpServer {
     server.tool(
       "get_catalogs",
       "Чтение данных справочников 1С через OData 3.0. Поддерживает $filter, $select, $orderby, $top, " +
-      "$skip.",
+      "$skip." + PAGING_NOTE,
       getCatalogsSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleGetCatalogs(params) }],
@@ -224,7 +240,7 @@ export function createServer(): McpServer {
   if (modules.has("documents")) {
     server.tool(
       "get_documents",
-      "Чтение документов 1С через OData 3.0. Отбор по дате, виду документа или произвольным полям.",
+      "Чтение документов 1С через OData 3.0. Отбор по дате, виду документа или произвольным полям." + PAGING_NOTE,
       getDocumentsSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleGetDocuments(params) }],
@@ -293,7 +309,7 @@ export function createServer(): McpServer {
   if (modules.has("registers")) {
     server.tool(
       "get_register",
-      "Чтение данных регистров сведений и накопления 1С через OData 3.0.",
+      "Чтение данных регистров сведений и накопления 1С через OData 3.0." + PAGING_NOTE,
       getRegisterSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleGetRegister(params) }],
@@ -335,7 +351,7 @@ export function createServer(): McpServer {
     server.tool(
       "odata_query",
       "Произвольный запрос OData 3.0 к любой сущности 1С. Поддерживает $filter, $select, $expand, " +
-      "$orderby, $top, $skip, $inlinecount.",
+      "$orderby, $top, $skip, $inlinecount." + PAGING_NOTE,
       odataQuerySchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleODataQuery(params) }],
@@ -367,7 +383,7 @@ export function createServer(): McpServer {
     server.tool(
       "get_accounting_register",
       "Чтение записей регистра бухгалтерии (AccountingRegister_*, например Хозрасчетный — проводки) " +
-      "через OData.",
+      "через OData." + PAGING_NOTE,
       getAccountingRegisterSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleGetAccountingRegister(params) }],
@@ -390,7 +406,7 @@ export function createServer(): McpServer {
   if (modules.has("shortcuts")) {
     server.tool(
       "find_by_description",
-      "Нечёткий поиск элементов по подстроке наименования (OData substringof по полю Description).",
+      "Нечёткий поиск элементов по подстроке наименования (OData substringof по полю Description)." + PAGING_NOTE_NO_SKIP,
       findByDescriptionSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleFindByDescription(params) }],
@@ -428,7 +444,7 @@ export function createServer(): McpServer {
     server.tool(
       "get_recent_documents",
       "Последние документы указанного вида, отсортированные по дате по убыванию (при необходимости — " +
-      "только проведённые).",
+      "только проведённые)." + PAGING_NOTE_NO_SKIP,
       getRecentDocumentsSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleGetRecentDocuments(params) }],
@@ -463,7 +479,8 @@ export function createServer(): McpServer {
       "batch_query",
       "Параллельное выполнение N запросов OData к 1С (от 1 до 50). Результат по каждому запросу " +
       "возвращается отдельно. Соединения на стороне сервера нет (1С не поддерживает $batch) — " +
-      "объединять результаты нужно на стороне клиента.",
+      "объединять результаты нужно на стороне клиента. Данные каждого запроса — тот же конверт " +
+      "`{ value, returned, has_more, next_skip }`, что и у одиночных читающих инструментов.",
       batchQuerySchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleBatchQuery(params) }],

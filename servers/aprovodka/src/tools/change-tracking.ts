@@ -28,6 +28,7 @@
 import { z } from "zod";
 import { oneCGet, buildODataPath } from "../client.js";
 import { odataDateTime } from "../validation.js";
+import { probeTop } from "../lib/paging.js";
 
 // ──────────────────────────────────────────────────────────────────────────
 // poll_changes_since — pull recently-modified rows since a cursor
@@ -107,7 +108,7 @@ export async function handlePollChangesSince(
   const filter = `${params.date_field} ge datetime'${params.since}'`;
   const query: Record<string, string> = {
     $format: "json",
-    $top: String(params.top),
+    $top: probeTop(params.top),
     $filter: filter,
     $orderby: `${params.date_field} asc`,
   };
@@ -115,7 +116,12 @@ export async function handlePollChangesSince(
 
   const path = buildODataPath(params.entity, query);
   const result = (await oneCGet(path)) as { value?: unknown[] } | null;
-  const rows = result?.value ?? [];
+  // Запрошено top+1: лишняя запись — доказательство продолжения. Прежний признак
+  // `rows.length >= top` врал в обе стороны — ровно top записей в базе он объявлял
+  // незавершённой выдачей.
+  const fetched = result?.value ?? [];
+  const hasMore = fetched.length > params.top;
+  const rows = hasMore ? fetched.slice(0, params.top) : fetched;
 
   // Compute next cursor — max date across returned rows.
   let maxDate: string | null = null;
@@ -131,7 +137,7 @@ export async function handlePollChangesSince(
     count: rows.length,
     rows,
     next_cursor: maxDate,
-    has_more: rows.length >= params.top,
+    has_more: hasMore,
     note: POLL_NOTE,
   };
   return JSON.stringify(envelope, null, 2);
