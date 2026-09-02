@@ -28,7 +28,7 @@
 import { z } from "zod";
 import { oneCGet, buildODataPath } from "../client.js";
 import { odataDateTime } from "../validation.js";
-import { probeTop } from "../lib/paging.js";
+import { probeTop, stringifyCapped } from "../lib/paging.js";
 
 // ──────────────────────────────────────────────────────────────────────────
 // poll_changes_since — pull recently-modified rows since a cursor
@@ -140,7 +140,7 @@ export async function handlePollChangesSince(
     has_more: hasMore,
     note: POLL_NOTE,
   };
-  return JSON.stringify(envelope, null, 2);
+  return stringifyCapped(envelope, "rows");
 }
 
 // ──────────────────────────────────────────────────────────────────────────
@@ -170,5 +170,5 @@ export async function handleListSubscriptions(
       "This tool exists to prevent LLMs from hallucinating webhook-setup steps. " +
       "If your use-case requires push notifications, use `poll_changes_since` instead.",
   };
-  return JSON.stringify(envelope, null, 2);
+  return JSON.stringify(envelope);
 }

@@ -23,7 +23,7 @@
 import { z } from "zod";
 import { oneCGet, oneCPost, oneCPatch, buildODataPath, buildKeyedPath } from "../client.js";
 import { normaliseEntity } from "../validation.js";
-import { probeTop, toPage } from "../lib/paging.js";
+import { probeTop, toPage, stringifyCapped } from "../lib/paging.js";
 
 // ──────────────────────────────────────────────────────────────────────────
 // Concurrency primitive — simple promise pool, no external deps
@@ -139,7 +139,7 @@ export async function handleBatchCreateDocuments(
     failed_indexes: items.filter((x) => x.status === "error").map((x) => x.index),
     note: NATIVE_BATCH_NOTE,
   };
-  return JSON.stringify(envelope, null, 2);
+  return stringifyCapped(envelope, "results");
 }
 
 // ──────────────────────────────────────────────────────────────────────────
@@ -200,7 +200,7 @@ export async function handleBatchUpdateCatalogItems(
     failed_indexes: items.filter((x) => x.status === "error").map((x) => x.index),
     note: NATIVE_BATCH_NOTE,
   };
-  return JSON.stringify(envelope, null, 2);
+  return stringifyCapped(envelope, "results");
 }
 
 // ──────────────────────────────────────────────────────────────────────────
@@ -270,5 +270,5 @@ export async function handleBatchQuery(
       "with a concurrency cap. There is no server-side join — combine the per-item " +
       "results client-side.",
   };
-  return JSON.stringify(envelope, null, 2);
+  return stringifyCapped(envelope, "results");
 }

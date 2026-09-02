@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { oneCGet, oneCPost, buildODataPath, buildVirtualTablePath, escapeODataString } from "../client.js";
 import { odataDateTime, normaliseEntity, normaliseRegisterEntity } from "../validation.js";
-import { probeTop, toPage } from "../lib/paging.js";
+import { probeTop, pageJson } from "../lib/paging.js";
 
 export const getRegisterSchema = z.object({
   register_type: z.enum(["InformationRegister", "AccumulationRegister"]).describe("Тип регистра"),
@@ -26,7 +26,7 @@ export async function handleGetRegister(params: z.infer<typeof getRegisterSchema
 
   const path = buildODataPath(entity, query);
   const result = await oneCGet(path);
-  return JSON.stringify(toPage(result, params.top, params.skip), null, 2);
+  return pageJson(result, params.top, params.skip);
 }
 
 // ──────────────────────────────────────────────────────────────
@@ -44,7 +44,7 @@ export async function handleWriteInformationRegister(
 ): Promise<string> {
   const path = buildODataPath(normaliseEntity("InformationRegister_", params.register_name), { $format: "json" });
   const result = await oneCPost(path, params.data);
-  return JSON.stringify(result, null, 2);
+  return JSON.stringify(result);
 }
 
 // ──────────────────────────────────────────────────────────────
@@ -77,5 +77,5 @@ export async function handleGetAccumulationBalance(
     { $format: "json" },
   );
   const result = await oneCGet(path);
-  return JSON.stringify(result, null, 2);
+  return JSON.stringify(result);
 }

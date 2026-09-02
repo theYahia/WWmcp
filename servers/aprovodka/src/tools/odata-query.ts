@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { oneCGet, buildODataPath } from "../client.js";
-import { probeTop, toPage } from "../lib/paging.js";
+import { probeTop, pageJson } from "../lib/paging.js";
 
 export const odataQuerySchema = z.object({
   entity: z.string().describe("OData-сущность (например, Catalog_Номенклатура, Document_СчётНаОплатуПокупателю)"),
@@ -27,5 +27,5 @@ export async function handleODataQuery(params: z.infer<typeof odataQuerySchema>)
 
   const path = buildODataPath(params.entity, query);
   const result = await oneCGet(path);
-  return JSON.stringify(toPage(result, params.top, params.skip), null, 2);
+  return pageJson(result, params.top, params.skip);
 }

@@ -20,7 +20,7 @@ export async function handleGetConstant(
 ): Promise<string> {
   const path = buildODataPath(asConstantEntity(params.constant_name), { $format: "json" });
   const result = await oneCGet(path);
-  return JSON.stringify(result, null, 2);
+  return JSON.stringify(result);
 }
 
 // ──────────────────────────────────────────────────────────────
@@ -37,5 +37,5 @@ export async function handleSetConstant(
 ): Promise<string> {
   const path = buildODataPath(asConstantEntity(params.constant_name), { $format: "json" });
   const result = await oneCPatch(path, { Value: params.value });
-  return JSON.stringify(result, null, 2);
+  return JSON.stringify(result);
 }

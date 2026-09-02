@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { stringifyCapped } from "../lib/paging.js";
 import { oneCGet, buildODataPath, escapeODataString } from "../client.js";
 import { odataDate, normaliseEntity } from "../validation.js";
 
@@ -76,13 +77,12 @@ export async function handleListEntities(
     entities = entities.filter((e) => e.name.toLowerCase().includes(q));
   }
 
-  return JSON.stringify(
+  return stringifyCapped(
     {
       total: entities.length,
       entities: entities.map((e) => e.name),
     },
-    null,
-    2,
+    "entities",
   );
 }
 
@@ -122,7 +122,7 @@ export async function handleGetDocumentByNumber(
 
   const path = buildODataPath(normaliseEntity("Document_", params.document_type), query);
   const result = await oneCGet(path);
-  return JSON.stringify(result, null, 2);
+  return JSON.stringify(result);
 }
 
 // ──────────────────────────────────────────────────────────────
@@ -136,7 +136,7 @@ export async function handleGetMetadata(
 ): Promise<string> {
   // $metadata возвращает XML (EDMX) — oneCGet вернёт его строкой (JSON.parse упадёт → текст).
   const result = await oneCGet("/odata/standard.odata/$metadata");
-  return typeof result === "string" ? result : JSON.stringify(result, null, 2);
+  return typeof result === "string" ? result : JSON.stringify(result);
 }
 
 // ──────────────────────────────────────────────────────────────
@@ -158,14 +158,11 @@ export async function handleDescribeEntity(
   const sample = raw.value?.[0];
   if (!sample) {
     return JSON.stringify(
-      { entity: params.entity, fields: [], note: "Сущность пуста — полей по образцу не извлечь. Используйте get_metadata для EDMX." },
-      null,
-      2,
-    );
+      { entity: params.entity, fields: [], note: "Сущность пуста — полей по образцу не извлечь. Используйте get_metadata для EDMX." });
   }
   const fields = Object.keys(sample).map((name) => ({
     name,
     type: sample[name] === null ? "null" : typeof sample[name],
   }));
-  return JSON.stringify({ entity: params.entity, field_count: fields.length, fields }, null, 2);
+  return JSON.stringify({ entity: params.entity, field_count: fields.length, fields });
 }

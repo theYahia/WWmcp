@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { oneCGet, oneCPost, oneCPatch, buildODataPath, buildKeyedPath } from "../client.js";
 import { refKeySchema, normaliseEntity } from "../validation.js";
-import { probeTop, toPage } from "../lib/paging.js";
+import { probeTop, pageJson } from "../lib/paging.js";
 
 export const getCatalogsSchema = z.object({
   catalog_name: z.string().describe("Имя справочника — с префиксом Catalog_ или без него (Catalog_Номенклатура / Номенклатура)"),
@@ -24,7 +24,7 @@ export async function handleGetCatalogs(params: z.infer<typeof getCatalogsSchema
 
   const path = buildODataPath(normaliseEntity("Catalog_", params.catalog_name), query);
   const result = await oneCGet(path);
-  return JSON.stringify(toPage(result, params.top, params.skip), null, 2);
+  return pageJson(result, params.top, params.skip);
 }
 
 // ──────────────────────────────────────────────────────────────
@@ -39,7 +39,7 @@ export const createCatalogItemSchema = z.object({
 export async function handleCreateCatalogItem(params: z.infer<typeof createCatalogItemSchema>): Promise<string> {
   const path = buildODataPath(normaliseEntity("Catalog_", params.catalog_name), { $format: "json" });
   const result = await oneCPost(path, params.data);
-  return JSON.stringify(result, null, 2);
+  return JSON.stringify(result);
 }
 
 // ──────────────────────────────────────────────────────────────
@@ -55,5 +55,5 @@ export const updateCatalogItemSchema = z.object({
 export async function handleUpdateCatalogItem(params: z.infer<typeof updateCatalogItemSchema>): Promise<string> {
   const path = buildKeyedPath(normaliseEntity("Catalog_", params.catalog_name), params.ref_key, undefined, { $format: "json" });
   const result = await oneCPatch(path, params.data);
-  return JSON.stringify(result, null, 2);
+  return JSON.stringify(result);
 }

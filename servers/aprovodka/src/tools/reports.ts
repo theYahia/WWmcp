@@ -7,5 +7,5 @@ export const getReportSchema = z.object({
 
 export async function handleGetReport(params: z.infer<typeof getReportSchema>): Promise<string> {
   const result = await oneCGet(params.report_url);
-  return JSON.stringify(result, null, 2);
+  return JSON.stringify(result);
 }

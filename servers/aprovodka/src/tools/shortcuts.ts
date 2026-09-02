@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { oneCGet, oneCPatch, buildODataPath, buildKeyedPath, escapeODataString } from "../client.js";
 import { refKeySchema, normaliseEntity } from "../validation.js";
-import { probeTop, toPage } from "../lib/paging.js";
+import { probeTop, pageJson } from "../lib/paging.js";
 
 // ──────────────────────────────────────────────────────────────
 // find_by_description — нечёткий поиск элементов по Description
@@ -24,7 +24,7 @@ export async function handleFindByDescription(
     $top: probeTop(params.top),
   });
   const result = await oneCGet(path);
-  return JSON.stringify(toPage(result, params.top), null, 2);
+  return pageJson(result, params.top);
 }
 
 // ──────────────────────────────────────────────────────────────
@@ -42,7 +42,7 @@ export async function handleGetByKey(params: z.infer<typeof getByKeySchema>): Pr
   if (params.select) query["$select"] = params.select;
   const path = buildKeyedPath(params.entity, params.ref_key, undefined, query);
   const result = await oneCGet(path);
-  return JSON.stringify(result, null, 2);
+  return JSON.stringify(result);
 }
 
 // ──────────────────────────────────────────────────────────────
@@ -66,7 +66,7 @@ export async function handleCountEntities(
   const path = buildODataPath(params.entity, query);
   const raw = (await oneCGet(path)) as Record<string, unknown>;
   const count = raw["odata.count"] ?? raw["@odata.count"] ?? null;
-  return JSON.stringify({ entity: params.entity, count }, null, 2);
+  return JSON.stringify({ entity: params.entity, count });
 }
 
 // ──────────────────────────────────────────────────────────────
@@ -85,7 +85,7 @@ export async function handleSetDeletionMark(
 ): Promise<string> {
   const path = buildKeyedPath(params.entity, params.ref_key, undefined, { $format: "json" });
   const result = await oneCPatch(path, { DeletionMark: params.mark });
-  return JSON.stringify(result, null, 2);
+  return JSON.stringify(result);
 }
 
 // ──────────────────────────────────────────────────────────────
@@ -109,5 +109,5 @@ export async function handleGetRecentDocuments(
   if (params.posted_only) query["$filter"] = "Posted eq true";
   const path = buildODataPath(normaliseEntity("Document_", params.document_type), query);
   const result = await oneCGet(path);
-  return JSON.stringify(toPage(result, params.top), null, 2);
+  return pageJson(result, params.top);
 }
