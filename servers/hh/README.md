@@ -8,7 +8,7 @@ Responses are returned as compact, LLM-friendly summaries by default — pass `r
 [![CI](https://github.com/theYahia/hh-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/theYahia/hh-mcp/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Part of the [Russian API MCP](https://github.com/theYahia/russian-mcp) series by [@theYahia](https://github.com/theYahia).
+Part of the [WWmcp](https://github.com/theYahia/WWmcp) series by [@theYahia](https://github.com/theYahia).
 
 ## Two Modes
 
@@ -180,3 +180,7 @@ npm test
 ## License
 
 MIT
+
+---
+
+Часть монорепозитория [WWmcp](https://github.com/theYahia/WWmcp) · Telegram: [@vhodvai](https://t.me/vhodvai)

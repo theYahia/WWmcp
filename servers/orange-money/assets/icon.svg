@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="Money transfer">
+  <title>Money transfer</title>
+  <rect x="8" y="8" width="240" height="240" rx="52" fill="#2F8F73" fill-opacity="0.14"/>
+  <g fill="none" stroke="#2F8F73" stroke-width="15" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="128" cy="128" r="30"/>
+    <path d="M128 54 A74 74 0 0 1 202 128"/>
+    <path d="M188 112 L202 128 L216 112"/>
+    <path d="M128 202 A74 74 0 0 1 54 128"/>
+    <path d="M68 144 L54 128 L40 144"/>
+  </g>
+</svg>

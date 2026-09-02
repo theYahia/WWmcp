@@ -1,4 +1,4 @@
-> 📦 Часть **[WWmcp — Emerging Markets MCP](https://github.com/theYahia/WWmcp)** — 114 MCP-серверов для non-Western API (Россия/СНГ/MENA/Gulf/SE Asia/Africa/Brazil).
+> 📦 Часть **[WWmcp — Emerging Markets MCP](https://github.com/theYahia/WWmcp)** — 46 MCP-серверов для non-Western API (Россия/СНГ/MENA/Gulf/SE Asia/Africa/Brazil). · Telegram: [@vhodvai](https://t.me/vhodvai)
 
 # @theyahia/elma365-mcp
 

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="Microphone">
+  <title>Microphone</title>
+  <rect x="8" y="8" width="240" height="240" rx="52" fill="#C25C7A" fill-opacity="0.14"/>
+  <g fill="none" stroke="#C25C7A" stroke-width="15" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="103" y="42" width="50" height="94" rx="25"/>
+    <path d="M76 116 A52 52 0 0 0 180 116"/>
+    <path d="M128 168 V202"/>
+    <path d="M96 202 H160"/>
+  </g>
+</svg>

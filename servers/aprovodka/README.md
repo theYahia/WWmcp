@@ -376,3 +376,7 @@ servers/aprovodka/
 ## License
 
 MIT — see [LICENSE](./LICENSE).
+
+---
+
+Часть монорепозитория [WWmcp](https://github.com/theYahia/WWmcp) · Telegram: [@vhodvai](https://t.me/vhodvai)

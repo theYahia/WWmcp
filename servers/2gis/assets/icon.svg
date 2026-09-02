@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="Map location">
+  <title>Map location</title>
+  <rect x="8" y="8" width="240" height="240" rx="52" fill="#3B82B8" fill-opacity="0.14"/>
+  <g fill="none" stroke="#3B82B8" stroke-width="15" stroke-linecap="round" stroke-linejoin="round">
+    <g stroke-width="9" opacity="0.55">
+      <path d="M54 78 H202"/><path d="M54 182 H202"/>
+      <path d="M78 54 V202"/><path d="M178 54 V202"/>
+    </g>
+    <path d="M128 60 A46 46 0 0 1 174 106 C174 140 128 200 128 200 C128 200 82 140 82 106 A46 46 0 0 1 128 60 Z"
+          fill="none" stroke="#3B82B8"/>
+    <circle cx="128" cy="106" r="17"/>
+  </g>
+</svg>

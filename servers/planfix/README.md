@@ -1,4 +1,4 @@
-> 📦 Part of **[WWmcp — Emerging Markets MCP](https://github.com/theYahia/WWmcp)** — 114 MCP servers for non-Western APIs (Brazil/MENA/Gulf/SE Asia/Africa/CIS).
+> 📦 Part of **[WWmcp — Emerging Markets MCP](https://github.com/theYahia/WWmcp)** — 46 MCP servers for non-Western APIs (Brazil/MENA/Gulf/SE Asia/Africa/CIS). · Telegram: [@vhodvai](https://t.me/vhodvai)
 
 # @theyahia/planfix-mcp
 

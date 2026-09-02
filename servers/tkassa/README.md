@@ -5,7 +5,7 @@ MCP server for T-Kassa (T-Bank/Tinkoff) payment API. **16 tools:** payments, ref
 [![npm](https://img.shields.io/npm/v/@theyahia/tkassa-mcp)](https://www.npmjs.com/package/@theyahia/tkassa-mcp)
 [![license](https://img.shields.io/npm/l/@theyahia/tkassa-mcp)](./LICENSE)
 
-Part of the [Russian API MCP](https://github.com/theYahia/russian-mcp) series (50 servers) by [@theYahia](https://github.com/theYahia).
+Part of the [WWmcp](https://github.com/theYahia/WWmcp) series (46 servers) by [@theYahia](https://github.com/theYahia).
 
 ## Quick Start
 
@@ -179,7 +179,7 @@ Register customer "cust-123" with email user@example.com, then create a recurrin
 Refund 500 rubles from payment 777888999, then check its current status.
 ```
 
-## Series: Russian API MCP
+## Series: WWmcp
 
 | MCP | Status | Description |
 |-----|--------|-------------|
@@ -187,8 +187,12 @@ Refund 500 rubles from payment 777888999, then check its current status.
 | [@theyahia/cbr-mcp](https://github.com/theYahia/cbr-mcp) | ready | Exchange rates, key rate |
 | [@theyahia/yookassa-mcp](https://github.com/theYahia/yookassa-mcp) | ready | Payments, refunds, receipts 54-FZ |
 | [@theyahia/tkassa-mcp](https://github.com/theYahia/tkassa-mcp) | **v2.1** | **16 tools** -- payments, refunds, recurring, SBP, receipts, T-Invest |
-| ... | soon | **+46 servers** -- [full list](https://github.com/theYahia/russian-mcp) |
+| ... | soon | **46 servers** -- [full list](https://github.com/theYahia/WWmcp) |
 
 ## License
 
 MIT
+
+---
+
+Часть монорепозитория [WWmcp](https://github.com/theYahia/WWmcp) · Telegram: [@vhodvai](https://t.me/vhodvai)

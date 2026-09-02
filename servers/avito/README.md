@@ -7,7 +7,7 @@
 [![npm](https://img.shields.io/npm/v/@theyahia/avito-mcp)](https://www.npmjs.com/package/@theyahia/avito-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Part of **[WWmcp — Emerging Markets MCP](https://github.com/theYahia/mcp-servers)**, the MCP collection for non-Western APIs (33 countries).
+Part of **[WWmcp — Emerging Markets MCP](https://github.com/theYahia/WWmcp)**, the MCP collection for non-Western APIs (33 countries). · Telegram: [@vhodvai](https://t.me/vhodvai)
 
 ---
 
@@ -124,4 +124,4 @@ MIT © [theYahia](https://github.com/theYahia)
 
 Avito is the **largest classifieds platform in Russia** by a wide margin: 50M+ monthly active users, billions of listings annually, used for everything from second-hand bikes to job posts to real estate. Yet until this package shipped, there was **no MCP server** for it — meaning every Avito seller using Claude / Cursor / Windsurf had to drop to manual API calls.
 
-This is the **TOP-1 RU gap** in MCP coverage as identified by the [WWmcp gap analysis](https://github.com/theYahia/mcp-servers) (score 19/20).
+This is the **TOP-1 RU gap** in MCP coverage as identified by the [WWmcp gap analysis](https://github.com/theYahia/WWmcp) (score 19/20).

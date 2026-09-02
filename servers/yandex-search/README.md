@@ -5,7 +5,7 @@ MCP server for **Yandex Cloud Search API** — Wordstat keyword research for the
 [![npm](https://img.shields.io/npm/v/@theyahia/yandex-search-mcp)](https://www.npmjs.com/package/@theyahia/yandex-search-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Часть серии [Russian API MCP](https://github.com/theYahia/mcp-servers) by [@theYahia](https://github.com/theYahia).
+Часть серии [WWmcp](https://github.com/theYahia/WWmcp) by [@theYahia](https://github.com/theYahia).
 
 > ⚠️ **Не путать с [yandex-wordstat-mcp](https://github.com/altrr2/yandex-tools-mcp)** (использует старый OAuth Wordstat API).  
 > Этот сервер работает через **Yandex Cloud Search API** с `Api-Key` аутентификацией — без OAuth, без отдельной регистрации.
@@ -99,3 +99,7 @@ npm run dev   # stdio mode
 ## Лицензия
 
 MIT
+
+---
+
+Часть монорепозитория [WWmcp](https://github.com/theYahia/WWmcp) · Telegram: [@vhodvai](https://t.me/vhodvai)

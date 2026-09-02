@@ -64,6 +64,18 @@ pnpm --filter @theyahia/kaspi-mcp build
 pnpm --filter @theyahia/kaspi-mcp test
 ```
 
+## Примеры запросов
+
+Спросите ИИ:
+
+- «Покажи заказы Kaspi в статусе NEW за последнюю неделю» — `get_orders`
+- «Открой детали заказа по ID: сумма, адрес доставки, клиент» — `get_order`
+- «Выведи список моих активных товаров на Kaspi» — `get_products`
+
 ## Лицензия
 
 MIT
+
+---
+
+Часть монорепозитория [WWmcp](https://github.com/theYahia/WWmcp) · Telegram: [@vhodvai](https://t.me/vhodvai)

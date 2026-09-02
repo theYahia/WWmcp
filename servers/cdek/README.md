@@ -158,14 +158,14 @@ OAuth 2.0 Client Credentials flow, handled by the `OAuthStrategy` in [`@theyahia
 
 ## E-commerce Stack
 
-Pair with other russian-mcp servers for a complete e-commerce AI stack:
+Pair with other WWmcp servers for a complete e-commerce AI stack:
 
 | Server | Purpose |
 |--------|---------|
 | **cdek-mcp** | Shipping & logistics |
 | [dadata-mcp](https://github.com/theYahia/dadata-mcp) | Address validation, company lookup |
 
-Part of the [russian-mcp](https://github.com/theYahia?tab=repositories&q=mcp) series.
+Part of the [WWmcp](https://github.com/theYahia/WWmcp) series.
 
 ## Demo Prompts
 
@@ -207,3 +207,7 @@ See [CHANGELOG.md](./CHANGELOG.md) for release notes.
 ## License
 
 MIT
+
+---
+
+Часть монорепозитория [WWmcp](https://github.com/theYahia/WWmcp) · Telegram: [@vhodvai](https://t.me/vhodvai)
