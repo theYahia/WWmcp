@@ -33,6 +33,6 @@
   "mcpName": "io.github.theYahia/robokassa-mcp",
   "keywords": ["mcp", "mcp-server", "model-context-protocol", "claude", "ai", "russian-api", "robokassa", "payment", "invoice", "md5-signature"],
   "license": "MIT",
-  "repository": { "type": "git", "url": "https://github.com/theYahia/mcp-servers.git", "directory": "servers/robokassa" },
+  "repository": { "type": "git", "url": "https://github.com/theYahia/WWmcp.git", "directory": "servers/robokassa" },
   "author": "theYahia (https://github.com/theYahia)"
 }

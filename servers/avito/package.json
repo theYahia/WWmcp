@@ -55,9 +55,9 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/theYahia/mcp-servers.git",
+    "url": "https://github.com/theYahia/WWmcp.git",
     "directory": "servers/avito"
   },
-  "homepage": "https://github.com/theYahia/mcp-servers/tree/main/servers/avito",
+  "homepage": "https://github.com/theYahia/WWmcp/tree/main/servers/avito",
   "author": "theYahia (https://github.com/theYahia)"
 }

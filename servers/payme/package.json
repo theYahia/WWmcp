@@ -33,6 +33,6 @@
   "mcpName": "io.github.theYahia/payme-mcp",
   "keywords": ["mcp", "mcp-server", "model-context-protocol", "claude", "ai", "payme", "uzbekistan", "payment", "uzs", "sum"],
   "license": "MIT",
-  "repository": { "type": "git", "url": "https://github.com/theYahia/mcp-servers.git", "directory": "servers/payme" },
+  "repository": { "type": "git", "url": "https://github.com/theYahia/WWmcp.git", "directory": "servers/payme" },
   "author": "theYahia (https://github.com/theYahia)"
 }

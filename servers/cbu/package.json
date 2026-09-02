@@ -33,6 +33,6 @@
   "mcpName": "io.github.theYahia/cbu-mcp",
   "keywords": ["mcp", "mcp-server", "model-context-protocol", "claude", "ai", "uzbekistan", "cbu", "currency", "exchange-rate", "sum", "uzs"],
   "license": "MIT",
-  "repository": { "type": "git", "url": "https://github.com/theYahia/mcp-servers.git", "directory": "servers/cbu" },
+  "repository": { "type": "git", "url": "https://github.com/theYahia/WWmcp.git", "directory": "servers/cbu" },
   "author": "theYahia (https://github.com/theYahia)"
 }

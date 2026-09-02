@@ -57,9 +57,9 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/theYahia/mcp-servers.git",
+    "url": "https://github.com/theYahia/WWmcp.git",
     "directory": "servers/orange-money"
   },
-  "homepage": "https://github.com/theYahia/mcp-servers/tree/main/servers/orange-money",
+  "homepage": "https://github.com/theYahia/WWmcp/tree/main/servers/orange-money",
   "author": "theYahia (https://github.com/theYahia)"
 }

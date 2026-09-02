@@ -33,6 +33,6 @@
   "mcpName": "io.github.theYahia/bitrix24-mcp",
   "keywords": ["mcp", "mcp-server", "model-context-protocol", "claude", "ai", "russian-api", "bitrix24", "crm", "deals", "contacts", "tasks"],
   "license": "MIT",
-  "repository": { "type": "git", "url": "https://github.com/theYahia/mcp-servers.git", "directory": "servers/bitrix24" },
+  "repository": { "type": "git", "url": "https://github.com/theYahia/WWmcp.git", "directory": "servers/bitrix24" },
   "author": "theYahia (https://github.com/theYahia)"
 }
