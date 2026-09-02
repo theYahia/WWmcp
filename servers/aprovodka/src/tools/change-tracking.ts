@@ -28,7 +28,7 @@
 import { z } from "zod";
 import { oneCGet, buildODataPath } from "../client.js";
 import { odataDateTime } from "../validation.js";
-import { probeTop, stringifyCapped } from "../lib/paging.js";
+import { probeTop, stringifyCapped, requireCollection } from "../lib/paging.js";
 
 // ──────────────────────────────────────────────────────────────────────────
 // poll_changes_since — pull recently-modified rows since a cursor
@@ -115,11 +115,11 @@ export async function handlePollChangesSince(
   if (params.select) query["$select"] = params.select;
 
   const path = buildODataPath(params.entity, query);
-  const result = (await oneCGet(path)) as { value?: unknown[] } | null;
+  const result = await oneCGet(path);
   // Запрошено top+1: лишняя запись — доказательство продолжения. Прежний признак
   // `rows.length >= top` врал в обе стороны — ровно top записей в базе он объявлял
   // незавершённой выдачей.
-  const fetched = result?.value ?? [];
+  const fetched = requireCollection(result, "poll_changes_since");
   const hasMore = fetched.length > params.top;
   const rows = hasMore ? fetched.slice(0, params.top) : fetched;
 

@@ -37,6 +37,10 @@ import { handleGetConstant, handleSetConstant } from "../src/tools/constants.js"
 import { handleGetAccountingRegister, handleGetAccountingBalance } from "../src/tools/accounting.js";
 import { refKeySchema, odataDate } from "../src/validation.js";
 import { resetClient } from "../src/client.js";
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
+import { createServer } from "../src/server.js";
+import { handlePollChangesSince } from "../src/tools/change-tracking.js";
 
 function mockFetchOk(data: unknown) {
   vi.stubGlobal(
@@ -736,5 +740,78 @@ describe("list_entities type filter", () => {
   it("ExchangePlan_ remains reachable only via type=all", async () => {
     const all = JSON.parse(await handleListEntities({ type: "all" })).entities as string[];
     expect(all).toContain("ExchangePlan_Обмен");
+  });
+});
+
+/**
+ * Ответ не в форме OData-JSON — это ошибка, а не «в базе ноль сущностей».
+ * 1С отвечает Atom-XML, когда $format=json не отработал; ядро отдаёт тело как есть,
+ * и прежнее `raw.value ?? []` превращало это в пустой список: модель делала вывод,
+ * что справочников нет. XML не разбираем — падаем честно.
+ */
+describe("unexpected response format is an error, not an empty list", () => {
+  const ATOM_XML =
+    "<?xml version=\"1.0\" encoding=\"UTF-8\"?><service xml:base=\"http://1c.test/base/odata/standard.odata/\" xmlns=\"http://www.w3.org/2007/app\"><workspace><collection href=\"Catalog_Номенклатура\"/></workspace></service>";
+
+  beforeEach(() => {
+    process.env["ONEC_BASE_URL"] = "http://1c.test/base";
+    process.env["ONEC_LOGIN"] = "u";
+    process.env["ONEC_PASSWORD"] = "p";
+    resetClient();
+  });
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    resetClient();
+  });
+
+  const respondWith = (body: string) =>
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({ ok: true, text: () => Promise.resolve(body), headers: new Map() }),
+    );
+
+  it("list_entities on Atom-XML throws about the format instead of returning 0 entities", async () => {
+    respondWith(ATOM_XML);
+    await expect(handleListEntities({ type: "all" })).rejects.toThrow(
+      /не похож на OData-JSON[\s\S]*\$format=json/,
+    );
+  });
+
+  it("the MCP tool call surfaces it as isError, not as an empty answer", async () => {
+    respondWith(ATOM_XML);
+    const server = createServer();
+    const [ct, st] = InMemoryTransport.createLinkedPair();
+    const client = new Client({ name: "test", version: "0" });
+    await Promise.all([server.connect(st), client.connect(ct)]);
+    try {
+      const res = (await client.callTool({ name: "list_entities", arguments: {} })) as {
+        isError?: boolean;
+        content: Array<{ text: string }>;
+      };
+      expect(res.isError).toBe(true);
+      expect(res.content[0]!.text).toMatch(/OData-JSON|\$format=json/);
+      expect(res.content[0]!.text).not.toMatch(/"total":0/);
+    } finally {
+      await client.close();
+    }
+  });
+
+  it("poll_changes_since refuses the same shape", async () => {
+    respondWith(ATOM_XML);
+    await expect(
+      handlePollChangesSince({
+        entity: "Catalog_Номенклатура",
+        since: "2026-01-01T00:00:00",
+        date_field: "DataVersion",
+        top: 10,
+      }),
+    ).rejects.toThrow(/не похож на OData-JSON/);
+  });
+
+  it("a correct {value: [...]} answer still works", async () => {
+    respondWith(JSON.stringify({ value: [{ name: "Catalog_Номенклатура", url: "" }] }));
+    const out = JSON.parse(await handleListEntities({ type: "all" }));
+    expect(out.total).toBe(1);
+    expect(out.entities).toEqual(["Catalog_Номенклатура"]);
   });
 });

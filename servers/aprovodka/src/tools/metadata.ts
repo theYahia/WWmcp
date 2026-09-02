@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { stringifyCapped } from "../lib/paging.js";
+import { stringifyCapped, requireCollection } from "../lib/paging.js";
 import { oneCGet, buildODataPath, escapeODataString } from "../client.js";
 import { odataDate, normaliseEntity } from "../validation.js";
 
@@ -57,11 +57,9 @@ export async function handleListEntities(
   params: z.infer<typeof listEntitiesSchema>,
 ): Promise<string> {
   // GET /odata/standard.odata/ возвращает JSON-массив всех EntitySet
-  const raw = await oneCGet("/odata/standard.odata/?$format=json") as {
-    value?: Array<{ name: string; url: string }>;
-  };
+  const raw = await oneCGet("/odata/standard.odata/?$format=json");
 
-  let entities = raw.value ?? [];
+  let entities = requireCollection(raw, "list_entities") as Array<{ name: string; url: string }>;
 
   // Фильтрация по типу
   if (params.type !== "all") {

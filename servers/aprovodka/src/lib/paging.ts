@@ -117,3 +117,28 @@ export function stringifyCapped(payload: unknown, arrayKey: string): string {
 export function pageJson(result: unknown, top: number, skip?: number): string {
   return stringifyCapped(toPage(result, top, skip), "value");
 }
+
+/**
+ * Убедиться, что 1С вернула коллекцию OData, а не что-то другое.
+ *
+ * Ядро отдаёт тело как есть, если это не JSON, — а 1С при неотработавшем
+ * `$format=json` (или при ошибке публикации) отвечает Atom-XML. Прежнее
+ * `raw.value ?? []` превращало такой ответ в «0 сущностей»: модель делала вывод,
+ * что в базе нет справочников, и строила на этом дальнейшие рассуждения. Молчать
+ * тут нельзя — либо коллекция, либо честная ошибка. XML не разбираем.
+ */
+export function requireCollection(result: unknown, what: string): unknown[] {
+  const rows = (result as { value?: unknown } | null | undefined)?.value;
+  if (Array.isArray(rows)) return rows;
+
+  const asText = typeof result === "string" ? result : JSON.stringify(result) ?? String(result);
+  const looksXml = typeof result === "string" && /^\s*<(\?xml|feed|service|html)/i.test(result);
+  throw new Error(
+    `${what}: ответ 1С не похож на OData-JSON — ожидался объект с массивом value, ` +
+      `получено ${typeof result}. ` +
+      (looksXml
+        ? "Похоже, база отдала XML: проверьте, что запрос идёт с $format=json и что публикация OData настроена. "
+        : "Проверьте адрес публикации OData в ONEC_BASE_URL и права пользователя. ") +
+      `Первые 200 символов ответа: ${asText.slice(0, 200)}`,
+  );
+}
