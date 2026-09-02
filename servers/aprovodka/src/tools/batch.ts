@@ -89,7 +89,11 @@ export const batchCreateDocumentsSchema = z.object({
     .min(1)
     .max(20)
     .default(5)
-    .describe("Max parallel HTTP requests to 1C. Default 5 — safe for most 1C deployments."),
+    .describe(
+      "Max parallel HTTP requests to 1C within this call. Default 5 — safe for most 1C " +
+      "deployments. The process-wide cap (ONEC_MAX_CONCURRENCY, default 8) applies on top: " +
+      "one 1C session per in-flight request.",
+    ),
 });
 
 export interface BatchItemResult {
@@ -168,7 +172,10 @@ export const batchUpdateCatalogItemsSchema = z.object({
     .min(1)
     .max(20)
     .default(5)
-    .describe("Max parallel HTTP requests. Default 5."),
+    .describe(
+      "Max parallel HTTP requests within this call. Default 5. The process-wide cap " +
+      "(ONEC_MAX_CONCURRENCY, default 8) applies on top: one 1C session per in-flight request.",
+    ),
 });
 
 export async function handleBatchUpdateCatalogItems(
@@ -229,7 +236,10 @@ export const batchQuerySchema = z.object({
     .min(1)
     .max(20)
     .default(5)
-    .describe("Max parallel HTTP requests. Default 5."),
+    .describe(
+      "Max parallel HTTP requests within this call. Default 5. The process-wide cap " +
+      "(ONEC_MAX_CONCURRENCY, default 8) applies on top: one 1C session per in-flight request.",
+    ),
 });
 
 export async function handleBatchQuery(

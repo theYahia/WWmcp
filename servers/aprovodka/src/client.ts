@@ -95,8 +95,60 @@ export function buildODataPath(
   return `/odata/standard.odata/${encodeURIComponent(entity)}?${qs}`;
 }
 
+// ──────────────────────────────────────────────────────────────
+// Потолок одновременных запросов — на весь процесс, не на вызов
+// ──────────────────────────────────────────────────────────────
+
+/**
+ * У клиента на тарифе «Базовый» 1С:Фреш всего два сеанса. Три batch-инструмента
+ * со своим пулом на вызов давали до 3 × 20 = 60 параллельных соединений и
+ * выбивали пользователя из его же базы. Поэтому ограничитель один на процесс и
+ * стоит в самой нижней точке — вокруг фактического HTTP-запроса, а не вокруг
+ * инструмента: guardWrite успевает сделать вложенное чтение до записи, и обёртка
+ * уровнем выше запирала бы сама себя.
+ *
+ * ponytail: счётчик одновременности, а не rate limiter по времени — сеансы
+ * расходует именно одновременность.
+ */
+export const DEFAULT_MAX_CONCURRENCY = 8;
+
+function maxConcurrency(): number {
+  const n = Number(process.env["ONEC_MAX_CONCURRENCY"]);
+  return Number.isFinite(n) && n >= 1 ? Math.floor(n) : DEFAULT_MAX_CONCURRENCY;
+}
+
+let inFlight = 0;
+const waiting: Array<() => void> = [];
+
+async function acquireSlot(): Promise<void> {
+  if (inFlight < maxConcurrency() && waiting.length === 0) {
+    inFlight++;
+    return;
+  }
+  // Освобождающий слот передаёт его следующему в очереди, не трогая счётчик, —
+  // иначе между decrement и продолжением ожидающего успевает вклиниться новый
+  // вызов, и потолок оказывается превышен.
+  await new Promise<void>((resolve) => waiting.push(resolve));
+}
+
+function releaseSlot(): void {
+  const next = waiting.shift();
+  if (next) next();
+  else inFlight--;
+}
+
+/** Каждый HTTP-запрос к 1С проходит здесь — единственная точка учёта сеансов. */
+async function limited<T>(fn: () => Promise<T>): Promise<T> {
+  await acquireSlot();
+  try {
+    return await fn();
+  } finally {
+    releaseSlot();
+  }
+}
+
 export async function oneCGet(path: string): Promise<unknown> {
-  return withOneCErrorEnrichment(getClient().request({ method: "GET", path }));
+  return withOneCErrorEnrichment(limited(() => getClient().request({ method: "GET", path })));
 }
 
 /**
@@ -110,7 +162,7 @@ export async function oneCRawWrite(
   path: string,
   body?: unknown,
 ): Promise<unknown> {
-  return withOneCErrorEnrichment(getClient().request({ method, path, body }));
+  return withOneCErrorEnrichment(limited(() => getClient().request({ method, path, body })));
 }
 
 export async function oneCPost(path: string, body: unknown): Promise<unknown> {

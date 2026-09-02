@@ -240,6 +240,7 @@ Includes session management (`mcp-session-id` header), CORS, graceful shutdown.
 | `ONEC_PASSWORD` | yes | Password for HTTP Basic auth. |
 | `ONEC_SERVICES` | no | Comma-separated module list (default: `all`). |
 | `ONEC_WRITE_MODE` | no | Write-safety gate: `off` (default) / `deny` / `preview` / `approval`. See [Write safety](#write-safety). |
+| `ONEC_MAX_CONCURRENCY` | no | Process-wide cap on concurrent requests to 1C (default `8`). One infobase session per in-flight request: on plans with 2 sessions set it to `1`. |
 | `ONEC_APPROVAL_TTL_SEC` | no | Lifetime of a pending approval, seconds (default `300`). |
 | `ONEC_AUDIT_LOG` | no | Path to a JSONL audit ledger for every gated write. Fail-closed: if it cannot be written, the write is refused. |
 | `ONEC_AUDIT_ACTOR` | no | Actor name recorded in the ledger (defaults to `ONEC_LOGIN`). |
