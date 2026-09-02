@@ -1,5 +1,7 @@
 # @theyahia/vk-ads-mcp
 
+> 📦 Part of **[WWmcp — Emerging Markets MCP](https://github.com/theYahia/WWmcp)** — 114 MCP servers for non-Western APIs (Brazil/MENA/Gulf/SE Asia/Africa/CIS).
+
 > MCP server for **VK Ads** API — campaigns, ads, statistics, targeting, budgets.
 > 8 tools. Bearer auth. Stdio + Streamable HTTP transports.
 
@@ -126,7 +128,14 @@ Get your VK Ads API token:
 
 ---
 
-## Demo Prompts
+## 🚀 Demo prompts
+
+> **Use case:** "Покажи топ-10 объявлений ВК.Ads по CTR за неделю, выведи бюджеты и охват"
+
+🤖 **Pairs well with:**
+- [`@theyahia/yandex-direct-mcp`](https://github.com/theYahia/yandex-direct-mcp)
+- [`@theyahia/vk-mcp`](https://github.com/theYahia/vk-mcp)
+- [`@theyahia/tgstat-mcp`](https://github.com/theYahia/tgstat-mcp)
 
 Try these natural-language prompts in your MCP client:
 
@@ -180,3 +189,11 @@ servers/vk-ads/
 ## License
 
 MIT — see [LICENSE](./LICENSE).
+
+---
+
+## 🌍 Part of WWmcp — Emerging Markets MCP
+
+**[WWmcp](https://github.com/theYahia/WWmcp)** ships 114 MCP servers covering APIs across Russia/CIS, MENA, Gulf, SE Asia, Africa, and Latin America — the markets ignored by Composio and other Western MCP hubs.
+
+⭐ **Star the [monorepo](https://github.com/theYahia/WWmcp)** to support the project, or [open an issue](https://github.com/theYahia/WWmcp/issues) if your favorite non-Western API isn't covered yet.

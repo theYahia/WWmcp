@@ -1,5 +1,7 @@
 # @theyahia/2gis-mcp
 
+> 📦 Part of **[WWmcp — Emerging Markets MCP](https://github.com/theYahia/WWmcp)** — 114 MCP servers for non-Western APIs (Brazil/MENA/Gulf/SE Asia/Africa/CIS).
+
 > MCP server for **2GIS** API — places search, geocoding, directions, suggest, reviews. Russia and CIS.
 > 8 tools. API key (query-param) auth. Stdio + Streamable HTTP transports.
 
@@ -127,7 +129,14 @@ The same key is used for all 4 underlying APIs (catalog, routing, suggest, revie
 
 ---
 
-## Demo Prompts
+## 🚀 Demo prompts
+
+> **Use case:** "Найди все кафе в радиусе 500 м от точки 55.7558,37.6173, отсортируй по рейтингу"
+
+🤖 **Pairs well with:**
+- [`@theyahia/yandex-maps-mcp`](https://github.com/theYahia/yandex-maps-mcp)
+- [`@theyahia/ati-su-mcp`](https://github.com/theYahia/ati-su-mcp)
+- [`@theyahia/cdek-mcp`](https://github.com/theYahia/cdek-mcp)
 
 Try these natural-language prompts in your MCP client:
 
@@ -183,3 +192,11 @@ servers/2gis/
 ## License
 
 MIT — see [LICENSE](./LICENSE).
+
+---
+
+## 🌍 Part of WWmcp — Emerging Markets MCP
+
+**[WWmcp](https://github.com/theYahia/WWmcp)** ships 114 MCP servers covering APIs across Russia/CIS, MENA, Gulf, SE Asia, Africa, and Latin America — the markets ignored by Composio and other Western MCP hubs.
+
+⭐ **Star the [monorepo](https://github.com/theYahia/WWmcp)** to support the project, or [open an issue](https://github.com/theYahia/WWmcp/issues) if your favorite non-Western API isn't covered yet.
