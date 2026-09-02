@@ -63,7 +63,8 @@ const T = {
   cloneViewBots: 2,     // clone:view выше — подозрение на ботов/CI
 };
 
-const CONCURRENCY = 5;
+const CONCURRENCY = 5;      // HTTP-запросы к npm и MCP-реестру
+const GH_CONCURRENCY = 3;   // подпроцессы gh: параллельные TLS-хендшейки отваливаются
 const GH_SEARCH_INTERVAL_MS = 2300; // GitHub Search API: 30 запросов/мин
 
 // -------------------------------------------------------------------- утилиты
@@ -104,34 +105,55 @@ function throttle(fn, intervalMs) {
 }
 
 /** Никогда не бросает: {ok:true,data} либо {ok:false,error}. */
-async function jsonFetch(url, retry = 1) {
+async function jsonFetch(url, attempt = 0) {
   try {
     const res = await fetch(url, { headers: { accept: 'application/json' } });
-    if (res.status === 429 && retry > 0) {
+    if (res.status === 429 && attempt < 2) {
       await sleep(20000);
-      return jsonFetch(url, retry - 1);
+      return jsonFetch(url, attempt + 1);
+    }
+    if (res.status >= 500 && attempt < 3) {
+      await sleep(1500 * (attempt + 1));
+      return jsonFetch(url, attempt + 1);
     }
     if (!res.ok) return { ok: false, error: `HTTP ${res.status}` };
     return { ok: true, data: await res.json() };
   } catch (e) {
-    if (retry > 0) {
-      await sleep(2000);
-      return jsonFetch(url, retry - 1);
+    // сеть тут регулярно моргает: без повторов пакет молча уходит в «не проверено»
+    if (attempt < 3) {
+      await sleep(1500 * (attempt + 1));
+      return jsonFetch(url, attempt + 1);
     }
     return { ok: false, error: String(e.message || e).slice(0, 120) };
   }
 }
 
-/** Никогда не бросает. 404 репозитория / rate limit возвращаются как ok:false. */
-async function ghJson(args, retry = 1) {
+const RATE_LIMIT_RE = /rate limit|429|secondary|abuse/i;
+// gh (Go) при пачке параллельных запросов регулярно отдаёт TLS handshake timeout —
+// это сеть, а не отказ API: без повтора критерий молча уходит в «не проверено»
+const TRANSIENT_RE = /timeout|TLS handshake|connection reset|unexpected EOF|no such host|temporary failure|network is unreachable|connection refused/i;
+
+/** Никогда не бросает. 404 репозитория возвращается как ok:false, сеть — повторяется. */
+async function ghJson(args, attempt = 0) {
   try {
     const { stdout } = await execFileAsync('gh', args, { maxBuffer: 16 * 1024 * 1024 });
-    return { ok: true, data: JSON.parse(stdout.trim() || 'null') };
+    const raw = stdout.trim();
+    if (!raw) return { ok: true, data: null };
+    try {
+      return { ok: true, data: JSON.parse(raw) };
+    } catch {
+      // `gh api --jq` печатает строки сырыми, без кавычек: дата коммита — не JSON
+      return { ok: true, data: raw };
+    }
   } catch (e) {
     const msg = String(e.stderr || e.message || '').trim().split('\n')[0].slice(0, 160);
-    if (retry > 0 && /rate limit|429|secondary|abuse/i.test(msg)) {
+    if (RATE_LIMIT_RE.test(msg) && attempt < 1) {
       await sleep(65000);
-      return ghJson(args, retry - 1);
+      return ghJson(args, attempt + 1);
+    }
+    if (TRANSIENT_RE.test(msg) && attempt < 3) {
+      await sleep(2000 * (attempt + 1));
+      return ghJson(args, attempt + 1);
     }
     return { ok: false, error: msg || 'gh failed' };
   }
@@ -405,11 +427,11 @@ async function main() {
 
   // 4. Живость и сигналы по репозиториям
   const repos = NICHES.filter((n) => n.repo).map((n) => n.repo);
-  const live = await pool(repos, CONCURRENCY, repoLiveness);
+  const live = await pool(repos, GH_CONCURRENCY, repoLiveness);
   const liveMap = new Map(repos.map((r, i) => [r, live[i]]));
   console.log(`Живость: ${repos.length} репозиториев`);
 
-  const sig = await pool(repos, CONCURRENCY, repoSignals);
+  const sig = await pool(repos, GH_CONCURRENCY, repoSignals);
   const sigMap = new Map(repos.map((r, i) => [r, sig[i]]));
 
   // 5. npm-поиск (сеть) и GitHub-поиск (троттлится)
