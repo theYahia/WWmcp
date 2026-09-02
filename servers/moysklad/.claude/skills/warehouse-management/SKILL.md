@@ -8,22 +8,29 @@ argument-hint: <действие> [детали]
 
 ## Алгоритм
 
-1. `search_products` или `search_assortment` — найти товары по названию/артикулу.
-2. `get_stock` — проверить текущие остатки; `get_stock_by_store` — по складам.
+1. `search_products` — найти товары по названию/артикулу.
+2. `get_stock` — проверить остатки; для разреза по складам передай `group_by: "store"`.
 3. `get_counterparties` — найти покупателей/поставщиков.
-4. `list_organizations` / `list_stores` — получить meta-href организации и склада (нужны для документов).
-5. Создать документ:
+4. Создать документ:
    - `create_customer_order` — заказ покупателя
-   - `create_demand` — отгрузка
    - `create_supply` — приёмка
-   - `create_move` — перемещение между складами
-   - `create_enter` / `create_loss` — оприходование / списание
+5. `get_orders` — посмотреть заказы, `get_profit_report` — выручка и прибыль.
 
 ## Важно
 
 - Цены, которые **возвращают** инструменты, уже в **рублях** (сервер сам конвертирует из копеек).
 - При создании документов цены передаются в **рублях** (конвертируются в копейки автоматически).
-- Документам нужны **meta-href** организации (`list_organizations`), контрагента (`get_counterparties`) и склада (`list_stores`), а не просто UUID.
+- Документам нужны **meta-href** организации, контрагента (`get_counterparties`) и склада, а не просто UUID.
+- **Инструмента для списка организаций и складов в этой версии сервера нет** — их href берутся из
+  МойСклад (`/entity/organization`, `/entity/store`).
+
+## Чего нет в этой версии
+
+Копия сервера в монорепозитории — **2.1.0** (10 инструментов). Отгрузка (`create_demand`),
+перемещение (`create_move`), оприходование и списание (`create_enter` / `create_loss`),
+единый `search_assortment`, `list_organizations` и `list_stores` появились в
+`@theyahia/moysklad-mcp@3.1.0` из npm. На 2.1.0 эти операции недоступны — скажи об этом
+пользователю, а не подбирай замену.
 
 ## Формат ответа
 
@@ -45,5 +52,5 @@ argument-hint: <действие> [детали]
 /warehouse-management найди товары "laptop"
 /warehouse-management проверь остатки
 /warehouse-management найди контрагента "Ромашка"
-/warehouse-management перемести 10 шт LP15 со склада A на склад B
+/warehouse-management создай заказ покупателя
 ```

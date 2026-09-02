@@ -3,6 +3,10 @@ name: inventory-count
 description: Инвентаризация склада в МойСклад
 ---
 
+> ⚠️ **Требует `@theyahia/moysklad-mcp@3.1.0` из npm.** Копия сервера в монорепозитории —
+> версия 2.1.0 (10 инструментов), в ней нет `create_inventory`, `create_enter`, `create_loss`, `list_stores`, `list_organizations`.
+> На версии 2.1.0 скилл неработоспособен — сообщи об этом пользователю вместо попытки вызова.
+
 Помоги провести инвентаризацию остатков на складе.
 
 1. Получи организацию через `list_organizations` и склад через `list_stores` — возьми их meta_href.

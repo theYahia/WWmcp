@@ -1,5 +1,5 @@
 ---
-name: skill-calculate
+name: calculate
 description: Расчёт стоимости грузоперевозки
 argument-hint: <откуда> <куда> <вес кг> [длина м] [ширина м] [высота м]
 allowed-tools:

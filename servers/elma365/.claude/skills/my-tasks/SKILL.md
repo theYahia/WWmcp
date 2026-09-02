@@ -1,5 +1,5 @@
 ---
-name: skill-my-tasks
+name: my-tasks
 description: "Мои задачи — показать текущие BPM-задачи пользователя"
 argument-hint: "[from] [size]"
 allowed-tools:

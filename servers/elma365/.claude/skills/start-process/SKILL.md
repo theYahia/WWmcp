@@ -1,5 +1,5 @@
 ---
-name: skill-start-process
+name: start-process
 description: "Запусти бизнес-процесс — запуск процесса ELMA365 по коду"
 argument-hint: <код_процесса> [параметры]
 allowed-tools:

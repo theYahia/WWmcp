@@ -1,5 +1,5 @@
 ---
-name: skill-calculate
+name: calculate
 description: "Расчёт стоимости доставки Boxberry"
 argument-hint: "<город> <вес г>"
 allowed-tools:
