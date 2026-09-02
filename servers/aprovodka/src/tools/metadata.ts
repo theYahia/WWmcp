@@ -2,24 +2,12 @@ import { z } from "zod";
 import { stringifyCapped, requireCollection, RESPONSE_BUDGET } from "../lib/paging.js";
 import { oneCGet, buildODataPath, escapeODataString, getBaseUrl } from "../client.js";
 import { odataDate, normaliseEntity } from "../validation.js";
+import { ENTITY_PREFIX_FILTERS } from "../lib/entity-prefixes.js";
 
 // ──────────────────────────────────────────────────────────────
 // list_entities — discovery: список всех сущностей базы 1С
 // ──────────────────────────────────────────────────────────────
 
-/**
- * Какие префиксы OData попадают под каждое значение фильтра `type`.
- *
- * Экспортируется, чтобы тест мог сверить карту с `COMMON.entity_prefixes`
- * (`src/presets/common.ts`) вместо ручного дублирования списка. Обратный импорт
- * — из `common.ts` сюда — сознательно не сделан: там форма `префикс → русское
- * существительное`, а нужна `тип → префиксы[]`, и он затянул бы всё поддерево
- * пресетов в путь discovery.
- *
- * `charts` намеренно один: в 1С три разных плана (ChartOfAccounts_,
- * ChartOfCalculationTypes_, ChartOfCharacteristicTypes_), и дробить их на три
- * значения enum ради полноты — менять одну ловушку на другую.
- */
 // ──────────────────────────────────────────────────────────────
 // Процессный кэш схемы
 // ──────────────────────────────────────────────────────────────
@@ -45,20 +33,12 @@ export function resetMetadataCache(): void {
   rootCache.clear();
 }
 
-export const ENTITY_PREFIX_FILTERS: Record<string, string[]> = {
-  catalogs:  ["Catalog_"],
-  documents: ["Document_"],
-  registers: [
-    "AccumulationRegister_",
-    "InformationRegister_",
-    "AccountingRegister_",
-    "CalculationRegister_",
-  ],
-  charts:    ["ChartOf"],
-  constants: ["Constant_"],
-  journals:  ["DocumentJournal_"],
-  reports:   ["Report_"],
-};
+/**
+ * Карта «тип фильтра → префиксы» живёт в `lib/entity-prefixes.ts` — там же, где
+ * плоский список для `validation.ts` и русские названия групп для пресетов.
+ * Реэкспорт сохранён: на это имя ссылается тест согласованности таблиц.
+ */
+export { ENTITY_PREFIX_FILTERS } from "../lib/entity-prefixes.js";
 
 export const listEntitiesSchema = z.object({
   type: z

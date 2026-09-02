@@ -23,7 +23,7 @@
 import { z } from "zod";
 import { oneCGet, oneCPost, oneCPatch, buildODataPath, buildKeyedPath } from "../client.js";
 import { normaliseEntity } from "../validation.js";
-import { probeTop, toPage, stringifyCapped } from "../lib/paging.js";
+import { buildQuery, toPage, stringifyCapped } from "../lib/paging.js";
 
 // ──────────────────────────────────────────────────────────────────────────
 // Concurrency primitive — simple promise pool, no external deps
@@ -118,6 +118,34 @@ const NATIVE_BATCH_NOTE =
   "1C OData does not natively support the $batch endpoint. This tool dispatches " +
   "N parallel OData requests with a concurrency cap and returns per-item results.";
 
+/**
+ * Один сборщик конверта пакетного ответа.
+ *
+ * `total/succeeded/failed/results/failed_indexes/note` собирались тремя
+ * одинаковыми копиями — вместе с тремя копиями раскладки результатов пула в
+ * `BatchItemResult`. Разъехавшийся конверт означал бы, что модель по одному
+ * инструменту считает провалы, а по другому нет.
+ */
+function toBatchEnvelope(
+  results: Array<{ status: "fulfilled"; value: unknown } | { status: "rejected"; reason: unknown }>,
+  note: string,
+): BatchResultEnvelope {
+  const items: BatchItemResult[] = results.map((r, i) =>
+    r.status === "fulfilled"
+      ? { index: i, status: "ok", data: r.value }
+      : { index: i, status: "error", error: errToString(r.reason) },
+  );
+  const failed = items.filter((x) => x.status === "error");
+  return {
+    total: items.length,
+    succeeded: items.length - failed.length,
+    failed: failed.length,
+    results: items,
+    failed_indexes: failed.map((x) => x.index),
+    note,
+  };
+}
+
 export async function handleBatchCreateDocuments(
   params: z.infer<typeof batchCreateDocumentsSchema>,
 ): Promise<string> {
@@ -129,21 +157,7 @@ export async function handleBatchCreateDocuments(
     (doc) => oneCPost(path, doc),
   );
 
-  const items: BatchItemResult[] = results.map((r, i) =>
-    r.status === "fulfilled"
-      ? { index: i, status: "ok", data: r.value }
-      : { index: i, status: "error", error: errToString(r.reason) },
-  );
-
-  const envelope: BatchResultEnvelope = {
-    total: items.length,
-    succeeded: items.filter((x) => x.status === "ok").length,
-    failed: items.filter((x) => x.status === "error").length,
-    results: items,
-    failed_indexes: items.filter((x) => x.status === "error").map((x) => x.index),
-    note: NATIVE_BATCH_NOTE,
-  };
-  return stringifyCapped(envelope, "results");
+  return stringifyCapped(toBatchEnvelope(results, NATIVE_BATCH_NOTE), "results");
 }
 
 // ──────────────────────────────────────────────────────────────────────────
@@ -193,21 +207,7 @@ export async function handleBatchUpdateCatalogItems(
     },
   );
 
-  const items: BatchItemResult[] = results.map((r, i) =>
-    r.status === "fulfilled"
-      ? { index: i, status: "ok", data: r.value }
-      : { index: i, status: "error", error: errToString(r.reason) },
-  );
-
-  const envelope: BatchResultEnvelope = {
-    total: items.length,
-    succeeded: items.filter((x) => x.status === "ok").length,
-    failed: items.filter((x) => x.status === "error").length,
-    results: items,
-    failed_indexes: items.filter((x) => x.status === "error").map((x) => x.index),
-    note: NATIVE_BATCH_NOTE,
-  };
-  return stringifyCapped(envelope, "results");
+  return stringifyCapped(toBatchEnvelope(results, NATIVE_BATCH_NOTE), "results");
 }
 
 // ──────────────────────────────────────────────────────────────────────────
@@ -249,36 +249,14 @@ export async function handleBatchQuery(
     params.queries,
     params.concurrency,
     (q) => {
-      const query: Record<string, string> = {
-        $format: "json",
-        $top: probeTop(q.top),
-      };
-      if (q.skip) query["$skip"] = String(q.skip);
-      if (q.filter) query["$filter"] = q.filter;
-      if (q.select) query["$select"] = q.select;
-      if (q.expand) query["$expand"] = q.expand;
-      if (q.orderby) query["$orderby"] = q.orderby;
-      const path = buildODataPath(q.entity, query);
+      const path = buildODataPath(q.entity, buildQuery(q));
       return oneCGet(path).then((r) => toPage(r, q.top, q.skip));
     },
   );
 
-  const items: BatchItemResult[] = results.map((r, i) =>
-    r.status === "fulfilled"
-      ? { index: i, status: "ok", data: r.value }
-      : { index: i, status: "error", error: errToString(r.reason) },
-  );
-
-  const envelope: BatchResultEnvelope = {
-    total: items.length,
-    succeeded: items.filter((x) => x.status === "ok").length,
-    failed: items.filter((x) => x.status === "error").length,
-    results: items,
-    failed_indexes: items.filter((x) => x.status === "error").map((x) => x.index),
-    note:
-      "1C OData does not support $batch. Queries are dispatched in parallel " +
-      "with a concurrency cap. There is no server-side join — combine the per-item " +
-      "results client-side.",
-  };
-  return stringifyCapped(envelope, "results");
+  const note =
+    "1C OData does not support $batch. Queries are dispatched in parallel " +
+    "with a concurrency cap. There is no server-side join — combine the per-item " +
+    "results client-side.";
+  return stringifyCapped(toBatchEnvelope(results, note), "results");
 }

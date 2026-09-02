@@ -8,6 +8,7 @@
  */
 import { z } from "zod";
 import { GUID_RE } from "./client.js";
+import { ENTITY_PREFIXES } from "./lib/entity-prefixes.js";
 
 /** A 1C Ref_Key (GUID). */
 export const refKeySchema = z
@@ -30,24 +31,8 @@ export const odataDateTime = z
     "must be in YYYY-MM-DDTHH:MM:SS format",
   );
 
-/** Известные префиксы имён entity set в OData 1С. Порядок значения не имеет. */
-export const ENTITY_PREFIXES = [
-  "Catalog_",
-  "Document_",
-  "DocumentJournal_",
-  "InformationRegister_",
-  "AccumulationRegister_",
-  "AccountingRegister_",
-  "CalculationRegister_",
-  "ChartOfAccounts_",
-  "ChartOfCalculationTypes_",
-  "ChartOfCharacteristicTypes_",
-  "Constant_",
-  "ExchangePlan_",
-  "BusinessProcess_",
-  "Task_",
-  "Report_",
-] as const;
+/** Известные префиксы имён entity set в OData 1С — из единого источника. */
+export { ENTITY_PREFIXES } from "./lib/entity-prefixes.js";
 
 /**
  * Достроить префикс имени сущности, если вызывающий его не указал.

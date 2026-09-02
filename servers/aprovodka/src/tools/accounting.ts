@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { oneCGet, buildODataPath, buildVirtualTablePath, escapeODataString } from "../client.js";
 import { normaliseEntity, odataDateTime } from "../validation.js";
-import { probeTop, pageJson } from "../lib/paging.js";
+import { buildQuery, pageJson } from "../lib/paging.js";
 
 // ──────────────────────────────────────────────────────────────
 // get_accounting_register — записи регистра бухгалтерии
@@ -26,15 +26,7 @@ export const getAccountingRegisterSchema = z.object({
 export async function handleGetAccountingRegister(
   params: z.infer<typeof getAccountingRegisterSchema>,
 ): Promise<string> {
-  const query: Record<string, string> = {
-    $format: "json",
-    $top: probeTop(params.top),
-  };
-  if (params.skip) query["$skip"] = String(params.skip);
-  if (params.filter) query["$filter"] = params.filter;
-  if (params.select) query["$select"] = params.select;
-  if (params.orderby) query["$orderby"] = params.orderby;
-
+  const query = buildQuery(params);
   const path = buildODataPath(normaliseEntity("AccountingRegister_", params.register_name), query);
   const result = await oneCGet(path);
   return pageJson(result, params.top, params.skip);

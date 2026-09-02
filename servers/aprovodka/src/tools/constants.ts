@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { oneCGet, oneCPatch, buildODataPath } from "../client.js";
+import { normaliseEntity } from "../validation.js";
 
 // ──────────────────────────────────────────────────────────────
 // get_constant — прочитать значение константы 1С (Constant_*)
@@ -11,14 +12,10 @@ export const getConstantSchema = z.object({
     .describe("Имя константы (например, Constant_ОсновнаяВалюта или ОсновнаяВалюта)"),
 });
 
-function asConstantEntity(name: string): string {
-  return name.startsWith("Constant_") ? name : `Constant_${name}`;
-}
-
 export async function handleGetConstant(
   params: z.infer<typeof getConstantSchema>,
 ): Promise<string> {
-  const path = buildODataPath(asConstantEntity(params.constant_name), { $format: "json" });
+  const path = buildODataPath(normaliseEntity("Constant_", params.constant_name), { $format: "json" });
   const result = await oneCGet(path);
   return JSON.stringify(result);
 }
@@ -35,7 +32,7 @@ export const setConstantSchema = z.object({
 export async function handleSetConstant(
   params: z.infer<typeof setConstantSchema>,
 ): Promise<string> {
-  const path = buildODataPath(asConstantEntity(params.constant_name), { $format: "json" });
+  const path = buildODataPath(normaliseEntity("Constant_", params.constant_name), { $format: "json" });
   const result = await oneCPatch(path, { Value: params.value });
   return JSON.stringify(result);
 }

@@ -24,6 +24,44 @@ export function probeTop(top: number): string {
 }
 
 /**
+ * Один сборщик query-строки читающего OData-запроса.
+ *
+ * Блок `$format/$top/$skip/$filter/$select/$orderby` был дословно скопирован в
+ * восьми местах: каждая новая опция OData требовала восьми одинаковых правок, а
+ * любая забытая копия — молчаливое расхождение поведения между инструментами.
+ * Для продукта, который продаёт единообразие результата, это фабрика будущих
+ * «в одном инструменте работает, в другом нет».
+ *
+ * `top` проходит через `probeTop` — читающие инструменты просят на запись больше,
+ * чтобы честно ответить `has_more`. Инструмент, который страницу не читает
+ * (`count_entities` с `$top=0`), сюда и не ходит.
+ *
+ * ponytail: принимает params инструмента целиком — лишние поля схемы просто
+ * игнорируются, и на каждом вызове не нужно перечислять шесть аргументов.
+ */
+export interface ODataReadParams {
+  top?: number;
+  skip?: number;
+  filter?: string;
+  select?: string;
+  expand?: string;
+  orderby?: string;
+  inlinecount?: boolean;
+}
+
+export function buildQuery(p: ODataReadParams): Record<string, string> {
+  const q: Record<string, string> = { $format: "json" };
+  if (p.top !== undefined) q["$top"] = probeTop(p.top);
+  if (p.skip) q["$skip"] = String(p.skip);
+  if (p.filter) q["$filter"] = p.filter;
+  if (p.select) q["$select"] = p.select;
+  if (p.expand) q["$expand"] = p.expand;
+  if (p.orderby) q["$orderby"] = p.orderby;
+  if (p.inlinecount) q["$inlinecount"] = "allpages";
+  return q;
+}
+
+/**
  * Обрезать ответ 1С до `top` записей и сказать, есть ли продолжение.
  *
  * Прочие поля ответа (например `odata.count` при `$inlinecount`) сохраняются.

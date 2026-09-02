@@ -6,25 +6,11 @@
  * пресетом. Источники — внизу файла (COMMON.sources).
  */
 
+import { ENTITY_PREFIX_LABELS } from "../lib/entity-prefixes.js";
+
 export const COMMON = {
-  /** Префиксы имён entity set по типу объекта метаданных. */
-  entity_prefixes: {
-    "Catalog_": "справочники",
-    "Document_": "документы",
-    "DocumentJournal_": "журналы документов",
-    "Constant_": "константы",
-    "ExchangePlan_": "планы обмена",
-    "ChartOfAccounts_": "планы счетов",
-    "ChartOfCalculationTypes_": "планы видов расчёта",
-    "ChartOfCharacteristicTypes_": "планы видов характеристик",
-    "InformationRegister_": "регистры сведений",
-    "AccumulationRegister_": "регистры накопления",
-    "CalculationRegister_": "регистры расчёта",
-    "AccountingRegister_": "регистры бухгалтерии",
-    "BusinessProcess_": "бизнес-процессы",
-    "Task_": "задачи",
-    "Report_": "отчёты",
-  } as Record<string, string>,
+  /** Префиксы имён entity set по типу объекта метаданных — из единого источника. */
+  entity_prefixes: ENTITY_PREFIX_LABELS,
 
   /** Стандартные поля, которые есть почти у любого объекта. */
   standard_fields: {

@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { oneCGet, oneCPost, buildODataPath, buildVirtualTablePath, escapeODataString } from "../client.js";
 import { odataDateTime, normaliseEntity, normaliseRegisterEntity } from "../validation.js";
-import { probeTop, pageJson } from "../lib/paging.js";
+import { buildQuery, pageJson } from "../lib/paging.js";
 
 export const getRegisterSchema = z.object({
   register_type: z.enum(["InformationRegister", "AccumulationRegister"]).describe("Тип регистра"),
@@ -15,15 +15,7 @@ export const getRegisterSchema = z.object({
 
 export async function handleGetRegister(params: z.infer<typeof getRegisterSchema>): Promise<string> {
   const entity = normaliseRegisterEntity(params.register_type, params.register_name);
-  const query: Record<string, string> = {
-    $format: "json",
-    $top: probeTop(params.top),
-  };
-  if (params.skip) query["$skip"] = String(params.skip);
-  if (params.filter) query["$filter"] = params.filter;
-  if (params.select) query["$select"] = params.select;
-  if (params.orderby) query["$orderby"] = params.orderby;
-
+  const query = buildQuery(params);
   const path = buildODataPath(entity, query);
   const result = await oneCGet(path);
   return pageJson(result, params.top, params.skip);

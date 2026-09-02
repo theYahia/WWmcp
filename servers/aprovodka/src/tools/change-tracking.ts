@@ -28,7 +28,7 @@
 import { z } from "zod";
 import { oneCGet, buildODataPath } from "../client.js";
 import { odataDateTime } from "../validation.js";
-import { probeTop, stringifyCapped, requireCollection } from "../lib/paging.js";
+import { buildQuery, stringifyCapped, requireCollection } from "../lib/paging.js";
 
 // ──────────────────────────────────────────────────────────────────────────
 // poll_changes_since — pull recently-modified rows since a cursor
@@ -105,14 +105,12 @@ function tryGetDate(row: unknown, field: string): string | null {
 export async function handlePollChangesSince(
   params: z.infer<typeof pollChangesSinceSchema>,
 ): Promise<string> {
-  const filter = `${params.date_field} ge datetime'${params.since}'`;
-  const query: Record<string, string> = {
-    $format: "json",
-    $top: probeTop(params.top),
-    $filter: filter,
-    $orderby: `${params.date_field} asc`,
-  };
-  if (params.select) query["$select"] = params.select;
+  const query = buildQuery({
+    top: params.top,
+    filter: `${params.date_field} ge datetime'${params.since}'`,
+    select: params.select,
+    orderby: `${params.date_field} asc`,
+  });
 
   const path = buildODataPath(params.entity, query);
   const result = await oneCGet(path);
