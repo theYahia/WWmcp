@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-02T18:34:23.852Z",
+  "generatedAt": "2026-09-02T19:05:37.376Z",
   "servers": 46,
   "serversConnected": 46,
   "totalTools": 501,
@@ -8,7 +8,7 @@
       "dir": "2gis",
       "name": "@theyahia/2gis-mcp",
       "version": "3.0.0",
-      "description": "MCP server for 2GIS API — 8 tools: places search, geocoding, directions, reviews. Russia/CIS.",
+      "description": "2GIS maps for AI agents: place search by name and rubric, geocoding and reverse geocoding, driving directions, reviews, suggest (8 tools, Russia/CIS)",
       "connected": true,
       "toolCount": 8,
       "tools": [
@@ -30,7 +30,7 @@
       "dir": "amocrm",
       "name": "@theyahia/amocrm-mcp",
       "version": "2.0.2",
-      "description": "MCP server for amoCRM — leads, contacts, pipelines, tasks (Russia)",
+      "description": "amoCRM (амоСРМ) for AI agents: create and update leads, contacts and companies, browse pipelines, tasks, notes and the unsorted inbox (19 tools, Russia)",
       "connected": true,
       "toolCount": 19,
       "tools": [
@@ -63,7 +63,7 @@
       "dir": "aprovodka",
       "name": "@theyahia/aprovodka",
       "version": "4.3.0",
-      "description": "MCP server for 1C:Enterprise — 34 tools across 11 modules: catalogs & documents CRUD, post/unpost, registers & balances, accounting registers incl. virtual tables, constants, batch ops, change-tracking, metadata discovery, curated config presets, optional write-safety gate (+ 3 guided prompts) via OData 3.0. Basic auth.",
+      "description": "1C:Enterprise (1С:Предприятие) for AI agents: read and post documents, catalog CRUD, accounting and accumulation balances, OData queries (34 tools, Russia)",
       "connected": true,
       "toolCount": 34,
       "tools": [
@@ -111,7 +111,7 @@
       "dir": "avito",
       "name": "@theyahia/avito-mcp",
       "version": "0.2.0",
-      "description": "MCP server for Avito — Russia's #1 classifieds platform (50M+ MAU). 3 tools: list seller's items, get item details, list messenger chats. OAuth 2.0 Client Credentials with auto-refresh.",
+      "description": "Avito classifieds for AI agents: list your own listings, get item details, browse messenger chats (3 tools, Russia)",
       "connected": true,
       "toolCount": 3,
       "tools": [
@@ -128,7 +128,7 @@
       "dir": "bitrix24",
       "name": "@theyahia/bitrix24-mcp",
       "version": "1.2.0",
-      "description": "MCP server for Bitrix24 CRM — deals, contacts, tasks via webhook API. 4 tools. Auth via URL webhook path.",
+      "description": "Bitrix24 (Битрикс24) CRM for AI agents: list deals by stage, find contacts, create deals and tasks over an inbound webhook (4 tools, Russia)",
       "connected": true,
       "toolCount": 4,
       "tools": [
@@ -146,7 +146,7 @@
       "dir": "bkash",
       "name": "@theyahia/bkash-mcp",
       "version": "1.1.0",
-      "description": "MCP server for bKash Tokenized Checkout (Bangladesh) — 8 tools for payments, refunds, agreements. Custom 3-step token auth.",
+      "description": "bKash mobile money for AI agents: tokenized checkout payments, execute and query, refunds, recurring agreements, transaction search (8 tools, Bangladesh)",
       "connected": true,
       "toolCount": 8,
       "tools": [
@@ -168,7 +168,7 @@
       "dir": "boxberry",
       "name": "@theyahia/boxberry-mcp",
       "version": "1.1.1",
-      "description": "MCP server for Boxberry — delivery points, shipping calculation, tracking (Russia)",
+      "description": "Boxberry delivery for AI agents: pickup point and city lookup, delivery cost calculation, parcel tracking, zip validation (6 tools, Russia)",
       "connected": true,
       "toolCount": 6,
       "tools": [
@@ -188,7 +188,7 @@
       "dir": "calltouch",
       "name": "@theyahia/calltouch-mcp",
       "version": "1.2.1",
-      "description": "MCP server for Calltouch — call tracking, attribution analytics (Russia)",
+      "description": "Calltouch call tracking for AI agents: calls and leads for a period, traffic sources, tags, campaign statistics (7 tools, Russia)",
       "connected": true,
       "toolCount": 7,
       "tools": [
@@ -209,7 +209,7 @@
       "dir": "cbr",
       "name": "@theyahia/cbr-mcp",
       "version": "1.1.0",
-      "description": "MCP server for Central Bank of Russia API — currency rates, key rate, precious metals, conversion. 5 tools. No auth required.",
+      "description": "Central Bank of Russia (ЦБ РФ) rates for AI agents: daily FX rates, rate on a given date, key rate, precious metals, currency conversion (5 tools, Russia)",
       "connected": true,
       "toolCount": 5,
       "tools": [
@@ -228,7 +228,7 @@
       "dir": "cbu",
       "name": "@theyahia/cbu-mcp",
       "version": "1.1.0",
-      "description": "MCP server for Central Bank of Uzbekistan API — currency rates, conversion, dynamics. 5 tools. No auth required.",
+      "description": "Central Bank of Uzbekistan rates for AI agents: ~30 currencies against UZS, historical rates, daily dynamics, cross-rate conversion (5 tools, Uzbekistan)",
       "connected": true,
       "toolCount": 5,
       "tools": [
@@ -247,7 +247,7 @@
       "dir": "cdek",
       "name": "@theyahia/cdek-mcp",
       "version": "2.2.0",
-      "description": "MCP server for CDEK delivery API — 16 tools: calculate, orders, courier pickup, tracking, PVZ, print, webhooks. OAuth2 auth.",
+      "description": "CDEK (СДЭК) delivery for AI agents: tariff and transit-time calculation, order creation, shipment tracking, pickup points, courier call-out (16 tools, Russia)",
       "connected": true,
       "toolCount": 16,
       "tools": [
@@ -277,7 +277,7 @@
       "dir": "chapa",
       "name": "@theyahia/chapa-mcp",
       "version": "1.1.0",
-      "description": "MCP server for Chapa (Ethiopia) — 8 tools for payment initialization, verification, transfers, banks, balance.",
+      "description": "Chapa payments for AI agents: initialize and verify transactions, bank transfers, bank list, balance and transfer history (8 tools, Ethiopia)",
       "connected": true,
       "toolCount": 8,
       "tools": [
@@ -299,7 +299,7 @@
       "dir": "cloudpayments",
       "name": "@theyahia/cloudpayments-mcp",
       "version": "1.2.0",
-      "description": "MCP server for CloudPayments API — charge, auth, confirm, void, refund, find transaction. 6 tools. Basic auth.",
+      "description": "CloudPayments acquiring for AI agents: charge a card cryptogram, two-stage auth and confirm, void a hold, find a transaction, full or partial refund (6 tools, Russia)",
       "connected": true,
       "toolCount": 6,
       "tools": [
@@ -319,7 +319,7 @@
       "dir": "delovye-linii",
       "name": "@theyahia/delovye-linii-mcp",
       "version": "1.1.1",
-      "description": "MCP server for Delovye Linii (Dellin) — freight delivery, tariff calculation, cities, terminals, orders, tracking (Russia). 6 tools.",
+      "description": "Delovye Linii (Деловые Линии) freight for AI agents: tariff and transit-time calculation, city and terminal lookup, order creation, waybill tracking (6 tools, Russia)",
       "connected": true,
       "toolCount": 6,
       "tools": [
@@ -339,7 +339,7 @@
       "dir": "elma365",
       "name": "@theyahia/elma365-mcp",
       "version": "2.0.0",
-      "description": "MCP server for ELMA365 — BPM tasks, business processes, app items, schema discovery (Russia). 20 tools.",
+      "description": "ELMA365 BPM for AI agents: my tasks and completion by outcome, start business processes, app item CRUD, schema discovery, comments (20 tools, Russia)",
       "connected": true,
       "toolCount": 20,
       "tools": [
@@ -373,7 +373,7 @@
       "dir": "fawaterak",
       "name": "@theyahia/fawaterak-mcp",
       "version": "1.1.0",
-      "description": "MCP server for Fawaterak (Egypt) — 8 tools: invoice creation, payment methods, status, refunds. Aggregates Fawry, cards, wallets, Meeza.",
+      "description": "Fawaterak payments for AI agents: create invoice links, Fawry / card / wallet / Meeza payment methods, invoice status, refunds, balance (8 tools, Egypt)",
       "connected": true,
       "toolCount": 8,
       "tools": [
@@ -395,7 +395,7 @@
       "dir": "getcourse",
       "name": "@theyahia/getcourse-mcp",
       "version": "1.2.0",
-      "description": "MCP server for GetCourse API — users, deals, create/update users. 3 tools. API key as query param.",
+      "description": "GetCourse LMS for AI agents: export students filtered by status and signup date, list orders for a period, create a user with group and offer (3 tools, Russia)",
       "connected": true,
       "toolCount": 3,
       "tools": [
@@ -412,7 +412,7 @@
       "dir": "gigachat",
       "name": "@theyahia/gigachat-mcp",
       "version": "3.0.1",
-      "description": "MCP server for GigaChat — AI chat, embeddings, image generation (Russia)",
+      "description": "Sber GigaChat for AI agents: chat completions, text embeddings, image generation, token counting, model and assistant lists, file upload, balance (8 tools, Russia)",
       "connected": true,
       "toolCount": 8,
       "tools": [
@@ -434,7 +434,7 @@
       "dir": "hh",
       "name": "@theyahia/hh-mcp",
       "version": "2.1.0",
-      "description": "MCP server for HeadHunter — vacancy search, resumes, salary stats (Russia)",
+      "description": "HeadHunter (hh.ru) for AI agents: vacancy and resume search, employer profiles, salary statistics, region and professional-role dictionaries (19 tools, Russia/CIS)",
       "connected": true,
       "toolCount": 19,
       "tools": [
@@ -467,7 +467,7 @@
       "dir": "huntflow",
       "name": "@theyahia/huntflow-mcp",
       "version": "1.2.0",
-      "description": "MCP server for Huntflow — ATS, vacancies, candidates, recruiting (Russia)",
+      "description": "Huntflow ATS for AI agents: vacancy and applicant search, resumes, hiring stages, sources, rejection reasons, divisions and coworkers (14 tools, Russia)",
       "connected": true,
       "toolCount": 14,
       "tools": [
@@ -495,7 +495,7 @@
       "dir": "ileti-merkezi",
       "name": "@theyahia/ileti-merkezi-mcp",
       "version": "3.0.0",
-      "description": "MCP server for Ileti Merkezi SMS API (Turkey) — 8 tools: SMS, bulk SMS, reports, contacts, blacklist. HMAC auth.",
+      "description": "Ileti Merkezi SMS for AI agents: send single and bulk SMS, delivery reports, sender IDs, contact groups, blacklist, balance (8 tools, Turkey)",
       "connected": true,
       "toolCount": 8,
       "tools": [
@@ -517,7 +517,7 @@
       "dir": "kaspi",
       "name": "@theyahia/kaspi-mcp",
       "version": "1.0.2",
-      "description": "MCP server for Kaspi — marketplace orders, payments (Kazakhstan)",
+      "description": "Kaspi.kz marketplace for AI agents: list seller orders with filters, order details, product catalog (3 tools, Kazakhstan)",
       "connected": true,
       "toolCount": 3,
       "tools": [
@@ -534,7 +534,7 @@
       "dir": "kontur-focus",
       "name": "@theyahia/kontur-focus-mcp",
       "version": "3.0.1",
-      "description": "MCP server for Kontur.Focus — company search, financials, counterparty check (Russia)",
+      "description": "Kontur.Focus (Контур.Фокус) for AI agents: company lookup by INN or OGRN, EGRUL details, financial statements, arbitration, bankruptcy, licenses (8 tools, Russia)",
       "connected": true,
       "toolCount": 8,
       "tools": [
@@ -556,7 +556,7 @@
       "dir": "mango-office",
       "name": "@theyahia/mango-office-mcp",
       "version": "1.1.1",
-      "description": "MCP server for Mango Office — cloud PBX, call management (Russia). 8 tools: calls, users, callback, stats, recordings, SMS. HMAC auth.",
+      "description": "Mango Office cloud PBX for AI agents: call history and statistics, click-to-call, call recordings, SMS, extension users (8 tools, Russia)",
       "connected": true,
       "toolCount": 8,
       "tools": [
@@ -578,7 +578,7 @@
       "dir": "megaplan",
       "name": "@theyahia/megaplan-mcp",
       "version": "3.0.0",
-      "description": "MCP server for Megaplan project management — 8 tools for tasks, deals, projects, employees, comments + 2 MCP prompts.",
+      "description": "Megaplan (Мегаплан) for AI agents: create and read tasks and deals, projects, employees, comments (8 tools + 2 prompts, Russia)",
       "connected": true,
       "toolCount": 8,
       "tools": [
@@ -600,7 +600,7 @@
       "dir": "mercadopago",
       "name": "@theyahia/mercadopago-mcp",
       "version": "1.1.0",
-      "description": "MCP server for MercadoPago — 10 tools for payments, refunds, checkout preferences, merchant orders. Multi-country: AR/BR/MX/UY/CL/CO/PE/EC/VE.",
+      "description": "Mercado Pago for AI agents: create and search payments, refunds, checkout preferences, merchant orders, payment methods (10 tools, AR/BR/MX/CL/CO/PE/UY)",
       "connected": true,
       "toolCount": 10,
       "tools": [
@@ -624,7 +624,7 @@
       "dir": "mindbox",
       "name": "@theyahia/mindbox-mcp",
       "version": "1.2.0",
-      "description": "MCP server for Mindbox — CDP, customer profiles, orders, segmentation (Russia)",
+      "description": "Mindbox CDP for AI agents: read and update customer profiles, orders, segments, product lists, arbitrary operation calls (6 tools, Russia)",
       "connected": true,
       "toolCount": 6,
       "tools": [
@@ -644,7 +644,7 @@
       "dir": "moysklad",
       "name": "@theyahia/moysklad-mcp",
       "version": "2.1.0",
-      "description": "MCP server for MoySklad (Moy Sklad) ERP/inventory API — products, stock, orders, counterparties, supplies, profit reports. 10 tools. Token bucket rate limiting (45 req/3s). Dual auth: Bearer token or Basic login/password.",
+      "description": "MoySklad (МойСклад) for AI agents: stock and reserves, product search by SKU, price updates, customer orders, supplies, profit reports (10 tools, Russia)",
       "connected": true,
       "toolCount": 10,
       "tools": [
@@ -668,7 +668,7 @@
       "dir": "mts-exolve",
       "name": "@theyahia/mts-exolve-mcp",
       "version": "3.0.1",
-      "description": "MCP server for MTS Exolve — SMS, calls, recordings, Viber messaging (Russia)",
+      "description": "MTS Exolve for AI agents: send SMS and Viber messages, place outbound calls, call status and recordings, buy and list numbers (8 tools, Russia)",
       "connected": true,
       "toolCount": 8,
       "tools": [
@@ -690,7 +690,7 @@
       "dir": "orange-money",
       "name": "@theyahia/orange-money-mcp",
       "version": "1.1.0",
-      "description": "MCP server for Orange Money WebPay (Senegal + 10 Francophone West/Central African countries) — 8 tools for web payments, status, cashin, cashout. OAuth2 Client Credentials with Basic auth header.",
+      "description": "Orange Money WebPay for AI agents: web payments and status, cash-in and cash-out, transfers, webhook validation, balance across ~12 countries (8 tools, Africa)",
       "connected": true,
       "toolCount": 8,
       "tools": [
@@ -712,7 +712,7 @@
       "dir": "payme",
       "name": "@theyahia/payme-mcp",
       "version": "1.1.0",
-      "description": "MCP server for Payme Subscribe API — payments, cards, receipts for Uzbekistan. 10 tools. JSON-RPC 2.0 with X-Auth header.",
+      "description": "Payme for AI agents: tokenize UzCard and Humo cards, SMS verification, create pay and cancel receipts, send payment links, receipt history (10 tools, Uzbekistan)",
       "connected": true,
       "toolCount": 10,
       "tools": [
@@ -736,7 +736,7 @@
       "dir": "planfix",
       "name": "@theyahia/planfix-mcp",
       "version": "1.2.0",
-      "description": "MCP server for Planfix — tasks, contacts, project management (Russia). 20 tools + 2 MCP prompts.",
+      "description": "Planfix (Планфикс) for AI agents: task and contact CRUD, projects, comments, users, custom fields, directories, file upload (20 tools, Russia)",
       "connected": true,
       "toolCount": 20,
       "tools": [
@@ -770,7 +770,7 @@
       "dir": "pochta-russia",
       "name": "@theyahia/pochta-russia-mcp",
       "version": "2.0.0",
-      "description": "MCP server for Russian Post (Почта России) — tracking, tariffs, delivery time, post offices, zip codes, address normalization. 6 tools.",
+      "description": "Russian Post (Почта России) for AI agents: parcel tracking, shipping tariffs, delivery time, post office lookup, zip codes, address normalization (6 tools, Russia)",
       "connected": true,
       "toolCount": 6,
       "tools": [
@@ -790,7 +790,7 @@
       "dir": "retailcrm",
       "name": "@theyahia/retailcrm-mcp",
       "version": "3.0.0",
-      "description": "MCP server for RetailCRM — orders, customers, inventory, payments, tasks & e-commerce analytics (Russia)",
+      "description": "RetailCRM for AI agents: order and customer CRUD, product catalog and store inventory, payments, tasks, e-commerce analytics and reference data (39 tools, Russia)",
       "connected": true,
       "toolCount": 39,
       "tools": [
@@ -843,7 +843,7 @@
       "dir": "robokassa",
       "name": "@theyahia/robokassa-mcp",
       "version": "1.2.0",
-      "description": "MCP server for Robokassa payment API — generate payment URLs, check invoice status. 2 tools. MD5 signature auth.",
+      "description": "Robokassa for AI agents: generate a signed payment link with an optional 54-FZ receipt and check whether the invoice is paid (2 tools, Russia)",
       "connected": true,
       "toolCount": 2,
       "tools": [
@@ -859,7 +859,7 @@
       "dir": "roistat",
       "name": "@theyahia/roistat-mcp",
       "version": "1.1.1",
-      "description": "MCP server for Roistat — marketing analytics, ROI tracking (Russia)",
+      "description": "Roistat for AI agents: marketing analytics and ROI reports, leads, visits, ad channels, costs, integrations (6 tools, Russia)",
       "connected": true,
       "toolCount": 6,
       "tools": [
@@ -879,7 +879,7 @@
       "dir": "salla",
       "name": "@theyahia/salla-mcp",
       "version": "3.1.0",
-      "description": "MCP server for Salla e-commerce (Saudi Arabia) — 9 tools for products, orders, customers, store. OAuth 2.0.",
+      "description": "Salla store for AI agents: product and category CRUD, bulk stock updates, orders and status changes, customers, coupons, abandoned carts (22 tools, Saudi Arabia)",
       "connected": true,
       "toolCount": 22,
       "tools": [
@@ -915,7 +915,7 @@
       "dir": "salutespeech",
       "name": "@theyahia/salutespeech-mcp",
       "version": "1.2.0",
-      "description": "MCP server for SaluteSpeech — speech recognition and synthesis (Russia)",
+      "description": "Sber SaluteSpeech for AI agents: speech recognition from audio or file, speech synthesis, async task status, model list (5 tools, Russia)",
       "connected": true,
       "toolCount": 5,
       "tools": [
@@ -934,7 +934,7 @@
       "dir": "tilda",
       "name": "@theyahia/tilda-mcp",
       "version": "1.2.0",
-      "description": "MCP server for Tilda — website builder, page management (Russia)",
+      "description": "Tilda website builder for AI agents: list projects and pages, fetch page HTML and CSS, full project export, publication dates (7 tools, Russia)",
       "connected": true,
       "toolCount": 7,
       "tools": [
@@ -955,7 +955,7 @@
       "dir": "tkassa",
       "name": "@theyahia/tkassa-mcp",
       "version": "2.0.1",
-      "description": "MCP server for T-Kassa (T-Bank/Tinkoff) payment API — 16 tools: payments, refunds, customers, SBP QR, receipts, T-Invest. SHA-256 token auth.",
+      "description": "T-Kassa (T-Bank / Tinkoff) for AI agents: init and confirm payments, refunds, saved cards and customers, SBP QR, 54-FZ receipts, T-Invest portfolio (16 tools, Russia)",
       "connected": true,
       "toolCount": 16,
       "tools": [
@@ -985,7 +985,7 @@
       "dir": "travelpayouts",
       "name": "@theyahia/travelpayouts-mcp",
       "version": "2.0.1",
-      "description": "MCP server for Travelpayouts (Aviasales) API — 13 tools: flight prices, price calendar, special offers, hotels, airport/airline/city lookup. Token as query param.",
+      "description": "Travelpayouts (Aviasales) for AI agents: flight price search, price calendar and cheapest month, special offers, hotel search, airport and airline lookup (13 tools, Russia)",
       "connected": true,
       "toolCount": 13,
       "tools": [
@@ -1012,7 +1012,7 @@
       "dir": "unisender",
       "name": "@theyahia/unisender-mcp",
       "version": "1.1.1",
-      "description": "MCP server for UniSender — email campaigns, newsletters (Russia)",
+      "description": "UniSender for AI agents: create and send email campaigns, manage contact lists and subscriptions, templates, delivery statistics (10 tools, Russia)",
       "connected": true,
       "toolCount": 10,
       "tools": [
@@ -1036,7 +1036,7 @@
       "dir": "vk-ads",
       "name": "@theyahia/vk-ads-mcp",
       "version": "3.0.0",
-      "description": "MCP server for VK Ads API — 8 tools: campaigns, ads, statistics, targeting, budgets. Bearer auth.",
+      "description": "VK Ads for AI agents: create and update campaigns and ads, statistics, targeting groups, budgets (8 tools, Russia)",
       "connected": true,
       "toolCount": 8,
       "tools": [
@@ -1058,7 +1058,7 @@
       "dir": "wildberries",
       "name": "@theyahia/wildberries-mcp",
       "version": "3.1.0",
-      "description": "MCP server for Wildberries Seller API — 30 tools across products, prices, stocks, orders, sales, FBS supplies, analytics, feedbacks, questions, returns, ads, ABC analysis. Per-category host routing + rate limiting with 409 penalty protection.",
+      "description": "Wildberries Seller API for AI agents: stocks and prices, orders and sales, FBS supplies, analytics, feedbacks, questions, returns and ads (30 tools, Russia)",
       "connected": true,
       "toolCount": 30,
       "tools": [
@@ -1104,7 +1104,7 @@
       "dir": "yandex-search",
       "name": "@theyahia/yandex-search-mcp",
       "version": "1.0.0",
-      "description": "MCP server for Yandex Cloud Search API — Wordstat keyword research (topRequests, dynamics, regions) + web search. Optimised for Russian market SEO.",
+      "description": "Yandex Wordstat for AI agents: top search requests, query dynamics over time, regional breakdown for Russian-market SEO (3 tools, Russia)",
       "connected": true,
       "toolCount": 3,
       "tools": [
@@ -1121,7 +1121,7 @@
       "dir": "yookassa",
       "name": "@theyahia/yookassa-mcp",
       "version": "3.0.0",
-      "description": "MCP server for YooKassa — payment processing, refunds, receipts, webhooks (Russia)",
+      "description": "YooKassa (ЮKassa) for AI agents: create and capture payments, refunds, 54-FZ receipts, payouts, SBP, recurring and split payments, webhooks (20 tools, Russia)",
       "connected": true,
       "toolCount": 20,
       "tools": [
