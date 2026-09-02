@@ -2,9 +2,6 @@
 name: call-stats
 description: Статистика звонков Mango Office
 argument-hint: ""
-allowed-tools:
-  - Bash
-  - Read
 ---
 
 # /call-stats

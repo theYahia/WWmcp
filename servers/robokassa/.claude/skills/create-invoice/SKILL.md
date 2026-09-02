@@ -2,9 +2,6 @@
 name: create-invoice
 description: Создать счёт в Робокасса и получить ссылку на оплату
 argument-hint: <сумма> <номер счёта> "<описание>"
-allowed-tools:
-  - Bash
-  - Read
 ---
 
 # /create-invoice — Счёт Робокасса

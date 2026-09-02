@@ -60,7 +60,7 @@ body:
         - hr (job boards / ATS)
         - marketing (ads / mailing)
         - finance (banking / fiscal / accounting)
-        - e-commerce (marketplaces / storefronts)
+        - ecommerce (marketplaces / storefronts)
         - other
     validations:
       required: true
@@ -91,15 +91,20 @@ body:
   - type: textarea
     id: tools
     attributes:
-      label: Suggested tools (8+ for production-grade)
-      description: List the operations you want the AI to be able to do. Format → `tool_name`: short description.
+      label: Suggested tools
+      description: |
+        List the operations you want the AI to be able to do. Format → `tool_name`: short description.
+
+        Aim to cover the API's useful surface. 8+ suits a broad API, but it is not a quota — `cbr` and `cbu` ship 5 tools each and are complete, because the upstream API is that small.
+
+        Names are unprefixed (`get_rates`, not `nbrb_get_rates`) — MCP clients namespace them as `mcp__<server>__<tool>`.
       placeholder: |
-        - `tinkoff_create_payment`: initiate a new payment
-        - `tinkoff_get_payment_status`: poll status
-        - `tinkoff_refund_payment`: full or partial refund
-        - `tinkoff_list_transactions`: paginated list
-        - `tinkoff_create_subscription`: recurring payment
-        - ... (8+ total)
+        - `create_payment`: initiate a new payment
+        - `get_payment_status`: poll status
+        - `refund_payment`: full or partial refund
+        - `list_transactions`: paginated list
+        - `create_subscription`: recurring payment
+        - ... (as many as the API actually warrants)
     validations:
       required: true
 
@@ -119,4 +124,6 @@ body:
         - label: I'd be willing to submit a PR for this server
           required: false
         - label: I have access to this API (test credentials / sandbox account)
+          required: false
+        - label: I have read the production-grade checklist in [CONTRIBUTING.md](https://github.com/theYahia/WWmcp/blob/main/CONTRIBUTING.md) — tests, `smithery.yaml` with an icon, at least one skill in `.claude/skills/`, and a `node scripts/catalog.mjs` re-run
           required: false

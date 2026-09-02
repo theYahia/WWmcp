@@ -2,9 +2,6 @@
 name: convert
 description: Конвертация валюты по курсу ЦБУ
 argument-hint: <сумма> <из> <в>
-allowed-tools:
-  - Bash
-  - Read
 ---
 
 # /convert — Конвертация валюты

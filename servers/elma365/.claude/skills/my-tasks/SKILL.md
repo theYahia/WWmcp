@@ -2,9 +2,6 @@
 name: my-tasks
 description: "Мои задачи — показать текущие BPM-задачи пользователя"
 argument-hint: "[from] [size]"
-allowed-tools:
-  - Bash
-  - Read
 ---
 
 # /skill-my-tasks — Мои задачи

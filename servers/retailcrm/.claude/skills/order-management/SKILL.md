@@ -2,9 +2,6 @@
 name: order-management
 description: Manage RetailCRM orders and customers
 argument-hint: <action> [details]
-allowed-tools:
-  - Bash
-  - Read
 ---
 
 # /order-management — RetailCRM Operations

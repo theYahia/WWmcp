@@ -2,9 +2,6 @@
 name: calculate
 description: "Расчёт стоимости отправления Почтой России"
 argument-hint: <индекс-от> <индекс-до> <вес-г> [тип]
-allowed-tools:
-  - Bash
-  - Read
 ---
 
 # /calculate -- Расчёт стоимости отправления

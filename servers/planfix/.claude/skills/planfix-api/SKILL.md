@@ -2,9 +2,6 @@
 name: planfix-api
 description: Управление задачами и контактами в Planfix CRM
 argument-hint: <действие> [параметры]
-allowed-tools:
-  - Bash
-  - Read
 ---
 
 # /planfix-api — Управление задачами и контактами

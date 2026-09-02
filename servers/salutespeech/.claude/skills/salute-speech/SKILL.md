@@ -2,9 +2,6 @@
 name: salute-speech
 description: Распознавание и синтез речи через SaluteSpeech API от Сбера
 argument-hint: <recognize|synthesize> <текст или путь к аудио>
-allowed-tools:
-  - Bash
-  - Read
 ---
 
 # /salute-speech -- Работа с речью через SaluteSpeech

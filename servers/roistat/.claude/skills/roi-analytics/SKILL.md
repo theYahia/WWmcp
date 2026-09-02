@@ -2,9 +2,6 @@
 name: roi-analytics
 description: "Аналитика ROI рекламных каналов из Roistat"
 argument-hint: <date range or channel>
-allowed-tools:
-  - Bash
-  - Read
 ---
 
 # /roi-analytics

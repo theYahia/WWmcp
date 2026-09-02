@@ -2,9 +2,6 @@
 name: call-analytics
 description: "Аналитика звонков из Calltouch"
 argument-hint: <date range>
-allowed-tools:
-  - Bash
-  - Read
 ---
 
 # /call-analytics

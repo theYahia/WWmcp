@@ -2,9 +2,6 @@
 name: pipeline-check
 description: Обзор открытых вакансий и кандидатов в HuntFlow ATS
 argument-hint: <account_id>
-allowed-tools:
-  - Bash
-  - Read
 ---
 
 # /pipeline-check — Обзор рекрутинга

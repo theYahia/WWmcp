@@ -2,9 +2,6 @@
 name: create-payment
 description: Создать платёж в T-Kassa и получить ссылку на оплату
 argument-hint: <сумма> "<описание>"
-allowed-tools:
-  - Bash
-  - Read
 ---
 
 # /create-payment — Платёж T-Kassa

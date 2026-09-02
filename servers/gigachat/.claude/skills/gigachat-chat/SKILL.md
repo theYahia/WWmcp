@@ -2,9 +2,6 @@
 name: gigachat-chat
 description: Диалог с GigaChat через MCP -- генерация текста с системным промптом
 argument-hint: <запрос> [модель] [температура]
-allowed-tools:
-  - Bash
-  - Read
 ---
 
 # /gigachat-chat -- Диалог с GigaChat

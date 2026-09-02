@@ -2,9 +2,6 @@
 name: project-management
 description: Manage Megaplan tasks and deals
 argument-hint: <action> [details]
-allowed-tools:
-  - Bash
-  - Read
 ---
 
 # /project-management — Megaplan Operations

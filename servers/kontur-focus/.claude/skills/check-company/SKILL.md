@@ -2,9 +2,6 @@
 name: check-company
 description: Проверка контрагента через Контур.Фокус — надёжность, финансы, аналитика
 argument-hint: <ИНН или ОГРН>
-allowed-tools:
-  - Bash
-  - Read
 ---
 
 # /check-company — Проверка контрагента

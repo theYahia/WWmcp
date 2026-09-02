@@ -2,10 +2,6 @@
 name: customer-orders
 description: "Работа с клиентами и заказами в Mindbox"
 argument-hint: <customer email or phone>
-allowed-tools:
-  - get_customer
-  - create_order
-  - get_segments
 ---
 
 # /customer-orders

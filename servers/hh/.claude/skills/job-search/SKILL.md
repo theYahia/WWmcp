@@ -2,9 +2,6 @@
 name: job-search
 description: Поиск вакансий на hh.ru с анализом зарплат по специальности и региону
 argument-hint: <специальность> [город] [зарплата от]
-allowed-tools:
-  - Bash
-  - Read
 ---
 
 # /job-search — Поиск вакансий с аналитикой

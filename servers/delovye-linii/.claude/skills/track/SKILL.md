@@ -2,9 +2,6 @@
 name: track
 description: Отследить груз
 argument-hint: <номер накладной>
-allowed-tools:
-  - Bash
-  - Read
 ---
 
 # /skill-track — Отследить груз

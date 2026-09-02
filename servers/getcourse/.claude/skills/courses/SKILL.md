@@ -2,9 +2,6 @@
 name: courses
 description: GetCourse management - users, deals, student creation
 argument-hint: [email] [name] [group]
-allowed-tools:
-  - Bash
-  - Read
 ---
 
 # /courses -- GetCourse management

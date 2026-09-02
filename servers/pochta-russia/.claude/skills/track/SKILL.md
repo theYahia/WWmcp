@@ -2,9 +2,6 @@
 name: track
 description: "Отследить посылку Почты России"
 argument-hint: <трек-номер>
-allowed-tools:
-  - Bash
-  - Read
 ---
 
 # /track -- Отслеживание посылки Почты России

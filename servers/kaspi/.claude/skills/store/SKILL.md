@@ -2,9 +2,6 @@
 name: store
 description: Kaspi.kz store management - orders, products, statuses
 argument-hint: [order status] [date from] [date to]
-allowed-tools:
-  - Bash
-  - Read
 ---
 
 # /store -- Kaspi store management

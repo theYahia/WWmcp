@@ -2,9 +2,6 @@
 name: rate
 description: Курс валюты Центрального Банка Узбекистана на дату
 argument-hint: <валюта> [дата]
-allowed-tools:
-  - Bash
-  - Read
 ---
 
 # /rate — Курс валюты ЦБУ

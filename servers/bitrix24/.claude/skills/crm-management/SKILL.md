@@ -2,9 +2,6 @@
 name: crm-management
 description: Manage Bitrix24 CRM deals, contacts, and tasks
 argument-hint: <action> [details]
-allowed-tools:
-  - Bash
-  - Read
 ---
 
 # /crm-management — Bitrix24 CRM Operations

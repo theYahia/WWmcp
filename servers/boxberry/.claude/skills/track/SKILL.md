@@ -2,9 +2,6 @@
 name: track
 description: "Отследить посылку Boxberry по трек-номеру"
 argument-hint: "<трек-номер>"
-allowed-tools:
-  - Bash
-  - Read
 ---
 
 # /skill-track -- Отслеживание посылки Boxberry

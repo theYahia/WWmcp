@@ -2,9 +2,6 @@
 name: calculate
 description: "Расчёт стоимости доставки Boxberry"
 argument-hint: "<город> <вес г>"
-allowed-tools:
-  - Bash
-  - Read
 ---
 
 # /skill-calculate -- Расчёт стоимости доставки Boxberry

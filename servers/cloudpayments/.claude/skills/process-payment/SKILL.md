@@ -2,9 +2,6 @@
 name: process-payment
 description: Обработать платёж в CloudPayments — списание, проверка статуса
 argument-hint: <сумма> "<описание>"
-allowed-tools:
-  - Bash
-  - Read
 ---
 
 # /process-payment — Платёж CloudPayments

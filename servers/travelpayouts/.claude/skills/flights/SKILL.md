@@ -2,9 +2,6 @@
 name: flights
 description: Search cheap flights - prices by dates, price calendar, popular routes
 argument-hint: <origin IATA> <destination IATA> [departure date]
-allowed-tools:
-  - Bash
-  - Read
 ---
 
 # /flights -- Flight search

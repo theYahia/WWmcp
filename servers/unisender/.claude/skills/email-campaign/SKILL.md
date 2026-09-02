@@ -2,9 +2,6 @@
 name: email-campaign
 description: "Создание и отправка email-рассылки через UniSender"
 argument-hint: <list_id or list name>
-allowed-tools:
-  - Bash
-  - Read
 ---
 
 # /email-campaign

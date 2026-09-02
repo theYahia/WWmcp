@@ -2,9 +2,6 @@
 name: send-message
 description: Отправка SMS через MTS Exolve
 argument-hint: "<номер> <текст>"
-allowed-tools:
-  - Bash
-  - Read
 ---
 
 # /send-message

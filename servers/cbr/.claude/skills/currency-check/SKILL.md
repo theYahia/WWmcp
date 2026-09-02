@@ -2,9 +2,6 @@
 name: currency-check
 description: Курс валюты к рублю с динамикой изменения. Использует get_currency_rate и get_daily_rates из ЦБ РФ MCP
 argument-hint: <код валюты, например USD, EUR, CNY>
-allowed-tools:
-  - Bash
-  - Read
 ---
 
 # /currency-check — Проверка курса валюты

@@ -2,9 +2,6 @@
 name: calculate
 description: Расчёт стоимости грузоперевозки
 argument-hint: <откуда> <куда> <вес кг> [длина м] [ширина м] [высота м]
-allowed-tools:
-  - Bash
-  - Read
 ---
 
 # /skill-calculate — Расчёт стоимости грузоперевозки

@@ -2,9 +2,6 @@
 name: delivery
 description: Расчёт доставки Boxberry — поиск города, пункта выдачи и расчёт стоимости
 argument-hint: <город назначения> <вес г>
-allowed-tools:
-  - Bash
-  - Read
 ---
 
 # /delivery — Доставка Boxberry

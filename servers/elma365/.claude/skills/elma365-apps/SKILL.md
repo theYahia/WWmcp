@@ -2,9 +2,6 @@
 name: elma365-apps
 description: Управление элементами приложений и BPM-задачами в ELMA365
 argument-hint: <действие> [namespace/code]
-allowed-tools:
-  - Bash
-  - Read
 ---
 
 # /elma365-apps — Работа с приложениями и задачами ELMA365
