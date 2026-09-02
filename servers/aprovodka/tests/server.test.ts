@@ -1,11 +1,13 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
+import { readFileSync } from "node:fs";
 import {
   createServer,
   getEnabledModules,
   countRegisteredTools,
   MODULE_TOOL_COUNTS,
+  VERSION,
 } from "../src/server.js";
 
 /** Реально зарегистрированные инструменты — через tools/list живого сервера. */
@@ -197,6 +199,35 @@ describe("ONEC_WRITE_MODE=deny", () => {
       for (const w of WRITE_TOOLS) expect(names, mode).toContain(w);
       expect(names.length, mode).toBe(mode === "off" ? 34 : 36);
       expect(names.length, mode).toBe(countRegisteredTools(getEnabledModules()));
+    }
+  });
+});
+
+/**
+ * Версия расходилась дважды: в коде стоял литерал «keep in sync with package.json»,
+ * и сервер представлялся клиенту версией 4.1.0, когда пакет был 4.3.0. Литерала
+ * больше нет, но server.json пишется руками — равенство держим тестом.
+ */
+describe("version is single-sourced", () => {
+  const read = (f: string) => JSON.parse(readFileSync(new URL(f, import.meta.url), "utf8"));
+
+  it("package.json, server handshake and server.json agree", () => {
+    const pkg = read("../package.json");
+    const serverJson = read("../server.json");
+    expect(VERSION).toBe(pkg.version);
+    expect(serverJson.version).toBe(pkg.version);
+    for (const p of serverJson.packages ?? []) expect(p.version).toBe(pkg.version);
+  });
+
+  it("the live MCP handshake reports that same version", async () => {
+    const server = createServer();
+    const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+    const client = new Client({ name: "test", version: "0" });
+    await Promise.all([server.connect(serverTransport), client.connect(clientTransport)]);
+    try {
+      expect(client.getServerVersion()?.version).toBe(read("../package.json").version);
+    } finally {
+      await client.close();
     }
   });
 });

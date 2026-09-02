@@ -6,6 +6,7 @@
  * on direct execution.
  */
 
+import { createRequire } from "node:module";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { createLogger, withErrorHandling } from "@theyahia/mcp-core";
@@ -70,11 +71,17 @@ import { getWriteMode } from "./lib/write-safety.js";
 export const logger = createLogger("aprovodka");
 
 /**
- * Single source of truth for the server version. Used by both `McpServer`
- * (MCP handshake) here and `runServer` (the /health endpoint) in index.ts,
- * so the two can never drift apart again. Keep in sync with package.json.
+ * Единственный источник версии — package.json. Раньше здесь стоял литерал с
+ * припиской «keep in sync», и он дважды разъезжался: сервер представлялся клиенту
+ * в MCP-рукопожатии и в /health версией 4.1.0, пока пакет был уже 4.3.0.
+ *
+ * Читаем через createRequire: и из `src/` (тесты), и из `dist/` (сборка), и из
+ * MCPB-бандла путь `../package.json` ведёт к манифесту пакета. Равенство трёх
+ * версий (package.json, VERSION, server.json) закрыто тестом — само по себе
+ * чтение не мешает server.json отстать.
  */
-export const VERSION = "4.1.0";
+const VERSION_SOURCE = createRequire(import.meta.url)("../package.json") as { version: string };
+export const VERSION: string = VERSION_SOURCE.version;
 
 /**
  * Single source of truth for module → tool count mapping.
