@@ -1,0 +1,2275 @@
+{
+  "date": "2026-09-02",
+  "thresholds": {
+    "leaderDeadDays": 120,
+    "medianMin": 3,
+    "maxShareOk": 0.25,
+    "maxShareSpike": 0.5,
+    "liveDays": 90,
+    "cloneViewBots": 2
+  },
+  "deadDays": [
+    "2026-08-14"
+  ],
+  "registryChecked": true,
+  "summary": {
+    "ТОП-1": [],
+    "БЛИЗКО": [
+      "wildberries",
+      "tilda",
+      "moysklad",
+      "chestnyznak",
+      "cdek",
+      "pochta-russia",
+      "yookassa"
+    ],
+    "ОТСТАЁМ": [
+      "1c",
+      "hh",
+      "ozon",
+      "avito",
+      "kaspi",
+      "yandex-direct",
+      "yandex-metrika",
+      "yandex-webmaster",
+      "tgstat",
+      "tkassa",
+      "cloudpayments",
+      "ileti-merkezi",
+      "parasut",
+      "kontur-diadoc"
+    ],
+    "НЕТ ПРОДУКТА": [
+      "wordstat"
+    ]
+  },
+  "niches": [
+    {
+      "niche": "wildberries",
+      "pkg": "@theyahia/wildberries-mcp",
+      "repo": "theYahia/wildberries-mcp",
+      "queries": [
+        "wildberries mcp"
+      ],
+      "npmVersion": "3.1.0",
+      "github": {
+        "checked": true,
+        "errors": [],
+        "candidates": 6,
+        "leader": {
+          "repo": "theYahia/wildberries-mcp",
+          "stars": 13,
+          "staleDays": 0,
+          "dead": false
+        },
+        "ourRank": 1,
+        "ourStars": 13,
+        "gap": 0,
+        "ok": true,
+        "aheadAllDead": false,
+        "top3": [
+          {
+            "repo": "theYahia/wildberries-mcp",
+            "stars": 13,
+            "staleDays": 0
+          },
+          {
+            "repo": "dias-zhanabayev/wildberries_mcp",
+            "stars": 1,
+            "staleDays": 193
+          },
+          {
+            "repo": "shndo1337/wildberries-mcp",
+            "stars": 0,
+            "staleDays": 56
+          }
+        ]
+      },
+      "npm": {
+        "checked": true,
+        "best": 1,
+        "bestQuery": "wildberries mcp",
+        "perQuery": [
+          {
+            "query": "wildberries mcp",
+            "position": 1,
+            "top": "@theyahia/wildberries-mcp",
+            "error": null
+          }
+        ]
+      },
+      "downloads": {
+        "days": 29,
+        "excludedDays": 1,
+        "median": 7,
+        "total": 204,
+        "max": 16,
+        "maxShare": 0.0784313725490196,
+        "healthy": true,
+        "spike": false
+      },
+      "downloadsError": null,
+      "registry": {
+        "checked": true,
+        "present": false,
+        "registryName": null,
+        "registryVersion": null,
+        "npmVersion": "3.1.0",
+        "versionMatch": false
+      },
+      "liveness": {
+        "checked": false,
+        "error": "Get \"https://api.github.com/repos/theYahia/wildberries-mcp/commits?per_page=1\": net/http: TLS handshake timeout",
+        "lastCommit": null,
+        "lastCommitDays": null,
+        "latestTag": null,
+        "latestReleaseAt": null,
+        "tagMatchesNpm": null,
+        "ok": false
+      },
+      "signals": {
+        "issuesEver": null,
+        "clones": 93,
+        "views": 86,
+        "cloneViewRatio": 1.08,
+        "botSuspect": false,
+        "errors": [
+          "Get \"https://api.github.com/search/issues?q=repo:theYahia/wildberries-mcp+type:issue\": net/http: TLS handshake timeout"
+        ]
+      },
+      "verdict": "БЛИЗКО",
+      "passed": 3,
+      "criteria": {
+        "github": true,
+        "npm": true,
+        "downloads": true,
+        "registry": false,
+        "live": false
+      },
+      "unchecked": [
+        "живость"
+      ],
+      "todo": "нет в registry.modelcontextprotocol.io — опубликовать через mcp-publisher"
+    },
+    {
+      "niche": "1c",
+      "pkg": "@theyahia/aprovodka",
+      "repo": "theYahia/aprovodka",
+      "queries": [
+        "1c mcp",
+        "1с mcp",
+        "onec mcp"
+      ],
+      "npmVersion": "4.3.0",
+      "github": {
+        "checked": true,
+        "errors": [],
+        "candidates": 21,
+        "leader": {
+          "repo": "Aleksandr-Litvinenko/1c-ai-guide",
+          "stars": 12,
+          "staleDays": 19,
+          "dead": false
+        },
+        "ourRank": null,
+        "ourStars": null,
+        "gap": null,
+        "ok": false,
+        "aheadAllDead": false,
+        "top3": [
+          {
+            "repo": "Aleksandr-Litvinenko/1c-ai-guide",
+            "stars": 12,
+            "staleDays": 19
+          },
+          {
+            "repo": "DarkVaneker/1C_MCP",
+            "stars": 4,
+            "staleDays": 104
+          },
+          {
+            "repo": "ruslan-hut/onec-mcp",
+            "stars": 3,
+            "staleDays": 2
+          }
+        ]
+      },
+      "npm": {
+        "checked": true,
+        "best": null,
+        "bestQuery": null,
+        "perQuery": [
+          {
+            "query": "1c mcp",
+            "position": null,
+            "top": "@fontsource/m-plus-rounded-1c",
+            "error": null
+          },
+          {
+            "query": "1с mcp",
+            "position": null,
+            "top": "1c-odata-mcp",
+            "error": null
+          },
+          {
+            "query": "onec mcp",
+            "position": null,
+            "top": "onec-odata-mcp",
+            "error": null
+          }
+        ]
+      },
+      "downloads": {
+        "days": 29,
+        "excludedDays": 1,
+        "median": 1,
+        "total": 102,
+        "max": 13,
+        "maxShare": 0.12745098039215685,
+        "healthy": false,
+        "spike": false
+      },
+      "downloadsError": null,
+      "registry": {
+        "checked": true,
+        "present": false,
+        "registryName": null,
+        "registryVersion": null,
+        "npmVersion": "4.3.0",
+        "versionMatch": false
+      },
+      "liveness": {
+        "checked": false,
+        "error": "Get \"https://api.github.com/repos/theYahia/aprovodka/commits?per_page=1\": net/http: TLS handshake timeout",
+        "lastCommit": null,
+        "lastCommitDays": null,
+        "latestTag": null,
+        "latestReleaseAt": null,
+        "tagMatchesNpm": null,
+        "ok": false
+      },
+      "signals": {
+        "issuesEver": null,
+        "clones": null,
+        "views": null,
+        "cloneViewRatio": null,
+        "botSuspect": false,
+        "errors": [
+          "Get \"https://api.github.com/search/issues?q=repo:theYahia/aprovodka+type:issue\": net/http: TLS handshake timeout",
+          "Get \"https://api.github.com/repos/theYahia/aprovodka/traffic/clones\": net/http: TLS handshake timeout",
+          "Get \"https://api.github.com/repos/theYahia/aprovodka/traffic/views\": net/http: TLS handshake timeout"
+        ]
+      },
+      "verdict": "ОТСТАЁМ",
+      "passed": 0,
+      "criteria": {
+        "github": false,
+        "npm": false,
+        "downloads": false,
+        "registry": false,
+        "live": false
+      },
+      "unchecked": [
+        "живость"
+      ],
+      "todo": "нашего репо нет в выдаче GitHub (лидер Aleksandr-Litvinenko/1c-ai-guide, 12★) — topics, описание, README под запрос"
+    },
+    {
+      "niche": "tilda",
+      "pkg": "@theyahia/tilda-mcp",
+      "repo": "theYahia/tilda-mcp",
+      "queries": [
+        "tilda mcp"
+      ],
+      "npmVersion": "1.2.0",
+      "github": {
+        "checked": true,
+        "errors": [],
+        "candidates": 5,
+        "leader": {
+          "repo": "theYahia/tilda-mcp",
+          "stars": 11,
+          "staleDays": 0,
+          "dead": false
+        },
+        "ourRank": 1,
+        "ourStars": 11,
+        "gap": 0,
+        "ok": true,
+        "aheadAllDead": false,
+        "top3": [
+          {
+            "repo": "theYahia/tilda-mcp",
+            "stars": 11,
+            "staleDays": 0
+          },
+          {
+            "repo": "AlbinaResearcher/tilda-mcp",
+            "stars": 5,
+            "staleDays": 134
+          },
+          {
+            "repo": "skiddgoddamn/tilda-mcp-cdp",
+            "stars": 1,
+            "staleDays": 41
+          }
+        ]
+      },
+      "npm": {
+        "checked": true,
+        "best": 1,
+        "bestQuery": "tilda mcp",
+        "perQuery": [
+          {
+            "query": "tilda mcp",
+            "position": 1,
+            "top": "@theyahia/tilda-mcp",
+            "error": null
+          }
+        ]
+      },
+      "downloads": {
+        "days": 29,
+        "excludedDays": 1,
+        "median": 8,
+        "total": 271,
+        "max": 25,
+        "maxShare": 0.09225092250922509,
+        "healthy": true,
+        "spike": false
+      },
+      "downloadsError": null,
+      "registry": {
+        "checked": true,
+        "present": true,
+        "registryName": "io.github.theYahia/tilda-mcp",
+        "registryVersion": "1.0.0",
+        "npmVersion": "1.2.0",
+        "versionMatch": false
+      },
+      "liveness": {
+        "checked": false,
+        "error": "Get \"https://api.github.com/repos/theYahia/tilda-mcp/commits?per_page=1\": net/http: TLS handshake timeout",
+        "lastCommit": null,
+        "lastCommitDays": null,
+        "latestTag": null,
+        "latestReleaseAt": null,
+        "tagMatchesNpm": null,
+        "ok": false
+      },
+      "signals": {
+        "issuesEver": null,
+        "clones": null,
+        "views": 197,
+        "cloneViewRatio": null,
+        "botSuspect": false,
+        "errors": [
+          "Get \"https://api.github.com/search/issues?q=repo:theYahia/tilda-mcp+type:issue\": net/http: TLS handshake timeout",
+          "Get \"https://api.github.com/repos/theYahia/tilda-mcp/traffic/clones\": net/http: TLS handshake timeout"
+        ]
+      },
+      "verdict": "БЛИЗКО",
+      "passed": 3,
+      "criteria": {
+        "github": true,
+        "npm": true,
+        "downloads": true,
+        "registry": false,
+        "live": false
+      },
+      "unchecked": [
+        "живость"
+      ],
+      "todo": "версия в MCP-реестре 1.0.0 ≠ npm 1.2.0 — перепубликовать"
+    },
+    {
+      "niche": "moysklad",
+      "pkg": "@theyahia/moysklad-mcp",
+      "repo": "theYahia/moysklad-mcp",
+      "queries": [
+        "moysklad mcp",
+        "мойсклад mcp"
+      ],
+      "npmVersion": "3.1.0",
+      "github": {
+        "checked": true,
+        "errors": [],
+        "candidates": 3,
+        "leader": {
+          "repo": "theYahia/moysklad-mcp",
+          "stars": 5,
+          "staleDays": 0,
+          "dead": false
+        },
+        "ourRank": 1,
+        "ourStars": 5,
+        "gap": 0,
+        "ok": true,
+        "aheadAllDead": false,
+        "top3": [
+          {
+            "repo": "theYahia/moysklad-mcp",
+            "stars": 5,
+            "staleDays": 0
+          },
+          {
+            "repo": "ilyautov/moysklad-mcp-ru",
+            "stars": 2,
+            "staleDays": 0
+          },
+          {
+            "repo": "marfarin/moysklad-mcp-ru",
+            "stars": 0,
+            "staleDays": 68
+          }
+        ]
+      },
+      "npm": {
+        "checked": true,
+        "best": 1,
+        "bestQuery": "moysklad mcp",
+        "perQuery": [
+          {
+            "query": "moysklad mcp",
+            "position": 1,
+            "top": "@theyahia/moysklad-mcp",
+            "error": null
+          },
+          {
+            "query": "мойсклад mcp",
+            "position": null,
+            "top": "@modelcontextprotocol/sdk",
+            "error": null
+          }
+        ]
+      },
+      "downloads": {
+        "days": 29,
+        "excludedDays": 1,
+        "median": 17,
+        "total": 526,
+        "max": 42,
+        "maxShare": 0.07984790874524715,
+        "healthy": true,
+        "spike": false
+      },
+      "downloadsError": null,
+      "registry": {
+        "checked": true,
+        "present": true,
+        "registryName": "io.github.theYahia/moysklad-mcp",
+        "registryVersion": "3.0.1",
+        "npmVersion": "3.1.0",
+        "versionMatch": false
+      },
+      "liveness": {
+        "checked": false,
+        "error": "Get \"https://api.github.com/repos/theYahia/moysklad-mcp/commits?per_page=1\": net/http: TLS handshake timeout",
+        "lastCommit": null,
+        "lastCommitDays": null,
+        "latestTag": null,
+        "latestReleaseAt": null,
+        "tagMatchesNpm": null,
+        "ok": false
+      },
+      "signals": {
+        "issuesEver": null,
+        "clones": null,
+        "views": null,
+        "cloneViewRatio": null,
+        "botSuspect": false,
+        "errors": [
+          "Get \"https://api.github.com/search/issues?q=repo:theYahia/moysklad-mcp+type:issue\": net/http: TLS handshake timeout",
+          "Get \"https://api.github.com/repos/theYahia/moysklad-mcp/traffic/clones\": net/http: TLS handshake timeout",
+          "Get \"https://api.github.com/repos/theYahia/moysklad-mcp/traffic/views\": net/http: TLS handshake timeout"
+        ]
+      },
+      "verdict": "БЛИЗКО",
+      "passed": 3,
+      "criteria": {
+        "github": true,
+        "npm": true,
+        "downloads": true,
+        "registry": false,
+        "live": false
+      },
+      "unchecked": [
+        "живость"
+      ],
+      "todo": "версия в MCP-реестре 3.0.1 ≠ npm 3.1.0 — перепубликовать"
+    },
+    {
+      "niche": "chestnyznak",
+      "pkg": "@theyahia/chestnyznak-mcp",
+      "repo": "theYahia/chestnyznak-mcp",
+      "queries": [
+        "chestnyznak mcp",
+        "честный знак mcp"
+      ],
+      "npmVersion": "1.1.1",
+      "github": {
+        "checked": true,
+        "errors": [],
+        "candidates": 1,
+        "leader": {
+          "repo": "theYahia/chestnyznak-mcp",
+          "stars": 4,
+          "staleDays": 0,
+          "dead": false
+        },
+        "ourRank": 1,
+        "ourStars": 4,
+        "gap": 0,
+        "ok": true,
+        "aheadAllDead": false,
+        "top3": [
+          {
+            "repo": "theYahia/chestnyznak-mcp",
+            "stars": 4,
+            "staleDays": 0
+          }
+        ]
+      },
+      "npm": {
+        "checked": true,
+        "best": 1,
+        "bestQuery": "chestnyznak mcp",
+        "perQuery": [
+          {
+            "query": "chestnyznak mcp",
+            "position": 1,
+            "top": "@theyahia/chestnyznak-mcp",
+            "error": null
+          },
+          {
+            "query": "честный знак mcp",
+            "position": null,
+            "top": "@modelcontextprotocol/sdk",
+            "error": null
+          }
+        ]
+      },
+      "downloads": {
+        "days": 29,
+        "excludedDays": 1,
+        "median": 5,
+        "total": 173,
+        "max": 17,
+        "maxShare": 0.09826589595375723,
+        "healthy": true,
+        "spike": false
+      },
+      "downloadsError": null,
+      "registry": {
+        "checked": true,
+        "present": true,
+        "registryName": "io.github.theYahia/chestnyznak-mcp",
+        "registryVersion": "1.0.0",
+        "npmVersion": "1.1.1",
+        "versionMatch": false
+      },
+      "liveness": {
+        "checked": false,
+        "error": "Get \"https://api.github.com/repos/theYahia/chestnyznak-mcp/commits?per_page=1\": net/http: TLS handshake timeout",
+        "lastCommit": null,
+        "lastCommitDays": null,
+        "latestTag": null,
+        "latestReleaseAt": null,
+        "tagMatchesNpm": null,
+        "ok": false
+      },
+      "signals": {
+        "issuesEver": null,
+        "clones": null,
+        "views": 90,
+        "cloneViewRatio": null,
+        "botSuspect": false,
+        "errors": [
+          "Get \"https://api.github.com/search/issues?q=repo:theYahia/chestnyznak-mcp+type:issue\": net/http: TLS handshake timeout",
+          "Get \"https://api.github.com/repos/theYahia/chestnyznak-mcp/traffic/clones\": net/http: TLS handshake timeout"
+        ]
+      },
+      "verdict": "БЛИЗКО",
+      "passed": 3,
+      "criteria": {
+        "github": true,
+        "npm": true,
+        "downloads": true,
+        "registry": false,
+        "live": false
+      },
+      "unchecked": [
+        "живость"
+      ],
+      "todo": "версия в MCP-реестре 1.0.0 ≠ npm 1.1.1 — перепубликовать"
+    },
+    {
+      "niche": "hh",
+      "pkg": "@theyahia/hh-mcp",
+      "repo": "theYahia/hh-mcp",
+      "queries": [
+        "hh.ru mcp",
+        "headhunter mcp"
+      ],
+      "npmVersion": "2.1.0",
+      "github": {
+        "checked": true,
+        "errors": [],
+        "candidates": 3,
+        "leader": {
+          "repo": "gmen1057/headhunter-mcp-server",
+          "stars": 27,
+          "staleDays": 324,
+          "dead": true
+        },
+        "ourRank": null,
+        "ourStars": null,
+        "gap": null,
+        "ok": false,
+        "aheadAllDead": false,
+        "top3": [
+          {
+            "repo": "gmen1057/headhunter-mcp-server",
+            "stars": 27,
+            "staleDays": 324
+          },
+          {
+            "repo": "Vadtop/hh-mcp-server",
+            "stars": 1,
+            "staleDays": 127
+          },
+          {
+            "repo": "evgenygurin/hh-mcp-pro",
+            "stars": 0,
+            "staleDays": 2
+          }
+        ]
+      },
+      "npm": {
+        "checked": true,
+        "best": 9,
+        "bestQuery": "hh.ru mcp",
+        "perQuery": [
+          {
+            "query": "hh.ru mcp",
+            "position": 9,
+            "top": "@modelcontextprotocol/sdk",
+            "error": null
+          },
+          {
+            "query": "headhunter mcp",
+            "position": null,
+            "top": "@modelcontextprotocol/sdk",
+            "error": null
+          }
+        ]
+      },
+      "downloads": {
+        "days": 29,
+        "excludedDays": 1,
+        "median": 11,
+        "total": 373,
+        "max": 31,
+        "maxShare": 0.08310991957104558,
+        "healthy": true,
+        "spike": false
+      },
+      "downloadsError": null,
+      "registry": {
+        "checked": true,
+        "present": true,
+        "registryName": "io.github.theYahia/hh-mcp",
+        "registryVersion": "1.0.0",
+        "npmVersion": "2.1.0",
+        "versionMatch": false
+      },
+      "liveness": {
+        "checked": false,
+        "error": "Get \"https://api.github.com/repos/theYahia/hh-mcp/commits?per_page=1\": net/http: TLS handshake timeout",
+        "lastCommit": null,
+        "lastCommitDays": null,
+        "latestTag": null,
+        "latestReleaseAt": null,
+        "tagMatchesNpm": null,
+        "ok": false
+      },
+      "signals": {
+        "issuesEver": null,
+        "clones": null,
+        "views": null,
+        "cloneViewRatio": null,
+        "botSuspect": false,
+        "errors": [
+          "Get \"https://api.github.com/search/issues?q=repo:theYahia/hh-mcp+type:issue\": net/http: TLS handshake timeout",
+          "Get \"https://api.github.com/repos/theYahia/hh-mcp/traffic/clones\": net/http: TLS handshake timeout",
+          "Get \"https://api.github.com/repos/theYahia/hh-mcp/traffic/views\": net/http: TLS handshake timeout"
+        ]
+      },
+      "verdict": "ОТСТАЁМ",
+      "passed": 1,
+      "criteria": {
+        "github": false,
+        "npm": false,
+        "downloads": true,
+        "registry": false,
+        "live": false
+      },
+      "unchecked": [
+        "живость"
+      ],
+      "todo": "нашего репо нет в выдаче GitHub (лидер gmen1057/headhunter-mcp-server, 27★) — topics, описание, README под запрос"
+    },
+    {
+      "niche": "ozon",
+      "pkg": "@theyahia/ozon-mcp",
+      "repo": null,
+      "queries": [
+        "ozon mcp"
+      ],
+      "npmVersion": "0.0.1",
+      "github": {
+        "checked": true,
+        "errors": [],
+        "candidates": 11,
+        "leader": {
+          "repo": "eduard256/ozon-mcp-server",
+          "stars": 55,
+          "staleDays": 87,
+          "dead": false
+        },
+        "ourRank": null,
+        "ourStars": null,
+        "gap": null,
+        "ok": false,
+        "aheadAllDead": false,
+        "top3": [
+          {
+            "repo": "eduard256/ozon-mcp-server",
+            "stars": 55,
+            "staleDays": 87
+          },
+          {
+            "repo": "PCDCK/ozon-mcp",
+            "stars": 20,
+            "staleDays": 138
+          },
+          {
+            "repo": "DeviceIngineering/ozon-mcp-server",
+            "stars": 4,
+            "staleDays": 10
+          }
+        ]
+      },
+      "npm": {
+        "checked": true,
+        "best": null,
+        "bestQuery": null,
+        "perQuery": [
+          {
+            "query": "ozon mcp",
+            "position": null,
+            "top": "@seller-mcp/ozon-mcp",
+            "error": null
+          }
+        ]
+      },
+      "downloads": {
+        "days": 29,
+        "excludedDays": 1,
+        "median": 1,
+        "total": 105,
+        "max": 65,
+        "maxShare": 0.6190476190476191,
+        "healthy": false,
+        "spike": true
+      },
+      "downloadsError": null,
+      "registry": {
+        "checked": true,
+        "present": false,
+        "registryName": null,
+        "registryVersion": null,
+        "npmVersion": "0.0.1",
+        "versionMatch": false
+      },
+      "liveness": null,
+      "signals": null,
+      "verdict": "ОТСТАЁМ",
+      "passed": 0,
+      "criteria": {
+        "github": false,
+        "npm": false,
+        "downloads": false,
+        "registry": false,
+        "live": false
+      },
+      "unchecked": [],
+      "todo": "нет публичного репо — открыть его, иначе GitHub-нишу не занять"
+    },
+    {
+      "niche": "avito",
+      "pkg": "@theyahia/avito-mcp",
+      "repo": null,
+      "queries": [
+        "avito mcp"
+      ],
+      "npmVersion": "0.2.0",
+      "github": {
+        "checked": true,
+        "errors": [],
+        "candidates": 7,
+        "leader": {
+          "repo": "elchin92/avito-mcp",
+          "stars": 14,
+          "staleDays": 9,
+          "dead": false
+        },
+        "ourRank": null,
+        "ourStars": null,
+        "gap": null,
+        "ok": false,
+        "aheadAllDead": false,
+        "top3": [
+          {
+            "repo": "elchin92/avito-mcp",
+            "stars": 14,
+            "staleDays": 9
+          },
+          {
+            "repo": "irikrafikov-ai/avito-mcp",
+            "stars": 1,
+            "staleDays": 16
+          },
+          {
+            "repo": "timoshinoleg-eng/avito-mcp",
+            "stars": 0,
+            "staleDays": 1
+          }
+        ]
+      },
+      "npm": {
+        "checked": true,
+        "best": 3,
+        "bestQuery": "avito mcp",
+        "perQuery": [
+          {
+            "query": "avito mcp",
+            "position": 3,
+            "top": "avito-mcp",
+            "error": null
+          }
+        ]
+      },
+      "downloads": {
+        "days": 29,
+        "excludedDays": 1,
+        "median": 1,
+        "total": 32,
+        "max": 7,
+        "maxShare": 0.21875,
+        "healthy": false,
+        "spike": false
+      },
+      "downloadsError": null,
+      "registry": {
+        "checked": true,
+        "present": false,
+        "registryName": null,
+        "registryVersion": null,
+        "npmVersion": "0.2.0",
+        "versionMatch": false
+      },
+      "liveness": null,
+      "signals": null,
+      "verdict": "ОТСТАЁМ",
+      "passed": 0,
+      "criteria": {
+        "github": false,
+        "npm": false,
+        "downloads": false,
+        "registry": false,
+        "live": false
+      },
+      "unchecked": [],
+      "todo": "нет публичного репо — открыть его, иначе GitHub-нишу не занять"
+    },
+    {
+      "niche": "kaspi",
+      "pkg": "@theyahia/kaspi-mcp",
+      "repo": "theYahia/kaspi-mcp",
+      "queries": [
+        "kaspi mcp"
+      ],
+      "npmVersion": "1.0.2",
+      "github": {
+        "checked": true,
+        "errors": [],
+        "candidates": 3,
+        "leader": {
+          "repo": "mkhamzanov/kaspi-mcp-free",
+          "stars": 9,
+          "staleDays": 63,
+          "dead": false
+        },
+        "ourRank": 3,
+        "ourStars": 0,
+        "gap": 9,
+        "ok": false,
+        "aheadAllDead": false,
+        "top3": [
+          {
+            "repo": "mkhamzanov/kaspi-mcp-free",
+            "stars": 9,
+            "staleDays": 63
+          },
+          {
+            "repo": "xanguka-debug/kaspi-mcp-server",
+            "stars": 0,
+            "staleDays": 40
+          },
+          {
+            "repo": "theYahia/kaspi-mcp",
+            "stars": 0,
+            "staleDays": 154
+          }
+        ]
+      },
+      "npm": {
+        "checked": true,
+        "best": 1,
+        "bestQuery": "kaspi mcp",
+        "perQuery": [
+          {
+            "query": "kaspi mcp",
+            "position": 1,
+            "top": "@theyahia/kaspi-mcp",
+            "error": null
+          }
+        ]
+      },
+      "downloads": {
+        "days": 29,
+        "excludedDays": 1,
+        "median": 6,
+        "total": 187,
+        "max": 22,
+        "maxShare": 0.11764705882352941,
+        "healthy": true,
+        "spike": false
+      },
+      "downloadsError": null,
+      "registry": {
+        "checked": true,
+        "present": true,
+        "registryName": "io.github.theYahia/kaspi-mcp",
+        "registryVersion": "1.0.0",
+        "npmVersion": "1.0.2",
+        "versionMatch": false
+      },
+      "liveness": {
+        "checked": false,
+        "error": "Get \"https://api.github.com/repos/theYahia/kaspi-mcp/commits?per_page=1\": net/http: TLS handshake timeout",
+        "lastCommit": null,
+        "lastCommitDays": null,
+        "latestTag": null,
+        "latestReleaseAt": null,
+        "tagMatchesNpm": null,
+        "ok": false
+      },
+      "signals": {
+        "issuesEver": null,
+        "clones": null,
+        "views": null,
+        "cloneViewRatio": null,
+        "botSuspect": false,
+        "errors": [
+          "Get \"https://api.github.com/search/issues?q=repo:theYahia/kaspi-mcp+type:issue\": net/http: TLS handshake timeout",
+          "Get \"https://api.github.com/repos/theYahia/kaspi-mcp/traffic/clones\": net/http: TLS handshake timeout",
+          "Get \"https://api.github.com/repos/theYahia/kaspi-mcp/traffic/views\": net/http: TLS handshake timeout"
+        ]
+      },
+      "verdict": "ОТСТАЁМ",
+      "passed": 2,
+      "criteria": {
+        "github": false,
+        "npm": true,
+        "downloads": true,
+        "registry": false,
+        "live": false
+      },
+      "unchecked": [
+        "живость"
+      ],
+      "todo": "+10★ чтобы обойти mkhamzanov/kaspi-mcp-free (9★)"
+    },
+    {
+      "niche": "yandex-direct",
+      "pkg": "@theyahia/yandex-direct-mcp",
+      "repo": "theYahia/yandex-direct-mcp",
+      "queries": [
+        "yandex direct mcp"
+      ],
+      "npmVersion": "4.0.1",
+      "github": {
+        "checked": true,
+        "errors": [],
+        "candidates": 13,
+        "leader": {
+          "repo": "axisrow/yandex-direct-mcp-plugin",
+          "stars": 12,
+          "staleDays": 1,
+          "dead": false
+        },
+        "ourRank": null,
+        "ourStars": null,
+        "gap": null,
+        "ok": false,
+        "aheadAllDead": false,
+        "top3": [
+          {
+            "repo": "axisrow/yandex-direct-mcp-plugin",
+            "stars": 12,
+            "staleDays": 1
+          },
+          {
+            "repo": "vtka/yandex-direct-mcp",
+            "stars": 6,
+            "staleDays": 162
+          },
+          {
+            "repo": "demokrat90/yandex-direct-mcp",
+            "stars": 1,
+            "staleDays": 92
+          }
+        ]
+      },
+      "npm": {
+        "checked": true,
+        "best": 1,
+        "bestQuery": "yandex direct mcp",
+        "perQuery": [
+          {
+            "query": "yandex direct mcp",
+            "position": 1,
+            "top": "@theyahia/yandex-direct-mcp",
+            "error": null
+          }
+        ]
+      },
+      "downloads": {
+        "days": 29,
+        "excludedDays": 1,
+        "median": 11,
+        "total": 430,
+        "max": 60,
+        "maxShare": 0.13953488372093023,
+        "healthy": true,
+        "spike": false
+      },
+      "downloadsError": null,
+      "registry": {
+        "checked": true,
+        "present": true,
+        "registryName": "io.github.theYahia/yandex-direct-mcp",
+        "registryVersion": "3.0.2",
+        "npmVersion": "4.0.1",
+        "versionMatch": false
+      },
+      "liveness": {
+        "checked": false,
+        "error": "Get \"https://api.github.com/repos/theYahia/yandex-direct-mcp/commits?per_page=1\": net/http: TLS handshake timeout",
+        "lastCommit": null,
+        "lastCommitDays": null,
+        "latestTag": null,
+        "latestReleaseAt": null,
+        "tagMatchesNpm": null,
+        "ok": false
+      },
+      "signals": {
+        "issuesEver": null,
+        "clones": null,
+        "views": null,
+        "cloneViewRatio": null,
+        "botSuspect": false,
+        "errors": [
+          "Get \"https://api.github.com/search/issues?q=repo:theYahia/yandex-direct-mcp+type:issue\": net/http: TLS handshake timeout",
+          "Get \"https://api.github.com/repos/theYahia/yandex-direct-mcp/traffic/clones\": net/http: TLS handshake timeout",
+          "Get \"https://api.github.com/repos/theYahia/yandex-direct-mcp/traffic/views\": net/http: TLS handshake timeout"
+        ]
+      },
+      "verdict": "ОТСТАЁМ",
+      "passed": 2,
+      "criteria": {
+        "github": false,
+        "npm": true,
+        "downloads": true,
+        "registry": false,
+        "live": false
+      },
+      "unchecked": [
+        "живость"
+      ],
+      "todo": "нашего репо нет в выдаче GitHub (лидер axisrow/yandex-direct-mcp-plugin, 12★) — topics, описание, README под запрос"
+    },
+    {
+      "niche": "yandex-metrika",
+      "pkg": "@theyahia/yandex-metrika-mcp",
+      "repo": "theYahia/yandex-metrika-mcp",
+      "queries": [
+        "yandex metrika mcp"
+      ],
+      "npmVersion": "2.1.1",
+      "github": {
+        "checked": true,
+        "errors": [],
+        "candidates": 11,
+        "leader": {
+          "repo": "atomkraft/yandex-metrika-mcp",
+          "stars": 22,
+          "staleDays": 377,
+          "dead": true
+        },
+        "ourRank": null,
+        "ourStars": null,
+        "gap": null,
+        "ok": false,
+        "aheadAllDead": false,
+        "top3": [
+          {
+            "repo": "atomkraft/yandex-metrika-mcp",
+            "stars": 22,
+            "staleDays": 377
+          },
+          {
+            "repo": "ShalomGH/yandex-metrika-mcp",
+            "stars": 4,
+            "staleDays": 28
+          },
+          {
+            "repo": "IlyaVorozhbit/yandex-metrika-mcp",
+            "stars": 1,
+            "staleDays": 34
+          }
+        ]
+      },
+      "npm": {
+        "checked": true,
+        "best": 2,
+        "bestQuery": "yandex metrika mcp",
+        "perQuery": [
+          {
+            "query": "yandex metrika mcp",
+            "position": 2,
+            "top": "yandex-metrika-mcp",
+            "error": null
+          }
+        ]
+      },
+      "downloads": {
+        "days": 29,
+        "excludedDays": 1,
+        "median": 11,
+        "total": 316,
+        "max": 26,
+        "maxShare": 0.08227848101265822,
+        "healthy": true,
+        "spike": false
+      },
+      "downloadsError": null,
+      "registry": {
+        "checked": true,
+        "present": true,
+        "registryName": "io.github.theYahia/yandex-metrika-mcp",
+        "registryVersion": "2.1.1",
+        "npmVersion": "2.1.1",
+        "versionMatch": true
+      },
+      "liveness": {
+        "checked": false,
+        "error": "Get \"https://api.github.com/repos/theYahia/yandex-metrika-mcp/commits?per_page=1\": net/http: TLS handshake timeout",
+        "lastCommit": null,
+        "lastCommitDays": null,
+        "latestTag": null,
+        "latestReleaseAt": null,
+        "tagMatchesNpm": null,
+        "ok": false
+      },
+      "signals": {
+        "issuesEver": null,
+        "clones": null,
+        "views": null,
+        "cloneViewRatio": null,
+        "botSuspect": false,
+        "errors": [
+          "Get \"https://api.github.com/search/issues?q=repo:theYahia/yandex-metrika-mcp+type:issue\": net/http: TLS handshake timeout",
+          "Get \"https://api.github.com/repos/theYahia/yandex-metrika-mcp/traffic/clones\": net/http: TLS handshake timeout",
+          "Get \"https://api.github.com/repos/theYahia/yandex-metrika-mcp/traffic/views\": net/http: TLS handshake timeout"
+        ]
+      },
+      "verdict": "ОТСТАЁМ",
+      "passed": 2,
+      "criteria": {
+        "github": false,
+        "npm": false,
+        "downloads": true,
+        "registry": true,
+        "live": false
+      },
+      "unchecked": [
+        "живость"
+      ],
+      "todo": "нашего репо нет в выдаче GitHub (лидер atomkraft/yandex-metrika-mcp, 22★) — topics, описание, README под запрос"
+    },
+    {
+      "niche": "yandex-webmaster",
+      "pkg": "@theyahia/yandex-webmaster-mcp",
+      "repo": "theYahia/yandex-webmaster-mcp",
+      "queries": [
+        "yandex webmaster mcp"
+      ],
+      "npmVersion": "2.0.0",
+      "github": {
+        "checked": true,
+        "errors": [],
+        "candidates": 10,
+        "leader": {
+          "repo": "weselow/Yandex-webmaster-mcp-server",
+          "stars": 5,
+          "staleDays": 34,
+          "dead": false
+        },
+        "ourRank": null,
+        "ourStars": null,
+        "gap": null,
+        "ok": false,
+        "aheadAllDead": false,
+        "top3": [
+          {
+            "repo": "weselow/Yandex-webmaster-mcp-server",
+            "stars": 5,
+            "staleDays": 34
+          },
+          {
+            "repo": "develex-pro/yandex-webmaster-mcp-server",
+            "stars": 4,
+            "staleDays": 272
+          },
+          {
+            "repo": "BoxLab-Ltd/yandex-webmaster-mcp",
+            "stars": 3,
+            "staleDays": 1
+          }
+        ]
+      },
+      "npm": {
+        "checked": true,
+        "best": 4,
+        "bestQuery": "yandex webmaster mcp",
+        "perQuery": [
+          {
+            "query": "yandex webmaster mcp",
+            "position": 4,
+            "top": "yandex-webmaster-mcp",
+            "error": null
+          }
+        ]
+      },
+      "downloads": {
+        "days": 29,
+        "excludedDays": 1,
+        "median": 9,
+        "total": 277,
+        "max": 27,
+        "maxShare": 0.09747292418772563,
+        "healthy": true,
+        "spike": false
+      },
+      "downloadsError": null,
+      "registry": {
+        "checked": true,
+        "present": true,
+        "registryName": "io.github.theYahia/yandex-webmaster-mcp",
+        "registryVersion": "1.0.2",
+        "npmVersion": "2.0.0",
+        "versionMatch": false
+      },
+      "liveness": {
+        "checked": false,
+        "error": "Get \"https://api.github.com/repos/theYahia/yandex-webmaster-mcp/commits?per_page=1\": net/http: TLS handshake timeout",
+        "lastCommit": null,
+        "lastCommitDays": null,
+        "latestTag": null,
+        "latestReleaseAt": null,
+        "tagMatchesNpm": null,
+        "ok": false
+      },
+      "signals": {
+        "issuesEver": null,
+        "clones": null,
+        "views": null,
+        "cloneViewRatio": null,
+        "botSuspect": false,
+        "errors": [
+          "Get \"https://api.github.com/search/issues?q=repo:theYahia/yandex-webmaster-mcp+type:issue\": net/http: TLS handshake timeout",
+          "Get \"https://api.github.com/repos/theYahia/yandex-webmaster-mcp/traffic/clones\": net/http: TLS handshake timeout",
+          "Get \"https://api.github.com/repos/theYahia/yandex-webmaster-mcp/traffic/views\": net/http: TLS handshake timeout"
+        ]
+      },
+      "verdict": "ОТСТАЁМ",
+      "passed": 1,
+      "criteria": {
+        "github": false,
+        "npm": false,
+        "downloads": true,
+        "registry": false,
+        "live": false
+      },
+      "unchecked": [
+        "живость"
+      ],
+      "todo": "нашего репо нет в выдаче GitHub (лидер weselow/Yandex-webmaster-mcp-server, 5★) — topics, описание, README под запрос"
+    },
+    {
+      "niche": "wordstat",
+      "pkg": null,
+      "repo": null,
+      "queries": [
+        "wordstat mcp"
+      ],
+      "npmVersion": null,
+      "github": {
+        "checked": true,
+        "errors": [],
+        "candidates": 8,
+        "leader": {
+          "repo": "marketscore/marketscore-wordstat-mcp",
+          "stars": 1,
+          "staleDays": 17,
+          "dead": false
+        },
+        "ourRank": null,
+        "ourStars": null,
+        "gap": null,
+        "ok": false,
+        "aheadAllDead": false,
+        "top3": [
+          {
+            "repo": "marketscore/marketscore-wordstat-mcp",
+            "stars": 1,
+            "staleDays": 17
+          },
+          {
+            "repo": "N1arko/yandex-wordstat-mcp",
+            "stars": 1,
+            "staleDays": 59
+          },
+          {
+            "repo": "demokrat90/yandex-direct-mcp",
+            "stars": 1,
+            "staleDays": 92
+          }
+        ]
+      },
+      "npm": null,
+      "downloads": null,
+      "downloadsError": null,
+      "registry": null,
+      "liveness": null,
+      "signals": null,
+      "verdict": "НЕТ ПРОДУКТА",
+      "passed": 0,
+      "criteria": null,
+      "unchecked": [],
+      "todo": "ниша пустая — сделать и опубликовать MCP-сервер"
+    },
+    {
+      "niche": "tgstat",
+      "pkg": "@theyahia/tgstat-mcp",
+      "repo": "theYahia/tgstat-mcp",
+      "queries": [
+        "tgstat mcp",
+        "telegram analytics mcp"
+      ],
+      "npmVersion": "2.0.0",
+      "github": {
+        "checked": true,
+        "errors": [],
+        "candidates": 3,
+        "leader": {
+          "repo": "theYahia/tgstat-mcp",
+          "stars": 4,
+          "staleDays": 0,
+          "dead": false
+        },
+        "ourRank": 1,
+        "ourStars": 4,
+        "gap": 0,
+        "ok": true,
+        "aheadAllDead": false,
+        "top3": [
+          {
+            "repo": "theYahia/tgstat-mcp",
+            "stars": 4,
+            "staleDays": 0
+          },
+          {
+            "repo": "georgiisidorov/tgstat-mcp",
+            "stars": 1,
+            "staleDays": 84
+          },
+          {
+            "repo": "mrvolkomorov/tgstat-mcp-http",
+            "stars": 0,
+            "staleDays": 0
+          }
+        ]
+      },
+      "npm": {
+        "checked": true,
+        "best": null,
+        "bestQuery": null,
+        "perQuery": [
+          {
+            "query": "tgstat mcp",
+            "position": null,
+            "top": null,
+            "error": "fetch failed"
+          },
+          {
+            "query": "telegram analytics mcp",
+            "position": null,
+            "top": "@grammyjs/types",
+            "error": null
+          }
+        ]
+      },
+      "downloads": {
+        "days": 29,
+        "excludedDays": 1,
+        "median": 2,
+        "total": 77,
+        "max": 10,
+        "maxShare": 0.12987012987012986,
+        "healthy": false,
+        "spike": false
+      },
+      "downloadsError": null,
+      "registry": {
+        "checked": true,
+        "present": false,
+        "registryName": null,
+        "registryVersion": null,
+        "npmVersion": "2.0.0",
+        "versionMatch": false
+      },
+      "liveness": {
+        "checked": false,
+        "error": "Get \"https://api.github.com/repos/theYahia/tgstat-mcp/commits?per_page=1\": net/http: TLS handshake timeout",
+        "lastCommit": null,
+        "lastCommitDays": null,
+        "latestTag": null,
+        "latestReleaseAt": null,
+        "tagMatchesNpm": null,
+        "ok": false
+      },
+      "signals": {
+        "issuesEver": 0,
+        "clones": null,
+        "views": null,
+        "cloneViewRatio": null,
+        "botSuspect": false,
+        "errors": [
+          "Get \"https://api.github.com/repos/theYahia/tgstat-mcp/traffic/clones\": net/http: TLS handshake timeout",
+          "Get \"https://api.github.com/repos/theYahia/tgstat-mcp/traffic/views\": net/http: TLS handshake timeout"
+        ]
+      },
+      "verdict": "ОТСТАЁМ",
+      "passed": 1,
+      "criteria": {
+        "github": true,
+        "npm": false,
+        "downloads": false,
+        "registry": false,
+        "live": false
+      },
+      "unchecked": [
+        "живость"
+      ],
+      "todo": "вне топ-10 npm-поиска — добавить keywords/description под запросы ниши"
+    },
+    {
+      "niche": "cdek",
+      "pkg": "@theyahia/cdek-mcp",
+      "repo": "theYahia/cdek-mcp",
+      "queries": [
+        "cdek mcp",
+        "сдэк mcp"
+      ],
+      "npmVersion": "2.2.0",
+      "github": {
+        "checked": true,
+        "errors": [],
+        "candidates": 2,
+        "leader": {
+          "repo": "theYahia/cdek-mcp",
+          "stars": 1,
+          "staleDays": 0,
+          "dead": false
+        },
+        "ourRank": 1,
+        "ourStars": 1,
+        "gap": 0,
+        "ok": true,
+        "aheadAllDead": false,
+        "top3": [
+          {
+            "repo": "theYahia/cdek-mcp",
+            "stars": 1,
+            "staleDays": 0
+          },
+          {
+            "repo": "aryazansev/cdek-mcp",
+            "stars": 0,
+            "staleDays": 196
+          }
+        ]
+      },
+      "npm": {
+        "checked": true,
+        "best": 1,
+        "bestQuery": "cdek mcp",
+        "perQuery": [
+          {
+            "query": "cdek mcp",
+            "position": 1,
+            "top": "@theyahia/cdek-mcp",
+            "error": null
+          },
+          {
+            "query": "сдэк mcp",
+            "position": null,
+            "top": "@modelcontextprotocol/sdk",
+            "error": null
+          }
+        ]
+      },
+      "downloads": {
+        "days": 29,
+        "excludedDays": 1,
+        "median": 8,
+        "total": 269,
+        "max": 25,
+        "maxShare": 0.09293680297397769,
+        "healthy": true,
+        "spike": false
+      },
+      "downloadsError": null,
+      "registry": {
+        "checked": true,
+        "present": true,
+        "registryName": "io.github.theYahia/cdek-mcp",
+        "registryVersion": "2.0.2",
+        "npmVersion": "2.2.0",
+        "versionMatch": false
+      },
+      "liveness": {
+        "checked": false,
+        "error": "Get \"https://api.github.com/repos/theYahia/cdek-mcp/commits?per_page=1\": net/http: TLS handshake timeout",
+        "lastCommit": null,
+        "lastCommitDays": null,
+        "latestTag": null,
+        "latestReleaseAt": null,
+        "tagMatchesNpm": null,
+        "ok": false
+      },
+      "signals": {
+        "issuesEver": 0,
+        "clones": null,
+        "views": null,
+        "cloneViewRatio": null,
+        "botSuspect": false,
+        "errors": [
+          "Get \"https://api.github.com/repos/theYahia/cdek-mcp/traffic/clones\": net/http: TLS handshake timeout",
+          "Get \"https://api.github.com/repos/theYahia/cdek-mcp/traffic/views\": net/http: TLS handshake timeout"
+        ]
+      },
+      "verdict": "БЛИЗКО",
+      "passed": 3,
+      "criteria": {
+        "github": true,
+        "npm": true,
+        "downloads": true,
+        "registry": false,
+        "live": false
+      },
+      "unchecked": [
+        "живость"
+      ],
+      "todo": "версия в MCP-реестре 2.0.2 ≠ npm 2.2.0 — перепубликовать"
+    },
+    {
+      "niche": "pochta-russia",
+      "pkg": "@theyahia/pochta-russia-mcp",
+      "repo": "theYahia/pochta-russia-mcp",
+      "queries": [
+        "pochta russia mcp"
+      ],
+      "npmVersion": "2.0.0",
+      "github": {
+        "checked": true,
+        "errors": [],
+        "candidates": 1,
+        "leader": {
+          "repo": "theYahia/pochta-russia-mcp",
+          "stars": 1,
+          "staleDays": 71,
+          "dead": false
+        },
+        "ourRank": 1,
+        "ourStars": 1,
+        "gap": 0,
+        "ok": true,
+        "aheadAllDead": false,
+        "top3": [
+          {
+            "repo": "theYahia/pochta-russia-mcp",
+            "stars": 1,
+            "staleDays": 71
+          }
+        ]
+      },
+      "npm": {
+        "checked": true,
+        "best": 1,
+        "bestQuery": "pochta russia mcp",
+        "perQuery": [
+          {
+            "query": "pochta russia mcp",
+            "position": 1,
+            "top": "@theyahia/pochta-russia-mcp",
+            "error": null
+          }
+        ]
+      },
+      "downloads": {
+        "days": 29,
+        "excludedDays": 1,
+        "median": 7,
+        "total": 195,
+        "max": 18,
+        "maxShare": 0.09230769230769231,
+        "healthy": true,
+        "spike": false
+      },
+      "downloadsError": null,
+      "registry": {
+        "checked": true,
+        "present": true,
+        "registryName": "io.github.theYahia/pochta-russia-mcp",
+        "registryVersion": "1.0.1",
+        "npmVersion": "2.0.0",
+        "versionMatch": false
+      },
+      "liveness": {
+        "checked": false,
+        "error": "Get \"https://api.github.com/repos/theYahia/pochta-russia-mcp/commits?per_page=1\": net/http: TLS handshake timeout",
+        "lastCommit": null,
+        "lastCommitDays": null,
+        "latestTag": null,
+        "latestReleaseAt": null,
+        "tagMatchesNpm": null,
+        "ok": false
+      },
+      "signals": {
+        "issuesEver": 0,
+        "clones": null,
+        "views": 3,
+        "cloneViewRatio": null,
+        "botSuspect": false,
+        "errors": [
+          "Get \"https://api.github.com/repos/theYahia/pochta-russia-mcp/traffic/clones\": net/http: TLS handshake timeout"
+        ]
+      },
+      "verdict": "БЛИЗКО",
+      "passed": 3,
+      "criteria": {
+        "github": true,
+        "npm": true,
+        "downloads": true,
+        "registry": false,
+        "live": false
+      },
+      "unchecked": [
+        "живость"
+      ],
+      "todo": "версия в MCP-реестре 1.0.1 ≠ npm 2.0.0 — перепубликовать"
+    },
+    {
+      "niche": "yookassa",
+      "pkg": "@theyahia/yookassa-mcp",
+      "repo": "theYahia/yookassa-mcp",
+      "queries": [
+        "yookassa mcp",
+        "юкасса mcp"
+      ],
+      "npmVersion": "3.0.0",
+      "github": {
+        "checked": true,
+        "errors": [],
+        "candidates": 1,
+        "leader": {
+          "repo": "theYahia/yookassa-mcp",
+          "stars": 4,
+          "staleDays": 0,
+          "dead": false
+        },
+        "ourRank": 1,
+        "ourStars": 4,
+        "gap": 0,
+        "ok": true,
+        "aheadAllDead": false,
+        "top3": [
+          {
+            "repo": "theYahia/yookassa-mcp",
+            "stars": 4,
+            "staleDays": 0
+          }
+        ]
+      },
+      "npm": {
+        "checked": true,
+        "best": 1,
+        "bestQuery": "yookassa mcp",
+        "perQuery": [
+          {
+            "query": "yookassa mcp",
+            "position": 1,
+            "top": "@theyahia/yookassa-mcp",
+            "error": null
+          },
+          {
+            "query": "юкасса mcp",
+            "position": null,
+            "top": "@modelcontextprotocol/sdk",
+            "error": null
+          }
+        ]
+      },
+      "downloads": {
+        "days": 29,
+        "excludedDays": 1,
+        "median": 10,
+        "total": 299,
+        "max": 28,
+        "maxShare": 0.09364548494983277,
+        "healthy": true,
+        "spike": false
+      },
+      "downloadsError": null,
+      "registry": {
+        "checked": true,
+        "present": true,
+        "registryName": "io.github.theYahia/yookassa-mcp",
+        "registryVersion": "1.0.0",
+        "npmVersion": "3.0.0",
+        "versionMatch": false
+      },
+      "liveness": {
+        "checked": false,
+        "error": "Get \"https://api.github.com/repos/theYahia/yookassa-mcp/commits?per_page=1\": net/http: TLS handshake timeout",
+        "lastCommit": null,
+        "lastCommitDays": null,
+        "latestTag": null,
+        "latestReleaseAt": null,
+        "tagMatchesNpm": null,
+        "ok": false
+      },
+      "signals": {
+        "issuesEver": 0,
+        "clones": null,
+        "views": null,
+        "cloneViewRatio": null,
+        "botSuspect": false,
+        "errors": [
+          "Get \"https://api.github.com/repos/theYahia/yookassa-mcp/traffic/clones\": net/http: TLS handshake timeout",
+          "Get \"https://api.github.com/repos/theYahia/yookassa-mcp/traffic/views\": net/http: TLS handshake timeout"
+        ]
+      },
+      "verdict": "БЛИЗКО",
+      "passed": 3,
+      "criteria": {
+        "github": true,
+        "npm": true,
+        "downloads": true,
+        "registry": false,
+        "live": false
+      },
+      "unchecked": [
+        "живость"
+      ],
+      "todo": "версия в MCP-реестре 1.0.0 ≠ npm 3.0.0 — перепубликовать"
+    },
+    {
+      "niche": "tkassa",
+      "pkg": "@theyahia/tkassa-mcp",
+      "repo": null,
+      "queries": [
+        "tkassa mcp",
+        "tinkoff kassa mcp"
+      ],
+      "npmVersion": "2.0.1",
+      "github": {
+        "checked": true,
+        "errors": [],
+        "candidates": 1,
+        "leader": {
+          "repo": "theYahia/tkassa-mcp",
+          "stars": 0,
+          "staleDays": 149,
+          "dead": true
+        },
+        "ourRank": null,
+        "ourStars": null,
+        "gap": null,
+        "ok": false,
+        "aheadAllDead": false,
+        "top3": [
+          {
+            "repo": "theYahia/tkassa-mcp",
+            "stars": 0,
+            "staleDays": 149
+          }
+        ]
+      },
+      "npm": {
+        "checked": true,
+        "best": 1,
+        "bestQuery": "tkassa mcp",
+        "perQuery": [
+          {
+            "query": "tkassa mcp",
+            "position": 1,
+            "top": "@theyahia/tkassa-mcp",
+            "error": null
+          },
+          {
+            "query": "tinkoff kassa mcp",
+            "position": null,
+            "top": "@tinkoff/utils",
+            "error": null
+          }
+        ]
+      },
+      "downloads": {
+        "days": 29,
+        "excludedDays": 1,
+        "median": 8,
+        "total": 234,
+        "max": 19,
+        "maxShare": 0.0811965811965812,
+        "healthy": true,
+        "spike": false
+      },
+      "downloadsError": null,
+      "registry": {
+        "checked": true,
+        "present": true,
+        "registryName": "io.github.theYahia/tkassa-mcp",
+        "registryVersion": "1.0.0",
+        "npmVersion": "2.0.1",
+        "versionMatch": false
+      },
+      "liveness": null,
+      "signals": null,
+      "verdict": "ОТСТАЁМ",
+      "passed": 2,
+      "criteria": {
+        "github": false,
+        "npm": true,
+        "downloads": true,
+        "registry": false,
+        "live": false
+      },
+      "unchecked": [],
+      "todo": "нет публичного репо — открыть его, иначе GitHub-нишу не занять"
+    },
+    {
+      "niche": "cloudpayments",
+      "pkg": "@theyahia/cloudpayments-mcp",
+      "repo": null,
+      "queries": [
+        "cloudpayments mcp"
+      ],
+      "npmVersion": "1.2.0",
+      "github": {
+        "checked": true,
+        "errors": [],
+        "candidates": 1,
+        "leader": {
+          "repo": "theYahia/cloudpayments-mcp",
+          "stars": 0,
+          "staleDays": 154,
+          "dead": true
+        },
+        "ourRank": null,
+        "ourStars": null,
+        "gap": null,
+        "ok": false,
+        "aheadAllDead": false,
+        "top3": [
+          {
+            "repo": "theYahia/cloudpayments-mcp",
+            "stars": 0,
+            "staleDays": 154
+          }
+        ]
+      },
+      "npm": {
+        "checked": true,
+        "best": 3,
+        "bestQuery": "cloudpayments mcp",
+        "perQuery": [
+          {
+            "query": "cloudpayments mcp",
+            "position": 3,
+            "top": "cloudpayments",
+            "error": null
+          }
+        ]
+      },
+      "downloads": {
+        "days": 29,
+        "excludedDays": 1,
+        "median": 6,
+        "total": 181,
+        "max": 14,
+        "maxShare": 0.07734806629834254,
+        "healthy": true,
+        "spike": false
+      },
+      "downloadsError": null,
+      "registry": {
+        "checked": true,
+        "present": true,
+        "registryName": "io.github.theYahia/cloudpayments-mcp",
+        "registryVersion": "1.0.0",
+        "npmVersion": "1.2.0",
+        "versionMatch": false
+      },
+      "liveness": null,
+      "signals": null,
+      "verdict": "ОТСТАЁМ",
+      "passed": 1,
+      "criteria": {
+        "github": false,
+        "npm": false,
+        "downloads": true,
+        "registry": false,
+        "live": false
+      },
+      "unchecked": [],
+      "todo": "нет публичного репо — открыть его, иначе GitHub-нишу не занять"
+    },
+    {
+      "niche": "ileti-merkezi",
+      "pkg": "@theyahia/ileti-merkezi-mcp",
+      "repo": "theYahia/ileti-merkezi-mcp",
+      "queries": [
+        "iletimerkezi mcp"
+      ],
+      "npmVersion": "4.0.0",
+      "github": {
+        "checked": true,
+        "errors": [],
+        "candidates": 1,
+        "leader": {
+          "repo": "iletimerkezi/iletimerkezi-mcp-server",
+          "stars": 2,
+          "staleDays": 59,
+          "dead": false
+        },
+        "ourRank": null,
+        "ourStars": null,
+        "gap": null,
+        "ok": false,
+        "aheadAllDead": false,
+        "top3": [
+          {
+            "repo": "iletimerkezi/iletimerkezi-mcp-server",
+            "stars": 2,
+            "staleDays": 59
+          }
+        ]
+      },
+      "npm": {
+        "checked": false,
+        "best": null,
+        "bestQuery": null,
+        "perQuery": [
+          {
+            "query": "iletimerkezi mcp",
+            "position": null,
+            "top": null,
+            "error": "terminated"
+          }
+        ]
+      },
+      "downloads": {
+        "days": 29,
+        "excludedDays": 1,
+        "median": 2,
+        "total": 102,
+        "max": 16,
+        "maxShare": 0.1568627450980392,
+        "healthy": false,
+        "spike": false
+      },
+      "downloadsError": null,
+      "registry": {
+        "checked": true,
+        "present": false,
+        "registryName": null,
+        "registryVersion": null,
+        "npmVersion": "4.0.0",
+        "versionMatch": false
+      },
+      "liveness": {
+        "checked": false,
+        "error": "Get \"https://api.github.com/repos/theYahia/ileti-merkezi-mcp/commits?per_page=1\": net/http: TLS handshake timeout",
+        "lastCommit": null,
+        "lastCommitDays": null,
+        "latestTag": null,
+        "latestReleaseAt": null,
+        "tagMatchesNpm": null,
+        "ok": false
+      },
+      "signals": {
+        "issuesEver": 0,
+        "clones": null,
+        "views": null,
+        "cloneViewRatio": null,
+        "botSuspect": false,
+        "errors": [
+          "Get \"https://api.github.com/repos/theYahia/ileti-merkezi-mcp/traffic/clones\": net/http: TLS handshake timeout",
+          "Get \"https://api.github.com/repos/theYahia/ileti-merkezi-mcp/traffic/views\": net/http: TLS handshake timeout"
+        ]
+      },
+      "verdict": "ОТСТАЁМ",
+      "passed": 0,
+      "criteria": {
+        "github": false,
+        "npm": false,
+        "downloads": false,
+        "registry": false,
+        "live": false
+      },
+      "unchecked": [
+        "npm-поиск",
+        "живость"
+      ],
+      "todo": "нашего репо нет в выдаче GitHub (лидер iletimerkezi/iletimerkezi-mcp-server, 2★) — topics, описание, README под запрос"
+    },
+    {
+      "niche": "parasut",
+      "pkg": "@theyahia/parasut-mcp",
+      "repo": "theYahia/parasut-mcp",
+      "queries": [
+        "parasut mcp"
+      ],
+      "npmVersion": "2.0.0",
+      "github": {
+        "checked": true,
+        "errors": [],
+        "candidates": 2,
+        "leader": {
+          "repo": "theYahia/parasut-mcp",
+          "stars": 1,
+          "staleDays": 71,
+          "dead": false
+        },
+        "ourRank": 1,
+        "ourStars": 1,
+        "gap": 0,
+        "ok": true,
+        "aheadAllDead": false,
+        "top3": [
+          {
+            "repo": "theYahia/parasut-mcp",
+            "stars": 1,
+            "staleDays": 71
+          },
+          {
+            "repo": "OAE-Istanbul/YKSN-Parasut-MCP",
+            "stars": 0,
+            "staleDays": 21
+          }
+        ]
+      },
+      "npm": {
+        "checked": true,
+        "best": 1,
+        "bestQuery": "parasut mcp",
+        "perQuery": [
+          {
+            "query": "parasut mcp",
+            "position": 1,
+            "top": "@theyahia/parasut-mcp",
+            "error": null
+          }
+        ]
+      },
+      "downloads": {
+        "days": 29,
+        "excludedDays": 1,
+        "median": 1,
+        "total": 50,
+        "max": 9,
+        "maxShare": 0.18,
+        "healthy": false,
+        "spike": false
+      },
+      "downloadsError": null,
+      "registry": {
+        "checked": true,
+        "present": false,
+        "registryName": null,
+        "registryVersion": null,
+        "npmVersion": "2.0.0",
+        "versionMatch": false
+      },
+      "liveness": {
+        "checked": false,
+        "error": "Unexpected non-whitespace character after JSON at position 4 (line 1 column 5)",
+        "lastCommit": null,
+        "lastCommitDays": null,
+        "latestTag": null,
+        "latestReleaseAt": null,
+        "tagMatchesNpm": null,
+        "ok": false
+      },
+      "signals": {
+        "issuesEver": 0,
+        "clones": 5,
+        "views": 0,
+        "cloneViewRatio": null,
+        "botSuspect": false,
+        "errors": []
+      },
+      "verdict": "ОТСТАЁМ",
+      "passed": 2,
+      "criteria": {
+        "github": true,
+        "npm": true,
+        "downloads": false,
+        "registry": false,
+        "live": false
+      },
+      "unchecked": [
+        "живость"
+      ],
+      "todo": "медиана 1/день (нужно ≥3), макс. день 18% — гнать живых пользователей"
+    },
+    {
+      "niche": "kontur-diadoc",
+      "pkg": "@theyahia/kontur-diadoc-mcp",
+      "repo": "theYahia/kontur-diadoc-mcp",
+      "queries": [
+        "diadoc mcp",
+        "контур диадок mcp"
+      ],
+      "npmVersion": "1.1.0",
+      "github": {
+        "checked": true,
+        "errors": [],
+        "candidates": 1,
+        "leader": {
+          "repo": "theYahia/kontur-diadoc-mcp",
+          "stars": 3,
+          "staleDays": 0,
+          "dead": false
+        },
+        "ourRank": 1,
+        "ourStars": 3,
+        "gap": 0,
+        "ok": true,
+        "aheadAllDead": false,
+        "top3": [
+          {
+            "repo": "theYahia/kontur-diadoc-mcp",
+            "stars": 3,
+            "staleDays": 0
+          }
+        ]
+      },
+      "npm": {
+        "checked": true,
+        "best": 1,
+        "bestQuery": "diadoc mcp",
+        "perQuery": [
+          {
+            "query": "diadoc mcp",
+            "position": 1,
+            "top": "@theyahia/kontur-diadoc-mcp",
+            "error": null
+          },
+          {
+            "query": "контур диадок mcp",
+            "position": null,
+            "top": "@modelcontextprotocol/sdk",
+            "error": null
+          }
+        ]
+      },
+      "downloads": {
+        "days": 29,
+        "excludedDays": 1,
+        "median": 2,
+        "total": 65,
+        "max": 8,
+        "maxShare": 0.12307692307692308,
+        "healthy": false,
+        "spike": false
+      },
+      "downloadsError": null,
+      "registry": {
+        "checked": true,
+        "present": false,
+        "registryName": null,
+        "registryVersion": null,
+        "npmVersion": "1.1.0",
+        "versionMatch": false
+      },
+      "liveness": {
+        "checked": false,
+        "error": "Unexpected non-whitespace character after JSON at position 4 (line 1 column 5)",
+        "lastCommit": null,
+        "lastCommitDays": null,
+        "latestTag": null,
+        "latestReleaseAt": null,
+        "tagMatchesNpm": null,
+        "ok": false
+      },
+      "signals": {
+        "issuesEver": 0,
+        "clones": 17,
+        "views": 50,
+        "cloneViewRatio": 0.34,
+        "botSuspect": false,
+        "errors": []
+      },
+      "verdict": "ОТСТАЁМ",
+      "passed": 2,
+      "criteria": {
+        "github": true,
+        "npm": true,
+        "downloads": false,
+        "registry": false,
+        "live": false
+      },
+      "unchecked": [
+        "живость"
+      ],
+      "todo": "медиана 2/день (нужно ≥3), макс. день 12% — гнать живых пользователей"
+    }
+  ]
+}
