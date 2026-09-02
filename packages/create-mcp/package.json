@@ -25,6 +25,10 @@
     "create",
     "cli",
     "generator",
+    "template",
+    "boilerplate",
+    "starter",
+    "typescript",
     "claude",
     "anthropic"
   ],
