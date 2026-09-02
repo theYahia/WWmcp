@@ -8,6 +8,8 @@ import {
   getWriteMode,
   resetWriteSafetyState,
   isSafetyEnvelope,
+  previewCount,
+  PREVIEW_MAX,
 } from "../src/lib/write-safety.js";
 import {
   handleApproveWrite,
@@ -442,5 +444,70 @@ describe("write gate is bound to the effect, not the spelling", () => {
     );
     expect(bare.op_hash).toBeDefined();
     expect(bare.op_hash).toBe(full.op_hash);
+  });
+});
+
+/**
+ * В режиме `preview` записи не выполняются никогда, а очистка карты предпросмотров
+ * стояла только в ветке фактического выполнения — то есть самый безопасный режим
+ * тёк линейно по числу операций (WORK-1531).
+ */
+describe("карта предпросмотров не растёт бесконечно", () => {
+  const originalEnv = { ...process.env };
+
+  beforeEach(() => {
+    process.env["ONEC_BASE_URL"] = "http://localhost:8080/base";
+    process.env["ONEC_LOGIN"] = "admin";
+    process.env["ONEC_PASSWORD"] = "secret";
+    process.env["ONEC_WRITE_MODE"] = "preview";
+    delete process.env["ONEC_AUDIT_LOG"];
+    resetClient();
+    resetWriteSafetyState();
+  });
+
+  afterEach(() => {
+    process.env = { ...originalEnv };
+    vi.restoreAllMocks();
+    resetClient();
+    resetWriteSafetyState();
+  });
+
+  /** 150 разных операций проведения — каждая даёт свой op_hash. */
+  async function previewMany(n: number): Promise<string[]> {
+    mockFetch();
+    const hashes: string[] = [];
+    for (let i = 0; i < n; i++) {
+      const guid = `5c8d9e2f-1a2b-3c4d-5e6f-${String(i).padStart(12, "0")}`;
+      const r = JSON.parse(
+        await handlePostDocument({ document_type: "Document_Test", ref_key: guid, operational: false }),
+      );
+      expect(r.write_safety).toBe("preview");
+      hashes.push(r.op_hash);
+    }
+    return hashes;
+  }
+
+  it("150 предпросмотров подряд — не больше 100 в памяти, самый свежий на месте", async () => {
+    const hashes = await previewMany(150);
+
+    expect(previewCount()).toBeLessThanOrEqual(PREVIEW_MAX);
+    expect(previewCount()).toBe(PREVIEW_MAX);
+
+    // Самый свежий пережил вытеснение: одобрение по нему проходит.
+    process.env["ONEC_WRITE_MODE"] = "approval";
+    const newest = hashes[hashes.length - 1]!;
+    const approved = JSON.parse(await handleApproveWrite({ op_hash: newest }));
+    expect(approved.approved).toBe(newest);
+  });
+
+  it("одобрение по хэшу вытесненного превью — понятная ошибка, а не молчаливый сбой", async () => {
+    const hashes = await previewMany(150);
+    const evicted = hashes[0]!;
+
+    process.env["ONEC_WRITE_MODE"] = "approval";
+    await expect(handleApproveWrite({ op_hash: evicted })).rejects.toThrow(
+      /предпросмотра операции op_hash=/,
+    );
+    await expect(handleApproveWrite({ op_hash: evicted })).rejects.toThrow(/токена отката/);
   });
 });

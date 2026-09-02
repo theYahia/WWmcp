@@ -134,6 +134,20 @@ export function appendAudit(entry: Record<string, unknown>): void {
   );
 }
 
+/**
+ * Вытеснить старейшую запись, если карта уже упёрлась в потолок.
+ *
+ * Карты этого слоя живут в памяти процесса и растут по числу операций.
+ * Порядок обхода Map — порядок вставки, поэтому первый ключ и есть старейший.
+ *
+ * ponytail: FIFO, а не LRU — счётчик обращений ради ста записей не окупается.
+ */
+function evictOldest<V>(map: Map<string, V>, max: number): void {
+  if (map.size < max) return;
+  const oldest = map.keys().next().value;
+  if (oldest !== undefined) map.delete(oldest);
+}
+
 // ──────────────────────────────────────────────────────────────
 // Approvals — one-shot, hash-bound, TTL'd, in-memory
 // ──────────────────────────────────────────────────────────────
@@ -141,6 +155,19 @@ export function appendAudit(entry: Record<string, unknown>): void {
 const approvals = new Map<string, { expires: number; reason?: string }>();
 
 export function approveOp(hash: string, reason?: string): number {
+  // Одобрение без живого предпросмотра — молчаливый сбой: consumeApproval пропустит
+  // запись, но снятого прежнего состояния уже нет, и выполненная операция останется
+  // без токена отката, хотя оператору предпросмотр обещал «reversible: true».
+  if (!previews.has(hash)) {
+    throw new Error(
+      `Одобрять нечего: предпросмотра операции op_hash=${hash} нет в памяти сервера. ` +
+        `Предпросмотры хранятся в памяти процесса, их не больше ${PREVIEW_MAX} — самые старые ` +
+        "вытесняются, после перезапуска сервера теряются все, а выполненная операция свой " +
+        "предпросмотр забирает. Повторите тот же вызов инструмента: он вернёт свежий " +
+        "предпросмотр с актуальным op_hash — одобряйте его. Одобрить хэш без предпросмотра " +
+        "нельзя: прежнее состояние не снято, и запись выполнится без токена отката.",
+    );
+  }
   const ttl = approvalTtlSec();
   approvals.set(hash, { expires: Date.now() + ttl * 1000, ...(reason ? { reason } : {}) });
   appendAudit({ event: "approved", op_hash: hash, reason: reason ?? null, ttl_sec: ttl });
@@ -235,10 +262,7 @@ function registerRollback(hash: string, op: WriteOp, before?: Record<string, unk
   const inv = inverseOf(op, before);
   if (!inv) return null;
   const rb: Rollback = { token: `rb-${hash}`, ...inv };
-  if (rollbacks.size >= ROLLBACK_MAX) {
-    const oldest = rollbacks.keys().next().value;
-    if (oldest) rollbacks.delete(oldest);
-  }
+  evictOldest(rollbacks, ROLLBACK_MAX);
   rollbacks.set(rb.token, rb);
   appendAudit({
     event: "rollback_token_issued",
@@ -301,6 +325,21 @@ export function isSafetyEnvelope(x: unknown): x is PreviewEnvelope | ExecutedEnv
 
 /** Previews awaiting approval — keeps the captured pre-write state for the rollback token. */
 const previews = new Map<string, { envelope: PreviewEnvelope; before?: Record<string, unknown> }>();
+
+/**
+ * Потолок карты предпросмотров — как у rollbacks.
+ *
+ * Очистка `previews.delete(hash)` стоит в ветке фактического выполнения записи, а в
+ * режиме `preview` записи не выполняются НИКОГДА — это его смысл. То есть в самом
+ * безопасном режиме карта росла линейно по числу операций, и длинная сессия сверки
+ * — ровно такой сценарий.
+ */
+export const PREVIEW_MAX = 100;
+
+/** Сколько предпросмотров держится в памяти (нужно тестам, чтобы проверить потолок). */
+export function previewCount(): number {
+  return previews.size;
+}
 
 type ReadFn = (path: string) => Promise<unknown>;
 
@@ -422,6 +461,9 @@ export async function guardWrite(
 
   if (mode !== "off" && !consumeApproval(hash)) {
     const preview = await buildPreview(op, hash, mode, read);
+    // Вытеснение не трогает карту approvals, поэтому проверка срока одобрения
+    // (consumeApproval) остаётся ровно такой же.
+    evictOldest(previews, PREVIEW_MAX);
     previews.set(hash, preview);
     appendAudit({
       event: "preview",
