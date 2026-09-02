@@ -1,7 +1,7 @@
 {
   "name": "@theyahia/yandex-search-mcp",
   "version": "1.0.0",
-  "description": "MCP server for Yandex Cloud Search API — Wordstat keyword research (topRequests, dynamics, regions) + web search. Optimised for Russian market SEO.",
+  "description": "Yandex Wordstat for AI agents: top search requests, query dynamics over time, regional breakdown for Russian-market SEO (3 tools, Russia)",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -30,7 +30,27 @@
     "vitest": "^3.1.0"
   },
   "publishConfig": { "access": "public" },
-  "keywords": ["mcp","mcp-server","model-context-protocol","claude","ai","anthropic","russian-api","yandex","wordstat","seo","keyword-research","yandex-cloud","russian-seo","typescript"],
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "claude",
+    "ai-agent",
+    "llm",
+    "wordstat",
+    "вордстат",
+    "yandex",
+    "яндекс",
+    "yandex-cloud",
+    "keyword-research",
+    "семантическое-ядро",
+    "seo",
+    "russian-seo",
+    "search-volume",
+    "частотность",
+    "russia",
+    "russian-api"
+  ],
   "license": "MIT",
   "repository": { "type": "git", "url": "https://github.com/theYahia/yandex-search-mcp.git" },
   "homepage": "https://github.com/theYahia/yandex-search-mcp#readme",

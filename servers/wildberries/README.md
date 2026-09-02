@@ -1,9 +1,11 @@
-# @theyahia/wildberries-mcp
+# MCP-сервер для Wildberries Seller API — 30 инструментов для ИИ-агента
 
-> MCP server for the **Wildberries** Seller API — **30 tools** across products, prices, stocks, orders, sales, FBS supplies, analytics, feedbacks, questions, returns, and ads. Per-category host routing with rate limiting and 409 penalty protection. Stdio + Streamable HTTP transports.
+Если вы искали, как подключить кабинет продавца Wildberries к Claude или другому ИИ-агенту, — этот сервер даёт агенту прямой доступ к Seller API: остатки и цены, заказы и продажи, поставки FBS, аналитика, отзывы, вопросы, возвраты и реклама. Спрашиваете обычными словами — «какие товары кончаются на складе Коледино», «подними цену на SW-4410 до 3490 ₽» — и получаете готовый ответ таблицей, а не выгрузку, которую ещё надо разбирать. Маршрутизация по хостам категорий, соблюдение лимитов запросов и защита от 409-штрафа — на стороне сервера.
 
 [![npm](https://img.shields.io/npm/v/@theyahia/wildberries-mcp)](https://www.npmjs.com/package/@theyahia/wildberries-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+![Демонстрация: вопрос «какие товары кончаются на складе Коледино» — агент вызывает get_fbw_stocks и отвечает таблицей остатков](./assets/demo.svg)
 
 ## Quick Start
 

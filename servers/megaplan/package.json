@@ -1,7 +1,7 @@
 {
   "name": "@theyahia/megaplan-mcp",
   "version": "3.0.0",
-  "description": "MCP server for Megaplan project management — 8 tools for tasks, deals, projects, employees, comments + 2 MCP prompts.",
+  "description": "Megaplan (Мегаплан) for AI agents: create and read tasks and deals, projects, employees, comments (8 tools + 2 prompts, Russia)",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -45,13 +45,20 @@
     "mcp-server",
     "model-context-protocol",
     "claude",
-    "ai",
-    "russian-api",
+    "ai-agent",
+    "llm",
     "megaplan",
+    "мегаплан",
     "crm",
+    "срм",
     "project-management",
+    "управление-проектами",
     "tasks",
-    "deals"
+    "задачи",
+    "deals",
+    "сделки",
+    "russia",
+    "russian-api"
   ],
   "license": "MIT",
   "repository": {

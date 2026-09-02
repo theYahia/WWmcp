@@ -1,7 +1,7 @@
 {
   "name": "@theyahia/aprovodka",
   "version": "4.3.0",
-  "description": "MCP server for 1C:Enterprise — 34 tools across 11 modules: catalogs & documents CRUD, post/unpost, registers & balances, accounting registers incl. virtual tables, constants, batch ops, change-tracking, metadata discovery, curated config presets, optional write-safety gate (+ 3 guided prompts) via OData 3.0. Basic auth.",
+  "description": "1C:Enterprise (1С:Предприятие) for AI agents: read and post documents, catalog CRUD, accounting and accumulation balances, OData queries (34 tools, Russia)",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -45,15 +45,22 @@
     "mcp-server",
     "model-context-protocol",
     "claude",
-    "ai",
-    "russian-api",
+    "ai-agent",
+    "llm",
     "1c",
+    "1с",
     "1c-enterprise",
-    "erp",
+    "1с-предприятие",
+    "1c-odata",
+    "onec",
     "odata",
+    "одата",
+    "бухгалтерия",
+    "accounting",
+    "erp",
     "documents",
-    "catalogs",
-    "registers"
+    "russia",
+    "russian-api"
   ],
   "license": "MIT",
   "repository": {

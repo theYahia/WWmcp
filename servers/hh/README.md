@@ -1,12 +1,14 @@
-# @theyahia/hh-mcp
+# MCP-сервер для hh.ru API — 19 инструментов для ИИ-агента: вакансии, резюме, зарплаты
 
-MCP server for the [hh.ru](https://hh.ru) API — Russia and CIS job market. **19 tools** covering vacancies, resumes, employers, salary statistics, dictionaries, autocomplete, and token diagnostics.
-
-Responses are returned as compact, LLM-friendly summaries by default — pass `raw: true` to any search/detail tool to get the full hh.ru JSON.
+Если вы искали, как подключить hh.ru к Claude или другому ИИ-агенту, — этот сервер даёт агенту поиск по вакансиям и резюме, карточки работодателей, статистику зарплат и справочники hh.ru по России и СНГ. Спрашиваете «найди Python-вакансии в Москве от 250 000 ₽ на удалёнке» — агент возвращает готовый список с зарплатами и опытом, а не ссылку на выдачу. Поиск вакансий работает без токена; токен нужен только для базы резюме.
 
 [![npm](https://img.shields.io/npm/v/@theyahia/hh-mcp)](https://www.npmjs.com/package/@theyahia/hh-mcp)
 [![CI](https://github.com/theYahia/hh-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/theYahia/hh-mcp/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+![Демонстрация: вопрос «найди Python-вакансии в Москве от 250 000 ₽ на удалёнке» — агент вызывает search_vacancies и отвечает списком вакансий](./assets/demo.svg)
+
+Responses are returned as compact, LLM-friendly summaries by default — pass `raw: true` to any search/detail tool to get the full hh.ru JSON.
 
 Part of the [WWmcp](https://github.com/theYahia/WWmcp) series by [@theYahia](https://github.com/theYahia).
 

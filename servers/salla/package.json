@@ -1,7 +1,7 @@
 {
   "name": "@theyahia/salla-mcp",
   "version": "3.1.0",
-  "description": "MCP server for Salla e-commerce (Saudi Arabia) — 9 tools for products, orders, customers, store. OAuth 2.0.",
+  "description": "Salla store for AI agents: product and category CRUD, bulk stock updates, orders and status changes, customers, coupons, abandoned carts (22 tools, Saudi Arabia)",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -45,13 +45,22 @@
     "mcp-server",
     "model-context-protocol",
     "claude",
-    "ai",
-    "saudi-api",
+    "ai-agent",
+    "llm",
     "salla",
+    "سلة",
+    "saudi-arabia",
+    "saudi-api",
+    "gulf",
+    "mena",
     "e-commerce",
+    "ecommerce",
     "marketplace",
     "products",
-    "orders"
+    "orders",
+    "seller-api",
+    "arabic",
+    "emerging-markets"
   ],
   "license": "MIT",
   "repository": {

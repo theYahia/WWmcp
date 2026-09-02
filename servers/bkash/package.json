@@ -1,7 +1,7 @@
 {
   "name": "@theyahia/bkash-mcp",
   "version": "1.1.0",
-  "description": "MCP server for bKash Tokenized Checkout (Bangladesh) — 8 tools for payments, refunds, agreements. Custom 3-step token auth.",
+  "description": "bKash mobile money for AI agents: tokenized checkout payments, execute and query, refunds, recurring agreements, transaction search (8 tools, Bangladesh)",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -45,12 +45,18 @@
     "mcp-server",
     "model-context-protocol",
     "claude",
-    "ai",
-    "bangladesh-api",
+    "ai-agent",
+    "llm",
     "bkash",
+    "বিকাশ",
+    "bangladesh",
+    "bangladesh-api",
     "mobile-money",
     "payments",
-    "tokenized-checkout"
+    "checkout",
+    "refunds",
+    "fintech",
+    "emerging-markets"
   ],
   "license": "MIT",
   "repository": {

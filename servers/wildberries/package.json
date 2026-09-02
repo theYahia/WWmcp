@@ -1,7 +1,7 @@
 {
   "name": "@theyahia/wildberries-mcp",
   "version": "3.1.0",
-  "description": "MCP server for Wildberries Seller API — 30 tools across products, prices, stocks, orders, sales, FBS supplies, analytics, feedbacks, questions, returns, ads, ABC analysis. Per-category host routing + rate limiting with 409 penalty protection.",
+  "description": "Wildberries Seller API for AI agents: stocks and prices, orders and sales, FBS supplies, analytics, feedbacks, questions, returns and ads (30 tools, Russia)",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -45,14 +45,22 @@
     "mcp-server",
     "model-context-protocol",
     "claude",
-    "ai",
-    "russian-api",
+    "ai-agent",
+    "llm",
     "wildberries",
-    "marketplace",
-    "e-commerce",
+    "вайлдберриз",
+    "wb",
+    "вб",
     "seller-api",
-    "products",
-    "orders"
+    "marketplace",
+    "маркетплейс",
+    "e-commerce",
+    "stocks",
+    "остатки",
+    "prices",
+    "orders",
+    "russia",
+    "russian-api"
   ],
   "license": "MIT",
   "repository": {

@@ -1,7 +1,7 @@
 {
   "name": "@theyahia/ileti-merkezi-mcp",
   "version": "3.0.0",
-  "description": "MCP server for Ileti Merkezi SMS API (Turkey) — 8 tools: SMS, bulk SMS, reports, contacts, blacklist. HMAC auth.",
+  "description": "Ileti Merkezi SMS for AI agents: send single and bulk SMS, delivery reports, sender IDs, contact groups, blacklist, balance (8 tools, Turkey)",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -45,14 +45,20 @@
     "mcp-server",
     "model-context-protocol",
     "claude",
-    "ai",
-    "turkey",
-    "turkish-api",
+    "ai-agent",
+    "llm",
+    "iletimerkezi",
     "ileti-merkezi",
+    "ileti",
+    "turkey",
+    "türkiye",
+    "turkish-api",
     "sms",
+    "toplu-sms",
     "bulk-sms",
+    "otp",
     "messaging",
-    "otp"
+    "emerging-markets"
   ],
   "license": "MIT",
   "repository": {

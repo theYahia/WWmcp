@@ -1,7 +1,7 @@
 {
   "name": "@theyahia/delovye-linii-mcp",
   "version": "1.1.1",
-  "description": "MCP server for Delovye Linii (Dellin) — freight delivery, tariff calculation, cities, terminals, orders, tracking (Russia). 6 tools.",
+  "description": "Delovye Linii (Деловые Линии) freight for AI agents: tariff and transit-time calculation, city and terminal lookup, order creation, waybill tracking (6 tools, Russia)",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -44,16 +44,21 @@
     "mcp-server",
     "model-context-protocol",
     "claude",
-    "ai",
-    "russian-api",
+    "ai-agent",
+    "llm",
     "dellin",
     "delovye-linii",
+    "деловые-линии",
+    "деллин",
+    "freight",
+    "грузоперевозки",
     "delivery",
-    "shipping",
+    "доставка",
     "logistics",
+    "shipping",
     "tracking",
-    "api",
-    "typescript"
+    "russia",
+    "russian-api"
   ],
   "license": "MIT",
   "repository": {
