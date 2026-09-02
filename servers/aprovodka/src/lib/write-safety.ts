@@ -334,21 +334,31 @@ async function buildPreview(
     const body = (op.body ?? {}) as Record<string, unknown>;
     const { current, error } = await readCurrent(p, read);
     readError = error;
-    if (current) {
-      before = {};
-      const fields: Record<string, unknown> = {};
-      for (const [k, to] of Object.entries(body)) {
-        before[k] = current[k] ?? null;
-        fields[k] = { from: current[k] ?? null, to };
-      }
-      changes = { kind: "update_fields", fields };
-    } else {
-      changes = {
-        kind: "update_fields",
-        fields: op.body,
-        warning: `current values unavailable (${error}) — shown values are the new ones only`,
-      };
+    // Прежнее значение либо прочитано, либо неизвестно — третьего («считаем, что там
+    // был null») быть не должно. Раньше отсутствующее поле превращалось в null: предпросмотр
+    // показывал клиенту «было null», а токен отката этим же null затирал реальное значение.
+    // Для константы поле ровно одно (Value), то есть откат стирал бы всю константу.
+    const unread = current
+      ? Object.keys(body).filter((k) => !(k in current))
+      : Object.keys(body);
+    if (unread.length > 0) {
+      throw new Error(
+        `Гейт записи (ONEC_WRITE_MODE=${mode}) отклонил операцию: прежнее значение ` +
+          `${unread.join(", ")} у ${p.entity} прочитать не удалось` +
+          (error ? ` (${error})` : " — поля нет в ответе 1С") +
+          ". Без него предпросмотр «было → стало» и откат невозможны, а записывать null " +
+          "вместо неизвестного прежнего значения недопустимо. Проверьте права роли 1С на " +
+          "чтение этой сущности либо выполните изменение в режиме ONEC_WRITE_MODE=off и " +
+          "откатывайте вручную.",
+      );
     }
+    before = {};
+    const fields: Record<string, unknown> = {};
+    for (const [k, to] of Object.entries(body)) {
+      before[k] = current![k];
+      fields[k] = { from: current![k], to };
+    }
+    changes = { kind: "update_fields", fields };
   } else if (op.method === "DELETE") {
     changes = { kind: "physical_delete", target: `${p?.entity ?? op.path} ${p?.refKey ?? ""}`.trim() };
   } else if (p?.action === "Post") {

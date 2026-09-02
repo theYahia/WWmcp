@@ -15,6 +15,7 @@ import {
 } from "../src/tools/safety.js";
 import { handlePostDocument, handleDeleteDocument } from "../src/tools/documents.js";
 import { handleUpdateCatalogItem } from "../src/tools/catalogs.js";
+import { handleSetConstant } from "../src/tools/constants.js";
 import { countRegisteredTools, getEnabledModules } from "../src/server.js";
 
 const GUID = "5c8d9e2f-1a2b-3c4d-5e6f-7a8b9c0d1e2f";
@@ -253,6 +254,82 @@ describe("write-safety", () => {
     expect(executed["irreversible_reason"]).toMatch(/set_deletion_mark/);
   });
 
+  // ── константы: единственное поле Value, поэтому «неизвестное прежнее значение»
+  //    здесь означало бы откат, стирающий всю константу ──
+
+  it("set_constant preview shows the real previous Value, not null", async () => {
+    process.env["ONEC_WRITE_MODE"] = "preview";
+    // 1С отдаёт константу как одиночную запись
+    const fetchMock = mockFetch({ Value: "RUB" });
+    const preview = JSON.parse(
+      await handleSetConstant({ constant_name: "ОсновнаяВалюта", value: "USD" }),
+    );
+    expect(fetchMock).toHaveBeenCalledOnce(); // только чтение, записи нет
+    expect(fetchMock.mock.calls[0][1].method).toBe("GET");
+    expect(preview.changes.fields.Value).toEqual({ from: "RUB", to: "USD" });
+    expect(preview.reversible).toBe(true);
+  });
+
+  it("set_constant preview reads the collection envelope form too", async () => {
+    process.env["ONEC_WRITE_MODE"] = "preview";
+    mockFetch({ value: [{ Value: "RUB" }] });
+    const preview = JSON.parse(
+      await handleSetConstant({ constant_name: "Constant_ОсновнаяВалюта", value: "USD" }),
+    );
+    expect(preview.changes.fields.Value).toEqual({ from: "RUB", to: "USD" });
+  });
+
+  it("set_constant in approval mode rolls back to the real previous Value", async () => {
+    process.env["ONEC_WRITE_MODE"] = "approval";
+    mockFetch({ Value: "RUB" });
+    const preview = JSON.parse(
+      await handleSetConstant({ constant_name: "ОсновнаяВалюта", value: "USD" }),
+    );
+    expect(preview.changes.fields.Value.from).toBe("RUB");
+    await handleApproveWrite({ op_hash: preview.op_hash });
+
+    mockFetch({ Value: "USD" });
+    const executed = JSON.parse(
+      await handleSetConstant({ constant_name: "ОсновнаяВалюта", value: "USD" }),
+    );
+    expect(executed.write_safety).toBe("executed");
+
+    const fetchMock = mockFetch({ Value: "RUB" });
+    await handleRollbackWrite({ token: executed.rollback.token });
+    const [, opts] = fetchMock.mock.calls[0];
+    expect(opts.method).toBe("PATCH");
+    expect(JSON.parse(opts.body)).toEqual({ Value: "RUB" }); // не null
+  });
+
+  it.each([
+    ["ответ без поля Value", { SomethingElse: 1 }],
+    ["пустой конверт", { value: [] }],
+    ["значение скаляром в value", { value: "RUB" }],
+  ])("set_constant is refused when the previous value is unreadable (%s)", async (_name, resp) => {
+    process.env["ONEC_WRITE_MODE"] = "approval";
+    const fetchMock = mockFetch(resp);
+    await expect(
+      handleSetConstant({ constant_name: "ОсновнаяВалюта", value: "USD" }),
+    ).rejects.toThrow(/прежнее значение|отклонил операцию/);
+    // прочитали и остановились: PATCH не ушёл
+    expect(fetchMock.mock.calls.every((c: any[]) => c[1].method === "GET")).toBe(true);
+  });
+
+  it("a PATCH whose current state cannot be read is refused, no rollback token", async () => {
+    process.env["ONEC_WRITE_MODE"] = "preview";
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 403,
+      statusText: "Forbidden",
+      text: () => Promise.resolve("Недостаточно прав"),
+      headers: new Map(),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    const path = buildKeyedPath("Catalog_Номенклатура", GUID, undefined, { $format: "json" });
+    await expect(oneCPatch(path, { Description: "Кефир" })).rejects.toThrow(/отклонил операцию/);
+    expect(fetchMock.mock.calls.every((c: any[]) => c[1].method === "GET")).toBe(true);
+  });
+
   it("rejects an unknown rollback token", async () => {
     await expect(handleRollbackWrite({ token: "rb-deadbeefdeadbeef" })).rejects.toThrow(/Unknown/);
   });
@@ -352,7 +429,7 @@ describe("write gate is bound to the effect, not the spelling", () => {
       "fetch",
       vi.fn().mockResolvedValue({
         ok: true,
-        text: () => Promise.resolve(JSON.stringify({ Ref_Key: "x" })),
+        text: () => Promise.resolve(JSON.stringify({ Ref_Key: "x", Code: "0" })),
         headers: new Map(),
       }),
     );
