@@ -25,7 +25,7 @@
 | `tools/list` опубликованного пакета | ✅ 34 инструмента, все описания русские |
 | `private: true` в манифесте | ✅ отсутствует |
 | `.changeset/config.json` | ✅ `ignore` пуст |
-| MCPB-бандл | ✅ `mcpb/aprovodka-4.2.0.mcpb`, манифест проходит схему, 34 инструмента |
+| MCPB-бандл | ✅ `mcpb/aprovodka-4.3.0.mcpb`, манифест проходит схему, 34 инструмента |
 
 Пересобрать бандл после правок кода — **обязательно перед публикацией в Smithery**,
 иначе в каталог уедет старая сборка:
@@ -109,7 +109,7 @@ npx mcp-publisher status --status deleted    --all-versions -y io.github.theYahi
 npx @smithery/cli login                    # OAuth в браузере
 npx @smithery/cli namespace list           # проверить, нет ли unlisted-карточки со старым слугом
 npx @smithery/cli namespace create theyahia
-npx @smithery/cli mcp publish ./mcpb/aprovodka-4.2.0.mcpb -n theyahia/aprovodka
+npx @smithery/cli mcp publish ./mcpb/aprovodka-4.3.0.mcpb -n theyahia/aprovodka
 ```
 
 ⚠️ Перед публикацией сверить имя файла бандла с текущей версией пакета — в каталог

@@ -8,14 +8,14 @@
     "source": "github",
     "subfolder": "servers/aprovodka"
   },
-  "version": "4.1.0",
+  "version": "4.3.0",
   "websiteUrl": "https://github.com/theYahia/aprovodka",
   "packages": [
     {
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "@theyahia/aprovodka",
-      "version": "4.1.0",
+      "version": "4.3.0",
       "transport": {
         "type": "stdio"
       },

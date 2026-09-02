@@ -14,7 +14,7 @@
 
 > MCP-сервер для **1С:Предприятие** через REST API (OData 3.0) — справочники, документы, регистры,
 > бухгалтерия, константы, отчёты, пакетные операции и отслеживание изменений плюс discovery
-> метаданных. Версия 4.2.0: 34 инструмента в 11 модулях. Аутентификация HTTP Basic.
+> метаданных. Версия 4.3.0: 34 инструмента в 11 модулях. Аутентификация HTTP Basic.
 > Транспорты stdio и Streamable HTTP.
 
 [![npm](https://img.shields.io/npm/v/@theyahia/aprovodka)](https://www.npmjs.com/package/@theyahia/aprovodka)
