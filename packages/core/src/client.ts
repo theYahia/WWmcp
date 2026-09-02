@@ -133,6 +133,10 @@ export class BaseHttpClient {
     // routinely runs longer than the timeout — so a retry there duplicates the
     // document (and its ledger movements) in the customer's live database.
     const idempotent = method === "GET" || method === "HEAD";
+    // В логи уходит путь БЕЗ query-строки: в $filter лежат ИНН, GUID и суммы из
+    // чужой базы, а stderr клиента MCP живёт неопределённо долго. Сущности и
+    // метода хватает, чтобы понять, что именно тормозит.
+    const logPath = opts.path.split("?")[0];
 
     for (let attempt = 1; attempt <= this.maxRetries; attempt++) {
       const controller = new AbortController();
@@ -189,7 +193,7 @@ export class BaseHttpClient {
             status: response.status,
             delay,
             attempt,
-            path: opts.path,
+            path: logPath,
           });
           await new Promise((r) => setTimeout(r, delay));
           continue;
@@ -220,7 +224,7 @@ export class BaseHttpClient {
           if (idempotent && attempt < this.maxRetries) {
             this.logger?.warn("Request timeout, retrying", {
               attempt,
-              path: opts.path,
+              path: logPath,
             });
             continue;
           }
@@ -240,7 +244,7 @@ export class BaseHttpClient {
             this.logger?.warn("Network error, retrying", {
               attempt,
               code: netCode,
-              path: opts.path,
+              path: logPath,
             });
             continue;
           }
