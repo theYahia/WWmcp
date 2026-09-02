@@ -6,7 +6,10 @@
  * placed there — no per-tool changes, nothing to forget when a tool is added.
  *
  * Configuration (all opt-in; default = pre-4.0 behaviour, byte-identical):
- *   ONEC_WRITE_MODE      off (default) | preview | approval
+ *   ONEC_WRITE_MODE      off (default) | deny | preview | approval
+ *                        deny     — the 12 write tools are not registered at
+ *                                   all: the model never sees them. Read-only
+ *                                   engagements (сверка чужой базы) run here.
  *                        preview  — writes NEVER execute; every write tool
  *                                   returns a dry-run report instead.
  *                        approval — first call returns the dry-run report +
@@ -28,7 +31,7 @@
 import { createHash } from "node:crypto";
 import { appendFileSync } from "node:fs";
 
-export type WriteMode = "off" | "preview" | "approval";
+export type WriteMode = "off" | "deny" | "preview" | "approval";
 
 export interface WriteOp {
   method: "POST" | "PATCH" | "DELETE";
@@ -38,7 +41,7 @@ export interface WriteOp {
 
 export function getWriteMode(): WriteMode {
   const raw = (process.env["ONEC_WRITE_MODE"] ?? "off").trim().toLowerCase();
-  return raw === "preview" || raw === "approval" ? raw : "off";
+  return raw === "preview" || raw === "approval" || raw === "deny" ? raw : "off";
 }
 
 function approvalTtlSec(): number {
@@ -397,6 +400,15 @@ export async function guardWrite(
 ): Promise<unknown> {
   const mode = getWriteMode();
   const hash = opHash(op);
+
+  // deny: write tools are not registered, so this is unreachable through the
+  // MCP surface — kept as the second rubbish barrier for any internal caller.
+  if (mode === "deny") {
+    appendAudit({ event: "denied", mode, method: op.method, path: op.path });
+    throw new Error(
+      "ONEC_WRITE_MODE=deny — сервер запущен в режиме только чтения, запись в 1С недоступна.",
+    );
+  }
 
   if (mode !== "off" && !consumeApproval(hash)) {
     const preview = await buildPreview(op, hash, mode, read);

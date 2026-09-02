@@ -239,7 +239,7 @@ Includes session management (`mcp-session-id` header), CORS, graceful shutdown.
 | `ONEC_LOGIN` | yes | Login for HTTP Basic auth. |
 | `ONEC_PASSWORD` | yes | Password for HTTP Basic auth. |
 | `ONEC_SERVICES` | no | Comma-separated module list (default: `all`). |
-| `ONEC_WRITE_MODE` | no | Write-safety gate: `off` (default) / `preview` / `approval`. See [Write safety](#write-safety). |
+| `ONEC_WRITE_MODE` | no | Write-safety gate: `off` (default) / `deny` / `preview` / `approval`. See [Write safety](#write-safety). |
 | `ONEC_APPROVAL_TTL_SEC` | no | Lifetime of a pending approval, seconds (default `300`). |
 | `ONEC_AUDIT_LOG` | no | Path to a JSONL audit ledger for every gated write. Fail-closed: if it cannot be written, the write is refused. |
 | `ONEC_AUDIT_ACTOR` | no | Actor name recorded in the ledger (defaults to `ONEC_LOGIN`). |
@@ -270,10 +270,11 @@ accounting is a different risk class from reading it.
 | Mode | Behaviour |
 |------|-----------|
 | `off` (default) | Writes execute immediately. Byte-for-byte the pre-4.1 behaviour. |
+| `deny` | **Read-only.** The 12 write tools are not registered at all — the model never sees them in the tool list, instead of being refused at call time. 22 read tools remain. The mode for read-only engagements on someone else's database. |
 | `preview` | **Nothing is ever written.** Every mutation returns a dry-run envelope: the method, the resolved path, the diff `from` → `to`, and an `op_hash`. |
 | `approval` | Every mutation is refused once with an `op_hash`, and executes only after `approve_write` is called with that hash. Approvals are single-use and expire (`ONEC_APPROVAL_TTL_SEC`). |
 
-Two extra tools appear while the gate is on (they are absent in `off`):
+Two extra tools appear in `preview` and `approval` (they are absent in `off` and `deny`):
 
 | Tool | Description |
 |------|-------------|

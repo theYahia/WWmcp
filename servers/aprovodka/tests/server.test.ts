@@ -146,6 +146,61 @@ describe("registration matches the counters", () => {
   });
 });
 
+/**
+ * ONEC_WRITE_MODE=deny — режим «только чтение» для работ на чужой базе:
+ * пишущих инструментов не должно быть в реестре вообще, а не «отказ при вызове».
+ */
+describe("ONEC_WRITE_MODE=deny", () => {
+  const originalEnv = { ...process.env };
+  afterEach(() => {
+    process.env = { ...originalEnv };
+  });
+
+  /** Все 12 пишущих инструментов сервера. */
+  const WRITE_TOOLS = [
+    "create_catalog_item", "update_catalog_item",
+    "create_document", "update_document", "post_document", "unpost_document", "delete_document",
+    "write_information_register", "set_constant", "set_deletion_mark",
+    "batch_create_documents", "batch_update_catalog_items",
+  ];
+
+  it("registers exactly 22 tools and none of them writes", async () => {
+    delete process.env["ONEC_SERVICES"];
+    process.env["ONEC_WRITE_MODE"] = "deny";
+    const names = await listRegisteredTools();
+    expect(names.length).toBe(22);
+    for (const w of WRITE_TOOLS) expect(names).not.toContain(w);
+    // approve_write/rollback_write тоже не нужны — одобрять нечего.
+    expect(names).not.toContain("approve_write");
+    expect(names).not.toContain("rollback_write");
+    // читающие на месте
+    expect(names).toContain("get_documents");
+    expect(names).toContain("list_entities");
+    expect(names.length).toBe(countRegisteredTools(getEnabledModules()));
+  });
+
+  it("counter matches registration under a module filter too", async () => {
+    process.env["ONEC_SERVICES"] = "documents,batch";
+    process.env["ONEC_WRITE_MODE"] = "deny";
+    const names = await listRegisteredTools();
+    expect(names.length).toBe(countRegisteredTools(getEnabledModules()));
+    expect(names).toContain("get_documents");
+    expect(names).toContain("batch_query");
+    expect(names).not.toContain("post_document");
+  });
+
+  it("off / preview / approval keep the full write surface (no regression)", async () => {
+    delete process.env["ONEC_SERVICES"];
+    for (const mode of ["off", "preview", "approval"]) {
+      process.env["ONEC_WRITE_MODE"] = mode;
+      const names = await listRegisteredTools();
+      for (const w of WRITE_TOOLS) expect(names, mode).toContain(w);
+      expect(names.length, mode).toBe(mode === "off" ? 34 : 36);
+      expect(names.length, mode).toBe(countRegisteredTools(getEnabledModules()));
+    }
+  });
+});
+
 describe("createServer", () => {
   const originalEnv = { ...process.env };
   beforeEach(() => {

@@ -97,6 +97,19 @@ export const MODULE_TOOL_COUNTS = {
   changes: 2,     // poll_changes_since + list_subscriptions
 } as const;
 
+/**
+ * Из скольких инструментов модуля пишут в 1С. При ONEC_WRITE_MODE=deny они не
+ * регистрируются вовсе, поэтому счётчик обязан вычитать ровно столько же.
+ */
+export const MODULE_WRITE_TOOL_COUNTS: Partial<Record<keyof typeof MODULE_TOOL_COUNTS, number>> = {
+  catalogs: 2,   // create_catalog_item + update_catalog_item
+  documents: 5,  // create/update/post/unpost/delete_document
+  registers: 1,  // write_information_register
+  constants: 1,  // set_constant
+  shortcuts: 1,  // set_deletion_mark
+  batch: 2,      // batch_create_documents + batch_update_catalog_items
+};
+
 export type ModuleName = keyof typeof MODULE_TOOL_COUNTS;
 const OPTIONAL_MODULES: ModuleName[] = [
   "catalogs", "documents", "registers", "reports", "odata",
@@ -124,10 +137,16 @@ export function getEnabledModules(): Set<ModuleName> {
 }
 
 export function countRegisteredTools(modules: Set<ModuleName>): number {
+  const mode = getWriteMode();
   let count = 0;
-  for (const m of modules) count += MODULE_TOOL_COUNTS[m];
-  // approve_write + rollback_write exist only while the write gate is on.
-  if (getWriteMode() !== "off") count += 2;
+  for (const m of modules) {
+    count += MODULE_TOOL_COUNTS[m];
+    // deny: пишущие инструменты не регистрируются вообще.
+    if (mode === "deny") count -= MODULE_WRITE_TOOL_COUNTS[m] ?? 0;
+  }
+  // approve_write + rollback_write существуют только при preview/approval:
+  // в deny одобрять нечего, в off гейта нет.
+  if (mode === "preview" || mode === "approval") count += 2;
   return count;
 }
 
@@ -138,6 +157,14 @@ export function createServer(): McpServer {
   });
 
   const modules = getEnabledModules();
+
+  // ONEC_WRITE_MODE=deny — режим «только чтение» для работ на чужой базе:
+  // 12 пишущих инструментов не регистрируются, модель их даже не видит.
+  // Регистрация именно этих 12 идёт через writeTool вместо server.tool.
+  const writeTool: typeof server.tool =
+    getWriteMode() === "deny"
+      ? ((() => undefined) as unknown as typeof server.tool)
+      : server.tool.bind(server);
 
   // Описания читает модель: без явной строки про has_more она не поймёт, что выдача
   // обрезана и что делать дальше. Держим одной константой, чтобы формулировка не
@@ -217,7 +244,7 @@ export function createServer(): McpServer {
       })),
     );
 
-    server.tool(
+    writeTool(
       "create_catalog_item",
       "Создание нового элемента справочника через OData POST (например, добавить Контрагента или " +
       "позицию Номенклатуры).",
@@ -227,7 +254,7 @@ export function createServer(): McpServer {
       })),
     );
 
-    server.tool(
+    writeTool(
       "update_catalog_item",
       "Изменение существующего элемента справочника через OData PATCH (по Ref_Key, GUID).",
       updateCatalogItemSchema.shape,
@@ -247,7 +274,7 @@ export function createServer(): McpServer {
       })),
     );
 
-    server.tool(
+    writeTool(
       "create_document",
       "Создание нового документа 1С через OData POST.",
       createDocumentSchema.shape,
@@ -256,7 +283,7 @@ export function createServer(): McpServer {
       })),
     );
 
-    server.tool(
+    writeTool(
       "update_document",
       "Изменение существующего документа 1С через OData PATCH (по Ref_Key, GUID).",
       updateDocumentSchema.shape,
@@ -265,7 +292,7 @@ export function createServer(): McpServer {
       })),
     );
 
-    server.tool(
+    writeTool(
       "post_document",
       "Проведение документа 1С через связанное действие OData Post(). Для оперативного проведения " +
       "указать operational=true.",
@@ -275,7 +302,7 @@ export function createServer(): McpServer {
       })),
     );
 
-    server.tool(
+    writeTool(
       "unpost_document",
       "Отмена проведения документа 1С через связанное действие OData Unpost().",
       unpostDocumentSchema.shape,
@@ -284,7 +311,7 @@ export function createServer(): McpServer {
       })),
     );
 
-    server.tool(
+    writeTool(
       "delete_document",
       "Физическое удаление документа 1С через OData DELETE (по Ref_Key). Для обратимого удаления " +
       "предпочтительнее set_deletion_mark — он ставит пометку на удаление.",
@@ -316,7 +343,7 @@ export function createServer(): McpServer {
       })),
     );
 
-    server.tool(
+    writeTool(
       "write_information_register",
       "Запись в независимый регистр сведений (OData POST на InformationRegister_*).",
       writeInformationRegisterSchema.shape,
@@ -369,7 +396,7 @@ export function createServer(): McpServer {
       })),
     );
 
-    server.tool(
+    writeTool(
       "set_constant",
       "Запись значения константы 1С через OData PATCH (поле Value).",
       setConstantSchema.shape,
@@ -431,7 +458,7 @@ export function createServer(): McpServer {
       })),
     );
 
-    server.tool(
+    writeTool(
       "set_deletion_mark",
       "Установка или снятие пометки на удаление (DeletionMark) у элемента справочника или документа — " +
       "обратимое удаление.",
@@ -453,7 +480,7 @@ export function createServer(): McpServer {
   }
 
   if (modules.has("batch")) {
-    server.tool(
+    writeTool(
       "batch_create_documents",
       "Параллельное создание N документов 1С (от 1 до 100 за вызов). 1С не поддерживает OData $batch " +
       "— пакет собирается на стороне клиента, с ограничением параллелизма и отчётом об успехе или " +
@@ -464,7 +491,7 @@ export function createServer(): McpServer {
       })),
     );
 
-    server.tool(
+    writeTool(
       "batch_update_catalog_items",
       "Параллельное изменение N элементов справочников (от 1 до 100). Каждый элемент правится через " +
       "OData PATCH по своему Ref_Key. По каждой позиции отдельно сообщается успех или ошибка; отказ " +
@@ -514,7 +541,9 @@ export function createServer(): McpServer {
 
   // ── Write-safety gate (ONEC_WRITE_MODE=preview|approval) ──
   // Off by default: writes behave exactly as before and these tools do not exist.
-  if (getWriteMode() !== "off") {
+  // В deny одобрять нечего — пишущих инструментов в реестре нет.
+  const gateMode = getWriteMode();
+  if (gateMode === "preview" || gateMode === "approval") {
     server.tool(
       "approve_write",
       "Одобрение ОДНОЙ отложенной операции записи в 1С по значению op_hash из её предпросмотра. " +
