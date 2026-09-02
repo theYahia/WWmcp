@@ -66,7 +66,7 @@ export function toPage(result: unknown, top: number, skip?: number): unknown {
  * `sanitizeApiResponse` заменяет найденные шаблоны на `[filtered]` и может немного
  * удлинить текст. Лимит в ядре не трогаем — он общий для всех серверов монорепы.
  */
-const RESPONSE_BUDGET = 45_000;
+export const RESPONSE_BUDGET = 45_000;
 
 const TRUNCATED_NOTE =
   "Ответ обрезан по целым записям, чтобы остаться валидным JSON. " +

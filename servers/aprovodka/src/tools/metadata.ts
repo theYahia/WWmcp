@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { stringifyCapped, requireCollection } from "../lib/paging.js";
-import { oneCGet, buildODataPath, escapeODataString } from "../client.js";
+import { stringifyCapped, requireCollection, RESPONSE_BUDGET } from "../lib/paging.js";
+import { oneCGet, buildODataPath, escapeODataString, getBaseUrl } from "../client.js";
 import { odataDate, normaliseEntity } from "../validation.js";
 
 // ──────────────────────────────────────────────────────────────
@@ -20,6 +20,31 @@ import { odataDate, normaliseEntity } from "../validation.js";
  * ChartOfCalculationTypes_, ChartOfCharacteristicTypes_), и дробить их на три
  * значения enum ради полноты — менять одну ловушку на другую.
  */
+// ──────────────────────────────────────────────────────────────
+// Процессный кэш схемы
+// ──────────────────────────────────────────────────────────────
+
+/**
+ * `$metadata` и корень OData описывают конфигурацию, а она в пределах жизни
+ * процесса не меняется. При этом `$metadata` — самый тяжёлый вызов сервера
+ * (на ERP 2 / БП 3.0 это десятки мегабайт EDMX), а prompt `inventory-database`
+ * велит звать discovery по 5–10 раз подряд.
+ *
+ * Ключ — `baseUrl`: сменили базу, получите её собственную схему, а не чужую.
+ * Инвалидации по времени нет и не нужно — перезапуск клиента дешевле.
+ *
+ * ponytail: две отдельные Map вместо общего кэша ответов — типы разные (строка
+ * EDMX и разобранный массив сущностей), а больше кэшировать тут нечего.
+ */
+const metadataCache = new Map<string, string>();
+const rootCache = new Map<string, Array<{ name: string; url: string }>>();
+
+/** Сбросить процессный кэш схемы (нужен тестам: один процесс — много баз-моков). */
+export function resetMetadataCache(): void {
+  metadataCache.clear();
+  rootCache.clear();
+}
+
 export const ENTITY_PREFIX_FILTERS: Record<string, string[]> = {
   catalogs:  ["Catalog_"],
   documents: ["Document_"],
@@ -57,9 +82,15 @@ export async function handleListEntities(
   params: z.infer<typeof listEntitiesSchema>,
 ): Promise<string> {
   // GET /odata/standard.odata/ возвращает JSON-массив всех EntitySet
-  const raw = await oneCGet("/odata/standard.odata/?$format=json");
-
-  let entities = requireCollection(raw, "list_entities") as Array<{ name: string; url: string }>;
+  const cacheKey = getBaseUrl();
+  let all = rootCache.get(cacheKey);
+  if (!all) {
+    const raw = await oneCGet("/odata/standard.odata/?$format=json");
+    all = requireCollection(raw, "list_entities") as Array<{ name: string; url: string }>;
+    rootCache.set(cacheKey, all);
+  }
+  // Фильтры ниже возвращают новые массивы — кэшированный не мутируется.
+  let entities = all;
 
   // Фильтрация по типу
   if (params.type !== "all") {
@@ -129,12 +160,39 @@ export async function handleGetDocumentByNumber(
 
 export const getMetadataSchema = z.object({});
 
+/**
+ * Общий таймаут клиента — 15 с (`src/client.ts`), и на крупной конфигурации
+ * `$metadata` не успевал ни разу: три попытки по 15 с и гарантированный отказ.
+ * Здесь свой потолок, потому что это единственный запрос сервера, который
+ * законно идёт минуты.
+ */
+const METADATA_TIMEOUT_MS = 120_000;
+
 export async function handleGetMetadata(
   _params: z.infer<typeof getMetadataSchema>,
 ): Promise<string> {
-  // $metadata возвращает XML (EDMX) — oneCGet вернёт его строкой (JSON.parse упадёт → текст).
-  const result = await oneCGet("/odata/standard.odata/$metadata");
-  return typeof result === "string" ? result : JSON.stringify(result);
+  const cacheKey = getBaseUrl();
+  let xml = metadataCache.get(cacheKey);
+  if (xml === undefined) {
+    // $metadata возвращает XML (EDMX) — oneCGet вернёт его строкой (JSON.parse упадёт → текст).
+    const result = await oneCGet("/odata/standard.odata/$metadata", {
+      timeout: METADATA_TIMEOUT_MS,
+    });
+    xml = typeof result === "string" ? result : JSON.stringify(result);
+    // Кэшируем и слишком большой ответ: повторно тянуть десятки мегабайт минуту,
+    // чтобы снова упереться в тот же лимит, — худшее из двух зол.
+    metadataCache.set(cacheKey, xml);
+  }
+  // Обрубок EDMX хуже отказа: модель получает невалидный XML и додумывает схему.
+  if (xml.length > RESPONSE_BUDGET) {
+    throw new Error(
+      `Метаданные слишком велики: ${xml.length} символов при лимите ответа ${RESPONSE_BUDGET}. ` +
+        "Отдать их обрезанными нельзя — получился бы невалидный XML, по которому схему не прочитать. " +
+        "Используйте describe_entity для конкретной сущности (поля по образцу записи) " +
+        "или list_entities, чтобы сначала найти нужное имя.",
+    );
+  }
+  return xml;
 }
 
 // ──────────────────────────────────────────────────────────────

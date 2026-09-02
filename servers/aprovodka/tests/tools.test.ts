@@ -25,6 +25,7 @@ import {
   handleGetDocumentByNumber,
   handleGetMetadata,
   handleDescribeEntity,
+  resetMetadataCache,
 } from "../src/tools/metadata.js";
 import {
   handleFindByDescription,
@@ -61,12 +62,14 @@ describe("tool handlers", () => {
     process.env["ONEC_LOGIN"] = "admin";
     process.env["ONEC_PASSWORD"] = "secret";
     resetClient();
+    resetMetadataCache();
   });
 
   afterEach(() => {
     process.env = { ...originalEnv };
     vi.restoreAllMocks();
     resetClient();
+    resetMetadataCache();
   });
 
   it("handleGetCatalogs returns JSON string", async () => {
@@ -554,6 +557,7 @@ describe("accounting virtual tables", () => {
     process.env["ONEC_LOGIN"] = "u";
     process.env["ONEC_PASSWORD"] = "p";
     resetClient();
+    resetMetadataCache();
   });
   afterEach(() => {
     vi.unstubAllGlobals();
@@ -639,6 +643,7 @@ describe("entity name symmetry (normaliseEntity)", () => {
     process.env["ONEC_LOGIN"] = "u";
     process.env["ONEC_PASSWORD"] = "p";
     resetClient();
+    resetMetadataCache();
   });
   afterEach(() => {
     vi.unstubAllGlobals();
@@ -699,6 +704,7 @@ describe("list_entities type filter", () => {
     process.env["ONEC_LOGIN"] = "u";
     process.env["ONEC_PASSWORD"] = "p";
     resetClient();
+    resetMetadataCache();
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue({
@@ -758,10 +764,12 @@ describe("unexpected response format is an error, not an empty list", () => {
     process.env["ONEC_LOGIN"] = "u";
     process.env["ONEC_PASSWORD"] = "p";
     resetClient();
+    resetMetadataCache();
   });
   afterEach(() => {
     vi.unstubAllGlobals();
     resetClient();
+    resetMetadataCache();
   });
 
   const respondWith = (body: string) =>

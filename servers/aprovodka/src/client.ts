@@ -21,7 +21,12 @@ async function withOneCErrorEnrichment<T>(p: Promise<T>): Promise<T> {
   }
 }
 
-function getBaseUrl(): string {
+/**
+ * Адрес публикации OData. Экспортирован, потому что процессные кэши
+ * (`src/tools/metadata.ts`) обязаны быть привязаны к базе: сменили ONEC_BASE_URL —
+ * ответ другой конфигурации нельзя выдавать из кэша прежней.
+ */
+export function getBaseUrl(): string {
   const url = process.env["ONEC_BASE_URL"] ?? process.env["1C_BASE_URL"];
   if (!url) {
     throw new Error(
@@ -147,8 +152,13 @@ async function limited<T>(fn: () => Promise<T>): Promise<T> {
   }
 }
 
-export async function oneCGet(path: string): Promise<unknown> {
-  return withOneCErrorEnrichment(limited(() => getClient().request({ method: "GET", path })));
+export async function oneCGet(
+  path: string,
+  opts?: { timeout?: number },
+): Promise<unknown> {
+  return withOneCErrorEnrichment(
+    limited(() => getClient().request({ method: "GET", path, timeout: opts?.timeout })),
+  );
 }
 
 /**

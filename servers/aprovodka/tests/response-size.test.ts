@@ -13,7 +13,7 @@ import { fileURLToPath } from "node:url";
 import { handleGetDocuments } from "../src/tools/documents.js";
 import { handleODataQuery } from "../src/tools/odata-query.js";
 import { handleGetRegister } from "../src/tools/registers.js";
-import { handleListEntities } from "../src/tools/metadata.js";
+import { handleListEntities, resetMetadataCache } from "../src/tools/metadata.js";
 import { handlePollChangesSince } from "../src/tools/change-tracking.js";
 import { resetClient } from "../src/client.js";
 
@@ -69,12 +69,14 @@ describe("обрезка по записям, а не по символам", ()
     process.env["ONEC_LOGIN"] = "admin";
     process.env["ONEC_PASSWORD"] = "secret";
     resetClient();
+    resetMetadataCache();
   });
 
   afterEach(() => {
     process.env = { ...originalEnv };
     vi.restoreAllMocks();
     resetClient();
+    resetMetadataCache();
   });
 
   it("get_documents при 5000 записях: валидный JSON, truncated с числом отброшенных", async () => {
