@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { RateLimiter, RateLimiterPool } from "../src/rate-limiter.js";
 
 describe("RateLimiter", () => {
@@ -47,10 +47,18 @@ describe("RateLimiter", () => {
   });
 
   it("should deduct penalty tokens", () => {
-    const before = limiter.availableTokens;
-    limiter.applyPenalty(5);
-    const after = limiter.availableTokens;
-    expect(after).toBeLessThanOrEqual(before - 5);
+    // Корзина пополняется по Date.now(), поэтому время замораживаем:
+    // иначе между двумя чтениями availableTokens набегает refill и на
+    // медленной машине проверка падает без всякой ошибки в коде.
+    vi.useFakeTimers();
+    try {
+      const before = limiter.availableTokens;
+      limiter.applyPenalty(5);
+      const after = limiter.availableTokens;
+      expect(after).toBeLessThanOrEqual(before - 5);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("should not go below 0 tokens on penalty", () => {
