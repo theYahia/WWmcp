@@ -366,7 +366,9 @@ export function createServer(): McpServer {
   if (modules.has("reports")) {
     server.tool(
       "get_report",
-      "Получение отчёта 1С через произвольный URL HTTP-сервиса (/hs/...).",
+      "Получение данных HTTP-сервиса конфигурации 1С (/hs/...) или штатной публикации OData " +
+      "по относительному пути. Другие адреса на сервере 1С (/e1cib/, служебные точки " +
+      "публикации) отклоняются.",
       getReportSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleGetReport(params) }],

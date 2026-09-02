@@ -150,7 +150,7 @@ describe("tool handlers", () => {
     expect(url).toContain("InformationRegister_");
   });
 
-  it("handleGetReport hits arbitrary URL", async () => {
+  it("handleGetReport passes an allowed /hs/ path through", async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       text: () => Promise.resolve(JSON.stringify({ balance: 100 })),
@@ -160,6 +160,31 @@ describe("tool handlers", () => {
 
     const result = await handleGetReport({ report_url: "/hs/reports/balance" });
     expect(result).toContain("balance");
+  });
+
+  // get_report — единственный инструмент со свободным путём: без белого списка модель
+  // дотягивается под учётной записью сервера до /e1cib/ и служебных точек публикации.
+  it.each([
+    ["/e1cib/data/Catalog.Контрагенты", /белый список|e1cib/],
+    ["/odata/standard.odata/../../e1cib/data", /переход вверх/],
+    ["/hs/svc/%2e%2e/%2e%2e/e1cib", /переход вверх/],
+    ["http://evil.example.com/steal", /абсолютный URL/],
+    ["//evil.example.com/steal", /protocol-relative/],
+    ["hs/reports/balance", /должен начинаться с/],
+    ["/DefaultVSSetting", /белый список/],
+  ])("handleGetReport refuses %s", async (url, expected) => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    await expect(handleGetReport({ report_url: url })).rejects.toThrow(expected);
+    // Отказ до сети: запрос под нашими кредами вообще не уходит.
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("handleGetReport still allows the OData publication path with a query", async () => {
+    mockFetchOk({ value: [] });
+    await expect(
+      handleGetReport({ report_url: "/odata/standard.odata/Report_Продажи?$format=json" }),
+    ).resolves.toContain("value");
   });
 
   it("handleODataQuery passes through filter+expand", async () => {

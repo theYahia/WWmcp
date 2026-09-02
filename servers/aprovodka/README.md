@@ -114,7 +114,7 @@ Tool names, arguments, return formats, and the `ONEC_*` env vars are unchanged.
 
 | Tool | Description |
 |------|-------------|
-| `get_report` | Get a 1C report from a relative HTTP service URL (`/hs/...`). Restricted to the configured `ONEC_BASE_URL` origin. |
+| `get_report` | Read a configuration HTTP service by relative path. Prefix allow-list: `/hs/` and `/odata/standard.odata`; anything else on the 1C host (`/e1cib/`, service publication endpoints) is refused, as is a foreign host (origin checked against `ONEC_BASE_URL`). |
 
 ### Generic OData — `odata`
 
