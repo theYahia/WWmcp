@@ -40,11 +40,6 @@ export async function handleGetAccountingRegister(
 
 /**
  * Таблицы, чьи ИМЕНА подтверждены источниками из `presets/common.ts`.
- *
- * Обороты по дебету/кредиту сюда НЕ включены сознательно: в прочитанных
- * источниках имя таблицы однозначно не зафиксировано (DrCrTurnover либо
- * DrCrTurnovers — см. `COMMON.accounting_virtual_tables._todo`), а угадывать
- * имя, которое уйдёт в боевой запрос, нельзя.
  */
 export const ACCOUNTING_VIRTUAL_TABLES = [
   "Balance",
@@ -54,20 +49,33 @@ export const ACCOUNTING_VIRTUAL_TABLES = [
   "ExtDimensions",
 ] as const;
 
+/**
+ * Обороты по дебету/кредиту: таблица в платформе есть, но её имя в прочитанных
+ * источниках однозначно не зафиксировано — DrCrTurnover либо DrCrTurnovers
+ * (см. `COMMON.accounting_virtual_tables._unsupported`). Угадывать имя, которое уйдёт
+ * в боевой запрос, нельзя.
+ *
+ * Раньше эти имена просто не попадали в enum, и вызов отбивался «invalid enum
+ * value». Из такого ответа не следует ни что таблица существует, ни что с этим
+ * делать дальше — молчание вместо объяснения. Теперь имена принимаются, а
+ * инструмент говорит, чего именно не хватает и как это подтвердить на базе.
+ */
+export const UNCONFIRMED_ACCOUNTING_TABLES = ["DrCrTurnover", "DrCrTurnovers"] as const;
+
 export const getAccountingBalanceSchema = z.object({
   register_name: z
     .string()
     .default("Хозрасчетный")
     .describe("Имя регистра бухгалтерии — с префиксом AccountingRegister_ или без него"),
   table: z
-    .enum(ACCOUNTING_VIRTUAL_TABLES)
+    .enum([...ACCOUNTING_VIRTUAL_TABLES, ...UNCONFIRMED_ACCOUNTING_TABLES])
     .default("Balance")
     .describe(
       "Виртуальная таблица. Balance — остатки на дату (period). " +
       "Turnovers / BalanceAndTurnovers — за период (start_period + end_period). " +
       "RecordsWithExtDimensions / ExtDimensions — субконто. " +
-      "Оборотов Дт/Кт в списке НЕТ: точное имя таблицы первоисточником не подтверждено — " +
-      "сверьте по get_metadata своей базы.",
+      "DrCrTurnover / DrCrTurnovers (обороты Дт/Кт) НЕ поддержаны: имя таблицы " +
+      "первоисточником не подтверждено. Вызов вернёт объяснение и путь в обход.",
     ),
   period: odataDateTime
     .optional()
@@ -104,6 +112,17 @@ export async function handleGetAccountingBalance(
   // Кросс-полевые проверки живут здесь, а не в zod .refine(): server.tool()
   // получает только .shape, SDK пересобирает свой z.object, и refinement
   // уровня объекта молча теряется на каждом реальном вызове.
+  if ((UNCONFIRMED_ACCOUNTING_TABLES as readonly string[]).includes(params.table)) {
+    throw new Error(
+      `Обороты Дт/Кт (${params.table}) инструментом не поддержаны: точное имя виртуальной ` +
+      "таблицы — DrCrTurnover или DrCrTurnovers — ни в одном прочитанном источнике не " +
+      "зафиксировано, а неверное имя даст 404 без внятной причины. " +
+      "Как обойти: (1) get_metadata / describe_entity на своей базе — найти фактическое имя " +
+      "в описании AccountingRegister_*; (2) вызвать его через odata_query, который имя не " +
+      "трогает. Подтверждённое имя стоит прислать в проект — задача WORK-1516. " +
+      "Остатки и обороты по счёту доступны уже сейчас: table=BalanceAndTurnovers.",
+    );
+  }
   const periodic = params.table === "Turnovers" || params.table === "BalanceAndTurnovers";
   if (params.table === "Balance" && (params.start_period || params.end_period)) {
     throw new Error(

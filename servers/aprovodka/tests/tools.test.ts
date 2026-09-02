@@ -616,6 +616,19 @@ describe("accounting virtual tables", () => {
     ).rejects.toThrow(/Balance takes/);
   });
 
+  it("handleGetAccountingBalance объясняет, почему оборотов Дт/Кт нет, а не молчит", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(okJson({ value: [] }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    for (const table of ["DrCrTurnover", "DrCrTurnovers"] as const) {
+      await expect(
+        handleGetAccountingBalance({ register_name: "Хозрасчетный", table }),
+      ).rejects.toThrow(/не поддержаны[\s\S]*odata_query/i);
+    }
+    // Главное: запрос с неподтверждённым именем таблицы в базу НЕ уходит.
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
   it("handleGetAccountingBalance doubles a quote in account_condition", async () => {
     const fetchMock = vi.fn().mockResolvedValue(okJson({ value: [] }));
     vi.stubGlobal("fetch", fetchMock);
