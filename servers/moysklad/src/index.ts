@@ -3,135 +3,97 @@
 /**
  * @theyahia/moysklad-mcp — MCP server for MoySklad ERP/inventory API
  *
- * 10 tools: search_products, get_product, create_product, update_prices,
- * get_stock, get_counterparties, create_customer_order, get_orders,
- * get_profit_report, create_supply.
+ * 60 tools across 16 modules: catalog, stock, counterparties, orders,
+ * shipments, warehouse documents (move/enter/loss/inventory/returns),
+ * finance (payments, cash, invoices), reports, reference lists and audit log.
  *
  * Auth: Bearer token (MOYSKLAD_TOKEN) or Basic (MOYSKLAD_LOGIN + MOYSKLAD_PASSWORD).
- * Rate limit: token bucket 45 req / 3s.
+ * Rate limit: token bucket 45 req / 3s (stock reports charged 5 units each).
  *
  * Transports: stdio (default), Streamable HTTP (--http or HTTP_PORT)
  */
 
+import { readFileSync } from "node:fs";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { createLogger, runServer, withErrorHandling } from "@theyahia/mcp-core";
-import {
-  searchProductsSchema, handleSearchProducts,
-  getProductSchema, handleGetProduct,
-  createProductSchema, handleCreateProduct,
-  updatePricesSchema, handleUpdatePrices,
-} from "./tools/products.js";
-import { getStockSchema, handleGetStock } from "./tools/stock.js";
-import { createCustomerOrderSchema, handleCreateCustomerOrder, getOrdersSchema, handleGetOrders } from "./tools/orders.js";
-import { getCounterpartiesSchema, handleGetCounterparties } from "./tools/counterparties.js";
-import { getProfitReportSchema, handleGetProfitReport } from "./tools/reports.js";
-import { createSupplySchema, handleCreateSupply } from "./tools/supply.js";
+import type { ToolDef } from "./types.js";
+
+import { tools as productTools } from "./tools/products.js";
+import { tools as stockTools } from "./tools/stock.js";
+import { tools as counterpartyTools } from "./tools/counterparties.js";
+import { tools as orderTools } from "./tools/orders.js";
+import { tools as reportTools } from "./tools/reports.js";
+import { tools as supplyTools } from "./tools/supply.js";
+import { tools as shipmentTools } from "./tools/shipments.js";
+import { tools as storeTools } from "./tools/stores.js";
+import { tools as organizationTools } from "./tools/organizations.js";
+import { tools as webhookTools } from "./tools/webhooks.js";
+import { tools as documentTools } from "./tools/documents.js";
+import { tools as financeTools } from "./tools/finance.js";
+import { tools as catalogTools } from "./tools/catalog.js";
+import { tools as reportsExtraTools } from "./tools/reports_extra.js";
+import { tools as referenceTools } from "./tools/reference.js";
+import { tools as auditTools } from "./tools/audit.js";
 
 const logger = createLogger("moysklad-mcp");
 
+const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8")) as { version: string };
+const VERSION: string = pkg.version;
+
+const ALL_TOOLS: ToolDef[] = [
+  ...productTools,
+  ...catalogTools,
+  ...stockTools,
+  ...counterpartyTools,
+  ...orderTools,
+  ...shipmentTools,
+  ...supplyTools,
+  ...documentTools,
+  ...financeTools,
+  ...reportTools,
+  ...reportsExtraTools,
+  ...storeTools,
+  ...organizationTools,
+  ...referenceTools,
+  ...webhookTools,
+  ...auditTools,
+];
+
+/**
+ * Numeric literal so `scripts/catalog.mjs` can read the declared count without
+ * running the server; the check below fails the process if it ever drifts from
+ * what is actually registered.
+ */
+export const TOOL_COUNT = 60;
+
+if (ALL_TOOLS.length !== TOOL_COUNT) {
+  throw new Error(`TOOL_COUNT is ${TOOL_COUNT} but ${ALL_TOOLS.length} tools are registered.`);
+}
+
 function createServer(): McpServer {
-  const server = new McpServer({
-    name: "moysklad-mcp",
-    version: "2.1.0",
-  });
+  const server = new McpServer({ name: "moysklad-mcp", version: VERSION });
 
-  server.tool(
-    "search_products",
-    "Search products in MoySklad by name or article/SKU. Returns a paginated list with sale and buy prices in rubles. Supports offset-based pagination up to 1000 results per page. Use filter_article for exact SKU lookup.",
-    searchProductsSchema.shape,
-    withErrorHandling(async (params) => ({
-      content: [{ type: "text", text: await handleSearchProducts(params) }],
-    })),
-  );
-
-  server.tool(
-    "get_product",
-    "Get a single product by its UUID. Returns full product details including name, article, code, description, sale/buy prices in rubles, weight, volume, and last update timestamp. Prices are returned in rubles (converted from kopecks internally).",
-    getProductSchema.shape,
-    withErrorHandling(async (params) => ({
-      content: [{ type: "text", text: await handleGetProduct(params) }],
-    })),
-  );
-
-  server.tool(
-    "create_product",
-    "Create a new product in MoySklad. Accepts name, article/SKU, description, code, prices in rubles (automatically converted to kopecks for the API), weight in grams, volume in liters, and VAT rate. Returns the created product with its assigned UUID.",
-    createProductSchema.shape,
-    withErrorHandling(async (params) => ({
-      content: [{ type: "text", text: await handleCreateProduct(params) }],
-    })),
-  );
-
-  server.tool(
-    "get_stock",
-    "Get current stock/inventory report from MoySklad. Shows quantities, reserves, and in-transit amounts for each product. Supports grouping by product, variant, or store, and filtering by stock level (positive, negative, empty, non-empty). Paginated.",
-    getStockSchema.shape,
-    withErrorHandling(async (params) => ({
-      content: [{ type: "text", text: await handleGetStock(params) }],
-    })),
-  );
-
-  server.tool(
-    "update_prices",
-    "Update sale, buy, or minimum prices for an existing product by UUID. All prices are specified in rubles and converted to kopecks internally. Preserves existing price type metadata when updating sale prices. Returns the updated product.",
-    updatePricesSchema.shape,
-    withErrorHandling(async (params) => ({
-      content: [{ type: "text", text: await handleUpdatePrices(params) }],
-    })),
-  );
-
-  server.tool(
-    "get_counterparties",
-    "Search counterparties (customers and suppliers) in MoySklad by name or INN (tax ID). Returns a paginated list with id, name, phone, email, INN, and company type. Use filter_inn for exact tax ID lookup. Supports offset-based pagination.",
-    getCounterpartiesSchema.shape,
-    withErrorHandling(async (params) => ({
-      content: [{ type: "text", text: await handleGetCounterparties(params) }],
-    })),
-  );
-
-  server.tool(
-    "create_customer_order",
-    "Create a customer order in MoySklad. Requires organization (seller) and agent (buyer) meta hrefs, plus at least one line item with product href and quantity. Prices in rubles are converted to kopecks internally. Supports per-line discounts.",
-    createCustomerOrderSchema.shape,
-    withErrorHandling(async (params) => ({
-      content: [{ type: "text", text: await handleCreateCustomerOrder(params) }],
-    })),
-  );
-
-  server.tool(
-    "get_orders",
-    "Get customer orders with filtering and sorting. Supports search by name/number, filtering by state name or counterparty, and sorting by created date, moment, or sum. Returns paginated results with order sums in rubles. Use expand parameter for nested entities.",
-    getOrdersSchema.shape,
-    withErrorHandling(async (params) => ({
-      content: [{ type: "text", text: await handleGetOrders(params) }],
-    })),
-  );
-
-  server.tool(
-    "get_profit_report",
-    "Get profit report by product from MoySklad. Shows sell quantity, sell sum, cost sum, return quantity, return sum, profit, and margin for each product. Supports date range filtering with moment_from/moment_to in ISO 8601 format. All monetary values in rubles.",
-    getProfitReportSchema.shape,
-    withErrorHandling(async (params) => ({
-      content: [{ type: "text", text: await handleGetProfitReport(params) }],
-    })),
-  );
-
-  server.tool(
-    "create_supply",
-    "Create an incoming supply (purchase receipt) in MoySklad. Records goods received from a supplier into a warehouse. Requires organization and agent meta hrefs, plus line items with product hrefs and quantities. Optionally specify warehouse, incoming document number, and date.",
-    createSupplySchema.shape,
-    withErrorHandling(async (params) => ({
-      content: [{ type: "text", text: await handleCreateSupply(params) }],
-    })),
-  );
+  const seen = new Set<string>();
+  for (const tool of ALL_TOOLS) {
+    if (seen.has(tool.name)) throw new Error(`Duplicate tool name: ${tool.name}`);
+    seen.add(tool.name);
+    server.tool(
+      tool.name,
+      tool.description,
+      tool.schema.shape,
+      withErrorHandling(async (params) => ({
+        content: [{ type: "text", text: await tool.handler(params) }],
+      })),
+    );
+  }
 
   return server;
 }
 
 runServer(createServer, {
   name: "moysklad-mcp",
-  version: "2.1.0",
-  toolCount: 10,
+  version: VERSION,
+  toolCount: TOOL_COUNT,
   logger,
 }).catch((error) => {
   logger.error("Fatal error", {
