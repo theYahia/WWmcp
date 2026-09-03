@@ -71,8 +71,13 @@
     "@modelcontextprotocol/sdk": "^1.12.1",
     "zod": "^4.4.3"
   },
-  "optionalDependencies": {
+  "peerDependencies": {
     "express": "^5.2.1"
+  },
+  "peerDependenciesMeta": {
+    "express": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@types/node": "^22.19.18",
