@@ -8,6 +8,8 @@ MCP-сервер для ELMA365 API — discovery схемы, элементы �
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![CI](https://github.com/theYahia/elma365-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/theYahia/elma365-mcp/actions)
 
+![Демонстрация: вопрос «какие задачи прилетели на меня и ещё не закрыты» — агент вызывает get_tasks и отвечает списком BPM-задач](./assets/demo.svg)
+
 Все эндпоинты сверены с официальной документацией [api.elma365.com](https://api.elma365.com/ru/public-api/reference/).
 
 ## Установка

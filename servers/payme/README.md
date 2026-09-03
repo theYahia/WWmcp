@@ -6,6 +6,8 @@
 [![npm downloads](https://img.shields.io/npm/dm/@theyahia/payme-mcp?label=downloads)](https://www.npmjs.com/package/@theyahia/payme-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+![Демонстрация: вопрос «какие чеки прошли за вчера и на какую сумму» — агент вызывает receipts_get_all и отвечает таблицей чеков](./assets/demo.svg)
+
 ## Установка
 
 ### Claude Desktop

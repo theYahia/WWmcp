@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 505" width="800" height="505" role="img" aria-label="AI chat: yesterday's approved MercadoPago payments via mercadopago-mcp">
+  <title>AI chat: yesterday's approved MercadoPago payments via mercadopago-mcp</title>
+  <rect x="1" y="1" width="798" height="503" rx="14" fill="#1B2028" stroke="#333C4A" stroke-width="2"/>
+  <path d="M1 56 H799" stroke="#333C4A" stroke-width="1.5"/>
+  <g fill="#3C4552"><circle cx="28" cy="28" r="6"/><circle cx="50" cy="28" r="6"/><circle cx="72" cy="28" r="6"/></g>
+  <text x="96" y="33" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" fill="#8B97A8">@theyahia/mercadopago-mcp</text>
+  <rect x="620" y="15" width="156" height="26" rx="13" fill="#232B36"/>
+  <text x="698" y="32" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" text-anchor="middle" fill="#8B97A8">sample data</text>
+  <text xml:space="preserve" x="28" y="90" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12.5" fill="#8B97A8">You</text>
+  <text xml:space="preserve" x="28" y="112" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#D9E0EA">Which payments were approved yesterday?</text>
+  <rect x="16" y="135" width="768" height="88" rx="8" fill="#232B36"/>
+  <text xml:space="preserve" x="28" y="153" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" fill="#3FB6E0">→ mercadopago-mcp · search_payments(status: "approved", range: "date_approved",</text>
+  <text xml:space="preserve" x="28" y="175" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" fill="#3FB6E0">                                    begin_date: "2026-09-02T00:00:00Z",</text>
+  <text xml:space="preserve" x="28" y="197" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" fill="#3FB6E0">                                    end_date: "2026-09-03T00:00:00Z", limit: 30)</text>
+  <text xml:space="preserve" x="28" y="261" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12.5" fill="#8B97A8">Claude</text>
+  <text xml:space="preserve" x="28" y="283" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">18 approved payments — 214 380,00 ARS. Three largest:</text>
+  <text xml:space="preserve" x="28" y="320" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8B97A8">external_reference</text>
+  <text xml:space="preserve" x="192.4" y="320" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8B97A8">transaction_amount</text>
+  <text xml:space="preserve" x="356.8" y="320" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8B97A8">payment_method_id</text>
+  <text xml:space="preserve" x="513.4" y="320" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8B97A8">status</text>
+  <path d="M28 330 H772" stroke="#333C4A" stroke-width="1.5"/>
+  <text xml:space="preserve" x="28" y="352" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">ORDER-2026-4471</text>
+  <text xml:space="preserve" x="192.4" y="352" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">38 900,00</text>
+  <text xml:space="preserve" x="356.8" y="352" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">visa</text>
+  <text xml:space="preserve" x="513.4" y="352" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">approved</text>
+  <text xml:space="preserve" x="28" y="377" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">ORDER-2026-4468</text>
+  <text xml:space="preserve" x="192.4" y="377" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">24 500,00</text>
+  <text xml:space="preserve" x="356.8" y="377" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">pix</text>
+  <text xml:space="preserve" x="513.4" y="377" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">approved</text>
+  <text xml:space="preserve" x="28" y="402" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">ORDER-2026-4462</text>
+  <text xml:space="preserve" x="192.4" y="402" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">19 250,00</text>
+  <text xml:space="preserve" x="356.8" y="402" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">master</text>
+  <text xml:space="preserve" x="513.4" y="402" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">approved</text>
+  <text xml:space="preserve" x="28" y="435" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">Refund one — refund_payment(payment_id, amount).</text>
+  <text xml:space="preserve" x="28" y="460" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">Whole order with shipments — search_merchant_orders(external_reference).</text>
+</svg>

@@ -6,6 +6,8 @@
 [![npm](https://img.shields.io/npm/v/@theyahia/bkash-mcp)](https://www.npmjs.com/package/@theyahia/bkash-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+![Демонстрация: вопрос «клиент говорит что оплатил счёт — прошёл ли платёж» — агент вызывает query_payment и отвечает статусом и суммой платежа bKash](./assets/demo.svg)
+
 ---
 
 ## Tools (8)

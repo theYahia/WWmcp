@@ -6,6 +6,8 @@
 [![npm](https://img.shields.io/npm/v/@theyahia/salla-mcp)](https://www.npmjs.com/package/@theyahia/salla-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+![Демонстрация: вопрос «какие заказы ждут проверки» — агент вызывает list_orders и отвечает таблицей заказов Salla](./assets/demo.svg)
+
 ---
 
 ### Migrating from v1.x

@@ -5,6 +5,8 @@ MCP server for T-Kassa (T-Bank/Tinkoff) payment API. **16 tools:** payments, ref
 [![npm](https://img.shields.io/npm/v/@theyahia/tkassa-mcp)](https://www.npmjs.com/package/@theyahia/tkassa-mcp)
 [![license](https://img.shields.io/npm/l/@theyahia/tkassa-mcp)](./LICENSE)
 
+![Демонстрация: вопрос «какие карты покупателя сохранены и какую можно списать» — агент вызывает get_card_list и отвечает таблицей карт](./assets/demo.svg)
+
 Part of the [WWmcp](https://github.com/theYahia/WWmcp) series (46 servers) by [@theYahia](https://github.com/theYahia).
 
 ## Quick Start

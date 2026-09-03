@@ -6,6 +6,8 @@
 [![npm](https://img.shields.io/npm/v/@theyahia/chapa-mcp)](https://www.npmjs.com/package/@theyahia/chapa-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+![Демонстрация: вопрос «какие платежи прошли на этой неделе» — агент вызывает list_transactions и отвечает таблицей транзакций Chapa](./assets/demo.svg)
+
 ---
 
 ## Tools (8)

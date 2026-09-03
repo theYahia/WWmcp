@@ -16,6 +16,8 @@
 [![npm](https://img.shields.io/npm/v/@theyahia/aprovodka)](https://www.npmjs.com/package/@theyahia/aprovodka)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+![Демонстрация: вопрос «какие реализации провели за квартал и на какую сумму» — агент вызывает get_documents и отвечает таблицей документов 1С](./assets/demo.svg)
+
 ---
 
 ### Migrating from @theyahia/1c-rest-mcp (v3.x → v4.0.0)

@@ -7,6 +7,8 @@
 [![npm](https://img.shields.io/npm/v/@theyahia/mercadopago-mcp)](https://www.npmjs.com/package/@theyahia/mercadopago-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+![Демонстрация: вопрос «какие платежи подтвердились вчера» — агент вызывает search_payments и отвечает таблицей платежей MercadoPago](./assets/demo.svg)
+
 ---
 
 ## Tools (10)

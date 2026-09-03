@@ -7,6 +7,8 @@ MCP server for YooKassa API -- payments, refunds, receipts (54-FZ), payouts, web
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![smithery badge](https://smithery.ai/badge/@theyahia/yookassa-mcp)](https://smithery.ai/server/@theyahia/yookassa-mcp)
 
+![Демонстрация: вопрос «какие платежи прошли вчера и на какую сумму» — агент вызывает list_payments и отвечает таблицей платежей ЮKassa](./assets/demo.svg)
+
 Part of [WWmcp](https://github.com/theYahia/WWmcp) series by [@theYahia](https://github.com/theYahia).
 
 ## Quick Start

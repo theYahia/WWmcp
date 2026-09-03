@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 461" width="800" height="461" role="img" aria-label="AI chat: open amoCRM pipeline leads via amocrm-mcp">
+  <title>AI chat: open amoCRM pipeline leads via amocrm-mcp</title>
+  <rect x="1" y="1" width="798" height="459" rx="14" fill="#1B2028" stroke="#333C4A" stroke-width="2"/>
+  <path d="M1 56 H799" stroke="#333C4A" stroke-width="1.5"/>
+  <g fill="#3C4552"><circle cx="28" cy="28" r="6"/><circle cx="50" cy="28" r="6"/><circle cx="72" cy="28" r="6"/></g>
+  <text x="96" y="33" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" fill="#8B97A8">@theyahia/amocrm-mcp</text>
+  <rect x="620" y="15" width="156" height="26" rx="13" fill="#232B36"/>
+  <text x="698" y="32" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" text-anchor="middle" fill="#8B97A8">sample data</text>
+  <text xml:space="preserve" x="28" y="90" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12.5" fill="#8B97A8">You</text>
+  <text xml:space="preserve" x="28" y="112" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#D9E0EA">What's in the sales pipeline right now, and what's it worth?</text>
+  <rect x="16" y="135" width="768" height="44" rx="8" fill="#232B36"/>
+  <text xml:space="preserve" x="28" y="153" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" fill="#4FA8E0">→ amocrm-mcp · list_leads(pipeline_id: 3210, limit: 50, with: ["contacts"])</text>
+  <text xml:space="preserve" x="28" y="217" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12.5" fill="#8B97A8">Claude</text>
+  <text xml:space="preserve" x="28" y="239" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">23 open leads in pipeline 3210 — 4 180 000 ₽ total. Three largest:</text>
+  <text xml:space="preserve" x="28" y="276" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8B97A8">id</text>
+  <text xml:space="preserve" x="110.80000000000001" y="276" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8B97A8">name</text>
+  <text xml:space="preserve" x="420.40000000000003" y="276" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8B97A8">price</text>
+  <text xml:space="preserve" x="503.20000000000005" y="276" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8B97A8">status_id</text>
+  <path d="M28 286 H772" stroke="#333C4A" stroke-width="1.5"/>
+  <text xml:space="preserve" x="28" y="308" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">1042318</text>
+  <text xml:space="preserve" x="110.80000000000001" y="308" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">Sample Logistics — annual contract</text>
+  <text xml:space="preserve" x="420.40000000000003" y="308" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">890 000</text>
+  <text xml:space="preserve" x="503.20000000000005" y="308" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">43110</text>
+  <text xml:space="preserve" x="28" y="333" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">1042297</text>
+  <text xml:space="preserve" x="110.80000000000001" y="333" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">Demo Retail — pilot</text>
+  <text xml:space="preserve" x="420.40000000000003" y="333" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">610 000</text>
+  <text xml:space="preserve" x="503.20000000000005" y="333" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">43108</text>
+  <text xml:space="preserve" x="28" y="358" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">1042264</text>
+  <text xml:space="preserve" x="110.80000000000001" y="358" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">Example Bank — integration</text>
+  <text xml:space="preserve" x="420.40000000000003" y="358" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">540 000</text>
+  <text xml:space="preserve" x="503.20000000000005" y="358" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">43110</text>
+  <text xml:space="preserve" x="28" y="391" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">Move one along — update_lead(lead_id, status_id).</text>
+  <text xml:space="preserve" x="28" y="416" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">Log the call — add_note(entity_id, entity_type: "leads", text).</text>
+</svg>

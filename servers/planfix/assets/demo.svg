@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 526" width="800" height="526" role="img" aria-label="Диалог с ИИ: задачи с ближайшими дедлайнами в Planfix через planfix-mcp">
+  <title>Диалог с ИИ: задачи с ближайшими дедлайнами в Planfix через planfix-mcp</title>
+  <rect x="1" y="1" width="798" height="524" rx="14" fill="#1B2028" stroke="#333C4A" stroke-width="2"/>
+  <path d="M1 56 H799" stroke="#333C4A" stroke-width="1.5"/>
+  <g fill="#3C4552"><circle cx="28" cy="28" r="6"/><circle cx="50" cy="28" r="6"/><circle cx="72" cy="28" r="6"/></g>
+  <text x="96" y="33" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" fill="#8B97A8">@theyahia/planfix-mcp</text>
+  <rect x="620" y="15" width="156" height="26" rx="13" fill="#232B36"/>
+  <text x="698" y="32" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" text-anchor="middle" fill="#8B97A8">данные — пример</text>
+  <text xml:space="preserve" x="28" y="90" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12.5" fill="#8B97A8">Вы</text>
+  <text xml:space="preserve" x="28" y="112" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#D9E0EA">Какие задачи на мне горят на этой неделе?</text>
+  <rect x="16" y="135" width="768" height="66" rx="8" fill="#232B36"/>
+  <text xml:space="preserve" x="28" y="153" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" fill="#E8925A">→ planfix-mcp · get_tasks(pageSize: 20,</text>
+  <text xml:space="preserve" x="28" y="175" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" fill="#E8925A">                          fields: "id,name,status,priority,assignees,endDateTime")</text>
+  <text xml:space="preserve" x="28" y="239" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12.5" fill="#8B97A8">Claude</text>
+  <text xml:space="preserve" x="28" y="261" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">Задачи (3):</text>
+  <text xml:space="preserve" x="28" y="298" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">1. #12480 | Согласовать смету по ЖК «Пример»</text>
+  <text xml:space="preserve" x="28" y="323" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#8B97A8">   статус: В работе (#3) | приоритет: Высокий | дедлайн: 2026-09-04</text>
+  <text xml:space="preserve" x="28" y="348" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">2. #12466 | Подготовить акт для «Пример Логистика»</text>
+  <text xml:space="preserve" x="28" y="373" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#8B97A8">   статус: В работе (#3) | приоритет: Обычный | дедлайн: 2026-09-05</text>
+  <text xml:space="preserve" x="28" y="398" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">3. #12451 | Созвон по этапу 2</text>
+  <text xml:space="preserve" x="28" y="423" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#8B97A8">   статус: Новая (#1) | приоритет: Обычный | дедлайн: 2026-09-06</text>
+  <text xml:space="preserve" x="28" y="456" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">Ближе всех дедлайн у #12480 — открыть: get_task(taskId: 12480).</text>
+  <text xml:space="preserve" x="28" y="481" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">Написать в задачу — add_comment.</text>
+</svg>

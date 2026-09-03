@@ -6,6 +6,8 @@ MCP-сервер для HuntFlow ATS API — вакансии, кандидат�
 [![CI](https://github.com/theYahia/huntflow-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/theYahia/huntflow-mcp/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+![Демонстрация: вопрос «какие вакансии открыты и по какой вилке» — агент вызывает list_vacancies и отвечает таблицей вакансий](./assets/demo.svg)
+
 Часть серии [WWmcp](https://github.com/theYahia/WWmcp) (46 серверов).
 
 ## Установка

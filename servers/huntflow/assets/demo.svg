@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 461" width="800" height="461" role="img" aria-label="Диалог с ИИ: открытые вакансии HuntFlow через huntflow-mcp">
+  <title>Диалог с ИИ: открытые вакансии HuntFlow через huntflow-mcp</title>
+  <rect x="1" y="1" width="798" height="459" rx="14" fill="#1B2028" stroke="#333C4A" stroke-width="2"/>
+  <path d="M1 56 H799" stroke="#333C4A" stroke-width="1.5"/>
+  <g fill="#3C4552"><circle cx="28" cy="28" r="6"/><circle cx="50" cy="28" r="6"/><circle cx="72" cy="28" r="6"/></g>
+  <text x="96" y="33" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" fill="#8B97A8">@theyahia/huntflow-mcp</text>
+  <rect x="620" y="15" width="156" height="26" rx="13" fill="#232B36"/>
+  <text x="698" y="32" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" text-anchor="middle" fill="#8B97A8">данные — пример</text>
+  <text xml:space="preserve" x="28" y="90" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12.5" fill="#8B97A8">Вы</text>
+  <text xml:space="preserve" x="28" y="112" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#D9E0EA">Какие вакансии сейчас открыты и по какой вилке?</text>
+  <rect x="16" y="135" width="768" height="44" rx="8" fill="#232B36"/>
+  <text xml:space="preserve" x="28" y="153" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" fill="#63C6A8">→ huntflow-mcp · list_vacancies(account_id: 12, opened: true, count: 30)</text>
+  <text xml:space="preserve" x="28" y="217" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12.5" fill="#8B97A8">Claude</text>
+  <text xml:space="preserve" x="28" y="239" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">Открытых вакансий: 7. Первые три:</text>
+  <text xml:space="preserve" x="28" y="276" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8B97A8">position</text>
+  <text xml:space="preserve" x="270.4" y="276" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8B97A8">money</text>
+  <text xml:space="preserve" x="454.0" y="276" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8B97A8">state</text>
+  <text xml:space="preserve" x="517.0" y="276" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8B97A8">created</text>
+  <path d="M28 286 H772" stroke="#333C4A" stroke-width="1.5"/>
+  <text xml:space="preserve" x="28" y="308" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">Backend-разработчик Python</text>
+  <text xml:space="preserve" x="270.4" y="308" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">250 000 – 320 000 ₽</text>
+  <text xml:space="preserve" x="454.0" y="308" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">OPEN</text>
+  <text xml:space="preserve" x="517.0" y="308" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">2026-08-19</text>
+  <text xml:space="preserve" x="28" y="333" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">Аналитик данных</text>
+  <text xml:space="preserve" x="270.4" y="333" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">от 210 000 ₽</text>
+  <text xml:space="preserve" x="454.0" y="333" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">OPEN</text>
+  <text xml:space="preserve" x="517.0" y="333" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">2026-08-11</text>
+  <text xml:space="preserve" x="28" y="358" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">QA-инженер</text>
+  <text xml:space="preserve" x="270.4" y="358" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">160 000 – 190 000 ₽</text>
+  <text xml:space="preserve" x="454.0" y="358" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">OPEN</text>
+  <text xml:space="preserve" x="517.0" y="358" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">2026-07-29</text>
+  <text xml:space="preserve" x="28" y="391" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">Кто на каких этапах — list_vacancy_applicants(account_id, vacancy_id).</text>
+  <text xml:space="preserve" x="28" y="416" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">Справочник этапов — list_stages(account_id).</text>
+</svg>

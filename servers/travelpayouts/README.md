@@ -2,6 +2,8 @@
 
 MCP server for the Travelpayouts (Aviasales) API. **13 tools** for flight search, price calendars, hotel search, airport/airline/city lookup, direct routes, and flexible date pricing.
 
+![Демонстрация: вопрос «сколько стоит улететь из Москвы в Сочи 12 октября» — агент вызывает search_flights_prices и отвечает таблицей рейсов с ценами](./assets/demo.svg)
+
 ## Install
 
 ```bash
