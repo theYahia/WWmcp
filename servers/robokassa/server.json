@@ -1,0 +1,48 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/robokassa-mcp",
+  "title": "Robokassa",
+  "description": "Robokassa - signed payment links with optional 54-FZ receipt, invoice status (Russia)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/robokassa",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/robokassa"
+  },
+  "version": "1.2.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/robokassa-mcp",
+      "version": "1.2.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "ROBOKASSA_LOGIN",
+          "description": "Merchant login (store identifier) from the Robokassa cabinet",
+          "isRequired": true
+        },
+        {
+          "name": "ROBOKASSA_PASSWORD1",
+          "description": "Password #1, used to sign payment URLs",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "ROBOKASSA_PASSWORD2",
+          "description": "Password #2, used to verify result URLs and check invoice state",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "ROBOKASSA_TEST",
+          "description": "Set to true to generate links in test mode",
+          "format": "boolean"
+        }
+      ]
+    }
+  ]
+}

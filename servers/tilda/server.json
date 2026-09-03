@@ -1,0 +1,37 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/tilda-mcp",
+  "title": "Tilda",
+  "description": "Tilda site builder - projects, pages, page HTML and CSS, export, publish dates (Russia)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/tilda",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/tilda"
+  },
+  "version": "1.2.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/tilda-mcp",
+      "version": "1.2.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "TILDA_PUBLIC_KEY",
+          "description": "Public API key from tilda.cc/identity/apikeys",
+          "isRequired": true
+        },
+        {
+          "name": "TILDA_SECRET_KEY",
+          "description": "Secret API key from tilda.cc/identity/apikeys",
+          "isRequired": true,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

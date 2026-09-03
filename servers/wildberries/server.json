@@ -1,0 +1,32 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/wildberries-mcp",
+  "title": "Wildberries",
+  "description": "Wildberries Seller API - stocks, prices, orders, FBS supplies, analytics, ads (Russia)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/wildberries",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/wildberries"
+  },
+  "version": "3.1.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/wildberries-mcp",
+      "version": "3.1.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "WB_API_TOKEN",
+          "description": "Seller API token from Wildberries (Settings -> Access to API)",
+          "isRequired": true,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/mango-office-mcp",
+  "title": "Mango Office",
+  "description": "Mango Office PBX - call history and stats, click-to-call, recordings, SMS, users (Russia)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/mango-office",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/mango-office"
+  },
+  "version": "1.1.1",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/mango-office-mcp",
+      "version": "1.1.1",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "MANGO_API_KEY",
+          "description": "API key from the Mango Office dashboard (Settings -> API)",
+          "isRequired": true
+        },
+        {
+          "name": "MANGO_API_SALT",
+          "description": "Secret salt used for HMAC request signing, paired with the API key",
+          "isRequired": true,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

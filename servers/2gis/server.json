@@ -1,0 +1,32 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/2gis-mcp",
+  "title": "2GIS",
+  "description": "2GIS maps - place search, geocoding, driving directions, reviews, suggest (Russia/CIS)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/2gis",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/2gis"
+  },
+  "version": "3.0.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/2gis-mcp",
+      "version": "3.0.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "TWOGIS_API_KEY",
+          "description": "API key from dev.2gis.com",
+          "isRequired": true,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

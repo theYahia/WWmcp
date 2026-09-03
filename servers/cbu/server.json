@@ -1,0 +1,24 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/cbu-mcp",
+  "title": "Central Bank of Uzbekistan",
+  "description": "Central Bank of Uzbekistan - ~30 currencies vs UZS, history, dynamics, cross-rates (Uzbekistan)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/cbu",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/cbu"
+  },
+  "version": "1.1.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/cbu-mcp",
+      "version": "1.1.0",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}
