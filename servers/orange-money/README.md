@@ -1,7 +1,6 @@
-# @theyahia/orange-money-mcp
+# Orange Money MCP server — 8 tools to connect Orange Money WebPay (paiement mobile) to Claude or any AI agent
 
-> MCP server for **Orange Money WebPay** — pan-Francophone African mobile money (~12 countries from one server).
-> 8 tools. OAuth2 Client Credentials with Basic header. Stdio + Streamable HTTP transports.
+If you were looking for how to connect Orange Money to Claude or another AI agent — this server covers WebPay in both directions: open a hosted payment session, check its status, push money to a customer wallet (cash-in), collect from one (cash-out), move funds between wallets, and read the merchant balance. You ask "did order 8842 get paid?" and the agent queries the transaction status instead of you signing into the portal. One server reaches 12 Francophone African countries — `ORANGE_MONEY_COUNTRY` picks which one — and an incoming webhook can be re-checked against the API before you trust it.
 
 [![npm](https://img.shields.io/npm/v/@theyahia/orange-money-mcp)](https://www.npmjs.com/package/@theyahia/orange-money-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)

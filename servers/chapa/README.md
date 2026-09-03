@@ -1,7 +1,6 @@
-# @theyahia/chapa-mcp
+# Chapa MCP server (Ethiopia) — 8 tools to connect Chapa payments to Claude or any AI agent
 
-> MCP server for **Chapa** (Ethiopia) — payment initialization, verification, transfers, banks, balance.
-> 8 tools. Bearer auth. Stdio + Streamable HTTP transports.
+If you were looking for how to connect Chapa to Claude or another AI agent — this server covers Ethiopian payments in both directions: start a transaction and get a checkout URL, verify it by `tx_ref`, pay out to a bank account, follow the transfer, and read your balance. You ask "which payments came in this week?" and get a table of transactions with statuses and amounts instead of a CSV export. A payout needs a `bank_code`, and `list_banks` returns the supported Ethiopian banks, so the agent can look it up itself.
 
 [![npm](https://img.shields.io/npm/v/@theyahia/chapa-mcp)](https://www.npmjs.com/package/@theyahia/chapa-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)

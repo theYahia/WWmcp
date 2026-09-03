@@ -1,7 +1,6 @@
-# @theyahia/fawaterak-mcp
+# Fawaterak MCP server (فواتيرك, Egypt) — 8 tools to connect Egyptian payments to Claude or any AI agent
 
-> MCP server for **Fawaterak** (Egypt) — payment aggregator covering Fawry, cards, wallets, Meeza in a single API.
-> 8 tools. Bearer auth. Stdio + Streamable HTTP transports.
+If you were looking for how to connect Fawaterak to Claude or another AI agent — this server puts Fawry, cards, wallets and Meeza behind one API: issue a hosted invoice link, force one specific method, check whether an invoice was paid, cancel or refund it, and read the merchant balance. You ask "send this customer a 1,450 EGP invoice payable by Fawry" and get back a link ready to forward. `get_payment_methods` returns the commission rate of every enabled method, so the agent can pick the cheaper route before the invoice goes out.
 
 [![npm](https://img.shields.io/npm/v/@theyahia/fawaterak-mcp)](https://www.npmjs.com/package/@theyahia/fawaterak-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)

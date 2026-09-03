@@ -1,7 +1,6 @@
-# @theyahia/kaspi-mcp
+# MCP-сервер для Kaspi.kz — 3 инструмента для ИИ-агента: заказы и товары продавца
 
-> MCP-сервер для API **Kaspi.kz Marketplace** (Казахстан) — заказы, товары, детали заказа.
-> 3 инструмента. Bearer-авторизация. Транспорты stdio + Streamable HTTP.
+Если вы искали, как подключить кабинет продавца Kaspi.kz Marketplace к Claude или другому ИИ-агенту, — этот сервер даёт агенту заказы и каталог товаров магазина. Спрашиваете «какие заказы пришли за сегодня и что уже в доставке» — получаете таблицу с суммами, способом доставки, клиентом и адресом, а не выгрузку из кабинета. Инструментов пока три: список заказов с фильтрами по статусу и датам, карточка одного заказа и список товаров продавца.
 
 [![npm](https://img.shields.io/npm/v/@theyahia/kaspi-mcp)](https://www.npmjs.com/package/@theyahia/kaspi-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)

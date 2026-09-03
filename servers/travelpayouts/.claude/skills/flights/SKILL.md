@@ -8,8 +8,8 @@ argument-hint: <origin IATA> <destination IATA> [departure date]
 
 ## Algorithm
 
-1. Call search_flights with IATA city codes and dates
-2. Call get_prices_calendar for monthly price overview
+1. Call `search_flights_prices` with IATA city codes and dates
+2. Call `get_calendar_prices` for monthly price overview
 3. Show cheapest options with links
 
 ## Examples

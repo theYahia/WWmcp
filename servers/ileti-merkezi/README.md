@@ -1,50 +1,59 @@
 # @theyahia/ileti-merkezi-mcp
 
-> MCP server for **Ileti Merkezi** SMS API (Turkey) — single SMS, bulk SMS, delivery reports, contacts, blacklist.
-> 8 tools. HMAC SHA256 auth. Stdio + Streamable HTTP transports.
+> MCP server for the **İletiMerkezi** SMS API (Turkey) — SMS/OTP, bulk sending, delivery reports, sender headers, blacklist, İYS consent.
+> 11 tools. Panel-issued key + hash auth. Stdio + Streamable HTTP transports.
 
 [![npm](https://img.shields.io/npm/v/@theyahia/ileti-merkezi-mcp)](https://www.npmjs.com/package/@theyahia/ileti-merkezi-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ---
 
-### Migrating from v1.x
+### ⚠️ Migrating from v3.x and earlier
 
-If you used v1.x, the v2.0.0 release adds Streamable HTTP transport and is built on `@theyahia/mcp-core`. Breaking changes:
+Every release before 4.0.0 targeted a **fabricated** API surface (header auth `X-API-Key` / `X-API-Hash` with a client-side SHA256, and REST paths like `/send-sms`, `/contacts/groups`) that does not exist at İletiMerkezi. 4.0.0 is a complete rewrite against the real v1 JSON API and is **breaking**:
 
-- **Internal client class:** `IletiMerkeziClient` now wraps `BaseHttpClient` with a custom `IletiHmacStrategy`. The public `request(method, path, body?)` shape is unchanged.
-- **Lazy init:** `new IletiMerkeziClient()` no longer throws when env vars are missing — they are read on the first request.
-- **Tool errors:** now returned as MCP-spec `CallToolResult` with `isError: true` (via `withErrorHandling`).
-- **HTTP transport:** previously stdio-only. v2 adds HTTP via `--http` flag or `HTTP_PORT` env.
-
-Tool names, arguments, return formats, and `ILETI_API_KEY`/`ILETI_SECRET` env vars are unchanged.
+- **Auth moved into the request body.** Credentials are sent as `request.authentication.{key, hash}`. All client-side hashing is gone — the panel issues both values already paired.
+- **Env vars changed:** `ILETIMERKEZI_API_KEY` + `ILETIMERKEZI_API_HASH`. `ILETI_SECRET` no longer exists. `ILETI_API_KEY` / `ILETI_API_HASH` are accepted as migration aliases.
+- **Tools removed** (no real endpoint): `send_bulk_sms`, `create_contact_group`, `add_contacts`. Bulk sending is `send_sms` with an array of numbers.
+- **Tools renamed:** `list_senders` → `get_sender`, `get_sms_report` → `get_report`.
+- **Tools added:** `cancel_order`, `get_reports`, `add_blacklist`, `delete_blacklist`, `iys_register`, `iys_check`.
 
 ---
 
-## Tools (8)
+## Tools (11)
 
 ### Sending
 
 | Tool | Description |
 |------|-------------|
-| `send_sms` | Send a single SMS. Optional `sender` (pre-approved name) and `schedule_at` (ISO 8601). |
-| `send_bulk_sms` | Send the same SMS to multiple recipients in one call. |
+| `send_sms` | Send to one recipient or many (bulk, up to 50 000) — `to` takes a string or an array. `message_type` (`transactional` / `commercial`) drives the İYS consent flag. Optional `schedule_at` (`DD/MM/YYYY HH:MM`). |
+| `cancel_order` | Cancel a future-scheduled order before it is dispatched. |
 
 ### Reporting
 
 | Tool | Description |
 |------|-------------|
-| `get_sms_report` | Delivery report for a sent SMS (by `message_id` or bulk `order_id`). |
-| `get_balance` | Account balance and remaining SMS credits. |
-| `list_senders` | List approved sender names/numbers. |
+| `get_report` | Per-recipient delivery report for one order id (paginated). |
+| `get_reports` | Order summaries within a date range (`YYYY-MM-DD`, range ≤ 10 days). |
+| `get_balance` | Account balance (TL) and remaining SMS credits. |
+| `get_sender` | Approved sender headers (başlık) on the account. |
 
-### Contacts & blacklist
+### Blacklist
 
 | Tool | Description |
 |------|-------------|
-| `create_contact_group` | Create a new contact group. |
-| `add_contacts` | Add contacts (phone + optional name/email) to a group. |
-| `get_blacklist` | List blacklisted phone numbers (opt-outs and blocks). |
+| `get_blacklist` | List blocked numbers, optionally filtered by a datetime range. |
+| `add_blacklist` | Block a number (idempotent). |
+| `delete_blacklist` | Unblock a number. |
+
+### İYS consent (Turkey, Law 6563)
+
+| Tool | Description |
+|------|-------------|
+| `iys_register` | Register consent records in batch (1–5000, atomic). |
+| `iys_check` | Look up one recipient's consent status (ONAY / RET) for a brand + channel. |
+
+Status codes surfaced in tool output: order `113 SENDING` / `114 COMPLETED` / `115 CANCELED`; message `110 WAITING` / `111 DELIVERED` / `112 UNDELIVERED`.
 
 ---
 
@@ -61,8 +70,9 @@ Add to `claude_desktop_config.json`:
       "command": "npx",
       "args": ["-y", "@theyahia/ileti-merkezi-mcp"],
       "env": {
-        "ILETI_API_KEY": "your_api_key",
-        "ILETI_SECRET": "your_secret"
+        "ILETIMERKEZI_API_KEY": "your_api_key",
+        "ILETIMERKEZI_API_HASH": "your_api_hash",
+        "ILETIMERKEZI_SENDER": "APITEST"
       }
     }
   }
@@ -75,27 +85,12 @@ Same configuration block under `mcpServers` in the IDE's MCP settings.
 
 ### VS Code (Copilot)
 
-Add to `.vscode/mcp.json`:
-
-```json
-{
-  "servers": {
-    "ileti-merkezi": {
-      "command": "npx",
-      "args": ["-y", "@theyahia/ileti-merkezi-mcp"],
-      "env": {
-        "ILETI_API_KEY": "your_api_key",
-        "ILETI_SECRET": "your_secret"
-      }
-    }
-  }
-}
-```
+Same shape under `.vscode/mcp.json` `servers` key.
 
 ### Streamable HTTP transport
 
 ```bash
-HTTP_PORT=3000 ILETI_API_KEY=... ILETI_SECRET=... npx @theyahia/ileti-merkezi-mcp
+HTTP_PORT=3000 ILETIMERKEZI_API_KEY=... ILETIMERKEZI_API_HASH=... npx @theyahia/ileti-merkezi-mcp
 # or: npx @theyahia/ileti-merkezi-mcp --http
 ```
 
@@ -113,37 +108,36 @@ Includes session management (`mcp-session-id` header), CORS, graceful shutdown.
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `ILETI_API_KEY` | yes | API key from your Ileti Merkezi panel. |
-| `ILETI_SECRET` | yes | Secret key from your Ileti Merkezi panel. |
+| `ILETIMERKEZI_API_KEY` | yes | API key from the panel (alias: `ILETI_API_KEY`). |
+| `ILETIMERKEZI_API_HASH` | yes | API hash from the panel — **precomputed, do not hash anything yourself** (alias: `ILETI_API_HASH`). |
+| `ILETIMERKEZI_SENDER` | no | Default sender header when `send_sms` omits `sender` (alias: `ILETI_SENDER`). |
 | `HTTP_PORT` | no | If set, server runs in HTTP mode on this port. |
 
 ---
 
 ## Authentication
 
-Ileti Merkezi uses HMAC-style auth: each request sends `X-API-Key` and `X-API-Hash` headers, where the hash is SHA256(`apiKey + secret + ISO_timestamp`). The hash is recomputed on every request.
+Both values are issued — already paired — from **panel.iletimerkezi.com → Settings → Security → API Access**. Copy them as-is; the panel precomputes the hash. Also switch on **"Allow API access"** under Settings → Security, otherwise the API answers 401.
 
-Get your credentials from the [Ileti Merkezi panel](https://www.iletimerkezi.com/) (Settings → API).
+Reference: [İletiMerkezi authentication docs](https://www.iletimerkezi.com/docs/api/authentication).
+
+Sandbox: send with sender header `APITEST`.
 
 ---
 
 ## Demo Prompts
 
-Try these natural-language prompts in your MCP client:
+> "Send an SMS to 5551234567 saying 'Siparişiniz kargoya verildi'."
 
-> "Send an SMS to +905551234567 saying 'Your order is ready for pickup'."
-
-> "Send bulk SMS to my VIP contact group about the 20% Bayram discount."
-
-> "Check the delivery report for message msg_001."
+> "Send this 20% Bayram discount to these 400 numbers — it's marketing, handle the İYS consent."
 
 > "How many SMS credits do I have left?"
 
-> "Create a contact group called 'March Campaign' and add three contacts to it."
+> "Show the delivery report for order 4471029."
 
-> "Show me the first 50 blacklisted numbers."
+> "Which sender headers are approved on my account?"
 
-> "What sender names are approved on my account?"
+> "Block 5559998877 from receiving any further SMS."
 
 ---
 
@@ -162,12 +156,14 @@ Project layout:
 servers/ileti-merkezi/
 ├── src/
 │   ├── index.ts          — bin entry, runServer
-│   ├── server.ts         — createServer factory + 8 tools defined inline
-│   ├── client.ts         — IletiMerkeziClient + IletiHmacStrategy
-│   └── types.ts          — TypeScript types for Ileti Merkezi responses
+│   ├── server.ts         — createServer factory + 11 tools defined inline
+│   ├── client.ts         — request-envelope client over BaseHttpClient
+│   ├── schemas.ts        — zod input shapes (phone/date/İYS validators)
+│   ├── errors.ts         — API status-code maps + actionable guidance
+│   └── responses.ts      — type-safe response highlights
 └── tests/
-    ├── client.test.ts    — HMAC header generation, lazy init, body serialization
-    └── server.test.ts    — createServer factory smoke
+    ├── client.test.ts    — envelope, credential aliases, 4xx pass-through
+    └── server.test.ts    — in-memory MCP client: tool list, send_sms, İYS flag
 ```
 
 ---
