@@ -2,6 +2,7 @@ name: elma365-mcp
 description: MCP server for ELMA365 BPM/Low-Code platform — schema discovery, app items, tasks, processes, users, comments. 20 tools.
 version: 2.0.0
 
+icon: https://raw.githubusercontent.com/theYahia/WWmcp/main/servers/elma365/assets/icon.svg
 startCommand:
   type: stdio
   configSchema:

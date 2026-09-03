@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="Airplane">
+  <title>Airplane</title>
+  <rect x="8" y="8" width="240" height="240" rx="52" fill="#3B82B8" fill-opacity="0.14"/>
+  <g fill="none" stroke="#3B82B8" stroke-width="15" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M128 26 C139 26 147 44 147 74 V102 L216 146 V170 L147 148 V186 L172 206 V224 L128 210 L84 224 V206 L109 186 V148 L40 170 V146 L109 102 V74 C109 44 117 26 128 26 Z"/>
+  </g>
+</svg>

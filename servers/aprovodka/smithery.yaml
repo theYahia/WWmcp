@@ -1,5 +1,6 @@
 name: aprovodka
 description: MCP server for 1C:Enterprise REST API via OData 3.0 — catalogs, documents, registers, accounting, constants, batch ops, change-tracking + metadata discovery
+icon: https://raw.githubusercontent.com/theYahia/WWmcp/main/servers/aprovodka/assets/icon.svg
 startCommand:
   type: stdio
   configSchema:

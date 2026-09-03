@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="Call tracking">
+  <title>Call tracking</title>
+  <rect x="8" y="8" width="240" height="240" rx="52" fill="#C2603C" fill-opacity="0.14"/>
+  <g fill="none" stroke="#C2603C" stroke-width="15" stroke-linecap="round" stroke-linejoin="round">
+    <g transform="rotate(-42 128 128)">
+      <rect x="96" y="40" width="64" height="44" rx="18"/>
+      <rect x="96" y="172" width="64" height="44" rx="18"/>
+      <path d="M128 84 V172"/>
+    </g>
+  </g>
+</svg>

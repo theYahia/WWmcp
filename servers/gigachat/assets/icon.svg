@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="Neural network">
+  <title>Neural network</title>
+  <rect x="8" y="8" width="240" height="240" rx="52" fill="#2E8896" fill-opacity="0.14"/>
+  <g fill="none" stroke="#2E8896" stroke-width="15" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="64" cy="88" r="18"/>
+    <circle cx="64" cy="172" r="18"/>
+    <circle cx="144" cy="128" r="22"/>
+    <circle cx="204" cy="76" r="18"/>
+    <circle cx="204" cy="180" r="18"/>
+    <path d="M81 96 L126 118"/>
+    <path d="M81 164 L126 140"/>
+    <path d="M163 117 L187 90"/>
+    <path d="M163 140 L188 166"/>
+  </g>
+</svg>

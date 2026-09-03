@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="Resume">
+  <title>Resume</title>
+  <rect x="8" y="8" width="240" height="240" rx="52" fill="#B0619F" fill-opacity="0.14"/>
+  <g fill="none" stroke="#B0619F" stroke-width="15" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="52" y="30" width="152" height="196" rx="20"/>
+    <circle cx="102" cy="88" r="24"/>
+    <path d="M72 136 A30 30 0 0 1 132 136"/>
+    <path d="M78 170 H178"/>
+    <path d="M78 198 H178"/>
+  </g>
+</svg>

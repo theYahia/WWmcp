@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="Hired candidate">
+  <title>Hired candidate</title>
+  <rect x="8" y="8" width="240" height="240" rx="52" fill="#B0619F" fill-opacity="0.14"/>
+  <g fill="none" stroke="#B0619F" stroke-width="15" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="98" cy="86" r="32"/>
+    <path d="M40 188 A58 58 0 0 1 156 188"/>
+    <path d="M166 176 L192 202 L230 152"/>
+  </g>
+</svg>
