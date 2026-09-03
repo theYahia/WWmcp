@@ -1,7 +1,7 @@
 {
   "name": "@theyahia/moysklad-mcp",
-  "version": "2.1.0",
-  "description": "MoySklad (МойСклад) for AI agents: stock and reserves, product search by SKU, price updates, customer orders, supplies, profit reports (10 tools, Russia)",
+  "version": "3.1.0",
+  "description": "MoySklad (МойСклад) for AI agents: stock and warehouse moves, inventory counts, product search by SKU, price updates, customer and purchase orders, supplies, shipments, payments and invoices, profit and turnover reports (60 tools, Russia)",
   "type": "module",
   "main": "dist/index.js",
   "bin": { "moysklad-mcp": "dist/index.js" },
@@ -50,6 +50,10 @@
     "остатки",
     "orders",
     "supplies",
+    "shipments",
+    "invoices",
+    "payments",
+    "webhooks",
     "russia",
     "russian-api"
   ],

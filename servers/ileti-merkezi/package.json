@@ -1,7 +1,7 @@
 {
   "name": "@theyahia/ileti-merkezi-mcp",
-  "version": "3.0.0",
-  "description": "Ileti Merkezi SMS for AI agents: send single and bulk SMS, delivery reports, sender IDs, contact groups, blacklist, balance (8 tools, Turkey)",
+  "version": "4.0.0",
+  "description": "Ileti Merkezi (İletiMerkezi) SMS for AI agents: send SMS/OTP and bulk, cancel scheduled orders, delivery reports, sender headers, blacklist, İYS consent (11 tools, Turkey)",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -49,7 +49,6 @@
     "llm",
     "iletimerkezi",
     "ileti-merkezi",
-    "ileti",
     "turkey",
     "türkiye",
     "turkish-api",
@@ -58,7 +57,9 @@
     "bulk-sms",
     "otp",
     "messaging",
-    "emerging-markets"
+    "emerging-markets",
+    "iys",
+    "sms-api"
   ],
   "license": "MIT",
   "repository": {

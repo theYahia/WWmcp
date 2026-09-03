@@ -8,29 +8,28 @@ argument-hint: <действие> [детали]
 
 ## Алгоритм
 
-1. `search_products` — найти товары по названию/артикулу.
-2. `get_stock` — проверить остатки; для разреза по складам передай `group_by: "store"`.
-3. `get_counterparties` — найти покупателей/поставщиков.
-4. Создать документ:
-   - `create_customer_order` — заказ покупателя
-   - `create_supply` — приёмка
-5. `get_orders` — посмотреть заказы, `get_profit_report` — выручка и прибыль.
+1. `search_products` — найти товары по названию/артикулу; `search_assortment` — единый поиск по товарам, модификациям, услугам и комплектам.
+2. `get_stock` — проверить остатки; для разреза по складам передай `group_by: "store"` или вызови `get_stock_by_store`.
+3. `get_counterparties` — найти покупателей/поставщиков (`create_counterparty` — завести нового).
+4. `list_organizations` и `list_stores` — получить meta-href организации и склада для документов.
+5. Создать документ:
+   - `create_customer_order` — заказ покупателя, `create_demand` — отгрузка по нему
+   - `create_supply` — приёмка, `create_purchase_order` — заказ поставщику
+   - `create_move` — перемещение между складами
+   - `create_enter` / `create_loss` — оприходование и списание
+   - `create_inventory` — инвентаризация
+   - `create_sales_return` / `create_purchase_return` — возвраты
+   - `create_invoice_out` / `create_invoice_in` — счета
+   - `create_payment_in` / `create_payment_out` / `create_cash_in` / `create_cash_out` — деньги
+6. `get_orders` — посмотреть заказы, `get_profit_report` — выручка и прибыль, `get_turnover` — обороты, `get_money_report` — остатки денег.
 
 ## Важно
 
-- Цены, которые **возвращают** инструменты, уже в **рублях** (сервер сам конвертирует из копеек).
+- Цены, которые **возвращают** инструменты, уже в **рублях** (сервер сам конвертирует из копеек). Исключение — `get_dashboard`, там суммы в копейках, как их отдаёт МойСклад.
 - При создании документов цены передаются в **рублях** (конвертируются в копейки автоматически).
-- Документам нужны **meta-href** организации, контрагента (`get_counterparties`) и склада, а не просто UUID.
-- **Инструмента для списка организаций и складов в этой версии сервера нет** — их href берутся из
-  МойСклад (`/entity/organization`, `/entity/store`).
-
-## Чего нет в этой версии
-
-Копия сервера в монорепозитории — **2.1.0** (10 инструментов). Отгрузка (`create_demand`),
-перемещение (`create_move`), оприходование и списание (`create_enter` / `create_loss`),
-единый `search_assortment`, `list_organizations` и `list_stores` появились в
-`@theyahia/moysklad-mcp@3.1.0` из npm. На 2.1.0 эти операции недоступны — скажи об этом
-пользователю, а не подбирай замену.
+- Документам нужны **meta-href** организации (`list_organizations`), контрагента (`get_counterparties`) и склада (`list_stores`), а не просто UUID.
+- Статусы документов меняются по meta-href состояния: список — `get_metadata` для нужного типа сущности, смена статуса заказа — `update_customer_order_status`.
+- Если для нужного типа документа нет отдельного инструмента, используй универсальные `get_documents` / `get_document` с полем `entity_type`.
 
 ## Формат ответа
 
@@ -53,4 +52,5 @@ argument-hint: <действие> [детали]
 /warehouse-management проверь остатки
 /warehouse-management найди контрагента "Ромашка"
 /warehouse-management создай заказ покупателя
+/warehouse-management перемести 10 штук LP15 с основного склада в розницу
 ```

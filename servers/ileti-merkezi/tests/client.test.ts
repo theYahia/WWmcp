@@ -1,12 +1,26 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { IletiMerkeziClient } from "../src/client.js";
+import { IletiMerkeziClient, MissingCredentialsError, readCredentials } from "../src/client.js";
+
+function mockFetch(status: number, body: unknown) {
+  const mock = vi.fn().mockResolvedValue({
+    ok: status >= 200 && status < 300,
+    status,
+    statusText: String(status),
+    text: () => Promise.resolve(typeof body === "string" ? body : JSON.stringify(body)),
+    headers: new Headers(),
+  });
+  vi.stubGlobal("fetch", mock);
+  return mock;
+}
 
 describe("IletiMerkeziClient", () => {
   const originalEnv = { ...process.env };
 
   beforeEach(() => {
-    process.env["ILETI_API_KEY"] = "test-api-key";
-    process.env["ILETI_SECRET"] = "test-secret";
+    process.env["ILETIMERKEZI_API_KEY"] = "panel-key";
+    process.env["ILETIMERKEZI_API_HASH"] = "panel-hash";
+    delete process.env["ILETI_API_KEY"];
+    delete process.env["ILETI_API_HASH"];
   });
 
   afterEach(() => {
@@ -15,63 +29,64 @@ describe("IletiMerkeziClient", () => {
   });
 
   it("does not throw on construction without env vars (lazy init)", () => {
-    delete process.env["ILETI_API_KEY"];
-    delete process.env["ILETI_SECRET"];
+    delete process.env["ILETIMERKEZI_API_KEY"];
+    delete process.env["ILETIMERKEZI_API_HASH"];
     expect(() => new IletiMerkeziClient()).not.toThrow();
   });
 
-  it("throws on first request when ILETI_API_KEY missing", async () => {
-    delete process.env["ILETI_API_KEY"];
+  it("throws MissingCredentialsError on first call when creds are absent", async () => {
+    delete process.env["ILETIMERKEZI_API_KEY"];
     const client = new IletiMerkeziClient();
-    await expect(client.request("GET", "/balance")).rejects.toThrow("ILETI_API_KEY");
+    await expect(client.call("/get-balance/json")).rejects.toThrow(MissingCredentialsError);
   });
 
-  it("sends X-API-Key + X-API-Hash headers", async () => {
-    const fetchMock = vi.fn().mockResolvedValue({
-      ok: true,
-      text: () => Promise.resolve(JSON.stringify({ balance: 1000 })),
-      headers: new Map(),
-    });
-    vi.stubGlobal("fetch", fetchMock);
-
-    const client = new IletiMerkeziClient();
-    await client.request("GET", "/balance");
-    const headers = new Headers(fetchMock.mock.calls[0][1].headers);
-    expect(headers.get("X-API-Key")).toBe("test-api-key");
-    expect(headers.get("X-API-Hash")).toMatch(/^[0-9a-f]{64}$/); // SHA256 hex = 64 chars
+  it("accepts the ILETI_* migration aliases", () => {
+    delete process.env["ILETIMERKEZI_API_KEY"];
+    delete process.env["ILETIMERKEZI_API_HASH"];
+    process.env["ILETI_API_KEY"] = "legacy-key";
+    process.env["ILETI_API_HASH"] = "legacy-hash";
+    expect(readCredentials()).toEqual({ key: "legacy-key", hash: "legacy-hash" });
   });
 
-  it("X-API-Hash differs across requests (timestamp changes)", async () => {
-    const fetchMock = vi.fn().mockResolvedValue({
-      ok: true,
-      text: () => Promise.resolve(JSON.stringify({})),
-      headers: new Map(),
-    });
-    vi.stubGlobal("fetch", fetchMock);
-
+  it("POSTs the request envelope with body-level authentication (no auth headers)", async () => {
+    const fetchMock = mockFetch(200, { response: { status: { code: 200 } } });
     const client = new IletiMerkeziClient();
-    await client.request("GET", "/balance");
-    // Wait a millisecond so the ISO timestamp changes
-    await new Promise((r) => setTimeout(r, 2));
-    await client.request("GET", "/balance");
+    await client.call("/send-sms/json", { order: { sender: "APITEST" } });
 
-    const hash1 = new Headers(fetchMock.mock.calls[0][1].headers).get("X-API-Hash");
-    const hash2 = new Headers(fetchMock.mock.calls[1][1].headers).get("X-API-Hash");
-    expect(hash1).not.toBe(hash2);
+    const [url, init] = fetchMock.mock.calls[0];
+    expect(url).toBe("https://api.iletimerkezi.com/v1/send-sms/json");
+    expect(init.method).toBe("POST");
+    expect(JSON.parse(init.body)).toEqual({
+      request: {
+        authentication: { key: "panel-key", hash: "panel-hash" },
+        order: { sender: "APITEST" },
+      },
+    });
+    const headers = new Headers(init.headers);
+    expect(headers.get("X-API-Key")).toBeNull();
+    expect(headers.get("X-API-Hash")).toBeNull();
   });
 
-  it("POST sends body", async () => {
-    const fetchMock = vi.fn().mockResolvedValue({
-      ok: true,
-      text: () => Promise.resolve(JSON.stringify({ messageId: "msg_001" })),
-      headers: new Map(),
-    });
-    vi.stubGlobal("fetch", fetchMock);
-
+  it("returns 4xx bodies instead of throwing — they carry the API status code", async () => {
+    mockFetch(401, { response: { status: { code: 401, message: "Unauthorized" } } });
     const client = new IletiMerkeziClient();
-    await client.request("POST", "/send-sms", { to: "+905551234567", message: "Hi" });
-    const opts = fetchMock.mock.calls[0][1];
-    expect(opts.method).toBe("POST");
-    expect(JSON.parse(opts.body)).toEqual({ to: "+905551234567", message: "Hi" });
+    const result = await client.call("/get-balance/json");
+    expect(result.status).toBe(401);
+    expect(result.body).toEqual({ response: { status: { code: 401, message: "Unauthorized" } } });
+  });
+
+  it("returns non-JSON error bodies as raw text", async () => {
+    mockFetch(500, "<html>gateway</html>");
+    const client = new IletiMerkeziClient();
+    const result = await client.call("/get-balance/json");
+    expect(result.status).toBe(500);
+    expect(result.body).toBe("<html>gateway</html>");
+  });
+
+  it("does not retry a mutating POST on 5xx (no duplicate sends)", async () => {
+    const fetchMock = mockFetch(503, { response: { status: { code: 503 } } });
+    const client = new IletiMerkeziClient();
+    await client.call("/send-sms/json", {});
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 });
