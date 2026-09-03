@@ -45,6 +45,14 @@ export class HhApiError extends Error {
 }
 
 export async function hhGet(path: string): Promise<unknown> {
+  // Traversal guard: vacancy/resume/employer ids form path segments here, and fetch normalises `..`
+  // before sending — a crafted value would reach an endpoint no tool exposes,
+  // carrying this server's credentials. Checked on the path only, so a query
+  // value containing dots is unaffected.
+  if (/(^|\/)\.\.(\/|$)/.test(path.split("?")[0]!)) {
+    throw new Error(`hh.ru: путь "${path}" содержит переход вверх по дереву ".." — параметры инструмента так выглядеть не должны.`);
+  }
+
   await waitForRateLimit();
 
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {

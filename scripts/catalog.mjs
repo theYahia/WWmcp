@@ -14,11 +14,16 @@
  *   node scripts/catalog.mjs --write-readme  дополнительно вписать числа в README/docs
  *
  * Серверы пишут свои логи в stderr — для чистого вывода добавь 2>/dev/null.
+ *
+ * Формы записи чисел в README/docs и их правка — в ./doc-numbers.mjs (чистая часть,
+ * покрыта packages/core/tests/doc-numbers.test.ts).
  */
 
 import { readdirSync, existsSync, readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { resolve, join } from "node:path";
+
+import { patchDocFile } from "./doc-numbers.mjs";
 
 const ROOT = resolve(fileURLToPath(import.meta.url), "../..");
 const CATALOG_JSON = join(ROOT, "scripts", "catalog.json");
@@ -161,31 +166,13 @@ for (const e of failed) drift.push(`${e.dir}: сервер не поднялся
 const byPkg = new Map(ok.map((e) => [e.name, e]));
 const DOC_FILES = ["README.md", "README.ru.md", "docs/index.html"];
 
-const patchLine = (line, e) =>
-  line.includes('class="tools-num"')
-    ? line.replace(/(class="tools-num">)\d+(<)/, `$1${e.toolCount}$2`)
-    : line
-        .replace(/\| v[\d.]+ \|/, `| v${e.version} |`)
-        .replace(/\| \d+ tools \|/, `| ${e.toolCount} tools |`);
-
 const docChanges = [];
 for (const rel of DOC_FILES) {
   const path = join(ROOT, rel);
   if (!existsSync(path)) continue;
-  const lines = readFileSync(path, "utf8").split("\n");
-  let changed = false;
-  const next = lines.map((line, i) => {
-    const m = line.match(/@theyahia\/[a-z0-9-]+-mcp/);
-    const e = m && byPkg.get(m[0]);
-    if (!e) return line;
-    const patched = patchLine(line, e);
-    if (patched !== line) {
-      changed = true;
-      docChanges.push({ file: rel, line: i + 1, from: line.trim(), to: patched.trim() });
-    }
-    return patched;
-  });
-  if (changed && WRITE_README && !CHECK) writeFileSync(path, next.join("\n"));
+  const { text, changes } = patchDocFile(readFileSync(path, "utf8"), byPkg, rel);
+  for (const c of changes) docChanges.push({ file: rel, ...c });
+  if (changes.length && WRITE_README && !CHECK) writeFileSync(path, text);
 }
 for (const rel of DOC_FILES) {
   const n = docChanges.filter((c) => c.file === rel).length;
