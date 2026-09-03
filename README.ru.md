@@ -2,7 +2,7 @@
 
 [English](README.md) | **Русский**
 
-> **46 серверов · 501 инструмент · один npm-scope: [@theyahia](https://www.npmjs.com/org/theyahia)**
+> **46 серверов · 566 инструментов · один npm-scope: [@theyahia](https://www.npmjs.com/org/theyahia)**
 >
 > Числа считает `node scripts/catalog.mjs`: каждый сервер поднимается по stdio и отвечает на `listTools()`. Последний прогон — 2026-09-02.
 
@@ -11,7 +11,7 @@
 [![npm downloads](https://img.shields.io/npm/dm/@theyahia/mcp-core?label=downloads)](https://www.npmjs.com/org/theyahia)
 [![GitHub stars](https://img.shields.io/github/stars/theYahia/WWmcp?style=social)](https://github.com/theYahia/WWmcp/stargazers)
 ![Серверы](https://img.shields.io/badge/MCP_Servers-46-blue)
-![Инструменты](https://img.shields.io/badge/Tools-501-green)
+![Инструменты](https://img.shields.io/badge/Tools-566-green)
 
 MCP-серверы для API, которых нет в западных каталогах: российские и СНГ-сервисы (1С, Wildberries, ЮKassa, СДЭК, hh.ru, amoCRM, МойСклад, Авито) плюс платёжные и SMS-провайдеры Турции, Залива, Египта, Эфиопии, Бангладеш и Латинской Америки. Подключаются к Claude Desktop, Cursor, VS Code и любому MCP-клиенту.
 
@@ -97,8 +97,8 @@ MCP-серверы для API, которых нет в западных кат�
 | [@theyahia/planfix-mcp](https://www.npmjs.com/package/@theyahia/planfix-mcp) | v1.2.0 | 20 tools | Задачи, контакты, проекты, комментарии, кастомные поля, файлы |
 | [@theyahia/elma365-mcp](https://www.npmjs.com/package/@theyahia/elma365-mcp) | v2.0.0 | 20 tools | BPM: процессы, задачи, элементы приложений, схемы |
 | [@theyahia/amocrm-mcp](https://www.npmjs.com/package/@theyahia/amocrm-mcp) | v2.0.2 | 19 tools | Сделки, контакты, компании, воронки, задачи, примечания, неразобранное |
-| [@theyahia/moysklad-mcp](https://www.npmjs.com/package/@theyahia/moysklad-mcp) | v2.1.0 | 10 tools | Товары, остатки, заказы, контрагенты, приёмки, отчёт по прибыли |
-| [@theyahia/megaplan-mcp](https://www.npmjs.com/package/@theyahia/megaplan-mcp) | v3.0.0 | 8 tools | Задачи, сделки, проекты, сотрудники, комментарии |
+| [@theyahia/moysklad-mcp](https://www.npmjs.com/package/@theyahia/moysklad-mcp) | v3.1.0 | 60 tools | Товары, остатки, заказы, контрагенты, приёмки, отчёт по прибыли |
+| [@theyahia/megaplan-mcp](https://www.npmjs.com/package/@theyahia/megaplan-mcp) | v4.0.0 | 18 tools | Задачи, сделки, проекты, сотрудники, комментарии |
 | [@theyahia/bitrix24-mcp](https://www.npmjs.com/package/@theyahia/bitrix24-mcp) | v1.2.0 | 4 tools | Сделки, контакты, задачи через входящий вебхук |
 | [@theyahia/getcourse-mcp](https://www.npmjs.com/package/@theyahia/getcourse-mcp) | v1.2.0 | 3 tools | Онлайн-школа: пользователи, сделки |
 
@@ -158,7 +158,7 @@ MCP-серверы для API, которых нет в западных кат�
 |---|---|---|---|
 | [@theyahia/kontur-focus-mcp](https://www.npmjs.com/package/@theyahia/kontur-focus-mcp) | v3.0.1 | 8 tools | Проверка контрагента: ЕГРЮЛ, финансы, арбитраж, банкротство, лицензии |
 | [@theyahia/2gis-mcp](https://www.npmjs.com/package/@theyahia/2gis-mcp) | v3.0.0 | 8 tools | Поиск мест, геокодинг, маршруты, отзывы |
-| [@theyahia/cbr-mcp](https://www.npmjs.com/package/@theyahia/cbr-mcp) | v1.1.0 | 5 tools | ЦБ РФ: курсы валют, ключевая ставка, драгметаллы, конвертация |
+| [@theyahia/cbr-mcp](https://www.npmjs.com/package/@theyahia/cbr-mcp) | v1.2.0 | 7 tools | ЦБ РФ: курсы валют, ключевая ставка, драгметаллы, конвертация |
 | [@theyahia/cbu-mcp](https://www.npmjs.com/package/@theyahia/cbu-mcp) | v1.1.0 | 5 tools | ЦБ Узбекистана: курсы валют, история, динамика |
 
 #### Тревел
@@ -182,7 +182,7 @@ MCP-серверы для API, которых нет в западных кат�
 | [@theyahia/bkash-mcp](https://www.npmjs.com/package/@theyahia/bkash-mcp) | Бангладеш | v1.1.0 | 8 tools | Tokenized Checkout: платежи, возвраты, соглашения |
 | [@theyahia/chapa-mcp](https://www.npmjs.com/package/@theyahia/chapa-mcp) | Эфиопия | v1.1.0 | 8 tools | Платежи, верификация, переводы, банки, баланс |
 | [@theyahia/fawaterak-mcp](https://www.npmjs.com/package/@theyahia/fawaterak-mcp) | Египет | v1.1.0 | 8 tools | Счета, способы оплаты (Fawry, карты, кошельки, Meeza), возвраты |
-| [@theyahia/ileti-merkezi-mcp](https://www.npmjs.com/package/@theyahia/ileti-merkezi-mcp) | Турция | v3.0.0 | 8 tools | SMS, массовые рассылки, отчёты, контакты, чёрный список |
+| [@theyahia/ileti-merkezi-mcp](https://www.npmjs.com/package/@theyahia/ileti-merkezi-mcp) | Турция | v4.0.0 | 11 tools | SMS, массовые рассылки, отчёты, контакты, чёрный список |
 | [@theyahia/orange-money-mcp](https://www.npmjs.com/package/@theyahia/orange-money-mcp) | Франкофонная Африка (11 стран) | v1.1.0 | 8 tools | WebPay: платежи, статусы, cash-in, cash-out, переводы |
 
 ---

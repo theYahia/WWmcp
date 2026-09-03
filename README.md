@@ -2,7 +2,7 @@
 
 **English** | [Русский](README.ru.md)
 
-> **46 servers · 501 tools · one npm scope: [@theyahia](https://www.npmjs.com/org/theyahia)**
+> **46 servers · 566 tools · one npm scope: [@theyahia](https://www.npmjs.com/org/theyahia)**
 >
 > Counts come from `node scripts/catalog.mjs`: every server is started over stdio and asked for `listTools()`. Last run — 2026-09-02.
 
@@ -11,7 +11,7 @@
 [![npm downloads](https://img.shields.io/npm/dm/@theyahia/mcp-core?label=downloads)](https://www.npmjs.com/org/theyahia)
 [![GitHub stars](https://img.shields.io/github/stars/theYahia/WWmcp?style=social)](https://github.com/theYahia/WWmcp/stargazers)
 ![Servers](https://img.shields.io/badge/MCP_Servers-46-blue)
-![Tools](https://img.shields.io/badge/Tools-501-green)
+![Tools](https://img.shields.io/badge/Tools-566-green)
 
 MCP servers for APIs that Western catalogs skip: Russian and CIS services (1C, Wildberries, YooKassa, CDEK, hh.ru, amoCRM, MoySklad, Avito) plus payment and SMS providers in Turkey, the Gulf, Egypt, Ethiopia, Bangladesh and Latin America. They plug into Claude Desktop, Cursor, VS Code and any other MCP client.
 
@@ -97,8 +97,8 @@ MoySklad → stock and price → CDEK → tariff → YooKassa → payment link. 
 | [@theyahia/planfix-mcp](https://www.npmjs.com/package/@theyahia/planfix-mcp) | v1.2.0 | 20 tools | Tasks, contacts, projects, comments, custom fields, files |
 | [@theyahia/elma365-mcp](https://www.npmjs.com/package/@theyahia/elma365-mcp) | v2.0.0 | 20 tools | BPM: processes, tasks, app items, schema discovery |
 | [@theyahia/amocrm-mcp](https://www.npmjs.com/package/@theyahia/amocrm-mcp) | v2.0.2 | 19 tools | Leads, contacts, companies, pipelines, tasks, notes, unsorted |
-| [@theyahia/moysklad-mcp](https://www.npmjs.com/package/@theyahia/moysklad-mcp) | v2.1.0 | 10 tools | Products, stock, orders, counterparties, supplies, profit report |
-| [@theyahia/megaplan-mcp](https://www.npmjs.com/package/@theyahia/megaplan-mcp) | v3.0.0 | 8 tools | Tasks, deals, projects, employees, comments |
+| [@theyahia/moysklad-mcp](https://www.npmjs.com/package/@theyahia/moysklad-mcp) | v3.1.0 | 60 tools | Products, stock, orders, counterparties, supplies, profit report |
+| [@theyahia/megaplan-mcp](https://www.npmjs.com/package/@theyahia/megaplan-mcp) | v4.0.0 | 18 tools | Tasks, deals, projects, employees, comments |
 | [@theyahia/bitrix24-mcp](https://www.npmjs.com/package/@theyahia/bitrix24-mcp) | v1.2.0 | 4 tools | Deals, contacts, tasks over an inbound webhook |
 | [@theyahia/getcourse-mcp](https://www.npmjs.com/package/@theyahia/getcourse-mcp) | v1.2.0 | 3 tools | Online school: users, deals |
 
@@ -158,7 +158,7 @@ MoySklad → stock and price → CDEK → tariff → YooKassa → payment link. 
 |---|---|---|---|
 | [@theyahia/kontur-focus-mcp](https://www.npmjs.com/package/@theyahia/kontur-focus-mcp) | v3.0.1 | 8 tools | Counterparty check: EGRUL, financials, arbitration, bankruptcy, licenses |
 | [@theyahia/2gis-mcp](https://www.npmjs.com/package/@theyahia/2gis-mcp) | v3.0.0 | 8 tools | Places search, geocoding, directions, reviews |
-| [@theyahia/cbr-mcp](https://www.npmjs.com/package/@theyahia/cbr-mcp) | v1.1.0 | 5 tools | Bank of Russia: FX rates, key rate, precious metals, conversion |
+| [@theyahia/cbr-mcp](https://www.npmjs.com/package/@theyahia/cbr-mcp) | v1.2.0 | 7 tools | Bank of Russia: FX rates, key rate, precious metals, conversion |
 | [@theyahia/cbu-mcp](https://www.npmjs.com/package/@theyahia/cbu-mcp) | v1.1.0 | 5 tools | Central Bank of Uzbekistan: FX rates, history, dynamics |
 
 #### Travel
@@ -182,7 +182,7 @@ MoySklad → stock and price → CDEK → tariff → YooKassa → payment link. 
 | [@theyahia/bkash-mcp](https://www.npmjs.com/package/@theyahia/bkash-mcp) | Bangladesh | v1.1.0 | 8 tools | Tokenized Checkout: payments, refunds, agreements |
 | [@theyahia/chapa-mcp](https://www.npmjs.com/package/@theyahia/chapa-mcp) | Ethiopia | v1.1.0 | 8 tools | Payments, verification, transfers, banks, balance |
 | [@theyahia/fawaterak-mcp](https://www.npmjs.com/package/@theyahia/fawaterak-mcp) | Egypt | v1.1.0 | 8 tools | Invoices, payment methods (Fawry, cards, wallets, Meeza), refunds |
-| [@theyahia/ileti-merkezi-mcp](https://www.npmjs.com/package/@theyahia/ileti-merkezi-mcp) | Turkey | v3.0.0 | 8 tools | SMS, bulk SMS, reports, contacts, blacklist |
+| [@theyahia/ileti-merkezi-mcp](https://www.npmjs.com/package/@theyahia/ileti-merkezi-mcp) | Turkey | v4.0.0 | 11 tools | SMS, bulk SMS, reports, contacts, blacklist |
 | [@theyahia/orange-money-mcp](https://www.npmjs.com/package/@theyahia/orange-money-mcp) | Francophone Africa (11 countries) | v1.1.0 | 8 tools | WebPay: payments, status, cash-in, cash-out, transfers |
 
 ---

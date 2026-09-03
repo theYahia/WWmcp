@@ -1,15 +1,17 @@
 /**
- * Megaplan API client.
+ * Megaplan API v3 client.
  *
- * Custom auth that supports BOTH:
+ * Auth supports BOTH:
  *   1. Direct token via MEGAPLAN_TOKEN env var (preferred)
  *   2. Password grant via MEGAPLAN_LOGIN + MEGAPLAN_PASSWORD (with token caching)
  *
- * Wraps @theyahia/mcp-core's BaseHttpClient. Re-exports megaplanGet/megaplanPost
- * as functional API so tools/* keep their signatures unchanged.
+ * Wraps @theyahia/mcp-core's BaseHttpClient (retry, timeout, 401 re-auth,
+ * logging). Re-exports megaplanGet/megaplanPost as a functional API so tools/*
+ * keep their signatures unchanged.
  */
 
 import {
+  ApiError,
   BaseHttpClient,
   createLogger,
   type AuthStrategy,
@@ -18,13 +20,22 @@ import {
 const logger = createLogger("megaplan-mcp");
 
 function getDomain(): string {
-  const domain = process.env["MEGAPLAN_DOMAIN"];
-  if (!domain) {
+  const raw = process.env["MEGAPLAN_DOMAIN"];
+  if (!raw) {
     throw new Error(
       "MEGAPLAN_DOMAIN is required (your Megaplan subdomain, e.g. 'mycompany' for mycompany.megaplan.ru).",
     );
   }
-  return domain.replace(/^https?:\/\//, "").replace(/\/$/, "");
+  let domain = raw.replace(/^https?:\/\//i, "").replace(/\/+$/, "").trim();
+  // Config-time SSRF guard: a bare host[:port] only — no path, credentials, or spaces.
+  if (!/^[a-zA-Z0-9.\-]+(:[0-9]+)?$/.test(domain)) {
+    throw new Error(
+      `MEGAPLAN_DOMAIN is invalid: "${raw}". Provide a bare host like "yourcompany" or "yourcompany.megaplan.ru".`,
+    );
+  }
+  // A bare subdomain ("yourcompany") is expanded to "yourcompany.megaplan.ru".
+  if (!domain.includes(".")) domain = `${domain}.megaplan.ru`;
+  return domain;
 }
 
 function getBaseUrl(): string {
@@ -40,6 +51,9 @@ function getBaseUrl(): string {
 class MegaplanAuthStrategy implements AuthStrategy {
   readonly type = "megaplan_password_grant";
   private cachedToken: string | null = null;
+  // Single in-flight auth shared by concurrent callers — otherwise a cold start
+  // (or one 401 under load) fires a password grant per pending request.
+  private authPromise: Promise<string> | null = null;
 
   invalidate(): void {
     this.cachedToken = null;
@@ -54,19 +68,24 @@ class MegaplanAuthStrategy implements AuthStrategy {
       );
     }
 
+    // The v3 access_token endpoint expects OAuth2 password-grant form fields,
+    // not a JSON body.
+    const body = new URLSearchParams({
+      username: login,
+      password,
+      grant_type: "password",
+    });
+
     const response = await fetch(`${getBaseUrl()}/auth/access_token`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({
-        username: login,
-        password,
-        grant_type: "password",
-      }),
+      headers: { Accept: "application/json" },
+      body,
+      signal: AbortSignal.timeout(15_000),
     });
 
     if (!response.ok) {
       const text = await response.text().catch(() => "");
-      throw new Error(`Megaplan auth failed (HTTP ${response.status}): ${text}`);
+      throw new Error(`Megaplan auth failed (HTTP ${response.status})${snippet(text)}`);
     }
 
     const data = (await response.json()) as {
@@ -82,8 +101,17 @@ class MegaplanAuthStrategy implements AuthStrategy {
     const envToken = process.env["MEGAPLAN_TOKEN"];
     if (envToken) return envToken;
     if (this.cachedToken) return this.cachedToken;
-    this.cachedToken = await this.fetchTokenViaPasswordGrant();
-    return this.cachedToken;
+    if (this.authPromise) return this.authPromise;
+
+    this.authPromise = this.fetchTokenViaPasswordGrant()
+      .then((token) => {
+        this.cachedToken = token;
+        return token;
+      })
+      .finally(() => {
+        this.authPromise = null;
+      });
+    return this.authPromise;
   }
 
   async authenticate(req: RequestInit): Promise<RequestInit> {
@@ -96,20 +124,18 @@ class MegaplanAuthStrategy implements AuthStrategy {
 
 const authStrategy = new MegaplanAuthStrategy();
 
-function buildClient(): BaseHttpClient {
-  return new BaseHttpClient({
-    baseUrl: getBaseUrl(),
-    timeout: 15_000,
-    maxRetries: 3,
-    auth: authStrategy,
-    logger,
-    headers: { Accept: "application/json" },
-  });
-}
-
 let _client: BaseHttpClient | null = null;
 function getClient(): BaseHttpClient {
-  if (!_client) _client = buildClient();
+  if (!_client) {
+    _client = new BaseHttpClient({
+      baseUrl: getBaseUrl(),
+      timeout: 15_000,
+      maxRetries: 3,
+      auth: authStrategy,
+      logger,
+      headers: { Accept: "application/json" },
+    });
+  }
   return _client;
 }
 
@@ -118,13 +144,49 @@ export function resetClient(): void {
   authStrategy.invalidate();
 }
 
+/** A short, single-line snippet of an upstream error body. */
+function snippet(text: string): string {
+  const s = (text ?? "").replace(/\s+/g, " ").trim().slice(0, 200);
+  return s ? `: ${s}` : "";
+}
+
+/**
+ * BaseHttpClient's ApiError carries the body separately from the message, so
+ * `createToolError` would show the model a bare "HTTP 422" with no reason.
+ * Re-throw with the upstream explanation folded into the message.
+ */
+async function request(method: string, path: string, body?: unknown): Promise<unknown> {
+  try {
+    return await getClient().request({ method, path, body });
+  } catch (error) {
+    if (error instanceof ApiError && error.body) {
+      throw new ApiError(
+        error.status,
+        `${error.message}${snippet(error.body)}`,
+        error.body,
+        error.headers,
+        error.code,
+      );
+    }
+    throw error;
+  }
+}
+
+/**
+ * v3 collection endpoints take a SINGLE JSON object (limit, filter, pageAfter, …)
+ * URL-encoded into the query string — not flat `filter[field]=value` params.
+ */
 export async function megaplanGet(
   path: string,
-  params?: Record<string, string>,
+  params?: Record<string, unknown>,
 ): Promise<unknown> {
-  return getClient().request({ method: "GET", path, params });
+  const query =
+    params && Object.keys(params).length > 0
+      ? `?${encodeURIComponent(JSON.stringify(params))}`
+      : "";
+  return request("GET", `${path}${query}`);
 }
 
 export async function megaplanPost(path: string, body: unknown): Promise<unknown> {
-  return getClient().request({ method: "POST", path, body });
+  return request("POST", path, body);
 }

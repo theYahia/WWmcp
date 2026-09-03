@@ -1,6 +1,6 @@
 import type { Server as HttpServer, ServerResponse } from "node:http";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { createLogger } from "@theyahia/mcp-core";
+import { createLogger, withErrorHandling } from "@theyahia/mcp-core";
 import {
   getProjectsSchema, handleGetProjects,
   getProjectInfoSchema, handleGetProjectInfo,
@@ -29,22 +29,17 @@ export const TOOL_COUNT = TOOL_NAMES.length;
 
 const MAX_BODY_BYTES = 1_000_000;
 
-type ToolResult = {
-  content: Array<{ type: "text"; text: string }>;
-  isError?: boolean;
-  [k: string]: unknown;
-};
-
-/** Wrap a handler so thrown errors surface to the LLM as isError content instead of a protocol error. */
-function wrap<P>(handler: (params: P) => Promise<string>): (params: P) => Promise<ToolResult> {
-  return async (params: P) => {
-    try {
-      return { content: [{ type: "text", text: await handler(params) }] };
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      return { content: [{ type: "text", text: `Ошибка Tilda: ${message}` }], isError: true };
-    }
-  };
+/**
+ * Wrap a handler with the fleet-wide guard from core: thrown errors become isError
+ * content instead of a protocol error, AND successful output passes through
+ * prompt-injection stripping + the 50 000-char truncation cap. The previous local
+ * wrapper did neither, which mattered most here — these tools return whole Tilda
+ * pages (attacker-authorable HTML, easily megabytes) straight into the model context.
+ */
+function wrap<P>(handler: (params: P) => Promise<string>) {
+  return withErrorHandling<P>(async (params) => ({
+    content: [{ type: "text" as const, text: await handler(params) }],
+  }));
 }
 
 export function createMcpServer(): McpServer {
@@ -102,8 +97,23 @@ export function createMcpServer(): McpServer {
   return server;
 }
 
-function setCors(res: ServerResponse): void {
-  res.setHeader("Access-Control-Allow-Origin", "*");
+/**
+ * CORS: deny-all by default, matching `@theyahia/mcp-core`'s startHttp.
+ *
+ * `Access-Control-Allow-Origin: *` on an unauthenticated /mcp endpoint let ANY page
+ * the user visits POST to this server on localhost and READ the response — i.e. dump
+ * the whole Tilda account through the browser. An Origin is now echoed only if it is
+ * explicitly allow-listed via TILDA_HTTP_ALLOWED_ORIGINS (comma-separated).
+ * Non-browser MCP clients (Claude Desktop, Cursor) are unaffected by CORS.
+ */
+const ALLOWED_ORIGINS = (process.env.TILDA_HTTP_ALLOWED_ORIGINS ?? "")
+  .split(",").map((s) => s.trim()).filter(Boolean);
+
+function setCors(res: ServerResponse, origin?: string): void {
+  if (origin && ALLOWED_ORIGINS.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Vary", "Origin");
+  }
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, mcp-session-id, Authorization");
 }
@@ -124,7 +134,7 @@ export async function startHttpMode(port: number): Promise<HttpServer> {
   const { createServer } = await import("node:http");
 
   const httpServer = createServer(async (req, res) => {
-    setCors(res);
+    setCors(res, req.headers.origin);
     const url = new URL(req.url ?? "/", `http://localhost:${port}`);
 
     if (req.method === "OPTIONS") {

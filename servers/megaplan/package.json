@@ -1,7 +1,7 @@
 {
   "name": "@theyahia/megaplan-mcp",
-  "version": "3.0.0",
-  "description": "Megaplan (Мегаплан) for AI agents: create and read tasks and deals, projects, employees, comments (8 tools + 2 prompts, Russia)",
+  "version": "4.0.0",
+  "description": "Megaplan (Мегаплан) for AI agents: tasks, deals, projects, employees, deal pipelines, CRM clients, comments (18 tools + 2 prompts, Russia)",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -58,7 +58,11 @@
     "deals",
     "сделки",
     "russia",
-    "russian-api"
+    "russian-api",
+    "pipelines",
+    "воронка",
+    "contractors",
+    "контрагенты"
   ],
   "license": "MIT",
   "repository": {

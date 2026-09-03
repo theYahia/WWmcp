@@ -1,87 +1,120 @@
 /**
- * Ileti Merkezi SMS API client.
+ * İletiMerkezi v1 JSON API client.
  *
- * Custom HMAC-style auth: SHA256(apiKey + secret + ISO_timestamp), sent as
- * X-API-Key + X-API-Hash headers. The timestamp is recomputed on every
- * request — Ileti Merkezi's server uses a tolerance window for replay protection.
+ * Every operation is a POST to `<base>/<action>/json` with the credentials and
+ * the operation payload nested inside a single `request` envelope:
  *
- * Wraps @theyahia/mcp-core's BaseHttpClient via a custom AuthStrategy.
+ *   { "request": { "authentication": { key, hash }, ...input } }
+ *
+ * There is deliberately NO client-side hashing: `hash` is the value the panel
+ * precomputes, passed through unchanged. (Pre-4.0 releases signed
+ * SHA256(key+secret+timestamp) into X-API-Key/X-API-Hash headers — that API
+ * never existed.)
+ *
+ * Wraps @theyahia/mcp-core's BaseHttpClient for retry/timeout/logging. 4xx is
+ * NOT surfaced as a throw: those bodies carry meaningful API status codes, so
+ * `call` returns them for the tool layer to interpret.
  */
 
-import * as crypto from "node:crypto";
-import {
-  BaseHttpClient,
-  createLogger,
-  type AuthStrategy,
-} from "@theyahia/mcp-core";
+import { ApiError, BaseHttpClient, createLogger } from "@theyahia/mcp-core";
 
 const BASE_URL = "https://api.iletimerkezi.com/v1";
 const logger = createLogger("ileti-merkezi-mcp");
 
-/**
- * Per-request HMAC: SHA256(apiKey + secret + timestamp), sent in X-API-Hash.
- */
-class IletiHmacStrategy implements AuthStrategy {
-  readonly type = "ileti_hmac";
-
-  constructor(
-    private readonly apiKey: string,
-    private readonly secret: string,
-  ) {}
-
-  async authenticate(req: RequestInit): Promise<RequestInit> {
-    const timestamp = new Date().toISOString();
-    const hash = crypto
-      .createHash("sha256")
-      .update(this.apiKey + this.secret + timestamp, "utf8")
-      .digest("hex");
-
-    const headers = new Headers(req.headers);
-    headers.set("X-API-Key", this.apiKey);
-    headers.set("X-API-Hash", hash);
-    return { ...req, headers };
-  }
+export interface Credentials {
+  key: string;
+  hash: string;
 }
 
-function buildClient(): BaseHttpClient {
-  const apiKey = process.env["ILETI_API_KEY"];
-  const secret = process.env["ILETI_SECRET"];
-  if (!apiKey || !secret) {
-    throw new Error(
-      "ILETI_API_KEY and ILETI_SECRET are required. Get them at https://www.iletimerkezi.com/ (panel → API).",
+export class MissingCredentialsError extends Error {
+  constructor() {
+    super(
+      "İletiMerkezi credentials missing. Set ILETIMERKEZI_API_KEY and " +
+        "ILETIMERKEZI_API_HASH (aliases ILETI_API_KEY / ILETI_API_HASH are also accepted) " +
+        "in your MCP client config. Both values are issued — already paired — from " +
+        "panel.iletimerkezi.com → Settings → Security → API Access; copy them as-is " +
+        "(the panel precomputes the hash, do NOT hash anything yourself). Also enable " +
+        '"Allow API access" under Settings → Security, otherwise the API returns 401. ' +
+        "See https://www.iletimerkezi.com/docs/api/authentication",
     );
+    this.name = "MissingCredentialsError";
   }
-  return new BaseHttpClient({
-    baseUrl: BASE_URL,
-    timeout: 15_000,
-    maxRetries: 3,
-    auth: new IletiHmacStrategy(apiKey, secret),
-    logger,
-    headers: { Accept: "application/json" },
-  });
 }
 
 /**
- * Lazy-initialized client wrapper. Public shape matches the v1 IletiMerkeziClient
- * so existing tool code (and tests) don't need rewrites.
+ * Read API credentials from the environment. Primary names match the official
+ * provider tooling so configs are drop-in; the ILETI_* aliases ease migration
+ * from the pre-4.0 layout.
+ */
+export function readCredentials(): Credentials {
+  const key = (process.env["ILETIMERKEZI_API_KEY"] ?? process.env["ILETI_API_KEY"] ?? "").trim();
+  const hash = (process.env["ILETIMERKEZI_API_HASH"] ?? process.env["ILETI_API_HASH"] ?? "").trim();
+  if (!key || !hash) throw new MissingCredentialsError();
+  return { key, hash };
+}
+
+export interface ApiResult {
+  /** Transport-level HTTP status. */
+  status: number;
+  /** Parsed JSON body (or raw text when the response was not JSON). */
+  body: unknown;
+  /** Fully-qualified URL the request was sent to (handy in error messages). */
+  requestUrl: string;
+}
+
+function parseBody(text: string | undefined): unknown {
+  if (!text) return null;
+  try {
+    return JSON.parse(text);
+  } catch {
+    return text; // provider returned non-JSON (e.g. an HTML error page)
+  }
+}
+
+/**
+ * Lazy-initialized client. Construction never throws — credentials are read on
+ * the first call, so the server still boots (and lists tools) unconfigured.
  */
 export class IletiMerkeziClient {
   private _http: BaseHttpClient | null = null;
 
   private get http(): BaseHttpClient {
-    if (!this._http) this._http = buildClient();
+    if (!this._http) {
+      this._http = new BaseHttpClient({
+        baseUrl: BASE_URL,
+        timeout: 30_000,
+        maxRetries: 3,
+        logger,
+        headers: { Accept: "application/json" },
+      });
+    }
     return this._http;
   }
 
+  /** Test/env-change helper: drop the cached HTTP client. */
   reset(): void {
     this._http = null;
   }
 
-  async request(
-    method: string,
-    path: string,
-    body?: unknown,
-  ): Promise<unknown> {
-    return this.http.request({ method, path, body });
+  /**
+   * POST `input` to `<base><path>`, wrapped in the authenticated request
+   * envelope. Returns 4xx/5xx responses instead of throwing — their bodies hold
+   * the İletiMerkezi status code the caller needs. Only transport failures
+   * (timeout, socket error) and missing credentials throw.
+   */
+  async call(path: string, input: Record<string, unknown> = {}): Promise<ApiResult> {
+    const creds = readCredentials();
+    const requestUrl = `${BASE_URL}${path}`;
+    const body = { request: { authentication: creds, ...input } };
+
+    try {
+      return { status: 200, body: await this.http.request({ method: "POST", path, body }), requestUrl };
+    } catch (error) {
+      // status 0 == transport failure (timeout / socket), no HTTP response to report.
+      if (error instanceof ApiError && error.status > 0) {
+        return { status: error.status, body: parseBody(error.body), requestUrl };
+      }
+      throw error;
+    }
   }
 }

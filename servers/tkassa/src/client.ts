@@ -6,6 +6,21 @@ const BASE_URL = "https://securepay.tinkoff.ru/v2";
 const TIMEOUT = 10_000;
 const MAX_RETRIES = 3;
 
+/**
+ * Methods that must NEVER be repeated automatically after an ambiguous failure
+ * (HTTP 429/5xx or a timeout). Everything here is POST, like the whole T-Kassa API,
+ * but unlike /Init — which T-Kassa de-duplicates by the caller's OrderId — these
+ * carry no idempotency key of any kind, so a repeat moves the money a second time:
+ * /Cancel refunds a CONFIRMED payment again, /Charge charges the saved card again.
+ * A 5xx here means "result unknown", not "nothing happened": check the state with
+ * get_payment_state before repeating by hand.
+ */
+const NON_IDEMPOTENT = new Set(["/Cancel", "/Charge"]);
+
+const REPEAT_UNSAFE =
+  " Повтор не выполнен автоматически: операция двигает деньги и не защищена ключом " +
+  "идемпотентности. Проверьте состояние через get_payment_state, прежде чем повторять.";
+
 const logger = createLogger("tkassa-mcp");
 
 export class TKassaClient {
@@ -50,6 +65,7 @@ export class TKassaClient {
 
   async post(path: string, body: Record<string, unknown> = {}): Promise<TKassaResponse> {
     const url = `${BASE_URL}${path}`;
+    const repeatable = !NON_IDEMPOTENT.has(path);
 
     body.TerminalKey = this.terminalKey;
     body.Token = this.generateToken(body);
@@ -81,22 +97,29 @@ export class TKassaClient {
 
         const errorBody = await response.text();
 
-        if ((response.status === 429 || response.status >= 500) && attempt < MAX_RETRIES) {
+        if ((response.status === 429 || response.status >= 500) && repeatable && attempt < MAX_RETRIES) {
           const delay = Math.min(1000 * 2 ** (attempt - 1), 8000);
           logger.warn(`${response.status} from ${path}, retry in ${delay}ms`, { attempt, maxRetries: MAX_RETRIES });
           await new Promise(r => setTimeout(r, delay));
           continue;
         }
 
-        throw new Error(`T-Kassa HTTP ${response.status}: ${errorBody}`);
+        const ambiguous = response.status === 429 || response.status >= 500;
+        throw new Error(
+          `T-Kassa HTTP ${response.status}: ${errorBody}` +
+            (ambiguous && !repeatable ? REPEAT_UNSAFE : ""),
+        );
       } catch (error) {
         clearTimeout(timer);
         if (error instanceof DOMException && error.name === "AbortError") {
-          if (attempt < MAX_RETRIES) {
+          if (repeatable && attempt < MAX_RETRIES) {
             logger.warn(`Timeout ${path}, retrying`, { attempt, maxRetries: MAX_RETRIES });
             continue;
           }
-          throw new Error("T-Kassa: request timeout (10s). Try again later.");
+          throw new Error(
+            `T-Kassa: request timeout (${TIMEOUT / 1000}s).` +
+              (repeatable ? " Try again later." : REPEAT_UNSAFE),
+          );
         }
         throw error;
       }

@@ -70,6 +70,9 @@ class OrangeMoneyAuthStrategy implements AuthStrategy {
         Accept: "application/json",
       },
       body: "grant_type=client_credentials",
+      // Not a BaseHttpClient call: without this a hung Orange auth endpoint
+      // blocks the tool call forever.
+      signal: AbortSignal.timeout(15_000),
     });
 
     if (!response.ok) {

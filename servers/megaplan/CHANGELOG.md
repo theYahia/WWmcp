@@ -1,5 +1,63 @@
 # Changelog
 
+## 4.0.0
+
+API v3 correctness overhaul, ported from the standalone `theYahia/megaplan-mcp` repo (npm `latest`)
+and adapted to `@theyahia/mcp-core`. Earlier releases sent request shapes that do not match the real
+Megaplan v3 API. Tool surface grows 8 → 18. **Breaking.**
+
+### ⚠️ Breaking
+
+- **List filtering & pagination rewritten.** v3 list endpoints take a SINGLE JSON object
+  (`limit` + a nested `*Filter` + a `pageAfter` cursor) URL-encoded into the query string — not flat
+  `filter[field]=value` params or `offset`. `filter_status` now takes account-specific status
+  **code(s)** (e.g. `["filter_any"]`); `offset` is replaced by `page_after`.
+- **Comments fixed.** The endpoint is the plural `/{entity}/{id}/comments`, and `create_comment`'s
+  text field is `content` (was `text`, plus a redundant `subject` in the body).
+- **`create_task` deadline** is sent as a v3 `DateTime` object, not a bare ISO string.
+- **`create_deal`** sends `program` as a `Program` ref (was `DealProgram`), money as a `Money` object
+  on `price` (was a bare number on `cost`), and `contact` as `ContractorHuman` / `ContractorCompany`
+  (was `Contractor`) — hence the new `contact_type` param.
+- **Tool output is a compact summary** (`{ total, count, items, nextPageAfter }`) by default;
+  pass `raw: true` for the raw API JSON.
+
+### Added
+
+- 10 tools: `get_task`, `get_deal`, `get_project` (get-by-id); `update_task`, `update_deal`;
+  `get_deal_programs`, `get_deal_program`; `list_clients`, `get_client`;
+  `get_current_user` (experimental).
+- `get_deal_programs` makes `create_deal` usable — it is how you discover the required `program_id`.
+- `src/query.ts`: v3 list-query builder (FilterTermEnum / FilterTermRef / cursor) plus `DateTime`
+  and `Money` value-object helpers.
+- `src/format.ts`: defensive, LLM-friendly formatting of every entity, with a `raw` escape hatch.
+- `idSchema` guard on every id interpolated into a request path — LLM-supplied ids are an untrusted
+  boundary, so `../employee/current` and `1/2` are rejected before the call.
+- `MEGAPLAN_DOMAIN` validation (bare `host[:port]` only, config-time SSRF guard) and expansion of a
+  bare subdomain to `<sub>.megaplan.ru`.
+- Single in-flight auth: concurrent cold-start requests share one password grant instead of firing
+  one each.
+- Upstream error bodies are folded into the thrown message, so the model sees why a call failed
+  instead of a bare `HTTP 422`.
+
+### Fixed
+
+- Password grant posts `application/x-www-form-urlencoded` fields (the OAuth2 shape the v3
+  `auth/access_token` endpoint expects), not a JSON body.
+- Advertised server version is read from `package.json` (was a hardcoded `2.0.0` that had drifted).
+- `.claude/skills/*` updated to the new tool set, cursor pagination and `content` field.
+
+### Not ported from the standalone 4.0.0
+
+- HTTP-transport hardening (bearer auth, loopback bind, DNS-rebinding protection, body-size limit,
+  idle-session eviction). This monorepo's HTTP transport is `@theyahia/mcp-core`'s shared
+  `runServer`/`startHttp`, so that work belongs in `packages/core` for all servers at once.
+
+### Unchanged
+
+- Built on `@theyahia/mcp-core`: `BaseHttpClient` (retry/timeout/401 re-auth/logging),
+  `withErrorHandling`, `runServer` dual transport (stdio + Streamable HTTP).
+- `MEGAPLAN_TOKEN` / `MEGAPLAN_LOGIN` + `MEGAPLAN_PASSWORD` auth, both MCP prompts.
+
 ## 3.0.0
 
 ### Major Changes

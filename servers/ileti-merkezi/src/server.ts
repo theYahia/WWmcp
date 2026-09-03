@@ -1,167 +1,299 @@
 /**
- * Ileti Merkezi MCP server factory.
+ * İletiMerkezi MCP server factory.
  *
- * 8 tools defined inline (no separate tools/* files in v1, kept that way).
+ * 11 tools defined inline, all hitting the real v1 JSON API
+ * (POST /<action>/json with a `request` envelope).
  */
 
+import { readFileSync } from "node:fs";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { z } from "zod";
+import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { createLogger, withErrorHandling } from "@theyahia/mcp-core";
-import { IletiMerkeziClient } from "./client.js";
+import { IletiMerkeziClient, type ApiResult } from "./client.js";
+import { extractApiStatusCode, extractApiStatusMessage, guidanceFor, isOk } from "./errors.js";
+import {
+  summarizeBalance,
+  summarizeBlacklist,
+  summarizeCancel,
+  summarizeReport,
+  summarizeSend,
+  summarizeSenders,
+} from "./responses.js";
+import {
+  blacklistNumberShape,
+  cancelOrderShape,
+  emptyShape,
+  getBlacklistShape,
+  getReportShape,
+  getReportsShape,
+  iysCheckShape,
+  iysRegisterShape,
+  sendSmsShape,
+} from "./schemas.js";
 
 export const logger = createLogger("ileti-merkezi-mcp");
 
-export const TOOL_COUNT = 8;
+export const TOOL_COUNT = 11;
+
+/** Single source of truth for the advertised version — no hardcoded drift. */
+export const VERSION = (
+  JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8")) as {
+    version: string;
+  }
+).version;
+
+const DOCS_API = "https://www.iletimerkezi.com/en/docs/api";
+const docUrl = (slug: string) => `https://www.iletimerkezi.com/docs/api/${slug}`;
+
+type Summarizer = (body: unknown) => string | null;
 
 /**
- * Lazy module-level client — does not throw at construction without env vars.
- * Tools share this instance to amortize the singleton inside IletiMerkeziClient.
+ * Lazy module-level client — does not throw at construction without env vars,
+ * so the server boots and lists tools even when unconfigured.
  */
 const client = new IletiMerkeziClient();
+
+function textResult(text: string, isError: boolean): CallToolResult {
+  return { isError, content: [{ type: "text", text }] };
+}
+
+/** Render an ApiResult into a CallToolResult: summary + highlights + raw JSON. */
+function render(
+  path: string,
+  api: ApiResult,
+  summarize: Summarizer | undefined,
+  reference: string,
+): CallToolResult {
+  const apiCode = extractApiStatusCode(api.body);
+  const ok = isOk(api.status, apiCode);
+  const apiMsg = extractApiStatusMessage(api.body);
+
+  const head =
+    `${ok ? "OK" : "FAILED"} ${path} (HTTP ${api.status}` +
+    `${apiCode !== null ? `, response.status.code ${apiCode}` : ""})` +
+    `${apiMsg ? ` — ${apiMsg}` : ""}.`;
+
+  const highlights = ok && summarize ? summarize(api.body) : null;
+  const guidance = ok ? "" : guidanceFor(apiCode, reference);
+  const raw = "```json\n" + JSON.stringify(api.body, null, 2) + "\n```";
+
+  const text = [head, highlights, guidance, `Request URL: ${api.requestUrl}`, raw]
+    .filter(Boolean)
+    .join("\n\n");
+  return textResult(text, !ok);
+}
+
+async function call(
+  path: string,
+  input: Record<string, unknown>,
+  summarize: Summarizer | undefined,
+  reference: string,
+): Promise<CallToolResult> {
+  return render(path, await client.call(path, input), summarize, reference);
+}
 
 export function createServer(): McpServer {
   const server = new McpServer({
     name: "ileti-merkezi-mcp",
-    version: "2.0.0",
+    version: VERSION,
   });
 
   server.tool(
     "send_sms",
-    "Send a single SMS via Ileti Merkezi (Turkey). Recipient phone in international E.164 format (+90...).",
-    {
-      to: z.string().describe("Recipient phone number with country code (e.g. +905551234567)"),
-      message: z.string().describe("SMS message text"),
-      sender: z.string().optional().describe("Sender name/number (must be pre-approved at Ileti Merkezi panel)"),
-      schedule_at: z.string().optional().describe("Schedule send time (ISO 8601). Omit to send immediately."),
-    },
+    "Send an SMS to one recipient or many (bulk, up to 50000) via İletiMerkezi. " +
+      "Single and bulk use the same call — pass `to` as a string or an array. " +
+      "For OTP/one-time codes, send to a single recipient with message_type=transactional. " +
+      "İYS (Turkey commercial-message consent): set message_type=commercial for any marketing " +
+      "content (enables real-time consent validation); transactional messages are exempt. " +
+      `Reference: ${docUrl("send-sms")}`,
+    sendSmsShape,
     withErrorHandling(async (params) => {
-      const body: Record<string, unknown> = { to: params.to, message: params.message };
-      if (params.sender) body.sender = params.sender;
-      if (params.schedule_at) body.scheduleAt = params.schedule_at;
-      const result = await client.request("POST", "/send-sms", body);
-      return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
-    }),
-  );
-
-  server.tool(
-    "send_bulk_sms",
-    "Send the same SMS to multiple recipients (Turkey). All numbers must be in E.164 format.",
-    {
-      recipients: z.array(z.string()).describe("Array of phone numbers"),
-      message: z.string().describe("SMS message text"),
-      sender: z.string().optional().describe("Sender name (must be pre-approved)"),
-      schedule_at: z.string().optional().describe("Schedule send time (ISO 8601)"),
-    },
-    withErrorHandling(async (params) => {
-      const body: Record<string, unknown> = {
-        recipients: params.recipients,
-        message: params.message,
+      const numbers = Array.isArray(params.to) ? params.to : [params.to];
+      const sender =
+        params.sender ?? process.env["ILETIMERKEZI_SENDER"] ?? process.env["ILETI_SENDER"];
+      if (!sender) {
+        return textResult(
+          "No sender header provided. Pass `sender` (3-11 chars, panel-approved; " +
+            "use APITEST for sandbox) or set ILETIMERKEZI_SENDER in your MCP config.",
+          true,
+        );
+      }
+      const iys = params.iys ?? (params.message_type === "commercial" ? "1" : "0");
+      const order = {
+        sender,
+        sendDateTime: params.schedule_at ?? "",
+        iys,
+        iysList: params.iys_list,
+        message: { text: params.message, receipents: { number: numbers } },
       };
-      if (params.sender) body.sender = params.sender;
-      if (params.schedule_at) body.scheduleAt = params.schedule_at;
-      const result = await client.request("POST", "/send-bulk-sms", body);
-      return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+      return call("/send-sms/json", { order }, summarizeSend, docUrl("send-sms"));
     }),
   );
 
   server.tool(
-    "get_sms_report",
-    "Get delivery report for a previously sent SMS by message_id (single SMS) or order_id (bulk SMS).",
-    {
-      message_id: z.string().optional().describe("Message ID to look up (from send_sms response)"),
-      order_id: z.string().optional().describe("Order ID for bulk SMS (from send_bulk_sms response)"),
-      page: z.number().int().default(1).describe("Page number"),
-      per_page: z.number().int().default(25).describe("Items per page"),
-    },
-    withErrorHandling(async (params) => {
-      const qs = new URLSearchParams({
-        page: String(params.page),
-        perPage: String(params.per_page),
-      });
-      if (params.message_id) qs.set("messageId", params.message_id);
-      if (params.order_id) qs.set("orderId", params.order_id);
-      const result = await client.request("GET", `/reports?${qs}`);
-      return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
-    }),
+    "cancel_order",
+    "Cancel a future-scheduled SMS order before it is dispatched. " +
+      `Reference: ${docUrl("cancel-order")}`,
+    cancelOrderShape,
+    withErrorHandling(async (params) =>
+      call(
+        "/cancel-order/json",
+        { order: { id: params.order_id } },
+        summarizeCancel,
+        docUrl("cancel-order"),
+      ),
+    ),
+  );
+
+  server.tool(
+    "get_report",
+    "Get the per-recipient delivery report for one order id (status counts + each number's " +
+      "delivery state). Order status: 113 SENDING / 114 COMPLETED / 115 CANCELED. " +
+      "Message status: 110 WAITING / 111 DELIVERED / 112 UNDELIVERED. " +
+      `Reference: ${docUrl("get-report")}`,
+    getReportShape,
+    withErrorHandling(async (params) =>
+      call(
+        "/get-report/json",
+        { order: { id: params.order_id, page: params.page, rowCount: params.row_count } },
+        summarizeReport,
+        docUrl("get-report"),
+      ),
+    ),
+  );
+
+  server.tool(
+    "get_reports",
+    "List order summaries within a date range (YYYY-MM-DD, range no wider than 10 days). " +
+      `Reference: ${docUrl("get-reports")}`,
+    getReportsShape,
+    withErrorHandling(async (params) =>
+      call(
+        "/get-reports/json",
+        { filter: { start: params.start, end: params.end, page: params.page } },
+        undefined,
+        docUrl("get-reports"),
+      ),
+    ),
   );
 
   server.tool(
     "get_balance",
-    "Get current account balance and remaining SMS credits.",
-    {},
-    withErrorHandling(async () => {
-      const result = await client.request("GET", "/balance");
-      return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
-    }),
+    "Get account balance (TL) and remaining SMS credits. Side-effect free, costs nothing. " +
+      `Reference: ${docUrl("get-balance")}`,
+    emptyShape,
+    withErrorHandling(async () =>
+      call("/get-balance/json", {}, summarizeBalance, docUrl("get-balance")),
+    ),
   );
 
   server.tool(
-    "list_senders",
-    "List approved sender names/numbers configured for the account.",
-    {},
-    withErrorHandling(async () => {
-      const result = await client.request("GET", "/senders");
-      return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
-    }),
-  );
-
-  server.tool(
-    "create_contact_group",
-    "Create a new contact group for organizing recipients.",
-    {
-      name: z.string().describe("Group name"),
-    },
-    withErrorHandling(async (params) => {
-      const result = await client.request("POST", "/contacts/groups", { name: params.name });
-      return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
-    }),
-  );
-
-  server.tool(
-    "add_contacts",
-    "Add one or more contacts (phone + optional name/email) to an existing contact group.",
-    {
-      group_id: z.string().describe("Contact group ID"),
-      contacts: z
-        .array(
-          z.object({
-            phone_number: z.string().describe("Phone number with country code (E.164)"),
-            name: z.string().optional().describe("First name"),
-            surname: z.string().optional().describe("Last name"),
-            email: z.string().optional().describe("Email address"),
-          }),
-        )
-        .describe("Contacts to add"),
-    },
-    withErrorHandling(async (params) => {
-      const body = {
-        contacts: params.contacts.map((c) => ({
-          phoneNumber: c.phone_number,
-          name: c.name,
-          surname: c.surname,
-          email: c.email,
-        })),
-      };
-      const result = await client.request("POST", `/contacts/groups/${params.group_id}/contacts`, body);
-      return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
-    }),
+    "get_sender",
+    "List the approved sender headers (başlık) on the account. A header must be BTK-approved " +
+      "before it can be used; APITEST is available as a sandbox sender. " +
+      `Reference: ${docUrl("get-sender")}`,
+    emptyShape,
+    withErrorHandling(async () =>
+      call("/get-sender/json", {}, summarizeSenders, docUrl("get-sender")),
+    ),
   );
 
   server.tool(
     "get_blacklist",
-    "Get the list of blacklisted phone numbers (numbers that opted out or were blocked).",
-    {
-      page: z.number().int().default(1).describe("Page number"),
-      per_page: z.number().int().default(25).describe("Items per page"),
-    },
+    "List blocked numbers (paginated), optionally filtered by a datetime range " +
+      "(YYYY-MM-DD HH:MM:SS). " +
+      `Reference: ${docUrl("get-blacklist")}`,
+    getBlacklistShape,
     withErrorHandling(async (params) => {
-      const qs = new URLSearchParams({
-        page: String(params.page),
-        perPage: String(params.per_page),
-      });
-      const result = await client.request("GET", `/blacklist?${qs}`);
-      return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+      const blacklist: Record<string, unknown> = {
+        page: params.page,
+        rowCount: params.row_count,
+      };
+      if (params.start || params.end) {
+        blacklist.filter = {
+          ...(params.start ? { start: params.start } : {}),
+          ...(params.end ? { end: params.end } : {}),
+        };
+      }
+      return call("/get-blacklist/json", { blacklist }, summarizeBlacklist, docUrl("get-blacklist"));
     }),
+  );
+
+  server.tool(
+    "add_blacklist",
+    "Block a number so it stops receiving SMS. Idempotent — re-adding returns success. " +
+      `Reference: ${docUrl("add-blacklist")}`,
+    blacklistNumberShape,
+    withErrorHandling(async (params) =>
+      call(
+        "/add-blacklist/json",
+        { blacklist: { number: params.number } },
+        undefined,
+        docUrl("add-blacklist"),
+      ),
+    ),
+  );
+
+  server.tool(
+    "delete_blacklist",
+    "Unblock a number. Returns an error if the number is not currently on the blacklist. " +
+      `Reference: ${docUrl("delete-blacklist")}`,
+    blacklistNumberShape,
+    withErrorHandling(async (params) =>
+      call(
+        "/delete-blacklist/json",
+        { blacklist: { number: params.number } },
+        undefined,
+        docUrl("delete-blacklist"),
+      ),
+    ),
+  );
+
+  server.tool(
+    "iys_register",
+    "Register İYS (İleti Yönetim Sistemi) consent records in batch (1-5000, processed " +
+      "atomically — one failure fails the whole batch). Required for commercial messaging in " +
+      "Turkey under Law 6563. Each consent_date must be no older than 3 days. " +
+      `Reference: ${DOCS_API}`,
+    iysRegisterShape,
+    withErrorHandling(async (params) => {
+      const list = params.consents.map((c) => ({
+        recipient: c.recipient,
+        recipientType: c.recipient_type,
+        type: c.type,
+        status: c.status,
+        source: c.source,
+        consentDate: c.consent_date,
+      }));
+      return call(
+        "/consent/create/json",
+        { consent: { brandCode: params.brand_code, list } },
+        undefined,
+        DOCS_API,
+      );
+    }),
+  );
+
+  server.tool(
+    "iys_check",
+    "Look up a single recipient's İYS consent status (ONAY / RET) for a brand + channel. " +
+      `Reference: ${DOCS_API}`,
+    iysCheckShape,
+    withErrorHandling(async (params) =>
+      call(
+        "/consent/show/json",
+        {
+          consent: {
+            brandCode: params.brand_code,
+            recipient: params.recipient,
+            recipientType: params.recipient_type,
+            type: params.type,
+          },
+        },
+        undefined,
+        DOCS_API,
+      ),
+    ),
   );
 
   return server;
