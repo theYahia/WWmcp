@@ -8,6 +8,8 @@ import {
   countRegisteredTools,
   MODULE_TOOL_COUNTS,
   VERSION,
+  MIN_NODE_MAJOR,
+  unsupportedNodeMessage,
 } from "../src/server.js";
 
 /** Реально зарегистрированные инструменты — через tools/list живого сервера. */
@@ -245,5 +247,27 @@ describe("createServer", () => {
     const server = createServer();
     expect(server).toBeDefined();
     expect(typeof server.connect).toBe("function");
+  });
+});
+
+/**
+ * `engines.node` раньше обещал 18, а CI собирал только на 20 и 22 — пользователь
+ * на 18 узнавал о несовместимости падением. Порог теперь читается из package.json
+ * и проверяется на старте; тест держит оба конца.
+ */
+describe("supported Node version", () => {
+  const pkg = JSON.parse(
+    readFileSync(new URL("../package.json", import.meta.url), "utf8"),
+  ) as { engines: { node: string } };
+
+  it("MIN_NODE_MAJOR matches the engines field", () => {
+    expect(pkg.engines.node).toBe(`>=${MIN_NODE_MAJOR}.0.0`);
+  });
+
+  it("rejects older majors and passes supported ones", () => {
+    expect(unsupportedNodeMessage("18.20.4")).toContain(String(MIN_NODE_MAJOR));
+    expect(unsupportedNodeMessage("20.11.0")).toBeNull();
+    expect(unsupportedNodeMessage("24.14.0")).toBeNull();
+    expect(unsupportedNodeMessage(process.versions.node)).toBeNull();
   });
 });
