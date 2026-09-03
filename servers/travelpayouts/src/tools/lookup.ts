@@ -10,7 +10,9 @@ export const lookupAirportsSchema = z.object({
 export const lookupAirlinesSchema = z.object({
   query: z.string().optional()
     .describe("Название или IATA/ICAO код авиакомпании (не указан — весь справочник)"),
-  lang: z.string().default("ru").describe("Язык названий авиакомпаний (ru, en)"),
+  // Enum, not a free string: this value becomes a URL path segment in
+  // handleLookupAirlines (`/data/${lang}/airlines.json`).
+  lang: z.enum(["ru", "en"]).default("ru").describe("Язык названий авиакомпаний (ru, en)"),
 });
 
 export const lookupCitiesSchema = z.object({

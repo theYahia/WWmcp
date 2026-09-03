@@ -3,7 +3,9 @@ import { PochtaClient, HOSTS } from "../client.js";
 import { asRecord, pick, asString, asNumber } from "../lib.js";
 
 export const getOfficesSchema = z.object({
-  postal_code: z.string().optional().describe("Почтовый индекс для поиска конкретного отделения"),
+  // Spliced into the URL path below, so it is validated the same way as every other
+  // index in this server (calculate.ts, delivery_time.ts, zip_lookup.ts): 6 digits.
+  postal_code: z.string().regex(/^\d{6}$/).optional().describe("Почтовый индекс для поиска конкретного отделения (6 цифр)"),
   settlement: z.string().optional().describe("Населённый пункт для поиска отделений"),
   region: z.string().optional().describe("Регион для фильтрации"),
   top: z.number().int().min(1).max(100).default(20).describe("Количество результатов"),

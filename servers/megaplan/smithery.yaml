@@ -1,5 +1,5 @@
 name: megaplan-mcp
-description: MCP server for Megaplan — tasks, deals, projects, employees, comments + 2 MCP prompts (v2.0.0)
+description: MCP server for Megaplan (Мегаплан) API v3 — tasks, deals, projects, employees, deal pipelines, CRM clients, comments + 2 MCP prompts (Russia, 18 tools)
 icon: https://raw.githubusercontent.com/theYahia/WWmcp/main/servers/megaplan/assets/icon.svg
 startCommand:
   type: stdio

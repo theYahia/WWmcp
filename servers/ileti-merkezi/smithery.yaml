@@ -1,26 +1,30 @@
 name: ileti-merkezi-mcp
-description: MCP server for Ileti Merkezi SMS API — send/bulk SMS, reports, contacts, blacklist (Turkey, v2.0.0)
+description: MCP server for the İletiMerkezi SMS API — SMS/OTP, bulk, delivery reports, sender headers, blacklist, İYS consent (Turkey, 11 tools)
 icon: https://raw.githubusercontent.com/theYahia/WWmcp/main/servers/ileti-merkezi/assets/icon.svg
 startCommand:
   type: stdio
   configSchema:
     type: object
     required:
-      - ILETI_API_KEY
-      - ILETI_SECRET
+      - ILETIMERKEZI_API_KEY
+      - ILETIMERKEZI_API_HASH
     properties:
-      ILETI_API_KEY:
+      ILETIMERKEZI_API_KEY:
         type: string
-        description: "API key from Ileti Merkezi panel (Settings → API)"
-      ILETI_SECRET:
+        description: "API key from panel.iletimerkezi.com → Settings → Security → API Access"
+      ILETIMERKEZI_API_HASH:
         type: string
-        description: "Secret key from Ileti Merkezi panel (Settings → API)"
+        description: "API hash from the same panel page — precomputed and paired with the key, do not hash it yourself"
+      ILETIMERKEZI_SENDER:
+        type: string
+        description: "Default approved sender header (başlık) used when send_sms omits `sender`. APITEST is the sandbox header."
   commandFunction: |-
     (config) => ({
       command: "npx",
       args: ["-y", "@theyahia/ileti-merkezi-mcp"],
       env: {
-        ILETI_API_KEY: config.ILETI_API_KEY,
-        ILETI_SECRET: config.ILETI_SECRET,
+        ILETIMERKEZI_API_KEY: config.ILETIMERKEZI_API_KEY,
+        ILETIMERKEZI_API_HASH: config.ILETIMERKEZI_API_HASH,
+        ...(config.ILETIMERKEZI_SENDER ? { ILETIMERKEZI_SENDER: config.ILETIMERKEZI_SENDER } : {}),
       }
     })
