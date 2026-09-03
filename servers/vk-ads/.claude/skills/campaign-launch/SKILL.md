@@ -1,55 +1,65 @@
 ---
 name: campaign-launch
-description: Launch a VK Ads campaign — check budget, create campaign, attach ads, review targeting
-argument-hint: <account_id> "<campaign name>" <budget in kopecks>
+description: Launch a VK Ads campaign — check balance, create the ad_plan, attach ads, review ad groups
+argument-hint: "<campaign name>" <objective> <budget in roubles>
 ---
 
 # /campaign-launch — New VK Ads campaign
 
+VK Ads v2 has three levels: **ad_plans** (campaigns) → **ad_groups** → **banners** (ads).
+No tool here takes an `account_id` — the cabinet is determined by the token.
+
 ## Algorithm
 
-1. Call `get_budget` with account_id. If the remaining balance is below the campaign budget,
-   stop and report it — VK will accept the campaign and then refuse to serve it.
-2. Call `list_campaigns` with account_id to check the name is not already taken and to see
-   what the account already runs.
-3. Call `create_campaign` with account_id, name, type (normal, promoted_posts or
-   adaptive_ads — normal by default) and budget **in kopecks**.
-4. Call `create_ad` with campaign_id from step 3 and format (text, image or video), plus
-   title, description, link_url and optionally ad_group_id. Repeat per creative.
-5. Call `list_targeting_groups` with campaign_id to show what audience the campaign
-   inherited. This server has no tool to create or edit targeting — if the user needs
-   different targeting, tell them to set it in the VK Ads cabinet.
-6. Call `list_ads` with campaign_ids to confirm everything landed and report moderation status.
+1. Call `get_account`. If the remaining balance is below the campaign budget, stop and report
+   it — VK will accept the campaign and then refuse to serve it. (Balance needs the OAuth
+   scope `read_payments`; if it is missing, say so rather than reporting a blank.)
+2. Call `list_campaigns` to check the name is not already taken and to see what the account
+   already runs.
+3. Call `create_campaign` with name, objective (e.g. `traffic`, `reach`, `site_conversions`,
+   `leadads`) and `budget_limit` and/or `budget_limit_day` **in the cabinet currency — roubles
+   for RUB, not kopecks**.
+4. Ad groups carry the targeting and are **not creatable from this server**. Tell the user to
+   add an ad group under the new campaign in the VK Ads cabinet, then call `list_ad_groups`
+   with `campaign_ids` to get its id.
+5. Call `create_ad` with that `ad_group_id`, plus `textblocks`, `urls` and `content`. Media
+   creatives must already be uploaded in the cabinet — `content` references their ids
+   (e.g. `{"image_600x600": {"id": 123}}`). Repeat per creative.
+6. Call `list_ads` with `ad_group_ids` to confirm everything landed and report
+   `moderation_status`.
 
 ## Response format
 
 ```
 ## VK Ads campaign created
 
-**Account**: 1700123456 — balance 84,000 ₽
-**Campaign**: "Осенняя распродажа" (id 88214), type normal
-**Budget**: 3,000,000 kopecks = 30,000 ₽
+**Balance**: 84,000 ₽
+**Campaign (ad_plan)**: "Осенняя распродажа" (id 88214), objective traffic
+**Budget**: 30,000 ₽ total / 2,000 ₽ per day
 
-### Ads
-| id | Format | Title | Status |
-|----|--------|-------|--------|
-| 991201 | image | Скидки до 40% | moderation |
+### Ad groups
+| id | Name | Delivery |
+|----|------|----------|
+| 55120 | Москва 25-45 | active |
 
-### Targeting groups
-1. Москва 25-45, интерес «одежда» — reach 1.2M
+### Ads (banners)
+| id | Title | Moderation |
+|----|-------|------------|
+| 991201 | Скидки до 40% | moderation |
 ```
 
 ## Notes
 
-- **Budgets and prices are in kopecks.** 30,000 ₽ = 3000000. Multiply by 100 before sending
-  and divide by 100 when showing figures back.
+- **Budgets are in the cabinet currency, not kopecks.** 30,000 ₽ = `30000`.
 - New ads go to moderation, not straight to live. Do not tell the user the campaign is
   running until `list_ads` shows it active.
-- There is no delete tool here — `update_campaign` with status = stop is how you halt one.
+- There is no delete tool — `update_campaign` with `action: "stop"` halts a campaign and
+  `action: "delete"` marks it deleted. Both are reversible only in the cabinet.
+- Lists auto-paginate up to `limit` (default 200) and report `truncated` when there is more.
 
 ## Examples
 
 ```
-/campaign-launch 1700123456 "Осенняя распродажа" 3000000
-/campaign-launch 1700123456 "Ретаргет ноябрь" 500000
+/campaign-launch "Осенняя распродажа" traffic 30000
+/campaign-launch "Ретаргет ноябрь" site_conversions 5000
 ```

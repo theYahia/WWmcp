@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-03T05:01:48.161Z",
+  "generatedAt": "2026-09-03T05:13:38.883Z",
   "servers": 46,
   "serversConnected": 46,
   "totalTools": 566,
@@ -1100,18 +1100,18 @@
     {
       "dir": "vk-ads",
       "name": "@theyahia/vk-ads-mcp",
-      "version": "3.0.0",
-      "description": "VK Ads for AI agents: create and update campaigns and ads, statistics, targeting groups, budgets (8 tools, Russia)",
+      "version": "4.0.0",
+      "description": "VK Ads API v2 for AI agents: campaigns (ad_plans), ad groups, ads (banners), statistics, account balance (8 tools, Russia)",
       "connected": true,
       "toolCount": 8,
       "tools": [
         "create_ad",
         "create_campaign",
-        "get_budget",
+        "get_account",
         "get_statistics",
+        "list_ad_groups",
         "list_ads",
         "list_campaigns",
-        "list_targeting_groups",
         "update_campaign"
       ],
       "declaredToolCount": 8,

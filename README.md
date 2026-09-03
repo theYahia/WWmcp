@@ -131,7 +131,7 @@ MoySklad → stock and price → CDEK → tariff → YooKassa → payment link. 
 | Package | Version | Tools | What it does |
 |---|---|---|---|
 | [@theyahia/unisender-mcp](https://www.npmjs.com/package/@theyahia/unisender-mcp) | v1.1.1 | 10 tools | Lists, contacts, templates, campaigns, delivery stats |
-| [@theyahia/vk-ads-mcp](https://www.npmjs.com/package/@theyahia/vk-ads-mcp) | v3.0.0 | 8 tools | Campaigns, ads, targeting, budgets, statistics |
+| [@theyahia/vk-ads-mcp](https://www.npmjs.com/package/@theyahia/vk-ads-mcp) | v4.0.0 | 8 tools | Campaigns, ads, targeting, budgets, statistics |
 | [@theyahia/tilda-mcp](https://www.npmjs.com/package/@theyahia/tilda-mcp) | v1.2.0 | 7 tools | Projects, pages, page export |
 | [@theyahia/calltouch-mcp](https://www.npmjs.com/package/@theyahia/calltouch-mcp) | v1.2.1 | 7 tools | Call tracking: calls, leads, sources, statistics |
 | [@theyahia/mindbox-mcp](https://www.npmjs.com/package/@theyahia/mindbox-mcp) | v1.2.0 | 6 tools | CDP: customer profiles, orders, segments, operations |

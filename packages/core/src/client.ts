@@ -125,6 +125,21 @@ export class BaseHttpClient {
       }
       url = `${opts.path}${query}`;
     } else {
+      // Traversal guard, the relative-path half of the SSRF check above. Tool params
+      // are interpolated straight into paths across the fleet (`/orders/${params.uuid}`,
+      // `app/${params.namespace}/...`), and fetch normalises `..` before sending — so a
+      // model-supplied id of `../../admin/x` silently reaches an endpoint no tool
+      // exposes, carrying the server's credentials. No real API path contains `..`.
+      // Checked on the path only, and reported without the query string: some
+      // servers pass credentials inside `path` (getcourse appends `?key=<apiKey>`),
+      // and this message travels to the model via createToolError.
+      const bare = opts.path.split("?")[0]!;
+      if (/(^|\/)\.\.(\/|$)/.test(bare)) {
+        throw new ApiError(
+          0,
+          `Заблокирован путь с переходом вверх по дереву (${bare}): параметры инструмента не должны содержать "..".`,
+        );
+      }
       url = `${this.baseUrl}${opts.path}${query}`;
     }
     const requestTimeout = opts.timeout ?? this.timeout;

@@ -131,7 +131,7 @@ MCP-серверы для API, которых нет в западных кат�
 | Пакет | Версия | Инструменты | Что умеет |
 |---|---|---|---|
 | [@theyahia/unisender-mcp](https://www.npmjs.com/package/@theyahia/unisender-mcp) | v1.1.1 | 10 tools | Списки, контакты, шаблоны, рассылки, статистика доставки |
-| [@theyahia/vk-ads-mcp](https://www.npmjs.com/package/@theyahia/vk-ads-mcp) | v3.0.0 | 8 tools | Кампании, объявления, таргетинги, бюджеты, статистика |
+| [@theyahia/vk-ads-mcp](https://www.npmjs.com/package/@theyahia/vk-ads-mcp) | v4.0.0 | 8 tools | Кампании, объявления, таргетинги, бюджеты, статистика |
 | [@theyahia/tilda-mcp](https://www.npmjs.com/package/@theyahia/tilda-mcp) | v1.2.0 | 7 tools | Проекты, страницы, экспорт страниц |
 | [@theyahia/calltouch-mcp](https://www.npmjs.com/package/@theyahia/calltouch-mcp) | v1.2.1 | 7 tools | Коллтрекинг: звонки, лиды, источники, статистика |
 | [@theyahia/mindbox-mcp](https://www.npmjs.com/package/@theyahia/mindbox-mcp) | v1.2.0 | 6 tools | CDP: профили клиентов, заказы, сегменты, операции |
