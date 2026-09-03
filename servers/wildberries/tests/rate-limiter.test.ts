@@ -29,6 +29,10 @@ describe("RateLimiter", () => {
   });
 
   it("should handle 409 penalty - parse headers", () => {
+    // Корзина пополняется по Date.now(): без заморозки между чтениями
+    // availableTokens набегает refill и проверка списания падает на медленной
+    // машине. Именно на этом валился CI.
+    vi.useFakeTimers();
     const headers = new Headers({
       "x-ratelimit-remaining": "42",
       "x-ratelimit-retry-after": "2.5",
@@ -38,32 +42,40 @@ describe("RateLimiter", () => {
     expect(waitMs).toBe(2500);
     // Allow small tolerance for token refill between handlePenalty and availableTokens check
     expect(limiter.availableTokens).toBeLessThanOrEqual(43);
+    vi.useRealTimers();
   });
 
   it("should handle 409 penalty - missing headers", () => {
+    // Корзина пополняется по Date.now(): без заморозки между чтениями
+    // availableTokens набегает refill и проверка списания падает на медленной
+    // машине. Именно на этом валился CI.
+    vi.useFakeTimers();
     const headers = new Headers({});
     const waitMs = limiter.handlePenalty(headers);
     expect(waitMs).toBe(1000);
+    vi.useRealTimers();
   });
 
   it("should deduct penalty tokens", () => {
-    // Корзина пополняется по Date.now(), поэтому время замораживаем:
-    // иначе между двумя чтениями availableTokens набегает refill и на
-    // медленной машине проверка падает без всякой ошибки в коде.
+    // Корзина пополняется по Date.now(): без заморозки между чтениями
+    // availableTokens набегает refill и проверка списания падает на медленной
+    // машине. Именно на этом валился CI.
     vi.useFakeTimers();
-    try {
-      const before = limiter.availableTokens;
-      limiter.applyPenalty(5);
-      const after = limiter.availableTokens;
-      expect(after).toBeLessThanOrEqual(before - 5);
-    } finally {
-      vi.useRealTimers();
-    }
+    const before = limiter.availableTokens;
+    limiter.applyPenalty(5);
+    const after = limiter.availableTokens;
+    expect(after).toBeLessThanOrEqual(before - 5);
+    vi.useRealTimers();
   });
 
   it("should not go below 0 tokens on penalty", () => {
+    // Корзина пополняется по Date.now(): без заморозки между чтениями
+    // availableTokens набегает refill и проверка списания падает на медленной
+    // машине. Именно на этом валился CI.
+    vi.useFakeTimers();
     limiter.applyPenalty(1000);
     expect(limiter.availableTokens).toBeGreaterThanOrEqual(0);
+    vi.useRealTimers();
   });
 });
 
@@ -89,6 +101,10 @@ describe("RateLimiterPool", () => {
   });
 
   it("isolates a 409 penalty to a single key's bucket", () => {
+    // Корзина пополняется по Date.now(): без заморозки между чтениями
+    // availableTokens набегает refill и проверка списания падает на медленной
+    // машине. Именно на этом валился CI.
+    vi.useFakeTimers();
     const pool = new RateLimiterPool();
     const a = pool.for("a");
     const b = pool.for("b");
@@ -96,5 +112,6 @@ describe("RateLimiterPool", () => {
     a.applyPenalty(50);
     expect(a.availableTokens).toBeLessThan(bBefore);
     expect(b.availableTokens).toBeGreaterThanOrEqual(bBefore - 1); // tolerate refill jitter
+    vi.useRealTimers();
   });
 });
