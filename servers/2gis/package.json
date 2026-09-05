@@ -1,6 +1,6 @@
 {
   "name": "@theyahia/2gis-mcp",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "2GIS maps for AI agents: place search by name and rubric, geocoding and reverse geocoding, driving directions, reviews, suggest (8 tools, Russia/CIS)",
   "type": "module",
   "main": "dist/index.js",

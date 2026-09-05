@@ -1,6 +1,6 @@
 {
   "name": "@theyahia/CHANGEME-mcp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "MCP server for CHANGEME API — DESCRIBE TOOLS HERE.",
   "type": "module",
@@ -8,7 +8,9 @@
   "bin": {
     "CHANGEME-mcp": "dist/index.js"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "engines": {
     "node": ">=18.0.0"
   },
@@ -39,8 +41,13 @@
   },
   "mcpName": "io.github.theYahia/CHANGEME-mcp",
   "keywords": [
-    "mcp", "mcp-server", "model-context-protocol", "claude", "ai",
-    "russian-api", "CHANGEME"
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "claude",
+    "ai",
+    "russian-api",
+    "CHANGEME"
   ],
   "license": "MIT",
   "repository": {

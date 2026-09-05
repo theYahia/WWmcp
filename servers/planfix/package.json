@@ -1,6 +1,6 @@
 {
   "name": "@theyahia/planfix-mcp",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Planfix (Планфикс) for AI agents: task and contact CRUD, projects, comments, users, custom fields, directories, file upload (20 tools, Russia)",
   "type": "module",
   "main": "dist/index.js",

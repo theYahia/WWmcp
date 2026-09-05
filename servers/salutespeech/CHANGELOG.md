@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.1
+
+### Patch Changes
+
+- Updated dependencies [b146575]
+  - @theyahia/mcp-core@1.2.0
+
 All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -7,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.2.0] - 2026-06-23
 
 ### Fixed
+
 - **Text-to-speech was completely broken.** `synthesize_speech` POSTed to the non-existent
   `/speech:synthesize`; the correct SaluteSpeech endpoint is `/text:synthesize`. Every TTS
   call previously failed.
@@ -17,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `.opus` were already correct and are unchanged.
 
 ### Added
+
 - Configurable OAuth scope via `SALUTE_SPEECH_SCOPE` (default `SALUTE_SPEECH_PERS`), so
   corporate accounts (`SALUTE_SPEECH_CORP`, `SALUTE_SPEECH_B2B`) can authenticate.
 - `list_models` now reports the English voice **Kira** (`Kin_24000`/`Kin_8000`), the 8000 Hz
@@ -34,6 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Handler tests assert request URL + content-type, locking in the endpoint and MIME fixes.
 
 ### Changed
+
 - Recognition tools now return a flattened `text` transcript alongside `emotions` and the
   raw API body (the transcript lives in `result[]`).
 - Synthesis input is validated to 1–4000 characters (the documented limit).

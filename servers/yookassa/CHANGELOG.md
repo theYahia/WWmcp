@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.0.1
+
+### Patch Changes
+
+- Updated dependencies [b146575]
+  - @theyahia/mcp-core@1.2.0
+
 All notable changes to this project are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/), and this project adheres to
 [Semantic Versioning](https://semver.org/).
@@ -10,6 +17,7 @@ Production-hardening release: correctness fixes that prevent duplicate/wrong mon
 operations, a secured HTTP transport, MCP best-practices, and 54-FZ-robust receipts.
 
 ### Breaking
+
 - **Renamed tool `get_shop_balance` → `get_shop_info`.** `/me` returns shop settings, not a
   monetary balance, and YooKassa has no balance endpoint. Update any client/skill references.
 - **HTTP transport (`--http`) now requires `MCP_AUTH_TOKEN`** and binds to `127.0.0.1` by
@@ -22,6 +30,7 @@ operations, a secured HTTP transport, MCP best-practices, and 54-FZ-robust recei
   number; numbers are formatted via integer kopecks (no `toFixed` float artifacts).
 
 ### Fixed
+
 - **Idempotency:** the `Idempotence-Key` is generated once per logical request and reused on
   every retry (it was regenerated per attempt, so a retried POST/DELETE created a duplicate
   payment/refund/payout). Extended to DELETE; callers may pass an explicit key.
@@ -34,6 +43,7 @@ operations, a secured HTTP transport, MCP best-practices, and 54-FZ-robust recei
   declared `allowed-tools: [Bash, Read]` and could not call the MCP tools — fixed.
 
 ### Added
+
 - **MCP annotations** on every tool (`readOnlyHint` for reads; `destructiveHint`/`idempotentHint`
   for money operations) and server `instructions` for safe usage.
 - **Structured output** (`outputSchema` + `structuredContent`) for payment/refund/payout tools.

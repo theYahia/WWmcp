@@ -1,6 +1,6 @@
 {
   "name": "@theyahia/retailcrm-mcp",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "RetailCRM for AI agents: order and customer CRUD, product catalog and store inventory, payments, tasks, e-commerce analytics and reference data (39 tools, Russia)",
   "type": "module",
   "main": "dist/index.js",

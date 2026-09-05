@@ -1,6 +1,6 @@
 {
   "name": "@theyahia/chapa-mcp",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Chapa payments for AI agents: initialize and verify transactions, bank transfers, bank list, balance and transfer history (8 tools, Ethiopia)",
   "type": "module",
   "main": "dist/index.js",

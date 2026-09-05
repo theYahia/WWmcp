@@ -1,6 +1,6 @@
 {
   "name": "@theyahia/pochta-russia-mcp",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Russian Post (Почта России) for AI agents: parcel tracking, shipping tariffs, delivery time, post office lookup, zip codes, address normalization (6 tools, Russia)",
   "type": "module",
   "main": "dist/index.js",

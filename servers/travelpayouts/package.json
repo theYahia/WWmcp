@@ -1,12 +1,18 @@
 {
   "name": "@theyahia/travelpayouts-mcp",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Travelpayouts (Aviasales) for AI agents: flight price search, price calendar and cheapest month, special offers, hotel search, airport and airline lookup (13 tools, Russia)",
   "type": "module",
   "main": "dist/index.js",
-  "bin": { "travelpayouts-mcp": "dist/index.js" },
-  "files": ["dist"],
-  "engines": { "node": ">=18.0.0" },
+  "bin": {
+    "travelpayouts-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/index.ts",
@@ -29,7 +35,9 @@
     "typescript": "^5.8.3",
     "vitest": "^4.1.2"
   },
-  "publishConfig": { "access": "public" },
+  "publishConfig": {
+    "access": "public"
+  },
   "mcpName": "io.github.theYahia/travelpayouts-mcp",
   "keywords": [
     "mcp",
@@ -53,6 +61,10 @@
     "russian-api"
   ],
   "license": "MIT",
-  "repository": { "type": "git", "url": "https://github.com/theYahia/WWmcp.git", "directory": "servers/travelpayouts" },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/theYahia/WWmcp.git",
+    "directory": "servers/travelpayouts"
+  },
   "author": "theYahia (https://github.com/theYahia)"
 }

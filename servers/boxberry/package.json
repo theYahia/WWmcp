@@ -1,6 +1,6 @@
 {
   "name": "@theyahia/boxberry-mcp",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Boxberry delivery for AI agents: pickup point and city lookup, delivery cost calculation, parcel tracking, zip validation (6 tools, Russia)",
   "type": "module",
   "main": "dist/index.js",

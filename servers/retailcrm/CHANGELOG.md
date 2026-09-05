@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.0.1
+
+### Patch Changes
+
+- Updated dependencies [b146575]
+  - @theyahia/mcp-core@1.2.0
+
 All notable changes to this project are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -10,6 +17,7 @@ Production-hardening release. **Breaking**: read tools now return shaped, token-
 output by default instead of the raw RetailCRM payload.
 
 ### Breaking
+
 - **Shaped output (summary by default).** `list_orders`, `get_order`, `list_customers`,
   `get_customer`, `list_products` now return compact, essential-field views. Pass
   `detail:"full"` for the complete shaped object, or `raw:true` for the untouched
@@ -19,6 +27,7 @@ output by default instead of the raw RetailCRM payload.
   the fields an agent actually needs (big token reduction).
 
 ### Added
+
 - **20+ new tools:** `orders_history`, `update_customer`, `customers_history`,
   `list_product_groups`, `store_inventories`, `order_payment_create/edit/delete`,
   `customer_notes_list/create/delete`, `tasks_list/create/edit`, `list_segments`,
@@ -34,6 +43,7 @@ output by default instead of the raw RetailCRM payload.
 - Raw `application/octet-stream` file upload support in the API client (matches `/files/upload`).
 
 ### Changed
+
 - **Auth via `X-API-KEY` header** instead of the `apiKey` URL query string — keeps the
   key out of proxy/CDN/server access logs.
 - **Honest, period-scoped analytics.** `get_orders_summary` now sends the date filters
@@ -46,6 +56,7 @@ output by default instead of the raw RetailCRM payload.
   handshake, `/health`, and startup log.
 
 ### Fixed
+
 - **HTTP `--http` transport.** Each `POST /mcp` now gets a fresh `McpServer` + transport
   (stateless isolation) with cleanup on response close; previously one shared server was
   re-`connect()`ed per request, cross-wiring concurrent responses and leaking transports.
@@ -56,12 +67,15 @@ output by default instead of the raw RetailCRM payload.
 - Date filters validated as `YYYY-MM-DD`; list `limit` capped at 100.
 
 ## [2.0.1] — earlier
+
 - npm discoverability (description, keywords).
 
 ## [2.0.0] — earlier
+
 - Production-grade rewrite: 15 tools + 2 prompt skills, stdio + Streamable HTTP.
 
 ## [1.1.0] / [1.0.0] — earlier
+
 - Initial releases.
 
 [3.0.0]: https://github.com/theYahia/retailcrm-mcp/releases/tag/v3.0.0

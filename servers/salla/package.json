@@ -1,6 +1,6 @@
 {
   "name": "@theyahia/salla-mcp",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "Salla store for AI agents: product and category CRUD, bulk stock updates, orders and status changes, customers, coupons, abandoned carts (22 tools, Saudi Arabia)",
   "type": "module",
   "main": "dist/index.js",

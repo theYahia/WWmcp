@@ -1,6 +1,6 @@
 {
   "name": "@theyahia/wildberries-mcp",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "Wildberries Seller API for AI agents: stocks and prices, orders and sales, FBS supplies, analytics, feedbacks, questions, returns and ads (30 tools, Russia)",
   "type": "module",
   "main": "dist/index.js",

@@ -1,12 +1,19 @@
 {
   "name": "@theyahia/amocrm-mcp",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "amoCRM (амоСРМ) for AI agents: create and update leads, contacts and companies, browse pipelines, tasks, notes and the unsorted inbox (19 tools, Russia)",
   "type": "module",
   "main": "dist/index.js",
-  "bin": { "amocrm-mcp": "dist/index.js" },
-  "files": ["dist", "smithery.yaml"],
-  "engines": { "node": ">=18.0.0" },
+  "bin": {
+    "amocrm-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "smithery.yaml"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/index.ts",
@@ -29,7 +36,9 @@
     "typescript": "^5.8.3",
     "vitest": "^4.1.2"
   },
-  "publishConfig": { "access": "public" },
+  "publishConfig": {
+    "access": "public"
+  },
   "mcpName": "io.github.theYahia/amocrm-mcp",
   "keywords": [
     "mcp",

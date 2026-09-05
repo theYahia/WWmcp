@@ -1,6 +1,6 @@
 {
   "name": "@theyahia/gigachat-mcp",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "Sber GigaChat for AI agents: chat completions, text embeddings, image generation, token counting, model and assistant lists, file upload, balance (8 tools, Russia)",
   "type": "module",
   "main": "dist/index.js",

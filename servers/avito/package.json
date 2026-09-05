@@ -1,6 +1,6 @@
 {
   "name": "@theyahia/avito-mcp",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Avito classifieds for AI agents: list your own listings, get item details, browse messenger chats (3 tools, Russia)",
   "type": "module",
   "main": "dist/index.js",

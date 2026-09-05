@@ -1,6 +1,6 @@
 {
   "name": "@theyahia/ileti-merkezi-mcp",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "Ileti Merkezi (İletiMerkezi) SMS for AI agents: send SMS/OTP and bulk, cancel scheduled orders, delivery reports, sender headers, blacklist, İYS consent (11 tools, Turkey)",
   "type": "module",
   "main": "dist/index.js",

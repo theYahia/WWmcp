@@ -1,12 +1,18 @@
 {
   "name": "@theyahia/payme-mcp",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Payme for AI agents: tokenize UzCard and Humo cards, SMS verification, create pay and cancel receipts, send payment links, receipt history (10 tools, Uzbekistan)",
   "type": "module",
   "main": "dist/index.js",
-  "bin": { "payme-mcp": "dist/index.js" },
-  "files": ["dist"],
-  "engines": { "node": ">=18.0.0" },
+  "bin": {
+    "payme-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/index.ts",
@@ -29,7 +35,9 @@
     "typescript": "^5.8.3",
     "vitest": "^4.1.2"
   },
-  "publishConfig": { "access": "public" },
+  "publishConfig": {
+    "access": "public"
+  },
   "mcpName": "io.github.theYahia/payme-mcp",
   "keywords": [
     "mcp",
@@ -52,6 +60,10 @@
     "emerging-markets"
   ],
   "license": "MIT",
-  "repository": { "type": "git", "url": "https://github.com/theYahia/WWmcp.git", "directory": "servers/payme" },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/theYahia/WWmcp.git",
+    "directory": "servers/payme"
+  },
   "author": "theYahia (https://github.com/theYahia)"
 }

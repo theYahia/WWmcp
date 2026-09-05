@@ -1,6 +1,6 @@
 {
   "name": "@theyahia/mercadopago-mcp",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Mercado Pago for AI agents: create and search payments, refunds, checkout preferences, merchant orders, payment methods (10 tools, AR/BR/MX/CL/CO/PE/UY)",
   "type": "module",
   "main": "dist/index.js",
