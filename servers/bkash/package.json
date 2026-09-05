@@ -1,6 +1,6 @@
 {
   "name": "@theyahia/bkash-mcp",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "bKash mobile money for AI agents: tokenized checkout payments, execute and query, refunds, recurring agreements, transaction search (8 tools, Bangladesh)",
   "type": "module",
   "main": "dist/index.js",

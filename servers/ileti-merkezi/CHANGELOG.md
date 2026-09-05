@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.0.1
+
+### Patch Changes
+
+- Updated dependencies [b146575]
+  - @theyahia/mcp-core@1.2.0
+
 ## 4.0.0
 
 Complete rewrite against the **real** İletiMerkezi v1 JSON API, ported from the standalone

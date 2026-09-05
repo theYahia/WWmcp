@@ -1,12 +1,18 @@
 {
   "name": "@theyahia/moysklad-mcp",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "MoySklad (МойСклад) for AI agents: stock and warehouse moves, inventory counts, product search by SKU, price updates, customer and purchase orders, supplies, shipments, payments and invoices, profit and turnover reports (60 tools, Russia)",
   "type": "module",
   "main": "dist/index.js",
-  "bin": { "moysklad-mcp": "dist/index.js" },
-  "files": ["dist"],
-  "engines": { "node": ">=18.0.0" },
+  "bin": {
+    "moysklad-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/index.ts",
@@ -29,7 +35,9 @@
     "typescript": "^5.8.3",
     "vitest": "^4.1.2"
   },
-  "publishConfig": { "access": "public" },
+  "publishConfig": {
+    "access": "public"
+  },
   "mcpName": "io.github.theYahia/moysklad-mcp",
   "keywords": [
     "mcp",
@@ -58,6 +66,10 @@
     "russian-api"
   ],
   "license": "MIT",
-  "repository": { "type": "git", "url": "https://github.com/theYahia/WWmcp.git", "directory": "servers/moysklad" },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/theYahia/WWmcp.git",
+    "directory": "servers/moysklad"
+  },
   "author": "theYahia (https://github.com/theYahia)"
 }

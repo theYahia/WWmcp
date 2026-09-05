@@ -1,6 +1,6 @@
 {
   "name": "@theyahia/vk-ads-mcp",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "VK Ads API v2 for AI agents: campaigns (ad_plans), ad groups, ads (banners), statistics, account balance (8 tools, Russia)",
   "type": "module",
   "main": "dist/index.js",

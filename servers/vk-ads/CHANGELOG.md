@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.0.1
+
+### Patch Changes
+
+- Updated dependencies [b146575]
+  - @theyahia/mcp-core@1.2.0
+
 ## 4.0.0
 
 Переработка под реальный VK Ads API v2 (`ads.vk.com/api/v2`) — порт из standalone-репо

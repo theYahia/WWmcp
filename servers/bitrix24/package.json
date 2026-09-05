@@ -1,12 +1,18 @@
 {
   "name": "@theyahia/bitrix24-mcp",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Bitrix24 (Битрикс24) CRM for AI agents: list deals by stage, find contacts, create deals and tasks over an inbound webhook (4 tools, Russia)",
   "type": "module",
   "main": "dist/index.js",
-  "bin": { "bitrix24-mcp": "dist/index.js" },
-  "files": ["dist"],
-  "engines": { "node": ">=18.0.0" },
+  "bin": {
+    "bitrix24-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/index.ts",
@@ -29,7 +35,9 @@
     "typescript": "^5.8.3",
     "vitest": "^4.1.2"
   },
-  "publishConfig": { "access": "public" },
+  "publishConfig": {
+    "access": "public"
+  },
   "mcpName": "io.github.theYahia/bitrix24-mcp",
   "keywords": [
     "mcp",
@@ -53,6 +61,10 @@
     "russian-api"
   ],
   "license": "MIT",
-  "repository": { "type": "git", "url": "https://github.com/theYahia/WWmcp.git", "directory": "servers/bitrix24" },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/theYahia/WWmcp.git",
+    "directory": "servers/bitrix24"
+  },
   "author": "theYahia (https://github.com/theYahia)"
 }

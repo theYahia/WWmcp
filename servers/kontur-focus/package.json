@@ -1,6 +1,6 @@
 {
   "name": "@theyahia/kontur-focus-mcp",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "Kontur.Focus (Контур.Фокус) for AI agents: company lookup by INN or OGRN, EGRUL details, financial statements, arbitration, bankruptcy, licenses (8 tools, Russia)",
   "type": "module",
   "main": "dist/index.js",

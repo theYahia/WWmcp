@@ -1,12 +1,18 @@
 {
   "name": "@theyahia/hh-mcp",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "HeadHunter (hh.ru) for AI agents: vacancy and resume search, employer profiles, salary statistics, region and professional-role dictionaries (19 tools, Russia/CIS)",
   "type": "module",
   "main": "dist/index.js",
-  "bin": { "hh-mcp": "dist/index.js" },
-  "files": ["dist"],
-  "engines": { "node": ">=18.0.0" },
+  "bin": {
+    "hh-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "clean": "node -e \"for (const p of ['dist','tsconfig.tsbuildinfo']) require('fs').rmSync(p,{recursive:true,force:true})\"",
     "prebuild": "npm run clean",
@@ -31,7 +37,9 @@
     "typescript": "^5.8.3",
     "vitest": "^4.1.2"
   },
-  "publishConfig": { "access": "public" },
+  "publishConfig": {
+    "access": "public"
+  },
   "mcpName": "io.github.theYahia/hh-mcp",
   "keywords": [
     "mcp",
@@ -56,7 +64,11 @@
     "russian-api"
   ],
   "license": "MIT",
-  "repository": { "type": "git", "url": "https://github.com/theYahia/WWmcp.git", "directory": "servers/hh" },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/theYahia/WWmcp.git",
+    "directory": "servers/hh"
+  },
   "homepage": "https://github.com/theYahia/WWmcp/tree/main/servers/hh",
   "author": "theYahia (https://github.com/theYahia)"
 }

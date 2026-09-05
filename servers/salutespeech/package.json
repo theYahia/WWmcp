@@ -1,12 +1,20 @@
 {
   "name": "@theyahia/salutespeech-mcp",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Sber SaluteSpeech for AI agents: speech recognition from audio or file, speech synthesis, async task status, model list (5 tools, Russia)",
   "type": "module",
   "main": "dist/index.js",
-  "bin": { "salutespeech-mcp": "dist/index.js" },
-  "files": ["dist", "skills", "smithery.yaml"],
-  "engines": { "node": ">=18.0.0" },
+  "bin": {
+    "salutespeech-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "skills",
+    "smithery.yaml"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/index.ts",
@@ -30,7 +38,9 @@
     "typescript": "^5.8.3",
     "vitest": "^4.1.2"
   },
-  "publishConfig": { "access": "public" },
+  "publishConfig": {
+    "access": "public"
+  },
   "mcpName": "io.github.theYahia/salutespeech-mcp",
   "keywords": [
     "mcp",
@@ -53,6 +63,10 @@
     "russian-api"
   ],
   "license": "MIT",
-  "repository": { "type": "git", "url": "https://github.com/theYahia/WWmcp.git", "directory": "servers/salutespeech" },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/theYahia/WWmcp.git",
+    "directory": "servers/salutespeech"
+  },
   "author": "theYahia (https://github.com/theYahia)"
 }

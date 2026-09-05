@@ -1,12 +1,18 @@
 {
   "name": "@theyahia/robokassa-mcp",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Robokassa for AI agents: generate a signed payment link with an optional 54-FZ receipt and check whether the invoice is paid (2 tools, Russia)",
   "type": "module",
   "main": "dist/index.js",
-  "bin": { "robokassa-mcp": "dist/index.js" },
-  "files": ["dist"],
-  "engines": { "node": ">=18.0.0" },
+  "bin": {
+    "robokassa-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/index.ts",
@@ -29,7 +35,9 @@
     "typescript": "^5.8.3",
     "vitest": "^4.1.2"
   },
-  "publishConfig": { "access": "public" },
+  "publishConfig": {
+    "access": "public"
+  },
   "mcpName": "io.github.theYahia/robokassa-mcp",
   "keywords": [
     "mcp",
@@ -52,6 +60,10 @@
     "russian-api"
   ],
   "license": "MIT",
-  "repository": { "type": "git", "url": "https://github.com/theYahia/WWmcp.git", "directory": "servers/robokassa" },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/theYahia/WWmcp.git",
+    "directory": "servers/robokassa"
+  },
   "author": "theYahia (https://github.com/theYahia)"
 }

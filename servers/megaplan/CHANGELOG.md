@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.0.1
+
+### Patch Changes
+
+- Updated dependencies [b146575]
+  - @theyahia/mcp-core@1.2.0
+
 ## 4.0.0
 
 API v3 correctness overhaul, ported from the standalone `theYahia/megaplan-mcp` repo (npm `latest`)

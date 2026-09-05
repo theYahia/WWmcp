@@ -1,6 +1,6 @@
 {
   "name": "@theyahia/mango-office-mcp",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Mango Office cloud PBX for AI agents: call history and statistics, click-to-call, call recordings, SMS, extension users (8 tools, Russia)",
   "type": "module",
   "main": "dist/index.js",

@@ -1,6 +1,6 @@
 {
   "name": "@theyahia/mts-exolve-mcp",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "MTS Exolve for AI agents: send SMS and Viber messages, place outbound calls, call status and recordings, buy and list numbers (8 tools, Russia)",
   "type": "module",
   "main": "dist/index.js",

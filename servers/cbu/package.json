@@ -1,12 +1,18 @@
 {
   "name": "@theyahia/cbu-mcp",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Central Bank of Uzbekistan rates for AI agents: ~30 currencies against UZS, historical rates, daily dynamics, cross-rate conversion (5 tools, Uzbekistan)",
   "type": "module",
   "main": "dist/index.js",
-  "bin": { "cbu-mcp": "dist/index.js" },
-  "files": ["dist"],
-  "engines": { "node": ">=18.0.0" },
+  "bin": {
+    "cbu-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/index.ts",
@@ -29,7 +35,9 @@
     "typescript": "^5.8.3",
     "vitest": "^4.1.2"
   },
-  "publishConfig": { "access": "public" },
+  "publishConfig": {
+    "access": "public"
+  },
   "mcpName": "io.github.theYahia/cbu-mcp",
   "keywords": [
     "mcp",
@@ -51,6 +59,10 @@
     "emerging-markets"
   ],
   "license": "MIT",
-  "repository": { "type": "git", "url": "https://github.com/theYahia/WWmcp.git", "directory": "servers/cbu" },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/theYahia/WWmcp.git",
+    "directory": "servers/cbu"
+  },
   "author": "theYahia (https://github.com/theYahia)"
 }

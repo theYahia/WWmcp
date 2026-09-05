@@ -1,6 +1,6 @@
 {
   "name": "@theyahia/orange-money-mcp",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Orange Money WebPay for AI agents: web payments and status, cash-in and cash-out, transfers, webhook validation, balance across ~12 countries (8 tools, Africa)",
   "type": "module",
   "main": "dist/index.js",

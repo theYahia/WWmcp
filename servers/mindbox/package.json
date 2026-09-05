@@ -1,6 +1,6 @@
 {
   "name": "@theyahia/mindbox-mcp",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Mindbox CDP for AI agents: read and update customer profiles, orders, segments, product lists, arbitrary operation calls (6 tools, Russia)",
   "type": "module",
   "main": "dist/index.js",

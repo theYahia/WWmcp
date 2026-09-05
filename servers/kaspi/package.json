@@ -1,12 +1,18 @@
 {
   "name": "@theyahia/kaspi-mcp",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Kaspi.kz marketplace for AI agents: list seller orders with filters, order details, product catalog (3 tools, Kazakhstan)",
   "type": "module",
   "main": "dist/index.js",
-  "bin": { "kaspi-mcp": "dist/index.js" },
-  "files": ["dist"],
-  "engines": { "node": ">=18.0.0" },
+  "bin": {
+    "kaspi-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/index.ts",
@@ -29,7 +35,9 @@
     "typescript": "^5.8.3",
     "vitest": "^4.1.2"
   },
-  "publishConfig": { "access": "public" },
+  "publishConfig": {
+    "access": "public"
+  },
   "mcpName": "io.github.theYahia/kaspi-mcp",
   "keywords": [
     "mcp",
@@ -52,6 +60,10 @@
     "emerging-markets"
   ],
   "license": "MIT",
-  "repository": { "type": "git", "url": "https://github.com/theYahia/WWmcp.git", "directory": "servers/kaspi" },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/theYahia/WWmcp.git",
+    "directory": "servers/kaspi"
+  },
   "author": "theYahia (https://github.com/theYahia)"
 }

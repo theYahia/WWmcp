@@ -1,6 +1,6 @@
 {
   "name": "@theyahia/megaplan-mcp",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "Megaplan (Мегаплан) for AI agents: tasks, deals, projects, employees, deal pipelines, CRM clients, comments (18 tools + 2 prompts, Russia)",
   "type": "module",
   "main": "dist/index.js",

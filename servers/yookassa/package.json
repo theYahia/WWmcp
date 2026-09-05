@@ -1,6 +1,6 @@
 {
   "name": "@theyahia/yookassa-mcp",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "YooKassa (ЮKassa) for AI agents: create and capture payments, refunds, 54-FZ receipts, payouts, SBP, recurring and split payments, webhooks (20 tools, Russia)",
   "type": "module",
   "main": "dist/index.js",

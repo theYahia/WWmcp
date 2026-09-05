@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.0.1
+
+### Patch Changes
+
+- Updated dependencies [b146575]
+  - @theyahia/mcp-core@1.2.0
+
 ## 3.0.0
 
 ### Major Changes
