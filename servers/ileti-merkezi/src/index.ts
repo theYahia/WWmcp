@@ -1,12 +1,14 @@
 #!/usr/bin/env node
 
 /**
- * @theyahia/ileti-merkezi-mcp — MCP server for Ileti Merkezi SMS API (Turkey)
+ * @theyahia/ileti-merkezi-mcp — MCP server for the İletiMerkezi SMS API (Turkey)
  *
- * 8 tools: send_sms, send_bulk_sms, get_sms_report, get_balance, list_senders,
- * create_contact_group, add_contacts, get_blacklist.
+ * 11 tools: send_sms, cancel_order, get_report, get_reports, get_balance,
+ * get_sender, get_blacklist, add_blacklist, delete_blacklist, iys_register,
+ * iys_check.
  *
- * Auth: API Key + HMAC SHA256 (ILETI_API_KEY + ILETI_SECRET env vars).
+ * Auth: ILETIMERKEZI_API_KEY + ILETIMERKEZI_API_HASH, sent inside the request
+ * body envelope (both values come precomputed from the panel).
  *
  * Transports:
  *   - stdio (default) — for Claude Desktop / Cursor / Windsurf
@@ -14,11 +16,11 @@
  */
 
 import { runServer } from "@theyahia/mcp-core";
-import { createServer, TOOL_COUNT, logger } from "./server.js";
+import { createServer, TOOL_COUNT, VERSION, logger } from "./server.js";
 
 runServer(createServer, {
   name: "ileti-merkezi-mcp",
-  version: "2.0.0",
+  version: VERSION,
   toolCount: TOOL_COUNT,
   logger,
 }).catch((error) => {

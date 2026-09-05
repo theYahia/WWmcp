@@ -1,0 +1,32 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/kontur-focus-mcp",
+  "title": "Kontur.Focus",
+  "description": "Kontur.Focus - company lookup by INN or OGRN, EGRUL, finances, arbitration, licenses (Russia)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/kontur-focus",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/kontur-focus"
+  },
+  "version": "3.0.1",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/kontur-focus-mcp",
+      "version": "3.0.1",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "KONTUR_FOCUS_API_KEY",
+          "description": "API key from focus.kontur.ru",
+          "isRequired": true,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="Shopping bag">
+  <title>Shopping bag</title>
+  <rect x="8" y="8" width="240" height="240" rx="52" fill="#8A6FC0" fill-opacity="0.14"/>
+  <g fill="none" stroke="#8A6FC0" stroke-width="15" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M56 86 H200 L186 210 H70 Z"/>
+    <path d="M92 86 V70 A36 36 0 0 1 164 70 V86"/>
+  </g>
+</svg>

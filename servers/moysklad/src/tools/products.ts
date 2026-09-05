@@ -1,5 +1,7 @@
 import { z } from "zod";
 import { moyskladGet, moyskladPost, moyskladPut } from "../client.js";
+import { buildFilter, getDefaultPriceTypeHref, json, kopToRub, listQuery, meta, rubToKop } from "../lib.js";
+import type { ToolDef } from "../types.js";
 
 // --- search_products ---
 export const searchProductsSchema = z.object({
@@ -10,24 +12,21 @@ export const searchProductsSchema = z.object({
 });
 
 export async function handleSearchProducts(params: z.infer<typeof searchProductsSchema>): Promise<string> {
-  const query = new URLSearchParams();
-  query.set("limit", String(params.limit));
-  query.set("offset", String(params.offset));
-  if (params.search) query.set("search", params.search);
-  if (params.filter_article) query.set("filter", `article=${params.filter_article}`);
-
-  const result = await moyskladGet(`/entity/product?${query.toString()}`);
+  const filter = buildFilter([["article", params.filter_article ?? ""]]);
+  const qs = listQuery({ limit: params.limit, offset: params.offset, search: params.search, filter });
+  const result = await moyskladGet(`/entity/product?${qs}`);
   return formatProducts(result);
 }
 
 // --- get_product ---
 export const getProductSchema = z.object({
   id: z.string().describe("Product UUID"),
+  raw: z.boolean().optional().describe("Return the full raw MoySklad object instead of the summary"),
 });
 
 export async function handleGetProduct(params: z.infer<typeof getProductSchema>): Promise<string> {
   const result = await moyskladGet(`/entity/product/${params.id}`);
-  return formatProduct(result);
+  return params.raw ? json(result) : formatProduct(result);
 }
 
 // --- create_product ---
@@ -39,6 +38,12 @@ export const createProductSchema = z.object({
   sale_price_rubles: z.number().optional().describe("Sale price in RUBLES (converted to kopecks internally)"),
   buy_price_rubles: z.number().optional().describe("Buy/cost price in RUBLES (converted to kopecks internally)"),
   min_price_rubles: z.number().optional().describe("Minimum price in RUBLES"),
+  price_type_href: z
+    .string()
+    .optional()
+    .describe(
+      "Meta href of the price type for the sale price (defaults to the account's default). Get from list_price_types.",
+    ),
   weight: z.number().optional().describe("Weight in grams"),
   volume: z.number().optional().describe("Volume in liters"),
   vat: z.number().optional().describe("VAT rate: 0, 10, 20"),
@@ -53,13 +58,14 @@ export async function handleCreateProduct(params: z.infer<typeof createProductSc
   if (params.volume !== undefined) body.volume = params.volume;
   if (params.vat !== undefined) body.effectiveVat = params.vat;
   if (params.sale_price_rubles !== undefined) {
-    body.salePrices = [{ value: Math.round(params.sale_price_rubles * 100), priceType: { meta: { href: "", type: "pricetype", mediaType: "application/json" } } }];
+    const priceTypeHref = params.price_type_href ?? (await getDefaultPriceTypeHref());
+    body.salePrices = [{ value: rubToKop(params.sale_price_rubles), priceType: meta(priceTypeHref, "pricetype") }];
   }
   if (params.buy_price_rubles !== undefined) {
-    body.buyPrice = { value: Math.round(params.buy_price_rubles * 100) };
+    body.buyPrice = { value: rubToKop(params.buy_price_rubles) };
   }
   if (params.min_price_rubles !== undefined) {
-    body.minPrice = { value: Math.round(params.min_price_rubles * 100) };
+    body.minPrice = { value: rubToKop(params.min_price_rubles) };
   }
   const result = await moyskladPost("/entity/product", body);
   return formatProduct(result);
@@ -76,53 +82,100 @@ export const updatePricesSchema = z.object({
 export async function handleUpdatePrices(params: z.infer<typeof updatePricesSchema>): Promise<string> {
   const body: Record<string, unknown> = {};
   if (params.sale_price_rubles !== undefined) {
-    const current = (await moyskladGet(`/entity/product/${params.id}`)) as Record<string, unknown>;
-    const salePrices = (current.salePrices as Array<Record<string, unknown>>) || [];
-    if (salePrices.length > 0) {
-      salePrices[0].value = Math.round(params.sale_price_rubles * 100);
-      body.salePrices = salePrices;
+    // Read-modify-write: preserve the existing price type when there is one;
+    // otherwise attach the account default (MoySklad requires a price type).
+    const current = (await moyskladGet(`/entity/product/${params.id}`)) as {
+      salePrices?: Array<Record<string, unknown>>;
+    };
+    const existing = current.salePrices ?? [];
+    if (existing.length > 0) {
+      body.salePrices = existing.map((sp, i) => (i === 0 ? { ...sp, value: rubToKop(params.sale_price_rubles!) } : sp));
     } else {
-      body.salePrices = [{ value: Math.round(params.sale_price_rubles * 100) }];
+      const priceTypeHref = await getDefaultPriceTypeHref();
+      body.salePrices = [{ value: rubToKop(params.sale_price_rubles), priceType: meta(priceTypeHref, "pricetype") }];
     }
   }
   if (params.buy_price_rubles !== undefined) {
-    body.buyPrice = { value: Math.round(params.buy_price_rubles * 100) };
+    body.buyPrice = { value: rubToKop(params.buy_price_rubles) };
   }
   if (params.min_price_rubles !== undefined) {
-    body.minPrice = { value: Math.round(params.min_price_rubles * 100) };
+    body.minPrice = { value: rubToKop(params.min_price_rubles) };
   }
   const result = await moyskladPut(`/entity/product/${params.id}`, body);
   return formatProduct(result);
 }
 
 // --- Formatting ---
+function salePricesToRubles(raw: Record<string, unknown>): Array<{ value: number | null; price_type: string | null }> {
+  const salePrices = (raw.salePrices as Array<Record<string, unknown>>) || [];
+  return salePrices.map((sp) => ({
+    value: kopToRub(sp.value),
+    price_type: ((sp.priceType as { name?: unknown })?.name as string) ?? null,
+  }));
+}
+
 function formatProduct(raw: unknown): string {
-  const p = raw as Record<string, unknown>;
-  const salePrices = (p.salePrices as Array<{ value: number }>) || [];
+  const p = (raw ?? {}) as Record<string, unknown>;
+  const prices = salePricesToRubles(p);
   const buyPrice = p.buyPrice as { value: number } | undefined;
-  return JSON.stringify({
-    id: p.id, name: p.name, article: p.article, code: p.code, description: p.description,
-    sale_price_rubles: salePrices.length > 0 ? salePrices[0].value / 100 : null,
-    buy_price_rubles: buyPrice ? buyPrice.value / 100 : null,
-    weight: p.weight, volume: p.volume, updated: p.updated,
-  }, null, 2);
+  return json({
+    id: p.id,
+    name: p.name,
+    article: p.article,
+    code: p.code,
+    description: p.description,
+    sale_price_rubles: prices[0]?.value ?? null,
+    sale_prices: prices,
+    buy_price_rubles: buyPrice ? kopToRub(buyPrice.value) : null,
+    weight: p.weight,
+    volume: p.volume,
+    updated: p.updated,
+  });
 }
 
 function formatProducts(raw: unknown): string {
-  const data = raw as { meta: { size: number }; rows: unknown[] };
-  return JSON.stringify({
+  const data = (raw ?? {}) as { meta?: { size?: number }; rows?: unknown[] };
+  return json({
     total: data.meta?.size,
-    products: data.rows?.map(formatProductRow) ?? [],
-  }, null, 2);
+    products: (data.rows ?? []).map((row) => {
+      const p = (row ?? {}) as Record<string, unknown>;
+      const prices = salePricesToRubles(p);
+      const buyPrice = p.buyPrice as { value: number } | undefined;
+      return {
+        id: p.id,
+        name: p.name,
+        article: p.article,
+        code: p.code,
+        sale_price_rubles: prices[0]?.value ?? null,
+        buy_price_rubles: buyPrice ? kopToRub(buyPrice.value) : null,
+      };
+    }),
+  });
 }
 
-function formatProductRow(raw: unknown): Record<string, unknown> {
-  const p = raw as Record<string, unknown>;
-  const salePrices = (p.salePrices as Array<{ value: number }>) || [];
-  const buyPrice = p.buyPrice as { value: number } | undefined;
-  return {
-    id: p.id, name: p.name, article: p.article, code: p.code,
-    sale_price_rubles: salePrices.length > 0 ? salePrices[0].value / 100 : null,
-    buy_price_rubles: buyPrice ? buyPrice.value / 100 : null,
-  };
-}
+export const tools: ToolDef[] = [
+  {
+    name: "search_products",
+    description: "Search products in MoySklad by name or article/SKU. Returns a paginated list with sale and buy prices in rubles. Supports offset-based pagination up to 1000 results per page. Use filter_article for exact SKU lookup.",
+    schema: searchProductsSchema,
+    handler: handleSearchProducts,
+  },
+  {
+    name: "get_product",
+    description: "Get a single product by its UUID. Returns name, article, code, description, all sale prices with their price types, buy price, weight, volume and last update timestamp. Prices are in rubles (converted from kopecks internally). Pass raw:true for the untouched MoySklad object.",
+    schema: getProductSchema,
+    handler: handleGetProduct,
+  },
+  {
+    name: "create_product",
+    description: "Create a new product in MoySklad. Accepts name, article/SKU, description, code, prices in rubles (automatically converted to kopecks for the API), weight in grams, volume in liters, and VAT rate. The sale price is attached to the account's default price type unless price_type_href is given. Returns the created product with its assigned UUID.",
+    schema: createProductSchema,
+    handler: handleCreateProduct,
+  },
+  {
+    name: "update_prices",
+    description: "Update sale, buy, or minimum prices for an existing product by UUID. All prices are specified in rubles and converted to kopecks internally. Preserves the existing price type when updating a sale price, and falls back to the account default when the product has none. Returns the updated product.",
+    schema: updatePricesSchema,
+    handler: handleUpdatePrices,
+  },
+];

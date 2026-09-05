@@ -7,7 +7,9 @@ export const receiptTools = [
     description:
       "Create a payment receipt in Payme. Amount must be in TIYINS (1 sum = 100 tiyins, e.g. 100000 tiyins = 1000 sum). The receipt can then be paid via receipts_pay or sent as a link via receipts_send.",
     inputSchema: {
-      amount: z.number().describe("Amount in TIYINS (1 sum = 100 tiyins). Example: 100000 = 1000 sum"),
+      // A money field on a create call: reject negatives, zero and fractional
+      // tiyins at the boundary rather than forwarding them to Payme.
+      amount: z.number().int().positive().describe("Amount in TIYINS (1 sum = 100 tiyins). Example: 100000 = 1000 sum"),
       account: z.record(z.string(), z.string()).describe("Account fields, e.g. {order_id: '123'}"),
     },
     method: "receipts.create",
@@ -77,8 +79,9 @@ export const receiptTools = [
     inputSchema: {
       from: z.number().describe("Start timestamp in milliseconds"),
       to: z.number().describe("End timestamp in milliseconds"),
-      offset: z.number().default(0).describe("Pagination offset"),
-      limit: z.number().default(50).describe("Number of results per page"),
+      offset: z.number().int().min(0).default(0).describe("Pagination offset"),
+      limit: z.number().int().min(1).max(1000).default(50)
+        .describe("Number of results per page (1-1000)"),
     },
     method: "receipts.get_all",
     buildParams: (args: { from: number; to: number; offset: number; limit: number }) => ({

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="Signal tower">
+  <title>Signal tower</title>
+  <rect x="8" y="8" width="240" height="240" rx="52" fill="#C25C7A" fill-opacity="0.14"/>
+  <g fill="none" stroke="#C25C7A" stroke-width="15" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="128" cy="93" r="15" fill="#C25C7A" stroke="none"/>
+    <path d="M128 112 V204"/>
+    <path d="M96 204 H160"/>
+    <path d="M96 128 A46 46 0 0 1 96 58"/>
+    <path d="M160 58 A46 46 0 0 1 160 128"/>
+    <path d="M68 146 A76 76 0 0 1 68 30"/>
+    <path d="M188 30 A76 76 0 0 1 188 146"/>
+  </g>
+</svg>

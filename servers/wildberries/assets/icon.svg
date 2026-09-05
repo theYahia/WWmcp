@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="Warehouse stock">
+  <title>Warehouse stock</title>
+  <rect x="8" y="8" width="240" height="240" rx="52" fill="#8A6FC0" fill-opacity="0.14"/>
+  <g fill="none" stroke="#8A6FC0" stroke-width="15" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="38" y="134" width="78" height="74" rx="8"/>
+    <path d="M38 158 H116"/>
+    <rect x="140" y="134" width="78" height="74" rx="8"/>
+    <path d="M140 158 H218"/>
+    <rect x="89" y="50" width="78" height="74" rx="8"/>
+    <path d="M89 74 H167"/>
+  </g>
+</svg>

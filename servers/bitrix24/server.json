@@ -1,0 +1,32 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/bitrix24-mcp",
+  "title": "Bitrix24",
+  "description": "Bitrix24 CRM - deals by stage, contact search, create deals and tasks via webhook (Russia)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/bitrix24",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/bitrix24"
+  },
+  "version": "1.2.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/bitrix24-mcp",
+      "version": "1.2.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "BITRIX24_WEBHOOK_URL",
+          "description": "Inbound webhook URL created in Bitrix24 under Developer resources; embeds the auth token",
+          "isRequired": true,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

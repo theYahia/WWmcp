@@ -1,0 +1,19 @@
+name: CHANGEME-mcp
+description: MCP server for CHANGEME API — DESCRIBE TOOLS HERE.
+icon: https://raw.githubusercontent.com/theYahia/WWmcp/main/servers/CHANGEME/assets/icon.svg
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - CHANGEME_API_KEY
+    properties:
+      CHANGEME_API_KEY:
+        type: string
+        description: "API key from https://example.com/settings"
+  commandFunction: |-
+    (config) => ({
+      command: "npx",
+      args: ["-y", "@theyahia/CHANGEME-mcp"],
+      env: { CHANGEME_API_KEY: config.CHANGEME_API_KEY }
+    })

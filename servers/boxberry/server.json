@@ -1,0 +1,32 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/boxberry-mcp",
+  "title": "Boxberry",
+  "description": "Boxberry delivery - pickup points, cities, cost calculation, tracking, zip check (Russia)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/boxberry",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/boxberry"
+  },
+  "version": "1.1.1",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/boxberry-mcp",
+      "version": "1.1.1",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "BOXBERRY_API_TOKEN",
+          "description": "API token from the Boxberry personal account (account.boxberry.ru). Alias: BOXBERRY_TOKEN",
+          "isRequired": true,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

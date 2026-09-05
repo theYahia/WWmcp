@@ -1,0 +1,37 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/yandex-search-mcp",
+  "title": "Yandex Wordstat",
+  "description": "Yandex Wordstat - top search requests, query dynamics, regional breakdown (Russia)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/yandex-search",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/yandex-search"
+  },
+  "version": "1.0.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/yandex-search-mcp",
+      "version": "1.0.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "YANDEX_SEARCH_API_KEY",
+          "description": "Yandex Cloud service-account API key (Console -> Service accounts -> API keys)",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "YANDEX_FOLDER_ID",
+          "description": "Yandex Cloud folder ID (Console -> Cloud -> Folder ID)",
+          "isRequired": true
+        }
+      ]
+    }
+  ]
+}

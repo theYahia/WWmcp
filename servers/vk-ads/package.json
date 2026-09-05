@@ -1,7 +1,7 @@
 {
   "name": "@theyahia/vk-ads-mcp",
-  "version": "3.0.0",
-  "description": "MCP server for VK Ads API — 8 tools: campaigns, ads, statistics, targeting, budgets. Bearer auth.",
+  "version": "4.0.0",
+  "description": "VK Ads API v2 for AI agents: campaigns (ad_plans), ad groups, ads (banners), statistics, account balance (8 tools, Russia)",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -45,20 +45,31 @@
     "mcp-server",
     "model-context-protocol",
     "claude",
-    "ai",
-    "russian-api",
-    "vk",
+    "ai-agent",
+    "llm",
     "vk-ads",
+    "vk",
+    "вконтакте",
+    "вк-реклама",
     "advertising",
+    "реклама",
+    "ads",
+    "campaigns",
+    "targeting",
+    "таргетинг",
     "marketing",
-    "campaigns"
+    "russia",
+    "russian-api",
+    "ad-plans",
+    "banners",
+    "vk-ads-api"
   ],
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/theYahia/mcp-servers.git",
+    "url": "https://github.com/theYahia/WWmcp.git",
     "directory": "servers/vk-ads"
   },
-  "homepage": "https://github.com/theYahia/mcp-servers/tree/main/servers/vk-ads",
+  "homepage": "https://github.com/theYahia/WWmcp/tree/main/servers/vk-ads",
   "author": "theYahia (https://github.com/theYahia)"
 }

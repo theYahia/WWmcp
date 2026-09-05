@@ -217,8 +217,17 @@ function sanitizeResult(result: CallToolResult): CallToolResult {
 
 /**
  * Wraps a tool handler with automatic error handling + output sanitization.
- * Returns `isError: true` result instead of throwing; successful results pass
- * through `sanitizeResult` (prompt-injection guard + truncation).
+ * Returns `isError: true` result instead of throwing; BOTH the success and the
+ * error result pass through `sanitizeResult` (prompt-injection guard + truncation).
+ *
+ * The error path used to skip it, which quietly punched a hole through the
+ * fleet-wide guard: `withDetails` appends the external API's own `error.message`
+ * to the canonical phrase, and several servers throw the raw upstream response
+ * body as that message. Text an attacker can author (a CRM note, a page title,
+ * a 500-page) therefore reached the model unfiltered and unbounded — via the one
+ * path where the model is *most* likely to act on it, since an error asks it to
+ * change course. `isError: true` content is injected into the LLM context exactly
+ * like success content, so it has to be filtered exactly like success content.
  */
 export function withErrorHandling<T = Record<string, unknown>>(
   handler: (params: T) => Promise<CallToolResult>,
@@ -227,7 +236,7 @@ export function withErrorHandling<T = Record<string, unknown>>(
     try {
       return sanitizeResult(await handler(params));
     } catch (error) {
-      return createToolError(error);
+      return sanitizeResult(createToolError(error));
     }
   };
 }

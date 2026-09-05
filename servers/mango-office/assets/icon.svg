@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="Call center headset">
+  <title>Call center headset</title>
+  <rect x="8" y="8" width="240" height="240" rx="52" fill="#C25C7A" fill-opacity="0.14"/>
+  <g fill="none" stroke="#C25C7A" stroke-width="15" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M60 140 V118 A68 68 0 0 1 196 118 V140"/>
+    <rect x="38" y="132" width="40" height="62" rx="20"/>
+    <rect x="178" y="132" width="40" height="62" rx="20"/>
+    <path d="M198 194 V202 A22 22 0 0 1 176 216 H152"/>
+  </g>
+</svg>

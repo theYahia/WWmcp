@@ -1,6 +1,7 @@
 # Smithery configuration for mindbox-mcp
 # https://smithery.ai/docs/config
 
+icon: https://raw.githubusercontent.com/theYahia/WWmcp/main/servers/mindbox/assets/icon.svg
 startCommand:
   type: stdio
   configSchema:

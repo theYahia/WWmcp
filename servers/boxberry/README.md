@@ -71,6 +71,18 @@ npm test
 BOXBERRY_API_TOKEN=<TOKEN> npm run dev
 ```
 
+## Примеры запросов
+
+Спросите ИИ:
+
+- «Найди код города Boxberry для Казани и покажи там пункты выдачи» — `list_cities`, затем `list_points`
+- «Сколько стоит доставка посылки 2000 г до пункта выдачи с кодом 010» — `calc_delivery`
+- «Где посылка Boxberry с трек-номером 12345678 и какие услуги по ней оказаны» — `track`, затем `list_services`
+
 ## Лицензия
 
 MIT
+
+---
+
+Часть монорепозитория [WWmcp](https://github.com/theYahia/WWmcp) · Telegram: [@vhodvai](https://t.me/vhodvai)

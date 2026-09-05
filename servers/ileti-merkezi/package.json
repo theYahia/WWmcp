@@ -1,7 +1,7 @@
 {
   "name": "@theyahia/ileti-merkezi-mcp",
-  "version": "3.0.0",
-  "description": "MCP server for Ileti Merkezi SMS API (Turkey) — 8 tools: SMS, bulk SMS, reports, contacts, blacklist. HMAC auth.",
+  "version": "4.0.0",
+  "description": "Ileti Merkezi (İletiMerkezi) SMS for AI agents: send SMS/OTP and bulk, cancel scheduled orders, delivery reports, sender headers, blacklist, İYS consent (11 tools, Turkey)",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -45,21 +45,28 @@
     "mcp-server",
     "model-context-protocol",
     "claude",
-    "ai",
-    "turkey",
-    "turkish-api",
+    "ai-agent",
+    "llm",
+    "iletimerkezi",
     "ileti-merkezi",
+    "turkey",
+    "türkiye",
+    "turkish-api",
     "sms",
+    "toplu-sms",
     "bulk-sms",
+    "otp",
     "messaging",
-    "otp"
+    "emerging-markets",
+    "iys",
+    "sms-api"
   ],
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/theYahia/mcp-servers.git",
+    "url": "https://github.com/theYahia/WWmcp.git",
     "directory": "servers/ileti-merkezi"
   },
-  "homepage": "https://github.com/theYahia/mcp-servers/tree/main/servers/ileti-merkezi",
+  "homepage": "https://github.com/theYahia/WWmcp/tree/main/servers/ileti-merkezi",
   "author": "theYahia (https://github.com/theYahia)"
 }

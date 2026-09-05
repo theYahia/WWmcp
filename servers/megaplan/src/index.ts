@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 
 /**
- * @theyahia/megaplan-mcp — MCP server for Megaplan project management
+ * @theyahia/megaplan-mcp — MCP server for Megaplan (Мегаплан) API v3
  *
- * 8 tools + 2 MCP prompts for tasks, deals, projects, employees, comments.
+ * 18 tools + 2 MCP prompts: tasks, deals, projects, employees, deal programs
+ * (pipelines), CRM clients, current user, comments.
  *
  * Auth: Bearer token (MEGAPLAN_TOKEN) OR Password grant (MEGAPLAN_LOGIN + MEGAPLAN_PASSWORD).
  *
@@ -13,11 +14,11 @@
  */
 
 import { runServer } from "@theyahia/mcp-core";
-import { createServer, TOOL_COUNT, logger } from "./server.js";
+import { createServer, TOOL_COUNT, VERSION, logger } from "./server.js";
 
 runServer(createServer, {
   name: "megaplan-mcp",
-  version: "2.0.0",
+  version: VERSION,
   toolCount: TOOL_COUNT,
   logger,
 }).catch((error) => {

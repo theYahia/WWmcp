@@ -1,0 +1,41 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/elma365-mcp",
+  "title": "ELMA365",
+  "description": "ELMA365 BPM - my tasks, start processes, app item CRUD, schema discovery, comments (Russia)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/elma365",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/elma365"
+  },
+  "version": "2.0.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/elma365-mcp",
+      "version": "2.0.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "ELMA365_DOMAIN",
+          "description": "ELMA365 domain, e.g. mycompany or mycompany.elma365.ru",
+          "isRequired": true
+        },
+        {
+          "name": "ELMA365_TOKEN",
+          "description": "ELMA365 API Bearer token",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "ELMA365_BASE_URL",
+          "description": "Full base URL for on-premise installations, e.g. https://elma365.mycorp.com"
+        }
+      ]
+    }
+  ]
+}

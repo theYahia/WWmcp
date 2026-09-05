@@ -2,7 +2,7 @@ name: delovye-linii-mcp
 description: >
   MCP-сервер для API Деловых Линий (Dellin) — расчёт стоимости грузоперевозок,
   поиск городов и терминалов, создание заказов, отслеживание.
-icon: truck
+icon: https://raw.githubusercontent.com/theYahia/WWmcp/main/servers/delovye-linii/assets/icon.svg
 color: "#E31E24"
 tools: 6
 

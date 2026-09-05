@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 461" width="800" height="461" role="img" aria-label="Диалог с ИИ: остатки на складе Wildberries через wildberries-mcp">
+  <title>Диалог с ИИ: остатки на складе Wildberries через wildberries-mcp</title>
+  <rect x="1" y="1" width="798" height="459" rx="14" fill="#1B2028" stroke="#333C4A" stroke-width="2"/>
+  <path d="M1 56 H799" stroke="#333C4A" stroke-width="1.5"/>
+  <g fill="#3C4552"><circle cx="28" cy="28" r="6"/><circle cx="50" cy="28" r="6"/><circle cx="72" cy="28" r="6"/></g>
+  <text x="96" y="33" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" fill="#8B97A8">@theyahia/wildberries-mcp</text>
+  <rect x="620" y="15" width="156" height="26" rx="13" fill="#232B36"/>
+  <text x="698" y="32" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" text-anchor="middle" fill="#8B97A8">данные — пример</text>
+  <text xml:space="preserve" x="28" y="90" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12.5" fill="#8B97A8">Вы</text>
+  <text xml:space="preserve" x="28" y="112" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#D9E0EA">Какие товары кончаются на складе Коледино?</text>
+  <rect x="16" y="135" width="768" height="44" rx="8" fill="#232B36"/>
+  <text xml:space="preserve" x="28" y="153" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" fill="#A98FE3">→ wildberries-mcp · get_fbw_stocks(dateFrom: "2026-08-25")</text>
+  <text xml:space="preserve" x="28" y="217" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12.5" fill="#8B97A8">Claude</text>
+  <text xml:space="preserve" x="28" y="239" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">На складе Коледино остаток ниже 20 шт — 3 позиции:</text>
+  <text xml:space="preserve" x="28" y="276" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8B97A8">supplierArticle</text>
+  <text xml:space="preserve" x="300" y="276" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8B97A8">quantity</text>
+  <text xml:space="preserve" x="440" y="276" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8B97A8">lastChangeDate</text>
+  <path d="M28 286 H772" stroke="#333C4A" stroke-width="1.5"/>
+  <text xml:space="preserve" x="28" y="308" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">SW-4410-BLK</text>
+  <text xml:space="preserve" x="300" y="308" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">6</text>
+  <text xml:space="preserve" x="440" y="308" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">2026-08-31</text>
+  <text xml:space="preserve" x="28" y="333" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">SW-2201-RED</text>
+  <text xml:space="preserve" x="300" y="333" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">11</text>
+  <text xml:space="preserve" x="440" y="333" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">2026-08-30</text>
+  <text xml:space="preserve" x="28" y="358" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">HD-0917-GRY</text>
+  <text xml:space="preserve" x="300" y="358" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">14</text>
+  <text xml:space="preserve" x="440" y="358" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">2026-08-29</text>
+  <text xml:space="preserve" x="28" y="391" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">Критичен SW-4410-BLK: при текущем темпе продаж это ~2 дня.</text>
+  <text xml:space="preserve" x="28" y="416" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">Поставку заводим через create_supply.</text>
+</svg>

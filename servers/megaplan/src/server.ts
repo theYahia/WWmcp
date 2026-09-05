@@ -3,135 +3,105 @@
  * Split from index.ts so tests can import without triggering runServer.
  */
 
+import { readFileSync } from "node:fs";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import type { ZodRawShape } from "zod";
 import { createLogger, withErrorHandling } from "@theyahia/mcp-core";
-import { getTasksSchema, handleGetTasks, createTaskSchema, handleCreateTask } from "./tools/tasks.js";
-import { getDealsSchema, handleGetDeals, createDealSchema, handleCreateDeal } from "./tools/deals.js";
-import { getProjectsSchema, handleGetProjects } from "./tools/projects.js";
+import {
+  getTasksSchema, handleGetTasks,
+  getTaskSchema, handleGetTask,
+  createTaskSchema, handleCreateTask,
+  updateTaskSchema, handleUpdateTask,
+} from "./tools/tasks.js";
+import {
+  getDealsSchema, handleGetDeals,
+  getDealSchema, handleGetDeal,
+  createDealSchema, handleCreateDeal,
+  updateDealSchema, handleUpdateDeal,
+} from "./tools/deals.js";
+import { getProjectsSchema, handleGetProjects, getProjectSchema, handleGetProject } from "./tools/projects.js";
 import { getEmployeesSchema, handleGetEmployees } from "./tools/employees.js";
 import { getCommentsSchema, handleGetComments, createCommentSchema, handleCreateComment } from "./tools/comments.js";
+import { getDealProgramsSchema, handleGetDealPrograms, getDealProgramSchema, handleGetDealProgram } from "./tools/programs.js";
+import { listClientsSchema, handleListClients, getClientSchema, handleGetClient } from "./tools/contractors.js";
+import { getCurrentUserSchema, handleGetCurrentUser } from "./tools/me.js";
+import { MY_TASKS_TODAY, CREATE_DEAL_WIZARD, type PromptDef } from "./prompts.js";
 
 export const logger = createLogger("megaplan-mcp");
 
-export const TOOL_COUNT = 8;
+export const TOOL_COUNT = 18;
+export const PROMPT_COUNT = 2;
+
+/** Single source of truth for the advertised version — no hardcoded drift. */
+export const VERSION = (
+  JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8")) as {
+    version: string;
+  }
+).version;
 
 export function createServer(): McpServer {
   const server = new McpServer({
     name: "megaplan-mcp",
-    version: "2.0.0",
+    version: VERSION,
   });
 
-  // ── Tasks ──
-  server.tool(
-    "get_tasks",
-    "List Megaplan tasks with filters by status (active/completed/delayed), responsible user, or search term.",
-    getTasksSchema.shape,
-    withErrorHandling(async (params) => ({
-      content: [{ type: "text", text: await handleGetTasks(params) }],
-    })),
-  );
+  /** Every tool returns a JSON string; wrap it in the MCP text result + error handling. */
+  const tool = <P>(
+    name: string,
+    description: string,
+    shape: ZodRawShape,
+    handler: (params: P) => Promise<string>,
+  ) =>
+    server.tool(
+      name,
+      description,
+      shape,
+      withErrorHandling(async (params) => ({
+        content: [{ type: "text", text: await handler(params as P) }],
+      })),
+    );
 
-  server.tool(
-    "create_task",
-    "Create a new Megaplan task — name, description, responsible user, deadline.",
-    createTaskSchema.shape,
-    withErrorHandling(async (params) => ({
-      content: [{ type: "text", text: await handleCreateTask(params) }],
-    })),
-  );
+  // ── Tasks ──
+  tool("get_tasks", "List tasks from Megaplan, filtered by status code(s), responsible user, and free-text search.", getTasksSchema.shape, handleGetTasks);
+  tool("get_task", "Get a single Megaplan task by ID with full details.", getTaskSchema.shape, handleGetTask);
+  tool("create_task", "Create a task in Megaplan with name, description, responsible user, and deadline.", createTaskSchema.shape, handleCreateTask);
+  tool("update_task", "Update an existing Megaplan task (name, description, responsible, deadline, status).", updateTaskSchema.shape, handleUpdateTask);
 
   // ── Deals ──
-  server.tool(
-    "get_deals",
-    "List Megaplan deals with filters by status, responsible user, or search.",
-    getDealsSchema.shape,
-    withErrorHandling(async (params) => ({
-      content: [{ type: "text", text: await handleGetDeals(params) }],
-    })),
-  );
-
-  server.tool(
-    "create_deal",
-    "Create a new Megaplan deal — name, pipeline (program), responsible user, amount.",
-    createDealSchema.shape,
-    withErrorHandling(async (params) => ({
-      content: [{ type: "text", text: await handleCreateDeal(params) }],
-    })),
-  );
+  tool("get_deals", "List deals from Megaplan, filtered by status code(s), responsible user, and free-text search.", getDealsSchema.shape, handleGetDeals);
+  tool("get_deal", "Get a single Megaplan deal by ID with full details.", getDealSchema.shape, handleGetDeal);
+  tool("create_deal", "Create a deal in Megaplan. Requires a program (pipeline) ID — discover it via get_deal_programs.", createDealSchema.shape, handleCreateDeal);
+  tool("update_deal", "Update an existing Megaplan deal (name, responsible, amount, description, status).", updateDealSchema.shape, handleUpdateDeal);
 
   // ── Projects ──
-  server.tool(
-    "get_projects",
-    "List Megaplan projects with filters by status and search.",
-    getProjectsSchema.shape,
-    withErrorHandling(async (params) => ({
-      content: [{ type: "text", text: await handleGetProjects(params) }],
-    })),
-  );
+  tool("get_projects", "List projects from Megaplan, filtered by status code(s) and free-text search.", getProjectsSchema.shape, handleGetProjects);
+  tool("get_project", "Get a single Megaplan project by ID with full details.", getProjectSchema.shape, handleGetProject);
 
   // ── Employees ──
-  server.tool(
-    "get_employees",
-    "List Megaplan employees with search and department filter.",
-    getEmployeesSchema.shape,
-    withErrorHandling(async (params) => ({
-      content: [{ type: "text", text: await handleGetEmployees(params) }],
-    })),
-  );
+  tool("get_employees", "List employees from Megaplan with free-text search and department filter.", getEmployeesSchema.shape, handleGetEmployees);
+
+  // ── Deal programs (pipelines) ──
+  tool("get_deal_programs", "List deal programs (pipelines). Use this to find the program_id required by create_deal.", getDealProgramsSchema.shape, handleGetDealPrograms);
+  tool("get_deal_program", "Get a single deal program (pipeline) by ID.", getDealProgramSchema.shape, handleGetDealProgram);
+
+  // ── Clients (CRM contractors) ──
+  tool("list_clients", "List clients (CRM contractors): people (human) or organizations (company).", listClientsSchema.shape, handleListClients);
+  tool("get_client", "Get a single client (contractor) by type and ID.", getClientSchema.shape, handleGetClient);
+
+  // ── Current user ──
+  tool("get_current_user", "Get the authenticated user's employee record (experimental). Use it to scope 'my tasks'.", getCurrentUserSchema.shape, handleGetCurrentUser);
 
   // ── Comments ──
-  server.tool(
-    "get_comments",
-    "List comments for a task, deal, or project in Megaplan.",
-    getCommentsSchema.shape,
-    withErrorHandling(async (params) => ({
-      content: [{ type: "text", text: await handleGetComments(params) }],
-    })),
-  );
+  tool("get_comments", "List comments for a task, deal, or project in Megaplan.", getCommentsSchema.shape, handleGetComments);
+  tool("create_comment", "Add a comment to a task, deal, or project in Megaplan.", createCommentSchema.shape, handleCreateComment);
 
-  server.tool(
-    "create_comment",
-    "Add a comment to a task, deal, or project in Megaplan.",
-    createCommentSchema.shape,
-    withErrorHandling(async (params) => ({
-      content: [{ type: "text", text: await handleCreateComment(params) }],
-    })),
-  );
-
-  // ── Skills (MCP prompts) — preserved from v1 ──
-  server.prompt(
-    "my-tasks-today",
-    "Мои задачи на сегодня — shows your tasks due today or overdue",
-    {},
-    async () => ({
-      messages: [
-        {
-          role: "user" as const,
-          content: {
-            type: "text" as const,
-            text: "Используй get_tasks с filter_status='active' чтобы получить мои активные задачи. Покажи список задач с дедлайнами, отсортируй по срочности. Если задача просрочена — отметь. Формат: компактная таблица с колонками: Задача, Дедлайн, Статус, Приоритет.",
-          },
-        },
-      ],
-    }),
-  );
-
-  server.prompt(
-    "create-deal-wizard",
-    "Создай сделку — guided deal creation wizard",
-    {},
-    async () => ({
-      messages: [
-        {
-          role: "user" as const,
-          content: {
-            type: "text" as const,
-            text: "Помоги создать новую сделку в Мегаплане. Спроси у меня: 1) Название сделки, 2) ID программы (pipeline), 3) Ответственный (опционально), 4) Сумма (опционально), 5) Описание (опционально). После сбора данных вызови create_deal.",
-          },
-        },
-      ],
-    }),
-  );
+  // ── Skills (MCP prompts) ──
+  const registerPrompt = (p: PromptDef) =>
+    server.prompt(p.name, p.description, {}, async () => ({
+      messages: [{ role: "user" as const, content: { type: "text" as const, text: p.text } }],
+    }));
+  registerPrompt(MY_TASKS_TODAY);
+  registerPrompt(CREATE_DEAL_WIZARD);
 
   return server;
 }

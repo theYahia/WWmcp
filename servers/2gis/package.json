@@ -1,7 +1,7 @@
 {
   "name": "@theyahia/2gis-mcp",
   "version": "3.0.0",
-  "description": "MCP server for 2GIS API — 8 tools: places search, geocoding, directions, reviews. Russia/CIS.",
+  "description": "2GIS maps for AI agents: place search by name and rubric, geocoding and reverse geocoding, driving directions, reviews, suggest (8 tools, Russia/CIS)",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -19,6 +19,7 @@
     "dev": "tsx src/index.ts",
     "start": "node dist/index.js",
     "test": "vitest run",
+    "test:e2e": "vitest run --config vitest.e2e.config.ts",
     "test:watch": "vitest",
     "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "typecheck": "tsc --noEmit",
@@ -45,21 +46,29 @@
     "mcp-server",
     "model-context-protocol",
     "claude",
-    "ai",
-    "russian-api",
+    "ai-agent",
+    "llm",
     "2gis",
+    "2гис",
+    "дубльгис",
+    "maps",
+    "карты",
     "geocoding",
+    "геокодирование",
     "places",
+    "poi",
     "directions",
+    "routing",
     "reviews",
-    "maps"
+    "russia",
+    "russian-api"
   ],
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/theYahia/mcp-servers.git",
+    "url": "https://github.com/theYahia/WWmcp.git",
     "directory": "servers/2gis"
   },
-  "homepage": "https://github.com/theYahia/mcp-servers/tree/main/servers/2gis",
+  "homepage": "https://github.com/theYahia/WWmcp/tree/main/servers/2gis",
   "author": "theYahia (https://github.com/theYahia)"
 }

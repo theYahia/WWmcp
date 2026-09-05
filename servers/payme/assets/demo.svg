@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 483" width="800" height="483" role="img" aria-label="Диалог с ИИ: чеки Payme за период через payme-mcp">
+  <title>Диалог с ИИ: чеки Payme за период через payme-mcp</title>
+  <rect x="1" y="1" width="798" height="481" rx="14" fill="#1B2028" stroke="#333C4A" stroke-width="2"/>
+  <path d="M1 56 H799" stroke="#333C4A" stroke-width="1.5"/>
+  <g fill="#3C4552"><circle cx="28" cy="28" r="6"/><circle cx="50" cy="28" r="6"/><circle cx="72" cy="28" r="6"/></g>
+  <text x="96" y="33" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" fill="#8B97A8">@theyahia/payme-mcp</text>
+  <rect x="620" y="15" width="156" height="26" rx="13" fill="#232B36"/>
+  <text x="698" y="32" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" text-anchor="middle" fill="#8B97A8">данные — пример</text>
+  <text xml:space="preserve" x="28" y="90" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12.5" fill="#8B97A8">Вы</text>
+  <text xml:space="preserve" x="28" y="112" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#D9E0EA">Какие чеки прошли за вчера и на какую сумму?</text>
+  <rect x="16" y="135" width="768" height="66" rx="8" fill="#232B36"/>
+  <text xml:space="preserve" x="28" y="153" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" fill="#4FC3D9">→ payme-mcp · receipts_get_all(from: 1788390000000, to: 1788476400000,</text>
+  <text xml:space="preserve" x="28" y="175" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" fill="#4FC3D9">                               offset: 0, limit: 50)</text>
+  <text xml:space="preserve" x="28" y="239" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12.5" fill="#8B97A8">Claude</text>
+  <text xml:space="preserve" x="28" y="261" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">Чеков за период: 3, на 1 340 000 тийинов (13 400 сумов):</text>
+  <text xml:space="preserve" x="28" y="298" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8B97A8">_id</text>
+  <text xml:space="preserve" x="161.2" y="298" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8B97A8">amount</text>
+  <text xml:space="preserve" x="244.0" y="298" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8B97A8">pay_time</text>
+  <text xml:space="preserve" x="402.4" y="298" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8B97A8">state</text>
+  <path d="M28 308 H772" stroke="#333C4A" stroke-width="1.5"/>
+  <text xml:space="preserve" x="28" y="330" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">68b6f1a4…c412</text>
+  <text xml:space="preserve" x="161.2" y="330" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">500 000</text>
+  <text xml:space="preserve" x="244.0" y="330" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">2026-09-02 14:12</text>
+  <text xml:space="preserve" x="402.4" y="330" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">4</text>
+  <text xml:space="preserve" x="28" y="355" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">68b6e2c7…9930</text>
+  <text xml:space="preserve" x="161.2" y="355" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">620 000</text>
+  <text xml:space="preserve" x="244.0" y="355" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">2026-09-02 11:48</text>
+  <text xml:space="preserve" x="402.4" y="355" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">4</text>
+  <text xml:space="preserve" x="28" y="380" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">68b6c188…77e2</text>
+  <text xml:space="preserve" x="161.2" y="380" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">220 000</text>
+  <text xml:space="preserve" x="244.0" y="380" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">2026-09-02 09:03</text>
+  <text xml:space="preserve" x="402.4" y="380" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">4</text>
+  <text xml:space="preserve" x="28" y="413" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">Состояние конкретного чека — receipts_check(id).</text>
+  <text xml:space="preserve" x="28" y="438" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">Отменить — receipts_cancel(id, reason). Суммы в тийинах: 1 сум = 100.</text>
+</svg>

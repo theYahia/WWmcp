@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 
 /**
- * @theyahia/vk-ads-mcp — MCP server for VK Ads API
+ * @theyahia/vk-ads-mcp — MCP server for the VK Ads API v2 (ads.vk.com/api/v2)
  *
- * 8 tools: list_campaigns, create_campaign, update_campaign, list_ads,
- * create_ad, get_statistics, list_targeting_groups, get_budget.
+ * 8 tools: list_campaigns, create_campaign, update_campaign, list_ad_groups,
+ * list_ads, create_ad, get_statistics, get_account.
  *
- * Auth: Bearer token (VK_ADS_TOKEN env var).
+ * Auth: Bearer token (VK_ADS_TOKEN), optionally auto-refreshed via
+ * VK_ADS_CLIENT_ID + VK_ADS_CLIENT_SECRET + VK_ADS_REFRESH_TOKEN.
  *
  * Transports:
  *   - stdio (default) — for Claude Desktop / Cursor / Windsurf
@@ -14,11 +15,11 @@
  */
 
 import { runServer } from "@theyahia/mcp-core";
-import { createServer, TOOL_COUNT, logger } from "./server.js";
+import { createServer, TOOL_COUNT, VERSION, logger } from "./server.js";
 
 runServer(createServer, {
   name: "vk-ads-mcp",
-  version: "2.0.0",
+  version: VERSION,
   toolCount: TOOL_COUNT,
   logger,
 }).catch((error) => {

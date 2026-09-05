@@ -30,6 +30,7 @@ auth:
       description: Cabinet password (part of X-User-Authorization Basic)
       required: true
 
+icon: https://raw.githubusercontent.com/theYahia/WWmcp/main/servers/pochta-russia/assets/icon.svg
 startCommand:
   type: stdio
   configSchema:

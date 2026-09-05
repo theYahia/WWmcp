@@ -112,6 +112,18 @@ npm run typecheck
 npm test
 ```
 
+## Примеры запросов
+
+Спросите ИИ:
+
+- «Где посылка с трек-номером RA123456789RU» — `track`
+- «Сколько стоит и сколько идёт посылка 1500 г из 101000 в 630000» — `calculate`, затем `delivery_time`
+- «Нормализуй адрес "мск тверская 1" и найди ближайшие отделения» — `normalize_address`, затем `get_offices`
+
 ## Лицензия
 
 MIT
+
+---
+
+Часть монорепозитория [WWmcp](https://github.com/theYahia/WWmcp) · Telegram: [@vhodvai](https://t.me/vhodvai)

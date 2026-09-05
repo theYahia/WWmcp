@@ -2,7 +2,7 @@
 
 MCP server for **Kontur.Focus API** -- company search, EGRUL extracts, financial statements, arbitration cases, bankruptcy, licenses, and affiliate networks for Russian legal entities.
 
-Part of the **Russian API MCP series** alongside [`@theyahia/dadata-mcp`](https://www.npmjs.com/package/@theyahia/dadata-mcp), [`@theyahia/spark-interfax-mcp`](https://www.npmjs.com/package/@theyahia/spark-interfax-mcp), and [`@theyahia/casebook-mcp`](https://www.npmjs.com/package/@theyahia/casebook-mcp).
+Part of the **WWmcp series** alongside [`@theyahia/dadata-mcp`](https://www.npmjs.com/package/@theyahia/dadata-mcp), [`@theyahia/spark-interfax-mcp`](https://www.npmjs.com/package/@theyahia/spark-interfax-mcp), and [`@theyahia/casebook-mcp`](https://www.npmjs.com/package/@theyahia/casebook-mcp).
 
 ## Tools
 
@@ -61,3 +61,7 @@ Docs: [https://focus-api.kontur.ru/](https://focus-api.kontur.ru/)
 ## License
 
 MIT
+
+---
+
+Часть монорепозитория [WWmcp](https://github.com/theYahia/WWmcp) · Telegram: [@vhodvai](https://t.me/vhodvai)

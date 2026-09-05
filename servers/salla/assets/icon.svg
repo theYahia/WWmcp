@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="Storefront">
+  <title>Storefront</title>
+  <rect x="8" y="8" width="240" height="240" rx="52" fill="#8A6FC0" fill-opacity="0.14"/>
+  <g fill="none" stroke="#8A6FC0" stroke-width="15" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M54 58 H202 L214 98 H42 Z"/>
+    <path d="M58 98 V206 H198 V98"/>
+    <path d="M104 206 V146 H152 V206"/>
+  </g>
+</svg>

@@ -24,6 +24,16 @@
     "url": "git+https://github.com/theYahia/WWmcp.git",
     "directory": "packages/telemetry"
   },
-  "keywords": ["mcp", "telemetry", "privacy", "anonymous", "opt-in"],
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "telemetry",
+    "analytics",
+    "privacy",
+    "anonymous",
+    "opt-in",
+    "typescript"
+  ],
   "license": "MIT"
 }

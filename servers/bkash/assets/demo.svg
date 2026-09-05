@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 479" width="800" height="479" role="img" aria-label="AI chat: bKash payment status of an invoice via bkash-mcp">
+  <title>AI chat: bKash payment status of an invoice via bkash-mcp</title>
+  <rect x="1" y="1" width="798" height="477" rx="14" fill="#1B2028" stroke="#333C4A" stroke-width="2"/>
+  <path d="M1 56 H799" stroke="#333C4A" stroke-width="1.5"/>
+  <g fill="#3C4552"><circle cx="28" cy="28" r="6"/><circle cx="50" cy="28" r="6"/><circle cx="72" cy="28" r="6"/></g>
+  <text x="96" y="33" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" fill="#8B97A8">@theyahia/bkash-mcp</text>
+  <rect x="620" y="15" width="156" height="26" rx="13" fill="#232B36"/>
+  <text x="698" y="32" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" text-anchor="middle" fill="#8B97A8">sample data</text>
+  <text xml:space="preserve" x="28" y="90" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12.5" fill="#8B97A8">You</text>
+  <text xml:space="preserve" x="28" y="112" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#D9E0EA">A customer says they paid invoice INV-4471 — did it go through?</text>
+  <rect x="16" y="135" width="768" height="44" rx="8" fill="#232B36"/>
+  <text xml:space="preserve" x="28" y="153" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" fill="#E2568C">→ bkash-mcp · query_payment(paymentID: "TR0011aBcD1EXAMPLE")</text>
+  <text xml:space="preserve" x="28" y="217" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12.5" fill="#8B97A8">Claude</text>
+  <text xml:space="preserve" x="28" y="239" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">Payment TR0011aBcD1EXAMPLE:</text>
+  <text xml:space="preserve" x="28" y="276" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">transactionStatus       Completed</text>
+  <text xml:space="preserve" x="28" y="301" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">amount                  1 250.00</text>
+  <text xml:space="preserve" x="28" y="326" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">currency                BDT</text>
+  <text xml:space="preserve" x="28" y="351" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">payerReference          017XXXXXXXX</text>
+  <text xml:space="preserve" x="28" y="376" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">merchantInvoiceNumber   INV-4471</text>
+  <text xml:space="preserve" x="28" y="409" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">Give the money back — refund_payment(paymentID, trxID, amount, sku).</text>
+  <text xml:space="preserve" x="28" y="434" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">Look it up by transaction reference — search_transaction(trxID).</text>
+</svg>

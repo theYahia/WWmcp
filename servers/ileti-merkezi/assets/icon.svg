@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="SMS message">
+  <title>SMS message</title>
+  <rect x="8" y="8" width="240" height="240" rx="52" fill="#C25C7A" fill-opacity="0.14"/>
+  <g fill="none" stroke="#C25C7A" stroke-width="15" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M42 70 A22 22 0 0 1 64 48 H192 A22 22 0 0 1 214 70 V146 A22 22 0 0 1 192 168 H118 L74 206 V168 H64 A22 22 0 0 1 42 146 Z"/>
+    <g stroke="none" fill="#C25C7A">
+      <circle cx="92" cy="108" r="11"/><circle cx="128" cy="108" r="11"/><circle cx="164" cy="108" r="11"/>
+    </g>
+  </g>
+</svg>

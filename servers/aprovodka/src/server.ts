@@ -80,8 +80,36 @@ export const logger = createLogger("aprovodka");
  * версий (package.json, VERSION, server.json) закрыто тестом — само по себе
  * чтение не мешает server.json отстать.
  */
-const VERSION_SOURCE = createRequire(import.meta.url)("../package.json") as { version: string };
+const VERSION_SOURCE = createRequire(import.meta.url)("../package.json") as {
+  version: string;
+  engines: { node: string };
+};
 export const VERSION: string = VERSION_SOURCE.version;
+
+/**
+ * Минимальный мажор Node — из того же package.json, чтобы поле `engines` и
+ * проверка на старте не разъехались (ровно так разъезжалась версия выше).
+ */
+export const MIN_NODE_MAJOR: number = Number(
+  VERSION_SOURCE.engines.node.replace(/[^\d.]/g, "").split(".")[0],
+);
+
+/**
+ * npm по умолчанию печатает несовпадение `engines` предупреждением и всё равно
+ * ставит пакет — `engine-strict` включает не издатель, а потребитель. Поэтому
+ * отказ даём сами: иначе про неподдерживаемый Node пользователь узнаёт падением
+ * в середине первого вызова инструмента, а не при запуске.
+ */
+export function unsupportedNodeMessage(
+  nodeVersion: string,
+  minMajor: number = MIN_NODE_MAJOR,
+): string | null {
+  const major = Number(nodeVersion.split(".")[0]);
+  if (Number.isFinite(major) && major < minMajor) {
+    return `aprovodka требует Node.js ${minMajor} или новее, запущен ${nodeVersion}. Обновите Node.js: https://nodejs.org/`;
+  }
+  return null;
+}
 
 /**
  * Single source of truth for module → tool count mapping.

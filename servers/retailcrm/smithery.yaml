@@ -4,6 +4,7 @@ author: Yahia
 license: MIT
 repository: https://github.com/theYahia/WWmcp
 
+icon: https://raw.githubusercontent.com/theYahia/WWmcp/main/servers/retailcrm/assets/icon.svg
 startCommand:
   type: stdio
   configSchema:

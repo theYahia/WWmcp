@@ -1,4 +1,4 @@
-> 📦 Часть **[WWmcp — Emerging Markets MCP](https://github.com/theYahia/WWmcp)** — 114 MCP-серверов для non-Western API (Россия/СНГ/MENA/Gulf/SE Asia/Africa/Brazil).
+> 📦 Часть **[WWmcp — Emerging Markets MCP](https://github.com/theYahia/WWmcp)** — 46 MCP-серверов для non-Western API (Россия/СНГ/MENA/Gulf/SE Asia/Africa/Brazil). · Telegram: [@vhodvai](https://t.me/vhodvai)
 
 # @theyahia/elma365-mcp
 
@@ -7,6 +7,8 @@ MCP-сервер для ELMA365 API — discovery схемы, элементы �
 [![npm](https://img.shields.io/npm/v/@theyahia/elma365-mcp)](https://www.npmjs.com/package/@theyahia/elma365-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![CI](https://github.com/theYahia/elma365-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/theYahia/elma365-mcp/actions)
+
+![Демонстрация: вопрос «какие задачи прилетели на меня и ещё не закрыты» — агент вызывает get_tasks и отвечает списком BPM-задач](./assets/demo.svg)
 
 Все эндпоинты сверены с официальной документацией [api.elma365.com](https://api.elma365.com/ru/public-api/reference/).
 

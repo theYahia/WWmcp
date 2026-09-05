@@ -8,6 +8,8 @@ MCP server for [UniSender](https://affiliate.unisender.com) API — lists, conta
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Smithery](https://smithery.ai/badge/@theyahia/unisender-mcp)](https://smithery.ai/server/@theyahia/unisender-mcp)
 
+![Демонстрация: вопрос «какие есть списки рассылки и сколько в них контактов» — агент вызывает get_lists и отвечает таблицей списков](./assets/demo.svg)
+
 ## Install
 
 ### Claude Desktop
@@ -113,3 +115,7 @@ pnpm test
 ## License
 
 MIT
+
+---
+
+Часть монорепозитория [WWmcp](https://github.com/theYahia/WWmcp) · Telegram: [@vhodvai](https://t.me/vhodvai)

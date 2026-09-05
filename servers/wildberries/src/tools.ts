@@ -126,7 +126,8 @@ export const toolDefinitions = {
     inputSchema: { type: "object" as const, properties: {} },
   },
   get_sales: {
-    description: "Get sales report",
+    description:
+      "Get the Wildberries sales report for a date range: sale IDs, prices, discounts and payouts",
     inputSchema: {
       type: "object" as const,
       properties: {

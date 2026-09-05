@@ -2,6 +2,8 @@
 
 Production-grade MCP server for [amoCRM](https://www.amocrm.ru/) API. 19 tools covering leads, contacts, companies, pipelines, tasks, notes, search, events, and unsorted leads. OAuth 2.0 with automatic token refresh. Rate limiting (7 req/sec). Retry with exponential backoff.
 
+![Демонстрация: вопрос «что сейчас в воронке продаж и на какую сумму» — агент вызывает list_leads и отвечает таблицей сделок](./assets/demo.svg)
+
 ## Installation
 
 ```bash
@@ -166,3 +168,7 @@ retries and error handling come from `@theyahia/mcp-core`.
 ## License
 
 MIT
+
+---
+
+Часть монорепозитория [WWmcp](https://github.com/theYahia/WWmcp) · Telegram: [@vhodvai](https://t.me/vhodvai)

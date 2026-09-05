@@ -1,6 +1,8 @@
-# @theyahia/travelpayouts-mcp
+# MCP-сервер для Travelpayouts (Aviasales) — 13 инструментов для ИИ-агента: цены на авиабилеты и отели
 
-MCP server for the Travelpayouts (Aviasales) API. **13 tools** for flight search, price calendars, hotel search, airport/airline/city lookup, direct routes, and flexible date pricing.
+Если вы искали, как подключить API Travelpayouts (Aviasales) к Claude или другому ИИ-агенту, — этот сервер даёт агенту цены на перелёты и отели: поиск по направлению и датам, календарь цен, самый дешёвый месяц, прямые рейсы, спецпредложения, популярные направления и справочники аэропортов, городов и авиакомпаний. Спрашиваете «сколько стоит улететь из Москвы в Сочи 12 октября» — получаете таблицу рейсов с ценами и пересадками, а не ссылку на выдачу. Из настроек нужен один `TRAVELPAYOUTS_TOKEN` из партнёрского кабинета.
+
+![Демонстрация: вопрос «сколько стоит улететь из Москвы в Сочи 12 октября» — агент вызывает search_flights_prices и отвечает таблицей рейсов с ценами](./assets/demo.svg)
 
 ## Install
 
@@ -96,3 +98,7 @@ npm run build        # Compile TypeScript
 ## License
 
 MIT
+
+---
+
+Часть монорепозитория [WWmcp](https://github.com/theYahia/WWmcp) · Telegram: [@vhodvai](https://t.me/vhodvai)

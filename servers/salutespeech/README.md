@@ -5,7 +5,7 @@ MCP server for Sber SaluteSpeech API — speech recognition (STT) and synthesis 
 [![npm](https://img.shields.io/npm/v/@theyahia/salutespeech-mcp)](https://www.npmjs.com/package/@theyahia/salutespeech-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Part of [WWmcp](https://github.com/theYahia/WWmcp) — MCP servers for non-Western APIs — by [@theYahia](https://github.com/theYahia).
+Part of [WWmcp](https://github.com/theYahia/WWmcp) — MCP servers for non-Western APIs — by [@theYahia](https://github.com/theYahia). · Telegram: [@vhodvai](https://t.me/vhodvai)
 
 ## Install
 

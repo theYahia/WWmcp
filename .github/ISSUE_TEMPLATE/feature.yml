@@ -23,7 +23,7 @@ body:
       label: Problem / use case
       description: What are you trying to do? What's the pain point today?
       placeholder: |
-        I want my AI agent to fetch product variants from Salla, but the current `salla_get_product` tool only returns the parent SKU.
+        I want my AI agent to fetch product variants from Salla, but the current `get_product` tool only returns the parent SKU.
     validations:
       required: true
 
@@ -33,9 +33,11 @@ body:
       label: Proposed solution
       description: What should the new/updated tool look like? Inputs, outputs, and which API endpoint it should call.
       placeholder: |
-        New tool: `salla_get_product_variants(product_id: string)`
+        New tool: `get_product_variants(product_id: string)`
         Endpoint: GET https://api.salla.dev/admin/v2/products/{id}/variants
         Returns: array of variants with SKU, price, stock.
+
+        Tool names are unprefixed — the MCP client namespaces them as `mcp__salla__get_product_variants`.
     validations:
       required: true
 
@@ -58,4 +60,6 @@ body:
       label: Contribution
       options:
         - label: I'd be willing to submit a PR for this
+          required: false
+        - label: I understand a new tool also needs a test, a line in the server README, and `node scripts/catalog.mjs` re-run (see CONTRIBUTING.md)
           required: false

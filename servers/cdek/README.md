@@ -1,9 +1,11 @@
-# cdek-mcp
+# MCP-сервер для СДЭК API — 16 инструментов для ИИ-агента: тарифы, заказы, трекинг
+
+Если вы искали, как подключить доставку СДЭК к Claude или другому ИИ-агенту, — этот сервер закрывает весь цикл отправления через CDEK API v2: расчёт тарифов и сроков, создание и отмена заказов, трекинг по накладной, поиск городов и пунктов выдачи, вызов курьера, штрихкоды и квитанции, вебхуки. Спрашиваете «сколько стоит и как долго везти 2 кг из Москвы в Казань» — получаете сравнение тарифов таблицей, а не форму на сайте. Работает и на тестовом контуре СДЭК, и на боевом.
 
 [![npm](https://img.shields.io/npm/v/@theyahia/cdek-mcp)](https://www.npmjs.com/package/@theyahia/cdek-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-MCP server for the CDEK delivery API (v2). **16 tools** covering the full delivery lifecycle: tariff calculation, order management, shipment tracking, location search, courier pickup, barcode/receipt generation, and webhooks.
+![Демонстрация: вопрос «сколько стоит и как долго везти 2 кг из Москвы в Казань» — агент вызывает calculate_tariff_list и отвечает таблицей тарифов](./assets/demo.svg)
 
 ## Tools (16)
 
@@ -158,14 +160,14 @@ OAuth 2.0 Client Credentials flow, handled by the `OAuthStrategy` in [`@theyahia
 
 ## E-commerce Stack
 
-Pair with other russian-mcp servers for a complete e-commerce AI stack:
+Pair with other WWmcp servers for a complete e-commerce AI stack:
 
 | Server | Purpose |
 |--------|---------|
 | **cdek-mcp** | Shipping & logistics |
 | [dadata-mcp](https://github.com/theYahia/dadata-mcp) | Address validation, company lookup |
 
-Part of the [russian-mcp](https://github.com/theYahia?tab=repositories&q=mcp) series.
+Part of the [WWmcp](https://github.com/theYahia/WWmcp) series.
 
 ## Demo Prompts
 
@@ -207,3 +209,7 @@ See [CHANGELOG.md](./CHANGELOG.md) for release notes.
 ## License
 
 MIT
+
+---
+
+Часть монорепозитория [WWmcp](https://github.com/theYahia/WWmcp) · Telegram: [@vhodvai](https://t.me/vhodvai)

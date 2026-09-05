@@ -1,49 +1,73 @@
 # @theyahia/vk-ads-mcp
 
-> MCP server for **VK Ads** API — campaigns, ads, statistics, targeting, budgets.
-> 8 tools. Bearer auth. Stdio + Streamable HTTP transports.
+> MCP server for the **VK Ads API v2** (`ads.vk.com/api/v2`) — campaigns (ad_plans), ad groups, ads (banners), statistics, account balance.
+> 8 tools. Bearer auth with optional refresh_token rotation. Stdio + Streamable HTTP transports.
 
 [![npm](https://img.shields.io/npm/v/@theyahia/vk-ads-mcp)](https://www.npmjs.com/package/@theyahia/vk-ads-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ---
 
-### Migrating from v1.x
+### ⚠️ Migrating from v3.x and earlier
 
-If you used v1.x, the v2.0.0 release adds Streamable HTTP transport and is built on `@theyahia/mcp-core`. Breaking changes:
+Every release before 4.0.0 called legacy `api.vk.com` / myTarget v1 endpoints
+(`/campaigns.json`, `/ads.json`, `/budget.json`, `/targeting_groups.json`) that do not exist on
+`ads.vk.com/api/v2`. 4.0.0 rewrites the whole API layer against the official `target.vk.ru`
+documentation. **Breaking:**
 
-- **Internal client:** now extends `BaseHttpClient` with `ApiKeyStrategy`. The exported `apiGet`/`apiPost` functional API is unchanged, so tool code keeps working.
-- **Tool errors:** now returned as MCP-spec `CallToolResult` with `isError: true` (via `withErrorHandling`). Compatible with all MCP clients.
-- **Single bin entrypoint:** previously stdio-only via `dist/index.js`. v2 adds HTTP via `--http` flag or `HTTP_PORT` env on the same binary.
+- **`account_id` removed from every tool** — the cabinet is determined by the OAuth token.
+- **Campaigns are `ad_plans`.** `list/create/update_campaign` now hit `/ad_plans.json`;
+  update is `POST /ad_plans/{id}.json` (id in the path).
+- **Campaign lifecycle:** `status: 1|0` → `action: activate | stop | delete`.
+- **Budgets:** `all_limit` (kopecks) → `budget_limit` / `budget_limit_day` **in the cabinet
+  currency** (roubles for RUB).
+- **Campaign goal:** `type` → `objective`.
+- **Ads are `banners`.** `create_ad` takes `{ad_group_id, textblocks, urls, content}` instead of
+  `{campaign_id, ad_format, title, description, link_url}`.
+- **Statistics:** `GET /statistics/{object_type}/{period}.json` with path segments;
+  `period` is `day` or `summary` only, and impressions are called **`shows`**.
+- **`list_targeting_groups` → `list_ad_groups`** (`/ad_groups.json` — targeting/delivery lives on
+  the ad group).
+- **`get_budget` → `get_account`** (`/user.json`; the balance field needs the OAuth scope
+  `read_payments`).
 
-Tool names, arguments, return formats, and the `VK_ADS_TOKEN` env var are unchanged.
+Unverified request details are marked `// VERIFY:` in the source — they follow the official docs
+and five independent working clients, but have not been exercised against a live cabinet.
 
 ---
 
 ## Tools (8)
 
-### Campaigns
+Model: **ad_plans** (campaigns) → **ad_groups** → **banners** (ads).
+
+### Campaigns (ad_plans)
 
 | Tool | Description |
 |------|-------------|
-| `list_campaigns` | List campaigns in an account. Supports `status` filter (active / blocked / deleted). |
-| `create_campaign` | Create a new campaign (name, type, budget in kopecks). |
-| `update_campaign` | Update name, budget, or status (start/stop). |
+| `list_campaigns` | List campaigns with a `status` filter (active / blocked / deleted). Auto-paginates. |
+| `create_campaign` | Create a campaign: `name`, `objective`, `budget_limit` / `budget_limit_day`. |
+| `update_campaign` | Rename, rebudget, or run the lifecycle (`activate` / `stop` / `delete`). |
 
-### Ads
+### Ad groups & ads
 
 | Tool | Description |
 |------|-------------|
-| `list_ads` | List ads inside one or more campaigns. |
-| `create_ad` | Create an ad — text/image/video format with title, description, link URL. |
+| `list_ad_groups` | Ad groups with their targeting/delivery, filtered by campaign. Auto-paginates. |
+| `list_ads` | Banners, filtered by ad group. Auto-paginates. |
+| `create_ad` | Create a banner in an ad group: `textblocks`, `urls`, `content` (ids of already-uploaded creatives). |
 
 ### Reporting
 
 | Tool | Description |
 |------|-------------|
-| `get_statistics` | Impressions, clicks, spend over a date range — grouped by day/week/month/overall. |
-| `list_targeting_groups` | List targeting groups for a campaign. |
-| `get_budget` | Account budget — remaining balance and spending limits. |
+| `get_statistics` | `shows`, clicks and spend for campaigns / ad_groups / banners / users; `day` or `summary`, up to 92 days and 200 ids. |
+| `get_account` | Cabinet info and balance (`/user.json`, needs scope `read_payments`). |
+
+Read tools carry `readOnlyHint` and return `structuredContent` alongside the text block;
+`create_*` and `update_campaign` are annotated as writes.
+
+There is no tool to create an ad group or upload a creative — do both in the VK Ads cabinet,
+then reference their ids from `create_ad`.
 
 ---
 
@@ -110,7 +134,10 @@ Includes session management (`mcp-session-id` header), CORS, graceful shutdown.
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `VK_ADS_TOKEN` | yes | Bearer token from your VK Ads account. |
+| `VK_ADS_TOKEN` | yes | Bearer access token from your VK Ads cabinet. |
+| `VK_ADS_CLIENT_ID` | no | OAuth client id — with the two below, an expired token is refreshed automatically. |
+| `VK_ADS_CLIENT_SECRET` | no | OAuth client secret. |
+| `VK_ADS_REFRESH_TOKEN` | no | Refresh token. |
 | `HTTP_PORT` | no | If set, server runs in HTTP mode on this port. |
 
 ---
@@ -121,8 +148,13 @@ Get your VK Ads API token:
 
 1. Log in to [ads.vk.com](https://ads.vk.com).
 2. Open **Tools → API access** in your VK Ads account.
-3. Generate a new token with permissions for the operations you need (read/write campaigns, statistics, etc.).
+3. Generate a token with the scopes you need (read/write ads, statistics; `read_payments` for the balance).
 4. Use the token as `VK_ADS_TOKEN`.
+
+A VK Ads `access_token` lives 24 hours. Set `VK_ADS_CLIENT_ID`, `VK_ADS_CLIENT_SECRET` and
+`VK_ADS_REFRESH_TOKEN` as well and the server renews it on the first 401 instead of failing.
+Agency cabinets authenticate with `agency_client_credentials` — the token itself selects the
+cabinet, which is why no tool takes an `account_id`.
 
 ---
 
@@ -130,19 +162,19 @@ Get your VK Ads API token:
 
 Try these natural-language prompts in your MCP client:
 
-> "List all active campaigns in account 12345."
+> "List all active campaigns."
 
-> "Create a campaign 'Summer 2026 Sale' in account 12345 with a budget of 500 rubles (50000 kopecks)."
+> "Create a campaign 'Summer 2026 Sale' with objective traffic and a daily budget of 2000 roubles."
 
-> "Show me statistics for campaign 67890 from January 1 to March 31, 2026 — daily breakdown."
+> "Show me statistics for campaigns 67890 and 67891 from January 1 to March 31, 2026, day by day."
 
-> "Pause campaign 67890."
+> "Stop campaign 67890."
 
-> "What's the remaining budget on account 12345?"
+> "What's my balance and how long does it last at last week's spend?"
 
-> "List all ads in campaigns 67890 and 67891 — I want to compare formats."
+> "List the ad groups under campaign 67890, then the banners in each."
 
-> "Show me targeting groups for campaign 67890."
+> "Which banner has the worst CTR this month?"
 
 ---
 
@@ -161,18 +193,18 @@ Project layout:
 servers/vk-ads/
 ├── src/
 │   ├── index.ts          — bin entry, runServer
-│   ├── server.ts         — createServer factory + tool registration
-│   ├── client.ts         — BaseHttpClient + ApiKeyStrategy + apiGet/apiPost helpers
+│   ├── server.ts         — createServer factory, registerTool + annotations + outputSchema
+│   ├── client.ts         — BaseHttpClient + refresh-token auth + auto-pagination
+│   ├── errors.ts         — defensive parsing of VK Ads' three error shapes
 │   └── tools/
-│       ├── ads.ts
-│       ├── budget.ts
-│       ├── campaigns.ts
+│       ├── ad_plans.ts    — campaigns
+│       ├── ad_groups.ts   — ad groups (targeting/delivery)
+│       ├── banners.ts     — ads
 │       ├── statistics.ts
-│       └── targeting.ts
+│       └── account.ts
 └── tests/
-    ├── client.test.ts
-    ├── server.test.ts
-    └── tools.test.ts
+    ├── tools.test.ts     — request shapes, pagination, retry policy, error parsing, refresh
+    └── server.test.ts    — in-memory MCP client: 8 tools + annotations
 ```
 
 ---
@@ -180,3 +212,7 @@ servers/vk-ads/
 ## License
 
 MIT — see [LICENSE](./LICENSE).
+
+---
+
+Часть монорепозитория [WWmcp](https://github.com/theYahia/WWmcp) · Telegram: [@vhodvai](https://t.me/vhodvai)

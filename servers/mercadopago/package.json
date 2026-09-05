@@ -1,7 +1,7 @@
 {
   "name": "@theyahia/mercadopago-mcp",
   "version": "1.1.0",
-  "description": "MCP server for MercadoPago — 10 tools for payments, refunds, checkout preferences, merchant orders. Multi-country: AR/BR/MX/UY/CL/CO/PE/EC/VE.",
+  "description": "Mercado Pago for AI agents: create and search payments, refunds, checkout preferences, merchant orders, payment methods (10 tools, AR/BR/MX/CL/CO/PE/UY)",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -19,6 +19,7 @@
     "dev": "tsx src/index.ts",
     "start": "node dist/index.js",
     "test": "vitest run",
+    "test:e2e": "vitest run --config vitest.e2e.config.ts",
     "test:watch": "vitest",
     "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "typecheck": "tsc --noEmit",
@@ -45,22 +46,29 @@
     "mcp-server",
     "model-context-protocol",
     "claude",
-    "ai",
-    "latam-api",
-    "argentina-api",
-    "brazil-api",
-    "mexico-api",
+    "ai-agent",
+    "llm",
     "mercadopago",
+    "mercado-pago",
+    "mercadolibre",
     "payments",
+    "pagos",
+    "pagamentos",
     "checkout",
+    "refunds",
+    "argentina",
+    "brazil",
+    "brasil",
+    "mexico",
+    "latam",
     "e-commerce"
   ],
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/theYahia/mcp-servers.git",
+    "url": "https://github.com/theYahia/WWmcp.git",
     "directory": "servers/mercadopago"
   },
-  "homepage": "https://github.com/theYahia/mcp-servers/tree/main/servers/mercadopago",
+  "homepage": "https://github.com/theYahia/WWmcp/tree/main/servers/mercadopago",
   "author": "theYahia (https://github.com/theYahia)"
 }

@@ -6,6 +6,8 @@
 [![npm](https://img.shields.io/npm/v/@theyahia/2gis-mcp)](https://www.npmjs.com/package/@theyahia/2gis-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+![Демонстрация: вопрос «найди кофейни в 800 метрах с рейтингом» — агент вызывает search_places и отвечает таблицей заведений 2ГИС](./assets/demo.svg)
+
 ---
 
 ### Migrating from v1.x
@@ -183,3 +185,7 @@ servers/2gis/
 ## License
 
 MIT — see [LICENSE](./LICENSE).
+
+---
+
+Часть монорепозитория [WWmcp](https://github.com/theYahia/WWmcp) · Telegram: [@vhodvai](https://t.me/vhodvai)

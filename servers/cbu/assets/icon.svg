@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="Central bank">
+  <title>Central bank</title>
+  <rect x="8" y="8" width="240" height="240" rx="52" fill="#5468B8" fill-opacity="0.14"/>
+  <g fill="none" stroke="#5468B8" stroke-width="15" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M32 100 L128 46 L224 100"/>
+    <path d="M80 108 V194"/>
+    <path d="M128 108 V194"/>
+    <path d="M176 108 V194"/>
+    <path d="M38 208 H218"/>
+  </g>
+</svg>

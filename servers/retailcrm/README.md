@@ -5,6 +5,8 @@ Production-grade MCP server for **RetailCRM** e-commerce CRM. 39 tools + 2 promp
 [![npm](https://img.shields.io/npm/v/@theyahia/retailcrm-mcp)](https://www.npmjs.com/package/@theyahia/retailcrm-mcp)
 [![Smithery](https://smithery.ai/badge/@theyahia/retailcrm-mcp)](https://smithery.ai/server/@theyahia/retailcrm-mcp)
 
+![Демонстрация: вопрос «какие заказы пришли за неделю и на какую сумму» — агент вызывает list_orders и отвечает таблицей заказов](./assets/demo.svg)
+
 ## Output is token-efficient by default
 
 Read tools return a **compact, shaped summary** of only the fields an agent needs — not the full RetailCRM payload. Control verbosity per call:
@@ -179,3 +181,7 @@ npm run build     # clean + compile to dist/
 ## License
 
 MIT
+
+---
+
+Часть монорепозитория [WWmcp](https://github.com/theYahia/WWmcp) · Telegram: [@vhodvai](https://t.me/vhodvai)

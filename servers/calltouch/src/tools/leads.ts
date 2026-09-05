@@ -4,8 +4,9 @@ import { apiGet, getSiteId } from "../client.js";
 export const getLeadsSchema = z.object({
   date_from: z.string().describe("Дата начала в формате dd/MM/yyyy"),
   date_to: z.string().describe("Дата окончания в формате dd/MM/yyyy"),
-  page: z.number().optional().describe("Номер страницы (по умолчанию 1)"),
-  limit: z.number().optional().describe("Количество записей (по умолчанию 50)"),
+  page: z.number().int().min(1).optional().describe("Номер страницы (по умолчанию 1)"),
+  limit: z.number().int().min(1).max(1000).optional()
+    .describe("Количество записей, 1-1000 (по умолчанию 50)"),
 });
 
 export async function handleGetLeads(params: z.infer<typeof getLeadsSchema>): Promise<string> {

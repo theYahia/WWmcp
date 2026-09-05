@@ -1,11 +1,11 @@
-# @theyahia/mercadopago-mcp
+# Mercado Pago MCP server — connect MercadoPago payments (pagos · pagamentos) to Claude or any AI agent (10 tools)
 
-> MCP server for **MercadoPago** — payments, refunds, checkout preferences, merchant orders.
-> Multi-country: AR, BR, MX, UY, CL, CO, PE, EC, VE.
-> 10 tools. Bearer access token. Stdio + Streamable HTTP transports.
+If you were looking for how to connect Mercado Pago to Claude or another AI agent — this server gives the agent the payments API across nine Latin American countries: charge a card with installments, take PIX, OXXO or Rapipago, search payments by `external_reference` or date range, refund fully or partially, and open a checkout preference that returns an `init_point` link for the customer. You ask "which payments were approved yesterday and for how much?" and get a table with statuses, amounts and fees. Merchant orders are readable too, so the agent can match a store order to the payments that cover it.
 
 [![npm](https://img.shields.io/npm/v/@theyahia/mercadopago-mcp)](https://www.npmjs.com/package/@theyahia/mercadopago-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+![Демонстрация: вопрос «какие платежи подтвердились вчера» — агент вызывает search_payments и отвечает таблицей платежей MercadoPago](./assets/demo.svg)
 
 ---
 
@@ -169,3 +169,7 @@ servers/mercadopago/
 ## License
 
 MIT — see [LICENSE](./LICENSE).
+
+---
+
+Часть монорепозитория [WWmcp](https://github.com/theYahia/WWmcp) · Telegram: [@vhodvai](https://t.me/vhodvai)

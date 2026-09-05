@@ -21,7 +21,14 @@ import {
   getEnabledModules,
   logger,
   VERSION,
+  unsupportedNodeMessage,
 } from "./server.js";
+
+const nodeError = unsupportedNodeMessage(process.versions.node);
+if (nodeError) {
+  console.error(nodeError);
+  process.exit(1);
+}
 
 runServer(createServer, {
   name: "aprovodka",
