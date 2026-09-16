@@ -28,6 +28,7 @@
 import { z } from "zod";
 import { oneCGet, buildODataPath } from "../client.js";
 import { odataDateTime } from "../validation.js";
+import { buildQuery, stringifyCapped, requireCollection } from "../lib/paging.js";
 
 // ──────────────────────────────────────────────────────────────────────────
 // poll_changes_since — pull recently-modified rows since a cursor
@@ -104,18 +105,21 @@ function tryGetDate(row: unknown, field: string): string | null {
 export async function handlePollChangesSince(
   params: z.infer<typeof pollChangesSinceSchema>,
 ): Promise<string> {
-  const filter = `${params.date_field} ge datetime'${params.since}'`;
-  const query: Record<string, string> = {
-    $format: "json",
-    $top: String(params.top),
-    $filter: filter,
-    $orderby: `${params.date_field} asc`,
-  };
-  if (params.select) query["$select"] = params.select;
+  const query = buildQuery({
+    top: params.top,
+    filter: `${params.date_field} ge datetime'${params.since}'`,
+    select: params.select,
+    orderby: `${params.date_field} asc`,
+  });
 
   const path = buildODataPath(params.entity, query);
-  const result = (await oneCGet(path)) as { value?: unknown[] } | null;
-  const rows = result?.value ?? [];
+  const result = await oneCGet(path);
+  // Запрошено top+1: лишняя запись — доказательство продолжения. Прежний признак
+  // `rows.length >= top` врал в обе стороны — ровно top записей в базе он объявлял
+  // незавершённой выдачей.
+  const fetched = requireCollection(result, "poll_changes_since");
+  const hasMore = fetched.length > params.top;
+  const rows = hasMore ? fetched.slice(0, params.top) : fetched;
 
   // Compute next cursor — max date across returned rows.
   let maxDate: string | null = null;
@@ -131,10 +135,10 @@ export async function handlePollChangesSince(
     count: rows.length,
     rows,
     next_cursor: maxDate,
-    has_more: rows.length >= params.top,
+    has_more: hasMore,
     note: POLL_NOTE,
   };
-  return JSON.stringify(envelope, null, 2);
+  return stringifyCapped(envelope, "rows");
 }
 
 // ──────────────────────────────────────────────────────────────────────────
@@ -164,5 +168,5 @@ export async function handleListSubscriptions(
       "This tool exists to prevent LLMs from hallucinating webhook-setup steps. " +
       "If your use-case requires push notifications, use `poll_changes_since` instead.",
   };
-  return JSON.stringify(envelope, null, 2);
+  return JSON.stringify(envelope);
 }

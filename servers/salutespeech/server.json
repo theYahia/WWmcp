@@ -1,0 +1,36 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/salutespeech-mcp",
+  "title": "SaluteSpeech",
+  "description": "Sber SaluteSpeech - speech recognition, synthesis, async task status, models (Russia)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/salutespeech",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/salutespeech"
+  },
+  "version": "1.2.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/salutespeech-mcp",
+      "version": "1.2.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "SALUTESPEECH_API_KEY",
+          "description": "Base64-encoded client_id:client_secret from developers.sber.ru. Alias: SALUTE_AUTH_KEY",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "SALUTE_SPEECH_SCOPE",
+          "description": "OAuth scope, defaults to SALUTE_SPEECH_PERS"
+        }
+      ]
+    }
+  ]
+}

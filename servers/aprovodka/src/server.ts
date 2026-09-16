@@ -6,6 +6,7 @@
  * on direct execution.
  */
 
+import { createRequire } from "node:module";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { createLogger, withErrorHandling } from "@theyahia/mcp-core";
@@ -70,11 +71,45 @@ import { getWriteMode } from "./lib/write-safety.js";
 export const logger = createLogger("aprovodka");
 
 /**
- * Single source of truth for the server version. Used by both `McpServer`
- * (MCP handshake) here and `runServer` (the /health endpoint) in index.ts,
- * so the two can never drift apart again. Keep in sync with package.json.
+ * Единственный источник версии — package.json. Раньше здесь стоял литерал с
+ * припиской «keep in sync», и он дважды разъезжался: сервер представлялся клиенту
+ * в MCP-рукопожатии и в /health версией 4.1.0, пока пакет был уже 4.3.0.
+ *
+ * Читаем через createRequire: и из `src/` (тесты), и из `dist/` (сборка), и из
+ * MCPB-бандла путь `../package.json` ведёт к манифесту пакета. Равенство трёх
+ * версий (package.json, VERSION, server.json) закрыто тестом — само по себе
+ * чтение не мешает server.json отстать.
  */
-export const VERSION = "4.1.0";
+const VERSION_SOURCE = createRequire(import.meta.url)("../package.json") as {
+  version: string;
+  engines: { node: string };
+};
+export const VERSION: string = VERSION_SOURCE.version;
+
+/**
+ * Минимальный мажор Node — из того же package.json, чтобы поле `engines` и
+ * проверка на старте не разъехались (ровно так разъезжалась версия выше).
+ */
+export const MIN_NODE_MAJOR: number = Number(
+  VERSION_SOURCE.engines.node.replace(/[^\d.]/g, "").split(".")[0],
+);
+
+/**
+ * npm по умолчанию печатает несовпадение `engines` предупреждением и всё равно
+ * ставит пакет — `engine-strict` включает не издатель, а потребитель. Поэтому
+ * отказ даём сами: иначе про неподдерживаемый Node пользователь узнаёт падением
+ * в середине первого вызова инструмента, а не при запуске.
+ */
+export function unsupportedNodeMessage(
+  nodeVersion: string,
+  minMajor: number = MIN_NODE_MAJOR,
+): string | null {
+  const major = Number(nodeVersion.split(".")[0]);
+  if (Number.isFinite(major) && major < minMajor) {
+    return `aprovodka требует Node.js ${minMajor} или новее, запущен ${nodeVersion}. Обновите Node.js: https://nodejs.org/`;
+  }
+  return null;
+}
 
 /**
  * Single source of truth for module → tool count mapping.
@@ -96,6 +131,19 @@ export const MODULE_TOOL_COUNTS = {
   batch: 3,       // batch_create_documents + batch_update_catalog_items + batch_query
   changes: 2,     // poll_changes_since + list_subscriptions
 } as const;
+
+/**
+ * Из скольких инструментов модуля пишут в 1С. При ONEC_WRITE_MODE=deny они не
+ * регистрируются вовсе, поэтому счётчик обязан вычитать ровно столько же.
+ */
+export const MODULE_WRITE_TOOL_COUNTS: Partial<Record<keyof typeof MODULE_TOOL_COUNTS, number>> = {
+  catalogs: 2,   // create_catalog_item + update_catalog_item
+  documents: 5,  // create/update/post/unpost/delete_document
+  registers: 1,  // write_information_register
+  constants: 1,  // set_constant
+  shortcuts: 1,  // set_deletion_mark
+  batch: 2,      // batch_create_documents + batch_update_catalog_items
+};
 
 export type ModuleName = keyof typeof MODULE_TOOL_COUNTS;
 const OPTIONAL_MODULES: ModuleName[] = [
@@ -124,10 +172,16 @@ export function getEnabledModules(): Set<ModuleName> {
 }
 
 export function countRegisteredTools(modules: Set<ModuleName>): number {
+  const mode = getWriteMode();
   let count = 0;
-  for (const m of modules) count += MODULE_TOOL_COUNTS[m];
-  // approve_write + rollback_write exist only while the write gate is on.
-  if (getWriteMode() !== "off") count += 2;
+  for (const m of modules) {
+    count += MODULE_TOOL_COUNTS[m];
+    // deny: пишущие инструменты не регистрируются вообще.
+    if (mode === "deny") count -= MODULE_WRITE_TOOL_COUNTS[m] ?? 0;
+  }
+  // approve_write + rollback_write существуют только при preview/approval:
+  // в deny одобрять нечего, в off гейта нет.
+  if (mode === "preview" || mode === "approval") count += 2;
   return count;
 }
 
@@ -138,6 +192,30 @@ export function createServer(): McpServer {
   });
 
   const modules = getEnabledModules();
+
+  // ONEC_WRITE_MODE=deny — режим «только чтение» для работ на чужой базе:
+  // 12 пишущих инструментов не регистрируются, модель их даже не видит.
+  // Регистрация именно этих 12 идёт через writeTool вместо server.tool.
+  const writeTool: typeof server.tool =
+    getWriteMode() === "deny"
+      ? ((() => undefined) as unknown as typeof server.tool)
+      : server.tool.bind(server);
+
+  // Описания читает модель: без явной строки про has_more она не поймёт, что выдача
+  // обрезана и что делать дальше. Держим одной константой, чтобы формулировка не
+  // разъехалась между инструментами.
+  const PAGING_NOTE =
+    " Ответ — конверт `{ value, returned, has_more, next_skip }`. `has_more: true` значит, что " +
+    "записей в базе больше, чем вернул $top: считать по такой выборке итоги, суммы, максимумы " +
+    "и \"сколько всего\" НЕЛЬЗЯ — либо дозапросите следующую страницу со `skip: next_skip`, либо " +
+    "сузьте отбор, либо посчитайте count_entities.";
+
+  // Те же поля, но без next_skip: у инструмента нет параметра skip, подсказка была бы в никуда.
+  const PAGING_NOTE_NO_SKIP =
+    " Ответ — конверт `{ value, returned, has_more }`. `has_more: true` значит, что подходящих " +
+    "записей больше, чем вернул $top: выборка неполная, сузьте запрос или возьмите инструмент " +
+    "с параметром skip (get_documents / get_catalogs / odata_query).";
+
 
   // --- Discovery (meta) — always enabled ---
   // Первым — потому что он офлайновый (в базу не ходит, ONEC_BASE_URL не требует) и
@@ -194,14 +272,14 @@ export function createServer(): McpServer {
     server.tool(
       "get_catalogs",
       "Чтение данных справочников 1С через OData 3.0. Поддерживает $filter, $select, $orderby, $top, " +
-      "$skip.",
+      "$skip." + PAGING_NOTE,
       getCatalogsSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleGetCatalogs(params) }],
       })),
     );
 
-    server.tool(
+    writeTool(
       "create_catalog_item",
       "Создание нового элемента справочника через OData POST (например, добавить Контрагента или " +
       "позицию Номенклатуры).",
@@ -211,7 +289,7 @@ export function createServer(): McpServer {
       })),
     );
 
-    server.tool(
+    writeTool(
       "update_catalog_item",
       "Изменение существующего элемента справочника через OData PATCH (по Ref_Key, GUID).",
       updateCatalogItemSchema.shape,
@@ -224,14 +302,14 @@ export function createServer(): McpServer {
   if (modules.has("documents")) {
     server.tool(
       "get_documents",
-      "Чтение документов 1С через OData 3.0. Отбор по дате, виду документа или произвольным полям.",
+      "Чтение документов 1С через OData 3.0. Отбор по дате, виду документа или произвольным полям." + PAGING_NOTE,
       getDocumentsSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleGetDocuments(params) }],
       })),
     );
 
-    server.tool(
+    writeTool(
       "create_document",
       "Создание нового документа 1С через OData POST.",
       createDocumentSchema.shape,
@@ -240,7 +318,7 @@ export function createServer(): McpServer {
       })),
     );
 
-    server.tool(
+    writeTool(
       "update_document",
       "Изменение существующего документа 1С через OData PATCH (по Ref_Key, GUID).",
       updateDocumentSchema.shape,
@@ -249,7 +327,7 @@ export function createServer(): McpServer {
       })),
     );
 
-    server.tool(
+    writeTool(
       "post_document",
       "Проведение документа 1С через связанное действие OData Post(). Для оперативного проведения " +
       "указать operational=true.",
@@ -259,7 +337,7 @@ export function createServer(): McpServer {
       })),
     );
 
-    server.tool(
+    writeTool(
       "unpost_document",
       "Отмена проведения документа 1С через связанное действие OData Unpost().",
       unpostDocumentSchema.shape,
@@ -268,7 +346,7 @@ export function createServer(): McpServer {
       })),
     );
 
-    server.tool(
+    writeTool(
       "delete_document",
       "Физическое удаление документа 1С через OData DELETE (по Ref_Key). Для обратимого удаления " +
       "предпочтительнее set_deletion_mark — он ставит пометку на удаление.",
@@ -293,14 +371,14 @@ export function createServer(): McpServer {
   if (modules.has("registers")) {
     server.tool(
       "get_register",
-      "Чтение данных регистров сведений и накопления 1С через OData 3.0.",
+      "Чтение данных регистров сведений и накопления 1С через OData 3.0." + PAGING_NOTE,
       getRegisterSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleGetRegister(params) }],
       })),
     );
 
-    server.tool(
+    writeTool(
       "write_information_register",
       "Запись в независимый регистр сведений (OData POST на InformationRegister_*).",
       writeInformationRegisterSchema.shape,
@@ -323,7 +401,9 @@ export function createServer(): McpServer {
   if (modules.has("reports")) {
     server.tool(
       "get_report",
-      "Получение отчёта 1С через произвольный URL HTTP-сервиса (/hs/...).",
+      "Получение данных HTTP-сервиса конфигурации 1С (/hs/...) или штатной публикации OData " +
+      "по относительному пути. Другие адреса на сервере 1С (/e1cib/, служебные точки " +
+      "публикации) отклоняются.",
       getReportSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleGetReport(params) }],
@@ -335,7 +415,7 @@ export function createServer(): McpServer {
     server.tool(
       "odata_query",
       "Произвольный запрос OData 3.0 к любой сущности 1С. Поддерживает $filter, $select, $expand, " +
-      "$orderby, $top, $skip, $inlinecount.",
+      "$orderby, $top, $skip, $inlinecount." + PAGING_NOTE,
       odataQuerySchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleODataQuery(params) }],
@@ -353,7 +433,7 @@ export function createServer(): McpServer {
       })),
     );
 
-    server.tool(
+    writeTool(
       "set_constant",
       "Запись значения константы 1С через OData PATCH (поле Value).",
       setConstantSchema.shape,
@@ -367,7 +447,7 @@ export function createServer(): McpServer {
     server.tool(
       "get_accounting_register",
       "Чтение записей регистра бухгалтерии (AccountingRegister_*, например Хозрасчетный — проводки) " +
-      "через OData.",
+      "через OData." + PAGING_NOTE,
       getAccountingRegisterSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleGetAccountingRegister(params) }],
@@ -390,7 +470,7 @@ export function createServer(): McpServer {
   if (modules.has("shortcuts")) {
     server.tool(
       "find_by_description",
-      "Нечёткий поиск элементов по подстроке наименования (OData substringof по полю Description).",
+      "Нечёткий поиск элементов по подстроке наименования (OData substringof по полю Description)." + PAGING_NOTE_NO_SKIP,
       findByDescriptionSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleFindByDescription(params) }],
@@ -415,7 +495,7 @@ export function createServer(): McpServer {
       })),
     );
 
-    server.tool(
+    writeTool(
       "set_deletion_mark",
       "Установка или снятие пометки на удаление (DeletionMark) у элемента справочника или документа — " +
       "обратимое удаление.",
@@ -428,7 +508,7 @@ export function createServer(): McpServer {
     server.tool(
       "get_recent_documents",
       "Последние документы указанного вида, отсортированные по дате по убыванию (при необходимости — " +
-      "только проведённые).",
+      "только проведённые)." + PAGING_NOTE_NO_SKIP,
       getRecentDocumentsSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleGetRecentDocuments(params) }],
@@ -437,7 +517,7 @@ export function createServer(): McpServer {
   }
 
   if (modules.has("batch")) {
-    server.tool(
+    writeTool(
       "batch_create_documents",
       "Параллельное создание N документов 1С (от 1 до 100 за вызов). 1С не поддерживает OData $batch " +
       "— пакет собирается на стороне клиента, с ограничением параллелизма и отчётом об успехе или " +
@@ -448,7 +528,7 @@ export function createServer(): McpServer {
       })),
     );
 
-    server.tool(
+    writeTool(
       "batch_update_catalog_items",
       "Параллельное изменение N элементов справочников (от 1 до 100). Каждый элемент правится через " +
       "OData PATCH по своему Ref_Key. По каждой позиции отдельно сообщается успех или ошибка; отказ " +
@@ -463,7 +543,8 @@ export function createServer(): McpServer {
       "batch_query",
       "Параллельное выполнение N запросов OData к 1С (от 1 до 50). Результат по каждому запросу " +
       "возвращается отдельно. Соединения на стороне сервера нет (1С не поддерживает $batch) — " +
-      "объединять результаты нужно на стороне клиента.",
+      "объединять результаты нужно на стороне клиента. Данные каждого запроса — тот же конверт " +
+      "`{ value, returned, has_more, next_skip }`, что и у одиночных читающих инструментов.",
       batchQuerySchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleBatchQuery(params) }],
@@ -497,7 +578,9 @@ export function createServer(): McpServer {
 
   // ── Write-safety gate (ONEC_WRITE_MODE=preview|approval) ──
   // Off by default: writes behave exactly as before and these tools do not exist.
-  if (getWriteMode() !== "off") {
+  // В deny одобрять нечего — пишущих инструментов в реестре нет.
+  const gateMode = getWriteMode();
+  if (gateMode === "preview" || gateMode === "approval") {
     server.tool(
       "approve_write",
       "Одобрение ОДНОЙ отложенной операции записи в 1С по значению op_hash из её предпросмотра. " +

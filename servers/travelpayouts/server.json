@@ -1,0 +1,32 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/travelpayouts-mcp",
+  "title": "Travelpayouts",
+  "description": "Travelpayouts - flight prices, calendar, offers, hotels, airport and airline lookup (Russia)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/travelpayouts",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/travelpayouts"
+  },
+  "version": "2.0.1",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/travelpayouts-mcp",
+      "version": "2.0.1",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "TRAVELPAYOUTS_TOKEN",
+          "description": "API token from the Travelpayouts affiliate cabinet",
+          "isRequired": true,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

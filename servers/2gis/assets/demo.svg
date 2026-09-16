@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 483" width="800" height="483" role="img" aria-label="AI chat: nearby coffee shops with ratings via 2gis-mcp">
+  <title>AI chat: nearby coffee shops with ratings via 2gis-mcp</title>
+  <rect x="1" y="1" width="798" height="481" rx="14" fill="#1B2028" stroke="#333C4A" stroke-width="2"/>
+  <path d="M1 56 H799" stroke="#333C4A" stroke-width="1.5"/>
+  <g fill="#3C4552"><circle cx="28" cy="28" r="6"/><circle cx="50" cy="28" r="6"/><circle cx="72" cy="28" r="6"/></g>
+  <text x="96" y="33" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" fill="#8B97A8">@theyahia/2gis-mcp</text>
+  <rect x="620" y="15" width="156" height="26" rx="13" fill="#232B36"/>
+  <text x="698" y="32" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" text-anchor="middle" fill="#8B97A8">sample data</text>
+  <text xml:space="preserve" x="28" y="90" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12.5" fill="#8B97A8">You</text>
+  <text xml:space="preserve" x="28" y="112" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#D9E0EA">Find coffee shops within 800 m of Tverskaya, with ratings.</text>
+  <rect x="16" y="135" width="768" height="66" rx="8" fill="#232B36"/>
+  <text xml:space="preserve" x="28" y="153" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" fill="#58C46A">→ 2gis-mcp · search_places(query: "кофейня", point: "37.6056,55.7658",</text>
+  <text xml:space="preserve" x="28" y="175" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" fill="#58C46A">                           radius: 800, page_size: 10)</text>
+  <text xml:space="preserve" x="28" y="239" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12.5" fill="#8B97A8">Claude</text>
+  <text xml:space="preserve" x="28" y="261" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">total: 34. Three best-rated:</text>
+  <text xml:space="preserve" x="28" y="298" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8B97A8">name</text>
+  <text xml:space="preserve" x="194.8" y="298" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8B97A8">address</text>
+  <text xml:space="preserve" x="378.4" y="298" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8B97A8">rating</text>
+  <text xml:space="preserve" x="449.2" y="298" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8B97A8">review_count</text>
+  <path d="M28 308 H772" stroke="#333C4A" stroke-width="1.5"/>
+  <text xml:space="preserve" x="28" y="330" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">Пример Кофе</text>
+  <text xml:space="preserve" x="194.8" y="330" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">ул. Тверская, 12с2</text>
+  <text xml:space="preserve" x="378.4" y="330" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">4.8</text>
+  <text xml:space="preserve" x="449.2" y="330" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">312</text>
+  <text xml:space="preserve" x="28" y="355" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">Демо Эспрессо-бар</text>
+  <text xml:space="preserve" x="194.8" y="355" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">ул. Тверская, 22</text>
+  <text xml:space="preserve" x="378.4" y="355" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">4.6</text>
+  <text xml:space="preserve" x="449.2" y="355" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">184</text>
+  <text xml:space="preserve" x="28" y="380" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">Кофейня «Образец»</text>
+  <text xml:space="preserve" x="194.8" y="380" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">Столешников пер., 9</text>
+  <text xml:space="preserve" x="378.4" y="380" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">4.5</text>
+  <text xml:space="preserve" x="449.2" y="380" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">97</text>
+  <text xml:space="preserve" x="28" y="413" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">What people write — get_reviews(place_id, limit: 10).</text>
+  <text xml:space="preserve" x="28" y="438" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">How to get there — get_directions(origin_lat, origin_lon, dest_lat, dest_lon).</text>
+</svg>

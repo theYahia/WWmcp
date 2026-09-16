@@ -1,222 +1,100 @@
-import { PKG_NAME, VERSION } from "./version.js";
+/**
+ * MoySklad API client.
+ *
+ * Uses BaseHttpClient (retry / timeout / SSRF guard) and DualAuthStrategy
+ * (Bearer token or Basic login/password fallback) from @theyahia/mcp-core,
+ * plus core's TokenBucketLimiter for MoySklad's 45 req / 3s budget.
+ *
+ * The limiter is held here rather than using RateLimitedClient because
+ * MoySklad charges some endpoints more than one unit — the stock reports cost
+ * 5 each — and the shared client always spends exactly one per request.
+ */
 
-const BASE_URL = "https://api.moysklad.ru/api/remap/1.2";
-const TIMEOUT = 15_000;
-const MAX_RETRIES = 3;
-const MAX_BACKOFF_MS = 30_000;
+import { ApiError, BaseHttpClient, DualAuthStrategy, TokenBucketLimiter, createLogger } from "@theyahia/mcp-core";
 
-const USER_AGENT = `${PKG_NAME}/${VERSION}`;
+const logger = createLogger("moysklad-mcp");
 
-// --- Rate limiting -----------------------------------------------------------
-//
-// MoySklad uses a "request weight per 3-second window" model. The window size
-// (45 for a public-solution token) shrinks for login/password and user tokens
-// (≈22 now, dropping toward ≈11 by the end of 2026) and some reports cost more
-// than one unit (stock/all and stock/bystore cost 5). Because we can't tell
-// which auth tier the configured token belongs to, the default bucket is kept
-// deliberately conservative to avoid the API auto-disabling access on repeated
-// 429s (which can only be restored via MoySklad support). Solution-token users
-// can raise it via MOYSKLAD_RATE_BUCKET.
+const client = new BaseHttpClient({
+  baseUrl: "https://api.moysklad.ru/api/remap/1.2",
+  timeout: 15_000,
+  maxRetries: 3,
+  auth: new DualAuthStrategy({
+    token: process.env.MOYSKLAD_TOKEN,
+    login: process.env.MOYSKLAD_LOGIN,
+    password: process.env.MOYSKLAD_PASSWORD,
+  }),
+  logger,
+  headers: {
+    "Content-Type": "application/json;charset=utf-8",
+    Accept: "application/json;charset=utf-8",
+  },
+});
 
-const REFILL_MS = 3000;
-
-function envInt(name: string, fallback: number): number {
-  const v = parseInt(process.env[name] ?? "", 10);
-  return Number.isFinite(v) && v > 0 ? v : fallback;
-}
-
-const BUCKET_MAX = envInt("MOYSKLAD_RATE_BUCKET", 20);
-const MAX_CONCURRENT = envInt("MOYSKLAD_MAX_CONCURRENT", 5); // MoySklad allows 5 parallel/user
-
-let tokens = BUCKET_MAX;
-let windowStart = Date.now();
-
-const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
+const limiter = new TokenBucketLimiter(45, 3000);
 
 /**
- * Acquire `weight` units from the fixed-window bucket, waiting for the next
- * window if needed. The check-and-decrement runs synchronously (no await
- * between them), so concurrent callers can't double-spend.
+ * Turn a MoySklad error body (`{ errors: [{ error, error_message, parameter, code }] }`)
+ * into one readable line.
+ *
+ * The core client puts the raw body on `ApiError.body` and builds the message from the
+ * status line alone, but `createToolError` only forwards the message — so without this
+ * the model sees "HTTP 400: Bad Request" and never learns which field MoySklad rejected.
  */
-async function acquireToken(weight = 1): Promise<void> {
-  const cost = Math.min(Math.max(1, weight), BUCKET_MAX);
-  for (;;) {
-    const now = Date.now();
-    if (now - windowStart >= REFILL_MS) {
-      tokens = BUCKET_MAX;
-      windowStart = now;
+function moyskladErrorMessage(body: string | undefined): string | undefined {
+  if (!body) return undefined;
+  try {
+    const errs = (JSON.parse(body) as { errors?: Array<Record<string, unknown>> })?.errors;
+    if (!Array.isArray(errs) || errs.length === 0) return undefined;
+    return errs
+      .map((e) => {
+        const code = e.code ? `[${String(e.code)}] ` : "";
+        const head = e.error ? String(e.error) : "";
+        const detail = e.error_message ? ` — ${String(e.error_message)}` : "";
+        const param = e.parameter ? ` (параметр: ${String(e.parameter)})` : "";
+        return `${code}${head}${detail}${param}`.trim();
+      })
+      .filter(Boolean)
+      .join("; ");
+  } catch {
+    // body wasn't MoySklad JSON — leave the core message as it is
+    return undefined;
+  }
+}
+
+/**
+ * Spend `weight` rate-limit units, run the request, and re-throw API errors with
+ * MoySklad's own explanation attached.
+ */
+async function call<T>(weight: number, run: () => Promise<T>): Promise<T> {
+  for (let i = 0; i < weight; i++) await limiter.acquire();
+  try {
+    return await run();
+  } catch (error) {
+    if (error instanceof ApiError) {
+      const detail = moyskladErrorMessage(error.body);
+      if (detail) {
+        throw new ApiError(error.status, `${error.message} — ${detail}`, error.body, error.headers, error.code);
+      }
     }
-    if (tokens >= cost) {
-      tokens -= cost;
-      return;
-    }
-    const wait = REFILL_MS - (now - windowStart);
-    await sleep(wait > 0 ? wait : REFILL_MS);
+    throw error;
   }
 }
-
-// --- Concurrency cap (MoySklad: max 5 parallel requests per user) ------------
-
-let active = 0;
-const waiters: Array<() => void> = [];
-
-async function acquireSlot(): Promise<void> {
-  if (active < MAX_CONCURRENT) {
-    active++;
-    return;
-  }
-  // Wait to be handed the slot by releaseSlot (which keeps `active` unchanged).
-  await new Promise<void>((resolve) => waiters.push(resolve));
-}
-
-function releaseSlot(): void {
-  const next = waiters.shift();
-  if (next) next();
-  else active--;
-}
-
-// --- Auth --------------------------------------------------------------------
-
-function getAuthHeader(): string {
-  const token = process.env.MOYSKLAD_TOKEN;
-  if (token) return `Bearer ${token}`;
-
-  const login = process.env.MOYSKLAD_LOGIN;
-  const password = process.env.MOYSKLAD_PASSWORD;
-  if (login && password) {
-    const encoded = Buffer.from(`${login}:${password}`).toString("base64");
-    return `Basic ${encoded}`;
-  }
-
-  throw new Error("Auth not configured. Set MOYSKLAD_TOKEN or both MOYSKLAD_LOGIN and MOYSKLAD_PASSWORD.");
-}
-
-// --- HTTP --------------------------------------------------------------------
 
 export async function moyskladGet(path: string, weight = 1): Promise<unknown> {
-  return moyskladRequest("GET", path, undefined, weight);
+  return call(weight, () => client.get(path));
 }
 
 export async function moyskladPost(path: string, body: unknown, weight = 1): Promise<unknown> {
-  return moyskladRequest("POST", path, body, weight);
+  return call(weight, () => client.post(path, body));
 }
 
 export async function moyskladPut(path: string, body: unknown, weight = 1): Promise<unknown> {
-  return moyskladRequest("PUT", path, body, weight);
+  return call(weight, () => client.put(path, body));
 }
 
 export async function moyskladDelete(path: string, weight = 1): Promise<unknown> {
-  return moyskladRequest("DELETE", path, undefined, weight);
+  return call(weight, () => client.delete(path));
 }
 
-/** Parse a MoySklad error body (`{ errors: [...] }`) into a readable message. */
-function formatApiError(status: number, text: string): string {
-  try {
-    const parsed = JSON.parse(text) as { errors?: Array<Record<string, unknown>> };
-    const errs = parsed?.errors;
-    if (Array.isArray(errs) && errs.length > 0) {
-      const msg = errs
-        .map((e) => {
-          const code = e.code ? `[${String(e.code)}] ` : "";
-          const head = e.error ? String(e.error) : "";
-          const detail = e.error_message ? ` — ${String(e.error_message)}` : "";
-          const param = e.parameter ? ` (parameter: ${String(e.parameter)})` : "";
-          return `${code}${head}${detail}${param}`.trim();
-        })
-        .join("; ");
-      return `MoySklad HTTP ${status}: ${msg}`;
-    }
-  } catch {
-    // body wasn't MoySklad JSON — fall through to the raw text
-  }
-  return `MoySklad HTTP ${status}: ${text}`;
-}
-
-/** Compute the retry delay, preferring MoySklad's own headers. */
-function retryDelayMs(headers: Headers, attempt: number): number {
-  const lognex = parseInt(headers.get("X-Lognex-Retry-After") ?? "", 10); // milliseconds
-  if (Number.isFinite(lognex) && lognex > 0) return Math.min(lognex, MAX_BACKOFF_MS);
-
-  const retryAfter = parseInt(headers.get("Retry-After") ?? "", 10); // seconds
-  if (Number.isFinite(retryAfter) && retryAfter > 0) return Math.min(retryAfter * 1000, MAX_BACKOFF_MS);
-
-  return Math.min(1000 * 2 ** (attempt - 1), 8000);
-}
-
-async function moyskladRequest(method: string, path: string, body?: unknown, weight = 1): Promise<unknown> {
-  await acquireSlot();
-  try {
-    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-      await acquireToken(weight);
-
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), TIMEOUT);
-
-      try {
-        const url = path.startsWith("http") ? path : `${BASE_URL}${path}`;
-        // NOTE: we intentionally do NOT set Accept-Encoding. Node's fetch
-        // (undici) already sends `gzip` and transparently decompresses the
-        // response — which satisfies MoySklad's mandatory-gzip rule. Setting
-        // the header manually makes undici skip decompression and hand back raw
-        // gzip bytes, breaking JSON.parse. Do not "fix" this by adding it.
-        const response = await fetch(url, {
-          method,
-          headers: {
-            Authorization: getAuthHeader(),
-            "Content-Type": "application/json;charset=utf-8",
-            Accept: "application/json;charset=utf-8",
-            "User-Agent": USER_AGENT,
-          },
-          body: body ? JSON.stringify(body) : undefined,
-          signal: controller.signal,
-        });
-        clearTimeout(timer);
-
-        if (response.ok) {
-          const text = await response.text();
-          return text ? JSON.parse(text) : { success: true };
-        }
-
-        if ((response.status === 429 || response.status >= 500) && attempt < MAX_RETRIES) {
-          const delay = retryDelayMs(response.headers, attempt);
-          console.error(`[moysklad-mcp] ${response.status}, retry in ${delay}ms (${attempt}/${MAX_RETRIES})`);
-          await sleep(delay);
-          continue;
-        }
-
-        if (response.status === 401 || response.status === 403) {
-          throw new Error(
-            `MoySklad auth error ${response.status}: check credentials are valid and have required permissions`,
-          );
-        }
-
-        if (response.status === 415) {
-          throw new Error(
-            "MoySklad HTTP 415: the API requires gzip-encoded responses. This usually means the runtime's fetch isn't sending Accept-Encoding: gzip — check your Node version (>=18).",
-          );
-        }
-
-        const text = await response.text();
-        throw new Error(formatApiError(response.status, text));
-      } catch (error) {
-        clearTimeout(timer);
-        if (error instanceof DOMException && error.name === "AbortError" && attempt < MAX_RETRIES) {
-          console.error(`[moysklad-mcp] Timeout, retry (${attempt}/${MAX_RETRIES})`);
-          continue;
-        }
-        throw error;
-      }
-    }
-    throw new Error("MoySklad: all retries exhausted");
-  } finally {
-    releaseSlot();
-  }
-}
-
-export {
-  acquireToken as _acquireToken,
-  getAuthHeader as _getAuthHeader,
-  formatApiError as _formatApiError,
-  retryDelayMs as _retryDelayMs,
-  BASE_URL,
-};
+/** Test hook: the error-body parser, exercised in tests/client.test.ts. */
+export { moyskladErrorMessage as _moyskladErrorMessage };

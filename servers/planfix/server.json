@@ -1,0 +1,37 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/planfix-mcp",
+  "title": "Planfix",
+  "description": "Planfix - task and contact CRUD, projects, comments, users, custom fields, files (Russia)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/planfix",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/planfix"
+  },
+  "version": "1.2.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/planfix-mcp",
+      "version": "1.2.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "PLANFIX_ACCOUNT",
+          "description": "Planfix account subdomain, e.g. mycompany for mycompany.planfix.com",
+          "isRequired": true
+        },
+        {
+          "name": "PLANFIX_API_KEY",
+          "description": "API key from Planfix Settings -> Integrations -> API. Alias: PLANFIX_TOKEN",
+          "isRequired": true,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

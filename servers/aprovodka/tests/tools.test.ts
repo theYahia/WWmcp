@@ -25,6 +25,7 @@ import {
   handleGetDocumentByNumber,
   handleGetMetadata,
   handleDescribeEntity,
+  resetMetadataCache,
 } from "../src/tools/metadata.js";
 import {
   handleFindByDescription,
@@ -37,6 +38,10 @@ import { handleGetConstant, handleSetConstant } from "../src/tools/constants.js"
 import { handleGetAccountingRegister, handleGetAccountingBalance } from "../src/tools/accounting.js";
 import { refKeySchema, odataDate } from "../src/validation.js";
 import { resetClient } from "../src/client.js";
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
+import { createServer } from "../src/server.js";
+import { handlePollChangesSince } from "../src/tools/change-tracking.js";
 
 function mockFetchOk(data: unknown) {
   vi.stubGlobal(
@@ -57,12 +62,14 @@ describe("tool handlers", () => {
     process.env["ONEC_LOGIN"] = "admin";
     process.env["ONEC_PASSWORD"] = "secret";
     resetClient();
+    resetMetadataCache();
   });
 
   afterEach(() => {
     process.env = { ...originalEnv };
     vi.restoreAllMocks();
     resetClient();
+    resetMetadataCache();
   });
 
   it("handleGetCatalogs returns JSON string", async () => {
@@ -93,7 +100,8 @@ describe("tool handlers", () => {
     const [url] = fetchMock.mock.calls[0];
     expect(url).toContain("Document_%D0%A0%D0%B5%D0%B0%D0%BB%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D1%8F");
     expect(url).toContain("$filter=");
-    expect(url).toContain("$top=100");
+    // top+1: лишняя запись — признак незавершённой выдачи, в ответ она не попадает
+    expect(url).toContain("$top=101");
   });
 
   it("handleCreateDocument sends POST with body", async () => {
@@ -149,7 +157,7 @@ describe("tool handlers", () => {
     expect(url).toContain("InformationRegister_");
   });
 
-  it("handleGetReport hits arbitrary URL", async () => {
+  it("handleGetReport passes an allowed /hs/ path through", async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       text: () => Promise.resolve(JSON.stringify({ balance: 100 })),
@@ -159,6 +167,31 @@ describe("tool handlers", () => {
 
     const result = await handleGetReport({ report_url: "/hs/reports/balance" });
     expect(result).toContain("balance");
+  });
+
+  // get_report — единственный инструмент со свободным путём: без белого списка модель
+  // дотягивается под учётной записью сервера до /e1cib/ и служебных точек публикации.
+  it.each([
+    ["/e1cib/data/Catalog.Контрагенты", /белый список|e1cib/],
+    ["/odata/standard.odata/../../e1cib/data", /переход вверх/],
+    ["/hs/svc/%2e%2e/%2e%2e/e1cib", /переход вверх/],
+    ["http://evil.example.com/steal", /абсолютный URL/],
+    ["//evil.example.com/steal", /protocol-relative/],
+    ["hs/reports/balance", /должен начинаться с/],
+    ["/DefaultVSSetting", /белый список/],
+  ])("handleGetReport refuses %s", async (url, expected) => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    await expect(handleGetReport({ report_url: url })).rejects.toThrow(expected);
+    // Отказ до сети: запрос под нашими кредами вообще не уходит.
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("handleGetReport still allows the OData publication path with a query", async () => {
+    mockFetchOk({ value: [] });
+    await expect(
+      handleGetReport({ report_url: "/odata/standard.odata/Report_Продажи?$format=json" }),
+    ).resolves.toContain("value");
   });
 
   it("handleODataQuery passes through filter+expand", async () => {
@@ -524,6 +557,7 @@ describe("accounting virtual tables", () => {
     process.env["ONEC_LOGIN"] = "u";
     process.env["ONEC_PASSWORD"] = "p";
     resetClient();
+    resetMetadataCache();
   });
   afterEach(() => {
     vi.unstubAllGlobals();
@@ -582,6 +616,19 @@ describe("accounting virtual tables", () => {
     ).rejects.toThrow(/Balance takes/);
   });
 
+  it("handleGetAccountingBalance объясняет, почему оборотов Дт/Кт нет, а не молчит", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(okJson({ value: [] }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    for (const table of ["DrCrTurnover", "DrCrTurnovers"] as const) {
+      await expect(
+        handleGetAccountingBalance({ register_name: "Хозрасчетный", table }),
+      ).rejects.toThrow(/не поддержаны[\s\S]*odata_query/i);
+    }
+    // Главное: запрос с неподтверждённым именем таблицы в базу НЕ уходит.
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
   it("handleGetAccountingBalance doubles a quote in account_condition", async () => {
     const fetchMock = vi.fn().mockResolvedValue(okJson({ value: [] }));
     vi.stubGlobal("fetch", fetchMock);
@@ -609,6 +656,7 @@ describe("entity name symmetry (normaliseEntity)", () => {
     process.env["ONEC_LOGIN"] = "u";
     process.env["ONEC_PASSWORD"] = "p";
     resetClient();
+    resetMetadataCache();
   });
   afterEach(() => {
     vi.unstubAllGlobals();
@@ -669,6 +717,7 @@ describe("list_entities type filter", () => {
     process.env["ONEC_LOGIN"] = "u";
     process.env["ONEC_PASSWORD"] = "p";
     resetClient();
+    resetMetadataCache();
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue({
@@ -710,5 +759,80 @@ describe("list_entities type filter", () => {
   it("ExchangePlan_ remains reachable only via type=all", async () => {
     const all = JSON.parse(await handleListEntities({ type: "all" })).entities as string[];
     expect(all).toContain("ExchangePlan_Обмен");
+  });
+});
+
+/**
+ * Ответ не в форме OData-JSON — это ошибка, а не «в базе ноль сущностей».
+ * 1С отвечает Atom-XML, когда $format=json не отработал; ядро отдаёт тело как есть,
+ * и прежнее `raw.value ?? []` превращало это в пустой список: модель делала вывод,
+ * что справочников нет. XML не разбираем — падаем честно.
+ */
+describe("unexpected response format is an error, not an empty list", () => {
+  const ATOM_XML =
+    "<?xml version=\"1.0\" encoding=\"UTF-8\"?><service xml:base=\"http://1c.test/base/odata/standard.odata/\" xmlns=\"http://www.w3.org/2007/app\"><workspace><collection href=\"Catalog_Номенклатура\"/></workspace></service>";
+
+  beforeEach(() => {
+    process.env["ONEC_BASE_URL"] = "http://1c.test/base";
+    process.env["ONEC_LOGIN"] = "u";
+    process.env["ONEC_PASSWORD"] = "p";
+    resetClient();
+    resetMetadataCache();
+  });
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    resetClient();
+    resetMetadataCache();
+  });
+
+  const respondWith = (body: string) =>
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({ ok: true, text: () => Promise.resolve(body), headers: new Map() }),
+    );
+
+  it("list_entities on Atom-XML throws about the format instead of returning 0 entities", async () => {
+    respondWith(ATOM_XML);
+    await expect(handleListEntities({ type: "all" })).rejects.toThrow(
+      /не похож на OData-JSON[\s\S]*\$format=json/,
+    );
+  });
+
+  it("the MCP tool call surfaces it as isError, not as an empty answer", async () => {
+    respondWith(ATOM_XML);
+    const server = createServer();
+    const [ct, st] = InMemoryTransport.createLinkedPair();
+    const client = new Client({ name: "test", version: "0" });
+    await Promise.all([server.connect(st), client.connect(ct)]);
+    try {
+      const res = (await client.callTool({ name: "list_entities", arguments: {} })) as {
+        isError?: boolean;
+        content: Array<{ text: string }>;
+      };
+      expect(res.isError).toBe(true);
+      expect(res.content[0]!.text).toMatch(/OData-JSON|\$format=json/);
+      expect(res.content[0]!.text).not.toMatch(/"total":0/);
+    } finally {
+      await client.close();
+    }
+  });
+
+  it("poll_changes_since refuses the same shape", async () => {
+    respondWith(ATOM_XML);
+    await expect(
+      handlePollChangesSince({
+        entity: "Catalog_Номенклатура",
+        since: "2026-01-01T00:00:00",
+        date_field: "DataVersion",
+        top: 10,
+      }),
+    ).rejects.toThrow(/не похож на OData-JSON/);
+  });
+
+  it("a correct {value: [...]} answer still works", async () => {
+    respondWith(JSON.stringify({ value: [{ name: "Catalog_Номенклатура", url: "" }] }));
+    const out = JSON.parse(await handleListEntities({ type: "all" }));
+    expect(out.total).toBe(1);
+    expect(out.entities).toEqual(["Catalog_Номенклатура"]);
   });
 });

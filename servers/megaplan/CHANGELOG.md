@@ -1,76 +1,112 @@
 # Changelog
 
-All notable changes to this project are documented here. The format is based on
-[Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres
-to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## 4.0.0
 
-## [4.0.0]
-
-> Versioned 4.0.0 to supersede the npm `latest` 3.0.0 (an earlier 8-tool build
-> that was never reflected in this repo). This is the first release of the v3
-> correctness/hardening overhaul on npm.
-
-This release fixes a series of API v3 correctness bugs (the previous request
-shapes did not match the real Megaplan v3 API), closes critical HTTP-mode
-security holes, expands the tool surface, and hardens the client. It is a
-**breaking** release: request/response shapes changed and `--http` now requires
-a token.
+API v3 correctness overhaul, ported from the standalone `theYahia/megaplan-mcp` repo (npm `latest`)
+and adapted to `@theyahia/mcp-core`. Earlier releases sent request shapes that do not match the real
+Megaplan v3 API. Tool surface grows 8 → 18. **Breaking.**
 
 ### ⚠️ Breaking
 
-- **List filtering & pagination rewritten.** v3 list endpoints use a nested
-  `*Filter` JSON object and a `pageAfter` cursor — not `filter[field]=value`
-  query params or `offset`. Tool params changed: `filter_status` now takes status
-  **code(s)** (e.g. `["filter_any"]`), and `offset` is replaced by `page_after`
-  (a cursor id).
-- **Comments fixed.** Endpoint is now the plural `/{entity}/{id}/comments`; the
-  `create_comment` text field is `content` (was `text`).
-- **`create_task` deadline** is now sent as a `DateTime` object, not a bare string.
-- **`create_deal`** now sends `program` as a `Program` ref (was `DealProgram`),
-  money as a `Money` object on the `price` field (was a bare number on `cost`),
-  and `contact` as `ContractorHuman`/`ContractorCompany` (was `Contractor`) — see
-  the new `contact_type` param.
-- **HTTP mode requires `MCP_HTTP_TOKEN`** and binds to `127.0.0.1` by default.
-- Tool output is now a **compact summary** by default; pass `raw: true` for the
-  raw API JSON.
+- **List filtering & pagination rewritten.** v3 list endpoints take a SINGLE JSON object
+  (`limit` + a nested `*Filter` + a `pageAfter` cursor) URL-encoded into the query string — not flat
+  `filter[field]=value` params or `offset`. `filter_status` now takes account-specific status
+  **code(s)** (e.g. `["filter_any"]`); `offset` is replaced by `page_after`.
+- **Comments fixed.** The endpoint is the plural `/{entity}/{id}/comments`, and `create_comment`'s
+  text field is `content` (was `text`, plus a redundant `subject` in the body).
+- **`create_task` deadline** is sent as a v3 `DateTime` object, not a bare ISO string.
+- **`create_deal`** sends `program` as a `Program` ref (was `DealProgram`), money as a `Money` object
+  on `price` (was a bare number on `cost`), and `contact` as `ContractorHuman` / `ContractorCompany`
+  (was `Contractor`) — hence the new `contact_type` param.
+- **Tool output is a compact summary** (`{ total, count, items, nextPageAfter }`) by default;
+  pass `raw: true` for the raw API JSON.
 
 ### Added
 
-- Tools: `get_task`, `get_deal`, `get_project` (get-by-id); `update_task`,
-  `update_deal`; `get_deal_programs`, `get_deal_program`; `list_clients`,
-  `get_client`; `get_current_user` (experimental).
-- `get_deal_programs` makes `create_deal` usable: it's how you discover the
-  required `program_id`.
-- A compact, LLM-friendly output formatter for every tool (with a `raw` escape hatch).
-- HTTP security: bearer auth, loopback bind, DNS-rebinding protection, request
-  body-size limit, idle-session eviction.
-- Client robustness: single in-flight auth (no thundering herd), correct 401
-  re-auth, auth timeout, retries on transient network errors, `Retry-After`
-  support, safe JSON parsing, `MEGAPLAN_DOMAIN` validation.
-- ESLint, a `typecheck` script (covering tests too), a CI matrix on Node 18/20/22,
-  and this changelog.
+- 10 tools: `get_task`, `get_deal`, `get_project` (get-by-id); `update_task`, `update_deal`;
+  `get_deal_programs`, `get_deal_program`; `list_clients`, `get_client`;
+  `get_current_user` (experimental).
+- `get_deal_programs` makes `create_deal` usable — it is how you discover the required `program_id`.
+- `src/query.ts`: v3 list-query builder (FilterTermEnum / FilterTermRef / cursor) plus `DateTime`
+  and `Money` value-object helpers.
+- `src/format.ts`: defensive, LLM-friendly formatting of every entity, with a `raw` escape hatch.
+- `idSchema` guard on every id interpolated into a request path — LLM-supplied ids are an untrusted
+  boundary, so `../employee/current` and `1/2` are rejected before the call.
+- `MEGAPLAN_DOMAIN` validation (bare `host[:port]` only, config-time SSRF guard) and expansion of a
+  bare subdomain to `<sub>.megaplan.ru`.
+- Single in-flight auth: concurrent cold-start requests share one password grant instead of firing
+  one each.
+- Upstream error bodies are folded into the thrown message, so the model sees why a call failed
+  instead of a bare `HTTP 422`.
 
 ### Fixed
 
-- `my-tasks-today` prompt now scopes to the current user (via `get_current_user`)
-  instead of returning everyone's tasks.
-- `create-deal-wizard` prompt now lists pipelines via `get_deal_programs`.
-- `vitest` and `@types/express` moved to `devDependencies` (they were shipped to
-  consumers).
+- Password grant posts `application/x-www-form-urlencoded` fields (the OAuth2 shape the v3
+  `auth/access_token` endpoint expects), not a JSON body.
+- Advertised server version is read from `package.json` (was a hardcoded `2.0.0` that had drifted).
+- `.claude/skills/*` updated to the new tool set, cursor pagination and `content` field.
 
-### Notes
+### Not ported from the standalone 4.0.0
 
-A few items are implemented from official docs/SDKs but could not be confirmed
-against a live account (auth body encoding, the search param name, the
-current-user endpoint, the task status-change field shape). They are marked
-`TODO(live-verify)` in the source and noted as experimental. See the README.
+- HTTP-transport hardening (bearer auth, loopback bind, DNS-rebinding protection, body-size limit,
+  idle-session eviction). This monorepo's HTTP transport is `@theyahia/mcp-core`'s shared
+  `runServer`/`startHttp`, so that work belongs in `packages/core` for all servers at once.
 
-## [3.0.0]
+### Unchanged
 
-- Published to npm 2026-05-03 as a version bump of the 8-tool v1 codebase; this
-  release was never reflected in the repository's git history. Superseded by 4.0.0.
+- Built on `@theyahia/mcp-core`: `BaseHttpClient` (retry/timeout/401 re-auth/logging),
+  `withErrorHandling`, `runServer` dual transport (stdio + Streamable HTTP).
+- `MEGAPLAN_TOKEN` / `MEGAPLAN_LOGIN` + `MEGAPLAN_PASSWORD` auth, both MCP prompts.
 
-## [1.1.0]
+## 3.0.0
 
-- Initial published surface: 8 tools (tasks, deals, projects, employees,
-  comments), 2 prompts, stdio + Streamable HTTP transports.
+### Major Changes
+
+- 54cb308: Production-grade rewrite to v2.0.0. Promoted from `pipeline/crm/` to `servers/` workspace. Now built on `@theyahia/mcp-core` with a custom `MegaplanAuthStrategy` supporting BOTH direct token (`MEGAPLAN_TOKEN`) and Password grant (`MEGAPLAN_LOGIN` + `MEGAPLAN_PASSWORD`) with automatic 401 re-auth.
+
+  Breaking changes:
+
+  - HTTP env var renamed: `PORT` → `HTTP_PORT`.
+  - Hand-rolled `http.ts` removed; `--http` flag still works via `runServer` (now with session management, `/health` endpoint, CORS).
+  - Internal client now extends `BaseHttpClient`. Functional API (`megaplanGet`, `megaplanPost`) unchanged.
+  - Tool errors return MCP-spec `CallToolResult` with `isError: true`.
+
+  Tool names, arguments, return formats, 2 MCP prompts, and `MEGAPLAN_*` env vars are unchanged.
+
+## 2.0.0 — 2026-04-22
+
+Production-grade rewrite. Promoted from `pipeline/crm/` to `servers/` workspace with full integration into `@theyahia/mcp-core`.
+
+### Breaking
+
+- **HTTP transport env var renamed:** `PORT=3000` → `HTTP_PORT=3000`.
+- **Hand-rolled `http.ts` removed:** v1's separate `--http` codepath is replaced by `@theyahia/mcp-core`'s `runServer`. Same `--http` flag still works, but the implementation now includes session management (`mcp-session-id`), CORS, `GET /health` endpoint, and graceful shutdown.
+- **Internal client class:** rewritten on top of `BaseHttpClient` + custom `MegaplanAuthStrategy` (Password grant flow with token caching and 401 re-auth via `invalidate()`). Public functional API (`megaplanGet`, `megaplanPost`) unchanged.
+- **Error responses:** tool errors now return MCP-spec `CallToolResult` with `isError: true` (via `withErrorHandling`) instead of throwing.
+
+### Added
+
+- Streamable HTTP transport via `runServer` (multi-session, `/health`, CORS).
+- Structured JSON logging via `createLogger("megaplan-mcp")`.
+- ErrorCategory-based error responses with self-recovery hints for the LLM.
+- English README with cross-IDE configuration (Claude Desktop, Cursor, Windsurf, VS Code Copilot).
+- Server factory split (`src/server.ts`) so tests don't trigger `runServer`.
+
+### Improved
+
+- Auth, retries, timeouts, and response parsing now share the battle-tested `BaseHttpClient` implementation used by all production servers (3 retries, exponential backoff on 5xx/429).
+- Tests (`tests/client.test.ts`, `tests/server.test.ts`) — vitest with mock fetch, covering both auth modes, the nested `data.access_token` response shape, missing-env validation, and POST body serialization.
+- `tsconfig.json` extends the workspace `tsconfig.base.json`.
+
+### Unchanged
+
+- Tool names, arguments, return formats — fully backward-compatible.
+- 2 MCP prompts (`my-tasks-today`, `create-deal-wizard`) preserved as-is.
+- `MEGAPLAN_DOMAIN`, `MEGAPLAN_TOKEN`, `MEGAPLAN_LOGIN`, `MEGAPLAN_PASSWORD` env vars.
+- npm package name `@theyahia/megaplan-mcp`.
+
+---
+
+## 1.1.0 — 2026-04-01
+
+Last release of the v1.x line. See git history for details.

@@ -23,6 +23,7 @@
 import { z } from "zod";
 import { oneCGet, oneCPost, oneCPatch, buildODataPath, buildKeyedPath } from "../client.js";
 import { normaliseEntity } from "../validation.js";
+import { buildQuery, toPage, stringifyCapped } from "../lib/paging.js";
 
 // ──────────────────────────────────────────────────────────────────────────
 // Concurrency primitive — simple promise pool, no external deps
@@ -88,7 +89,11 @@ export const batchCreateDocumentsSchema = z.object({
     .min(1)
     .max(20)
     .default(5)
-    .describe("Max parallel HTTP requests to 1C. Default 5 — safe for most 1C deployments."),
+    .describe(
+      "Max parallel HTTP requests to 1C within this call. Default 5 — safe for most 1C " +
+      "deployments. The process-wide cap (ONEC_MAX_CONCURRENCY, default 8) applies on top: " +
+      "one 1C session per in-flight request.",
+    ),
 });
 
 export interface BatchItemResult {
@@ -113,6 +118,34 @@ const NATIVE_BATCH_NOTE =
   "1C OData does not natively support the $batch endpoint. This tool dispatches " +
   "N parallel OData requests with a concurrency cap and returns per-item results.";
 
+/**
+ * Один сборщик конверта пакетного ответа.
+ *
+ * `total/succeeded/failed/results/failed_indexes/note` собирались тремя
+ * одинаковыми копиями — вместе с тремя копиями раскладки результатов пула в
+ * `BatchItemResult`. Разъехавшийся конверт означал бы, что модель по одному
+ * инструменту считает провалы, а по другому нет.
+ */
+function toBatchEnvelope(
+  results: Array<{ status: "fulfilled"; value: unknown } | { status: "rejected"; reason: unknown }>,
+  note: string,
+): BatchResultEnvelope {
+  const items: BatchItemResult[] = results.map((r, i) =>
+    r.status === "fulfilled"
+      ? { index: i, status: "ok", data: r.value }
+      : { index: i, status: "error", error: errToString(r.reason) },
+  );
+  const failed = items.filter((x) => x.status === "error");
+  return {
+    total: items.length,
+    succeeded: items.length - failed.length,
+    failed: failed.length,
+    results: items,
+    failed_indexes: failed.map((x) => x.index),
+    note,
+  };
+}
+
 export async function handleBatchCreateDocuments(
   params: z.infer<typeof batchCreateDocumentsSchema>,
 ): Promise<string> {
@@ -124,21 +157,7 @@ export async function handleBatchCreateDocuments(
     (doc) => oneCPost(path, doc),
   );
 
-  const items: BatchItemResult[] = results.map((r, i) =>
-    r.status === "fulfilled"
-      ? { index: i, status: "ok", data: r.value }
-      : { index: i, status: "error", error: errToString(r.reason) },
-  );
-
-  const envelope: BatchResultEnvelope = {
-    total: items.length,
-    succeeded: items.filter((x) => x.status === "ok").length,
-    failed: items.filter((x) => x.status === "error").length,
-    results: items,
-    failed_indexes: items.filter((x) => x.status === "error").map((x) => x.index),
-    note: NATIVE_BATCH_NOTE,
-  };
-  return JSON.stringify(envelope, null, 2);
+  return stringifyCapped(toBatchEnvelope(results, NATIVE_BATCH_NOTE), "results");
 }
 
 // ──────────────────────────────────────────────────────────────────────────
@@ -167,7 +186,10 @@ export const batchUpdateCatalogItemsSchema = z.object({
     .min(1)
     .max(20)
     .default(5)
-    .describe("Max parallel HTTP requests. Default 5."),
+    .describe(
+      "Max parallel HTTP requests within this call. Default 5. The process-wide cap " +
+      "(ONEC_MAX_CONCURRENCY, default 8) applies on top: one 1C session per in-flight request.",
+    ),
 });
 
 export async function handleBatchUpdateCatalogItems(
@@ -185,21 +207,7 @@ export async function handleBatchUpdateCatalogItems(
     },
   );
 
-  const items: BatchItemResult[] = results.map((r, i) =>
-    r.status === "fulfilled"
-      ? { index: i, status: "ok", data: r.value }
-      : { index: i, status: "error", error: errToString(r.reason) },
-  );
-
-  const envelope: BatchResultEnvelope = {
-    total: items.length,
-    succeeded: items.filter((x) => x.status === "ok").length,
-    failed: items.filter((x) => x.status === "error").length,
-    results: items,
-    failed_indexes: items.filter((x) => x.status === "error").map((x) => x.index),
-    note: NATIVE_BATCH_NOTE,
-  };
-  return JSON.stringify(envelope, null, 2);
+  return stringifyCapped(toBatchEnvelope(results, NATIVE_BATCH_NOTE), "results");
 }
 
 // ──────────────────────────────────────────────────────────────────────────
@@ -228,7 +236,10 @@ export const batchQuerySchema = z.object({
     .min(1)
     .max(20)
     .default(5)
-    .describe("Max parallel HTTP requests. Default 5."),
+    .describe(
+      "Max parallel HTTP requests within this call. Default 5. The process-wide cap " +
+      "(ONEC_MAX_CONCURRENCY, default 8) applies on top: one 1C session per in-flight request.",
+    ),
 });
 
 export async function handleBatchQuery(
@@ -238,36 +249,14 @@ export async function handleBatchQuery(
     params.queries,
     params.concurrency,
     (q) => {
-      const query: Record<string, string> = {
-        $format: "json",
-        $top: String(q.top),
-      };
-      if (q.skip) query["$skip"] = String(q.skip);
-      if (q.filter) query["$filter"] = q.filter;
-      if (q.select) query["$select"] = q.select;
-      if (q.expand) query["$expand"] = q.expand;
-      if (q.orderby) query["$orderby"] = q.orderby;
-      const path = buildODataPath(q.entity, query);
-      return oneCGet(path);
+      const path = buildODataPath(q.entity, buildQuery(q));
+      return oneCGet(path).then((r) => toPage(r, q.top, q.skip));
     },
   );
 
-  const items: BatchItemResult[] = results.map((r, i) =>
-    r.status === "fulfilled"
-      ? { index: i, status: "ok", data: r.value }
-      : { index: i, status: "error", error: errToString(r.reason) },
-  );
-
-  const envelope: BatchResultEnvelope = {
-    total: items.length,
-    succeeded: items.filter((x) => x.status === "ok").length,
-    failed: items.filter((x) => x.status === "error").length,
-    results: items,
-    failed_indexes: items.filter((x) => x.status === "error").map((x) => x.index),
-    note:
-      "1C OData does not support $batch. Queries are dispatched in parallel " +
-      "with a concurrency cap. There is no server-side join — combine the per-item " +
-      "results client-side.",
-  };
-  return JSON.stringify(envelope, null, 2);
+  const note =
+    "1C OData does not support $batch. Queries are dispatched in parallel " +
+    "with a concurrency cap. There is no server-side join — combine the per-item " +
+    "results client-side.";
+  return stringifyCapped(toBatchEnvelope(results, note), "results");
 }

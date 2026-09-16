@@ -4,7 +4,7 @@ import {
   handleBatchUpdateCatalogItems,
   handleBatchQuery,
 } from "../src/tools/batch.js";
-import { resetClient } from "../src/client.js";
+import { resetClient, DEFAULT_MAX_CONCURRENCY } from "../src/client.js";
 
 function makeFetch(handler: (url: string, opts: RequestInit) => Response | Promise<Response>): ReturnType<typeof vi.fn> {
   return vi.fn(async (url: string, opts: RequestInit) => {
@@ -228,5 +228,70 @@ describe("batch tools", () => {
     const parsed = JSON.parse(result) as { succeeded: number; failed: number; failed_indexes: number[] };
     expect(parsed.failed).toBe(1);
     expect(parsed.failed_indexes).toEqual([1]);
+  });
+});
+
+/**
+ * Потолок одновременности — про сеансы 1С, а не про скорость: на «Базовом»
+ * 1С:Фреш у клиента два сеанса, а три batch-инструмента со своим пулом на вызов
+ * давали до 60 параллельных соединений.
+ */
+describe("process-wide concurrency cap", () => {
+  const originalEnv = { ...process.env };
+
+  beforeEach(() => {
+    process.env["ONEC_BASE_URL"] = "http://localhost:8080/base";
+    process.env["ONEC_LOGIN"] = "admin";
+    process.env["ONEC_PASSWORD"] = "secret";
+    delete process.env["ONEC_MAX_CONCURRENCY"];
+    resetClient();
+  });
+
+  afterEach(() => {
+    process.env = { ...originalEnv };
+    vi.restoreAllMocks();
+    resetClient();
+  });
+
+  /** fetch, который держит соединение открытым и считает пик одновременности. */
+  function countingFetch() {
+    const state = { current: 0, peak: 0 };
+    const fn = vi.fn(async () => {
+      state.current++;
+      state.peak = Math.max(state.peak, state.current);
+      await new Promise((r) => setTimeout(r, 5));
+      state.current--;
+      return okResponse({ value: [] });
+    });
+    vi.stubGlobal("fetch", fn);
+    return state;
+  }
+
+  const queries = (n: number) =>
+    Array.from({ length: n }, (_, i) => ({ entity: `Catalog_${i}`, top: 10, skip: 0 }));
+
+  it("two parallel batch calls never exceed the default cap of 8 sockets", async () => {
+    const state = countingFetch();
+    await Promise.all([
+      handleBatchQuery({ queries: queries(20), concurrency: 20 }),
+      handleBatchQuery({ queries: queries(20), concurrency: 20 }),
+    ]);
+    expect(DEFAULT_MAX_CONCURRENCY).toBe(8);
+    expect(state.peak).toBeLessThanOrEqual(8);
+    expect(state.peak).toBeGreaterThan(1); // параллелизм всё-таки остался
+  });
+
+  it("ONEC_MAX_CONCURRENCY=2 is honoured across tools", async () => {
+    process.env["ONEC_MAX_CONCURRENCY"] = "2";
+    const state = countingFetch();
+    await Promise.all([
+      handleBatchQuery({ queries: queries(10), concurrency: 20 }),
+      handleBatchCreateDocuments({
+        document_type: "Document_Test",
+        documents: Array.from({ length: 10 }, (_, i) => ({ Number: String(i) })),
+        concurrency: 20,
+      }),
+    ]);
+    expect(state.peak).toBeLessThanOrEqual(2);
   });
 });

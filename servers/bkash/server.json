@@ -1,0 +1,53 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/bkash-mcp",
+  "title": "bKash",
+  "description": "bKash mobile money - checkout payments, refunds, agreements, transaction search (Bangladesh)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/bkash",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/bkash"
+  },
+  "version": "1.1.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/bkash-mcp",
+      "version": "1.1.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "BKASH_APP_KEY",
+          "description": "Application key from the bKash merchant panel",
+          "isRequired": true
+        },
+        {
+          "name": "BKASH_APP_SECRET",
+          "description": "Application secret from the bKash merchant panel",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "BKASH_USERNAME",
+          "description": "Merchant username",
+          "isRequired": true
+        },
+        {
+          "name": "BKASH_PASSWORD",
+          "description": "Merchant password",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "BKASH_SANDBOX",
+          "description": "Set to true to call the bKash sandbox endpoint",
+          "format": "boolean"
+        }
+      ]
+    }
+  ]
+}

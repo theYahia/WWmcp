@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="Express delivery">
+  <title>Express delivery</title>
+  <rect x="8" y="8" width="240" height="240" rx="52" fill="#A8762E" fill-opacity="0.14"/>
+  <g fill="none" stroke="#A8762E" stroke-width="15" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="90" y="82" width="122" height="118" rx="16"/>
+    <path d="M90 120 H212"/>
+    <path d="M151 82 V200"/>
+    <path d="M26 106 H66"/>
+    <path d="M14 141 H66"/>
+    <path d="M32 176 H66"/>
+  </g>
+</svg>

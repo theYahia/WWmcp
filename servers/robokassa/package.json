@@ -1,7 +1,7 @@
 {
   "name": "@theyahia/robokassa-mcp",
   "version": "1.2.0",
-  "description": "MCP server for Robokassa payment API — generate payment URLs, check invoice status. 2 tools. MD5 signature auth.",
+  "description": "Robokassa for AI agents: generate a signed payment link with an optional 54-FZ receipt and check whether the invoice is paid (2 tools, Russia)",
   "type": "module",
   "main": "dist/index.js",
   "bin": { "robokassa-mcp": "dist/index.js" },
@@ -31,8 +31,27 @@
   },
   "publishConfig": { "access": "public" },
   "mcpName": "io.github.theYahia/robokassa-mcp",
-  "keywords": ["mcp", "mcp-server", "model-context-protocol", "claude", "ai", "russian-api", "robokassa", "payment", "invoice", "md5-signature"],
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "claude",
+    "ai-agent",
+    "llm",
+    "robokassa",
+    "робокасса",
+    "payments",
+    "платежи",
+    "invoice",
+    "счет",
+    "payment-link",
+    "acquiring",
+    "эквайринг",
+    "54-fz",
+    "russia",
+    "russian-api"
+  ],
   "license": "MIT",
-  "repository": { "type": "git", "url": "https://github.com/theYahia/mcp-servers.git", "directory": "servers/robokassa" },
+  "repository": { "type": "git", "url": "https://github.com/theYahia/WWmcp.git", "directory": "servers/robokassa" },
   "author": "theYahia (https://github.com/theYahia)"
 }

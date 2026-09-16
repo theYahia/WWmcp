@@ -1,0 +1,41 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/avito-mcp",
+  "title": "Avito",
+  "description": "Avito classifieds - your own listings, item details, messenger chats (Russia)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/avito",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/avito"
+  },
+  "version": "0.2.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/avito-mcp",
+      "version": "0.2.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "AVITO_CLIENT_ID",
+          "description": "OAuth client_id from the Avito API office (developers.avito.ru)",
+          "isRequired": true
+        },
+        {
+          "name": "AVITO_CLIENT_SECRET",
+          "description": "OAuth client_secret from the Avito API office",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "AVITO_USER_ID",
+          "description": "Optional numeric Avito user_id used as the default for account-scoped tools"
+        }
+      ]
+    }
+  ]
+}

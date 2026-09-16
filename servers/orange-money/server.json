@@ -1,0 +1,47 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/orange-money-mcp",
+  "title": "Orange Money",
+  "description": "Orange Money WebPay - payments, cash-in and cash-out, transfers, balance (Africa)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/orange-money",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/orange-money"
+  },
+  "version": "1.1.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/orange-money-mcp",
+      "version": "1.1.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "ORANGE_MONEY_CLIENT_ID",
+          "description": "OAuth2 client ID from developer.orange.com (MyApps)",
+          "isRequired": true
+        },
+        {
+          "name": "ORANGE_MONEY_CLIENT_SECRET",
+          "description": "OAuth2 client secret from developer.orange.com",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "ORANGE_MONEY_COUNTRY",
+          "description": "Lowercase ISO country code: sn, ci, ml, cm, bf, td, mg, ne, gn, lr, sl, cd",
+          "isRequired": true
+        },
+        {
+          "name": "ORANGE_MONEY_MERCHANT_KEY",
+          "description": "Per-country merchant key from the Orange Money business contract",
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

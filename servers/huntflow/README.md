@@ -6,7 +6,9 @@ MCP-сервер для HuntFlow ATS API — вакансии, кандидат�
 [![CI](https://github.com/theYahia/huntflow-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/theYahia/huntflow-mcp/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Часть серии [Russian API MCP](https://github.com/theYahia/russian-mcp) (50 серверов).
+![Демонстрация: вопрос «какие вакансии открыты и по какой вилке» — агент вызывает list_vacancies и отвечает таблицей вакансий](./assets/demo.svg)
+
+Часть серии [WWmcp](https://github.com/theYahia/WWmcp) (46 серверов).
 
 ## Установка
 
@@ -97,5 +99,17 @@ npm run dev        # tsx src/index.ts
 npm run build      # tsc
 ```
 
+## Примеры запросов
+
+Спросите ИИ:
+
+- «Покажи открытые вакансии в HuntFlow» — `list_accounts`, затем `list_vacancies`
+- «Кто из кандидатов прикреплён к вакансии и на каких этапах воронки» — `list_vacancy_applicants`, затем `list_stages`
+- «Найди кандидата по email и покажи его резюме» — `search_applicants`, затем `get_applicant_resumes` и `get_resume`
+
 ## Лицензия
 MIT
+
+---
+
+Часть монорепозитория [WWmcp](https://github.com/theYahia/WWmcp) · Telegram: [@vhodvai](https://t.me/vhodvai)

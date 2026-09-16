@@ -1,0 +1,36 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/gigachat-mcp",
+  "title": "GigaChat",
+  "description": "Sber GigaChat - chat completions, embeddings, image generation, tokens, files (Russia)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/gigachat",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/gigachat"
+  },
+  "version": "3.0.1",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/gigachat-mcp",
+      "version": "3.0.1",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "GIGACHAT_AUTH_KEY",
+          "description": "Base64-encoded client_id:client_secret from developers.sber.ru",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "GIGACHAT_SCOPE",
+          "description": "OAuth scope: GIGACHAT_API_PERS (default), GIGACHAT_API_B2B or GIGACHAT_API_CORP"
+        }
+      ]
+    }
+  ]
+}

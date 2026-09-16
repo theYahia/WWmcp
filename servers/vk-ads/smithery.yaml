@@ -1,6 +1,6 @@
 name: vk-ads-mcp
-description: MCP server for VK Ads API — campaigns, ads, statistics, targeting, budgets (v2.0.0)
-icon: https://raw.githubusercontent.com/theYahia/vk-ads-mcp/main/icon.png
+description: MCP server for the VK Ads API v2 — campaigns (ad_plans), ad groups, ads (banners), statistics, account balance (Russia, 8 tools)
+icon: https://raw.githubusercontent.com/theYahia/WWmcp/main/servers/vk-ads/assets/icon.svg
 startCommand:
   type: stdio
   configSchema:
@@ -10,12 +10,24 @@ startCommand:
     properties:
       VK_ADS_TOKEN:
         type: string
-        description: "Bearer token from your VK Ads account (Tools → API access)"
+        description: "Bearer access token from your VK Ads cabinet (Tools → API access). Add read_payments scope for the balance."
+      VK_ADS_CLIENT_ID:
+        type: string
+        description: "OAuth client id — with the secret and refresh token, an expired access_token (24h) is renewed automatically."
+      VK_ADS_CLIENT_SECRET:
+        type: string
+        description: "OAuth client secret"
+      VK_ADS_REFRESH_TOKEN:
+        type: string
+        description: "OAuth refresh token"
   commandFunction: |-
     (config) => ({
       command: "npx",
       args: ["-y", "@theyahia/vk-ads-mcp"],
       env: {
         VK_ADS_TOKEN: config.VK_ADS_TOKEN,
+        ...(config.VK_ADS_CLIENT_ID ? { VK_ADS_CLIENT_ID: config.VK_ADS_CLIENT_ID } : {}),
+        ...(config.VK_ADS_CLIENT_SECRET ? { VK_ADS_CLIENT_SECRET: config.VK_ADS_CLIENT_SECRET } : {}),
+        ...(config.VK_ADS_REFRESH_TOKEN ? { VK_ADS_REFRESH_TOKEN: config.VK_ADS_REFRESH_TOKEN } : {}),
       }
     })

@@ -1,6 +1,6 @@
 name: bkash-mcp
 description: MCP server for bKash Tokenized Checkout — payments, refunds, agreements (Bangladesh, v1.0.0)
-icon: https://raw.githubusercontent.com/theYahia/mcp-servers/main/servers/bkash/icon.png
+icon: https://raw.githubusercontent.com/theYahia/WWmcp/main/servers/bkash/assets/icon.svg
 startCommand:
   type: stdio
   configSchema:

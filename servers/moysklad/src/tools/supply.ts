@@ -39,7 +39,7 @@ export async function handleCreateSupply(params: z.infer<typeof createSupplySche
 export const tools: ToolDef[] = [
   {
     name: "create_supply",
-    description: "Create an incoming supply (purchase receipt). Prices in RUBLES.",
+    description: "Create an incoming supply (purchase receipt) in MoySklad. Records goods received from a supplier into a warehouse. Requires organization and agent meta hrefs, plus line items with product hrefs and quantities. Optionally specify warehouse, incoming document number, and date.",
     schema: createSupplySchema,
     handler: handleCreateSupply,
   },

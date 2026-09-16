@@ -11,6 +11,7 @@ config:
       type: string
       description: API salt (secret) from Mango Office dashboard
 
+icon: https://raw.githubusercontent.com/theYahia/WWmcp/main/servers/mango-office/assets/icon.svg
 startCommand:
   type: stdio
   configSchema:

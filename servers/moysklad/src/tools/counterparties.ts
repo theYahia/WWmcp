@@ -67,13 +67,13 @@ function formatCounterpartyRow(c: Record<string, unknown>): Record<string, unkno
 export const tools: ToolDef[] = [
   {
     name: "get_counterparties",
-    description: "Search counterparties (customers/suppliers) by name, INN, or phone.",
+    description: "Search counterparties (customers and suppliers) in MoySklad by name, INN (tax ID) or phone. Returns a paginated list with id, name, phone, email, INN, and company type. Use filter_inn for exact tax ID lookup. Supports offset-based pagination.",
     schema: getCounterpartiesSchema,
     handler: handleGetCounterparties,
   },
   {
     name: "get_counterparty",
-    description: "Get full details of a counterparty by UUID.",
+    description: "Get full details of a counterparty by UUID. Pass raw:true for the untouched MoySklad object.",
     schema: getCounterpartySchema,
     handler: handleGetCounterparty,
   },

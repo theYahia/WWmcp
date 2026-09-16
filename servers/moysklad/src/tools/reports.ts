@@ -77,7 +77,7 @@ function formatSalesReport(raw: unknown): string {
 export const tools: ToolDef[] = [
   {
     name: "get_profit_report",
-    description: "Get profit report by product. Shows sales, costs, returns, profit, margin.",
+    description: "Get profit report by product from MoySklad. Shows sell quantity, sell sum, cost sum, return quantity, return sum, profit, and margin for each product. Supports date range filtering with moment_from/moment_to in ISO 8601 format. All monetary values in rubles.",
     schema: getProfitReportSchema,
     handler: handleGetProfitReport,
   },

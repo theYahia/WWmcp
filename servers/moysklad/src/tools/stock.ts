@@ -90,7 +90,7 @@ function formatStockByStore(raw: unknown): string {
 export const tools: ToolDef[] = [
   {
     name: "get_stock",
-    description: "Get current stock/inventory report. Shows quantities, reserves, and in-transit.",
+    description: "Get current stock/inventory report from MoySklad. Shows quantities, reserves, and in-transit amounts for each product. Supports grouping by product, variant, or store, and filtering by stock level (positive, negative, empty, non-empty). Paginated.",
     schema: getStockSchema,
     handler: handleGetStock,
   },

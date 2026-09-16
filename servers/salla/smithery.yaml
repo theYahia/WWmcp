@@ -1,6 +1,6 @@
 name: salla-mcp
 description: MCP server for Salla e-commerce platform — 22 tools for products, categories, brands, orders, customers, coupons, branches, store (Saudi Arabia)
-icon: https://raw.githubusercontent.com/theYahia/salla-mcp/main/icon.png
+icon: https://raw.githubusercontent.com/theYahia/WWmcp/main/servers/salla/assets/icon.svg
 startCommand:
   type: stdio
   configSchema:

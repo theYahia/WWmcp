@@ -1,8 +1,21 @@
 #!/usr/bin/env node
 
+/**
+ * @theyahia/moysklad-mcp — MCP server for MoySklad ERP/inventory API
+ *
+ * 60 tools across 16 modules: catalog, stock, counterparties, orders,
+ * shipments, warehouse documents (move/enter/loss/inventory/returns),
+ * finance (payments, cash, invoices), reports, reference lists and audit log.
+ *
+ * Auth: Bearer token (MOYSKLAD_TOKEN) or Basic (MOYSKLAD_LOGIN + MOYSKLAD_PASSWORD).
+ * Rate limit: token bucket 45 req / 3s (stock reports charged 5 units each).
+ *
+ * Transports: stdio (default), Streamable HTTP (--http or HTTP_PORT)
+ */
+
+import { readFileSync } from "node:fs";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { VERSION } from "./version.js";
+import { createLogger, runServer, withErrorHandling } from "@theyahia/mcp-core";
 import type { ToolDef } from "./types.js";
 
 import { tools as productTools } from "./tools/products.js";
@@ -22,97 +35,69 @@ import { tools as reportsExtraTools } from "./tools/reports_extra.js";
 import { tools as referenceTools } from "./tools/reference.js";
 import { tools as auditTools } from "./tools/audit.js";
 
-const allTools: ToolDef[] = [
+const logger = createLogger("moysklad-mcp");
+
+const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8")) as { version: string };
+const VERSION: string = pkg.version;
+
+const ALL_TOOLS: ToolDef[] = [
   ...productTools,
+  ...catalogTools,
   ...stockTools,
   ...counterpartyTools,
   ...orderTools,
-  ...reportTools,
-  ...supplyTools,
   ...shipmentTools,
-  ...storeTools,
-  ...organizationTools,
-  ...webhookTools,
+  ...supplyTools,
   ...documentTools,
   ...financeTools,
-  ...catalogTools,
+  ...reportTools,
   ...reportsExtraTools,
+  ...storeTools,
+  ...organizationTools,
   ...referenceTools,
+  ...webhookTools,
   ...auditTools,
 ];
 
-const server = new McpServer({ name: "moysklad-mcp", version: VERSION });
+/**
+ * Numeric literal so `scripts/catalog.mjs` can read the declared count without
+ * running the server; the check below fails the process if it ever drifts from
+ * what is actually registered.
+ */
+export const TOOL_COUNT = 60;
 
-const wrap = (handler: (params: any) => Promise<string>) => async (params: any) => ({
-  content: [{ type: "text" as const, text: await handler(params) }],
-});
-
-const seen = new Set<string>();
-for (const t of allTools) {
-  if (seen.has(t.name)) throw new Error(`Duplicate tool name: ${t.name}`);
-  seen.add(t.name);
-  server.tool(t.name, t.description, t.schema.shape, wrap(t.handler));
+if (ALL_TOOLS.length !== TOOL_COUNT) {
+  throw new Error(`TOOL_COUNT is ${TOOL_COUNT} but ${ALL_TOOLS.length} tools are registered.`);
 }
 
-const TOOL_COUNT = allTools.length;
+function createServer(): McpServer {
+  const server = new McpServer({ name: "moysklad-mcp", version: VERSION });
 
-async function main() {
-  const httpPort =
-    process.env.HTTP_PORT ||
-    (process.argv.includes("--http") ? process.argv[process.argv.indexOf("--http") + 1] : null);
-  if (httpPort) {
-    const port = parseInt(String(httpPort), 10) || 3000;
-    await startHttpTransport(port);
-  } else {
-    const transport = new StdioServerTransport();
-    await server.connect(transport);
-    console.error(`[moysklad-mcp] Server started (stdio). ${TOOL_COUNT} tools available.`);
+  const seen = new Set<string>();
+  for (const tool of ALL_TOOLS) {
+    if (seen.has(tool.name)) throw new Error(`Duplicate tool name: ${tool.name}`);
+    seen.add(tool.name);
+    server.tool(
+      tool.name,
+      tool.description,
+      tool.schema.shape,
+      withErrorHandling(async (params) => ({
+        content: [{ type: "text", text: await tool.handler(params) }],
+      })),
+    );
   }
+
+  return server;
 }
 
-async function startHttpTransport(port: number) {
-  const { createServer } = await import("node:http");
-  const { StreamableHTTPServerTransport } = await import("@modelcontextprotocol/sdk/server/streamableHttp.js");
-  const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined as unknown as () => string });
-  // CORS is opt-in: only emit Access-Control-Allow-Origin when explicitly
-  // configured. The HTTP transport exposes tools that act on the configured
-  // MoySklad token, so a wildcard default would let any web page drive it.
-  const corsOrigin = process.env.MOYSKLAD_HTTP_CORS_ORIGIN;
-  const httpServer = createServer(async (req, res) => {
-    if (corsOrigin) {
-      res.setHeader("Access-Control-Allow-Origin", corsOrigin);
-      res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, DELETE");
-      res.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept, Authorization");
-    }
-    if (req.method === "OPTIONS") {
-      res.writeHead(204);
-      res.end();
-      return;
-    }
-    if (req.url === "/health") {
-      res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ status: "ok", tools: TOOL_COUNT, transport: "streamable-http", version: VERSION }));
-      return;
-    }
-    if (req.url === "/mcp") {
-      await transport.handleRequest(req, res);
-      return;
-    }
-    res.writeHead(404);
-    res.end("Not found. Use /mcp or /health.");
+runServer(createServer, {
+  name: "moysklad-mcp",
+  version: VERSION,
+  toolCount: TOOL_COUNT,
+  logger,
+}).catch((error) => {
+  logger.error("Fatal error", {
+    error: error instanceof Error ? error.message : String(error),
   });
-  await server.connect(transport);
-  httpServer.listen(port, () => {
-    console.error(`[moysklad-mcp] HTTP server on port ${port}. ${TOOL_COUNT} tools available.`);
-  });
-}
-
-const isDirectRun = process.argv[1]?.endsWith("index.js") || process.argv[1]?.endsWith("index.ts");
-if (isDirectRun) {
-  main().catch((error) => {
-    console.error("[moysklad-mcp] Error:", error);
-    process.exit(1);
-  });
-}
-
-export { server, allTools };
+  process.exit(1);
+});

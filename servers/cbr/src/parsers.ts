@@ -1,68 +1,15 @@
-import type {
-  CbrCurrency,
-  CbrDailyResponse,
-  DynamicsPoint,
-  KeyRatePoint,
-  MetalPrice,
-} from "./types.js";
-
-// ── Даты ────────────────────────────────────────────────────────────────────
-
-const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
-
-export function pad2(n: number): string {
-  return String(n).padStart(2, "0");
-}
-
-export interface DateParts {
-  yyyy: number;
-  mm: number;
-  dd: number;
-  iso: string;
-}
-
 /**
- * Валидирует строку YYYY-MM-DD и возвращает компоненты.
- * Парсит компоненты напрямую из строки (без локальных геттеров Date),
- * чтобы избежать таймзона-сдвига.
+ * Чистые парсеры ответов ЦБ РФ — без сети, чтобы их можно было покрыть
+ * офлайн-фикстурами (см. tests/keyrate.test.ts).
  */
-export function parseDateParts(date: string): DateParts {
-  if (!DATE_RE.test(date)) {
-    throw new Error(`Неверный формат даты "${date}". Ожидается YYYY-MM-DD (например 2025-01-09).`);
-  }
-  const [yyyy, mm, dd] = date.split("-").map(Number);
-  const check = new Date(Date.UTC(yyyy, mm - 1, dd));
-  if (
-    check.getUTCFullYear() !== yyyy ||
-    check.getUTCMonth() !== mm - 1 ||
-    check.getUTCDate() !== dd
-  ) {
-    throw new Error(`Несуществующая дата "${date}".`);
-  }
-  return { yyyy, mm, dd, iso: date };
-}
 
-/** Date → "YYYY-MM-DD" по UTC. */
-export function isoFromDate(d: Date): string {
-  return `${d.getUTCFullYear()}-${pad2(d.getUTCMonth() + 1)}-${pad2(d.getUTCDate())}`;
-}
+import type { DynamicsPoint, KeyRatePoint } from "./types.js";
 
-/** Сдвиг ISO-даты на deltaDays (UTC-арифметика, без таймзона-багов). */
-export function shiftDays(iso: string, deltaDays: number): string {
-  const { yyyy, mm, dd } = parseDateParts(iso);
-  return isoFromDate(new Date(Date.UTC(yyyy, mm - 1, dd) + deltaDays * 86_400_000));
-}
+const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
-/** "YYYY-MM-DD" → "YYYY/MM/DD" (путь архива зеркала). */
-export function isoToArchivePath(iso: string): string {
-  const { yyyy, mm, dd } = parseDateParts(iso);
-  return `${yyyy}/${pad2(mm)}/${pad2(dd)}`;
-}
-
-/** "YYYY-MM-DD" → "DD<sep>MM<sep>YYYY" ("/" для .asp date_req, "." для hd_base UniDbQuery). */
-export function isoToCbrDate(iso: string, sep: "/" | "." = "/"): string {
-  const { yyyy, mm, dd } = parseDateParts(iso);
-  return `${pad2(dd)}${sep}${pad2(mm)}${sep}${yyyy}`;
+/** "1 234,56" / "14,25" → 14.25 (русский числовой формат ЦБ). */
+export function parseRu(num: string): number {
+  return parseFloat(num.replace(/\s/g, "").replace(",", "."));
 }
 
 /** "DD.MM.YYYY" → "YYYY-MM-DD". */
@@ -72,53 +19,35 @@ export function ddmmyyyyToIso(s: string): string {
   return `${m[3]}-${m[2]}-${m[1]}`;
 }
 
-/** "1 234,56" / "14,25" → 14.25 (русский числовой формат ЦБ). */
-export function parseRu(num: string): number {
-  return parseFloat(num.replace(/[\s]/g, "").replace(",", "."));
+/** Date → "YYYY-MM-DD" по UTC. */
+export function isoFromDate(d: Date): string {
+  const p = (n: number) => String(n).padStart(2, "0");
+  return `${d.getUTCFullYear()}-${p(d.getUTCMonth() + 1)}-${p(d.getUTCDate())}`;
 }
 
-// ── Парсеры ответов ───────────────────────────────────────────────────────────
-
-/** Валидирует JSON курсов зеркала (cbr-xml-daily.ru). */
-export function normalizeDailyJson(json: unknown): CbrDailyResponse {
-  const data = json as CbrDailyResponse;
-  if (!data || typeof data !== "object" || !data.Valute || typeof data.Valute !== "object") {
-    throw new Error("Некорректный ответ ЦБ: отсутствует поле Valute.");
+/**
+ * "YYYY-MM-DD" → "DD<sep>MM<sep>YYYY" ("/" для .asp date_req, "." для hd_base UniDbQuery).
+ * Валидирует формат: дата приходит от пользователя и подставляется в URL, а без
+ * проверки в запрос уезжает NaN и ЦБ отдаёт пустой ответ вместо понятной ошибки.
+ */
+export function isoToCbrDate(iso: string, sep: "/" | "." = "/"): string {
+  if (!ISO_DATE_RE.test(iso)) {
+    throw new Error(`Неверный формат даты "${iso}". Ожидается YYYY-MM-DD (например 2026-01-09).`);
   }
-  return data;
+  const [yyyy, mm, dd] = iso.split("-");
+  const check = new Date(`${iso}T00:00:00Z`);
+  if (Number.isNaN(check.getTime()) || isoFromDate(check) !== iso) {
+    throw new Error(`Несуществующая дата "${iso}".`);
+  }
+  return `${dd}${sep}${mm}${sep}${yyyy}`;
 }
 
-/** Парсит официальный windows-1251 XML_daily.asp в форму CbrDailyResponse (без Previous). */
-export function parseOfficialDailyXml(xml: string): CbrDailyResponse {
-  const dateMatch = xml.match(/<ValCurs[^>]*\sDate="([^"]+)"/);
-  const date = dateMatch ? ddmmyyyyToIso(dateMatch[1]) : "";
-  const re =
-    /<Valute\s+ID="([^"]+)">\s*<NumCode>([^<]*)<\/NumCode>\s*<CharCode>([^<]*)<\/CharCode>\s*<Nominal>([^<]*)<\/Nominal>\s*<Name>([^<]*)<\/Name>\s*<Value>([^<]*)<\/Value>/g;
-  const Valute: Record<string, CbrCurrency> = {};
-  let m: RegExpExecArray | null;
-  while ((m = re.exec(xml)) !== null) {
-    const [, id, numCode, charCode, nominal, name, value] = m;
-    const val = parseRu(value);
-    Valute[charCode] = {
-      ID: id,
-      NumCode: numCode,
-      CharCode: charCode,
-      Nominal: parseRu(nominal),
-      Name: name,
-      Value: val,
-      Previous: val, // официальный XML_daily не содержит предыдущего значения
-    };
-  }
-  if (Object.keys(Valute).length === 0) {
-    throw new Error("Не удалось разобрать официальный XML курсов ЦБ.");
-  }
-  return { Date: date, Valute };
-}
-
-/** Парсит таблицу ключевой ставки с hd_base/KeyRate. Возвращает ряд, отсортированный по дате (новые первыми). */
+/**
+ * Разбирает таблицу ключевой ставки со страницы cbr.ru/hd_base/KeyRate.
+ * Возвращает дневной ряд, отсортированный по убыванию даты (новые первыми).
+ */
 export function parseKeyRateHtml(html: string): KeyRatePoint[] {
-  const re =
-    /<td[^>]*>\s*(\d{2}\.\d{2}\.\d{4})\s*<\/td>\s*<td[^>]*>\s*([\d\s]+,\d+)\s*<\/td>/g;
+  const re = /<td[^>]*>\s*(\d{2}\.\d{2}\.\d{4})\s*<\/td>\s*<td[^>]*>\s*([\d\s]+,\d+)\s*<\/td>/g;
   const points: KeyRatePoint[] = [];
   let m: RegExpExecArray | null;
   while ((m = re.exec(html)) !== null) {
@@ -146,47 +75,13 @@ export function keyRateSince(points: KeyRatePoint[]): string {
   const current = points[0].rate;
   let since = points[0].date;
   for (const p of points) {
-    if (p.rate === current) since = p.date;
-    else break;
+    if (p.rate !== current) break;
+    since = p.date;
   }
   return since;
 }
 
-/** Парсит windows-1251 XML xml_metall.asp. Возвращает все записи (buy+sell). */
-export function parseMetalsXml(xml: string): MetalPrice[] {
-  const names: Record<string, string> = {
-    "1": "Золото",
-    "2": "Серебро",
-    "3": "Платина",
-    "4": "Палладий",
-  };
-  const re =
-    /<Record\s+Date="([^"]+)"\s+Code="(\d+)">\s*<Buy>([^<]*)<\/Buy>\s*<Sell>([^<]*)<\/Sell>\s*<\/Record>/g;
-  const out: MetalPrice[] = [];
-  let m: RegExpExecArray | null;
-  while ((m = re.exec(xml)) !== null) {
-    const [, date, code, buy, sell] = m;
-    out.push({
-      code,
-      name: names[code] ?? `Metal_${code}`,
-      buy: parseRu(buy),
-      sell: parseRu(sell),
-      date: ddmmyyyyToIso(date),
-    });
-  }
-  return out;
-}
-
-/** Сводит записи металлов к самой свежей цене на каждый металл, по возрастанию кода. */
-export function latestMetals(records: MetalPrice[]): MetalPrice[] {
-  const latest = new Map<string, MetalPrice>();
-  for (const r of [...records].sort((a, b) => (a.date < b.date ? -1 : 1))) {
-    latest.set(r.code, r);
-  }
-  return [...latest.values()].sort((a, b) => Number(a.code) - Number(b.code));
-}
-
-/** Парсит windows-1251 XML_dynamic.asp в ряд динамики курса. */
+/** Разбирает XML_dynamic.asp в ряд динамики курса. */
 export function parseDynamicsXml(xml: string): DynamicsPoint[] {
   const re =
     /<Record\s+Date="([^"]+)"[^>]*>\s*<Nominal>([^<]+)<\/Nominal>\s*<Value>([^<]+)<\/Value>(?:\s*<VunitRate>([^<]+)<\/VunitRate>)?\s*<\/Record>/g;

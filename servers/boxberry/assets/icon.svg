@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="Parcel box">
+  <title>Parcel box</title>
+  <rect x="8" y="8" width="240" height="240" rx="52" fill="#A8762E" fill-opacity="0.14"/>
+  <g fill="none" stroke="#A8762E" stroke-width="15" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="44" y="70" width="168" height="142" rx="16"/>
+    <path d="M44 118 H212"/>
+    <path d="M128 70 V212"/>
+  </g>
+</svg>

@@ -88,7 +88,7 @@ export function createServer(): McpServer {
     {
       account_name: z.string().describe("Recipient account holder name"),
       account_number: z.string().describe("Recipient bank account number"),
-      amount: z.string().describe("Transfer amount as string (e.g. '500')"),
+      amount: z.string().regex(/^\d+(\.\d{1,3})?$/, "Amount as a plain positive decimal, e.g. '500' or '500.00'").describe("Transfer amount as string (e.g. '500')"),
       currency: z.string().default("ETB").describe("Currency code"),
       reference: z.string().describe("Your unique transfer reference"),
       bank_code: z.string().describe("Bank code from list_banks"),

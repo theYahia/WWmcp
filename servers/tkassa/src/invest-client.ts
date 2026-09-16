@@ -33,6 +33,10 @@ export class TInvestClient {
         "x-app-name": "@theyahia/tkassa-mcp",
       },
       body: JSON.stringify(body),
+      // The only request path in this client; it has no retry loop and did not
+      // have an abort signal, so a stalled T-Invest endpoint hung the tool call
+      // with no error and no result.
+      signal: AbortSignal.timeout(15_000),
     });
 
     if (!res.ok) {

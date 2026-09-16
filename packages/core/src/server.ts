@@ -45,11 +45,17 @@ export async function startStdio(
 /**
  * Starts the MCP server with Streamable HTTP transport.
  * Includes CORS, health endpoint, session management.
+ *
+ * Возвращает слушающий `http.Server` — иначе транспорт нечем закрыть, и первый же
+ * тест `/health` оставляет висящий сокет, который не даёт процессу завершиться.
+ * Тип намеренно широкий (`{ close(cb) }`): express в этом пакете — optional
+ * dependency и импортируется динамически, тянуть ради подписи `@types/express`
+ * в обязательные незачем.
  */
 export async function startHttp(
   createServer: () => McpServer,
   config: ServerConfig & HttpServerConfig,
-): Promise<void> {
+): Promise<{ close(cb?: (err?: Error) => void): void }> {
   const { randomUUID } = await import("node:crypto");
 
   let StreamableHTTPServerTransport: any;
@@ -184,7 +190,7 @@ export async function startHttp(
     await transports[sessionId].handleRequest(req, res);
   });
 
-  app.listen(config.port, () => {
+  const httpServer = app.listen(config.port, () => {
     config.logger?.info(`HTTP server listening`, {
       port: config.port,
       tools: config.toolCount,
@@ -203,6 +209,8 @@ export async function startHttp(
 
   process.on("SIGINT", () => shutdown("SIGINT"));
   process.on("SIGTERM", () => shutdown("SIGTERM"));
+
+  return httpServer;
 }
 
 /**

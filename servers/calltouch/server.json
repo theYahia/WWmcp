@@ -1,0 +1,37 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/calltouch-mcp",
+  "title": "Calltouch",
+  "description": "Calltouch call tracking - calls, leads, traffic sources, tags, campaign stats (Russia)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/calltouch",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/calltouch"
+  },
+  "version": "1.2.1",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/calltouch-mcp",
+      "version": "1.2.1",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "CALLTOUCH_TOKEN",
+          "description": "API token from the Calltouch personal account",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "CALLTOUCH_SITE_ID",
+          "description": "Site ID in Calltouch",
+          "isRequired": true
+        }
+      ]
+    }
+  ]
+}

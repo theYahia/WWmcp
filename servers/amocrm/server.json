@@ -1,0 +1,51 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/amocrm-mcp",
+  "title": "amoCRM",
+  "description": "amoCRM - leads, contacts, companies, pipelines, tasks, notes, unsorted inbox (Russia)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/amocrm",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/amocrm"
+  },
+  "version": "2.0.2",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/amocrm-mcp",
+      "version": "2.0.2",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "AMOCRM_DOMAIN",
+          "description": "amoCRM account domain, e.g. mycompany.amocrm.ru (alias: AMOCRM_SUBDOMAIN)",
+          "isRequired": true
+        },
+        {
+          "name": "AMOCRM_ACCESS_TOKEN",
+          "description": "OAuth 2.0 access token",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "AMOCRM_REFRESH_TOKEN",
+          "description": "OAuth refresh token, enables automatic token renewal",
+          "isSecret": true
+        },
+        {
+          "name": "AMOCRM_CLIENT_ID",
+          "description": "OAuth integration Client ID, required for token refresh"
+        },
+        {
+          "name": "AMOCRM_CLIENT_SECRET",
+          "description": "OAuth integration Client Secret, required for token refresh",
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

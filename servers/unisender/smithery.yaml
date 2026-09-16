@@ -1,6 +1,6 @@
 name: unisender-mcp
 description: MCP server for UniSender email marketing API — lists, contacts, campaigns, templates, statistics
-icon: https://www.unisender.com/favicon.ico
+icon: https://raw.githubusercontent.com/theYahia/WWmcp/main/servers/unisender/assets/icon.svg
 author: theYahia
 
 startCommand:

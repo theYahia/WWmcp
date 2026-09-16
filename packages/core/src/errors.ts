@@ -48,6 +48,38 @@ function categorize(error: unknown): ErrorCategory {
 }
 
 /**
+ * Достать текст ошибки: `Error.message` либо поле `message` у ApiError-подобного
+ * объекта. Пустая строка — «сообщения нет».
+ */
+function errorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message.trim();
+  if (isApiError(error) && typeof error.message === "string") {
+    return error.message.trim();
+  }
+  return "";
+}
+
+/**
+ * Дописать к канонной фразе ветки исходное сообщение ошибки.
+ *
+ * Ветки `auth` / `rate_limit` / `not_found` / `server_error` классифицируют по
+ * HTTP-статусу и раньше возвращали ТОЛЬКО свою фиксированную фразу — всё, что
+ * сервер положил в `message`, пропадало по дороге к модели. Для серверов, которые
+ * разбирают тело ошибки внешнего API (aprovodka с русскими ошибками 1С), это
+ * выбрасывало разбор целиком: `object_not_found`, `permission_denied` и
+ * `session_locked` приходят ровно на 404 и 403, то есть на ветках, игнорировавших
+ * сообщение. Модель получала консервную фразу вместо «проверьте имя сущности».
+ *
+ * ponytail: конкатенация, а не отдельное поле в результате — MCP отдаёт модели
+ * текстовый блок, и второй блок она читает так же, как хвост первого.
+ */
+function withDetails(canonical: string, error: unknown): string {
+  const msg = errorMessage(error);
+  if (!msg || canonical.includes(msg)) return canonical;
+  return `${canonical} Детали: ${msg}`;
+}
+
+/**
  * Converts any error into an MCP-compliant CallToolResult with `isError: true`
  * and a next-action suggestion so the LLM can self-recover.
  */
@@ -71,16 +103,22 @@ export function createToolError(error: unknown): CallToolResult {
       };
     }
 
-    case "auth":
+    case "auth": {
+      const apiErr = error as ApiErrorInfo;
+      // Формулировка нейтральна намеренно: ядро общее для всех серверов монорепы,
+      // и способ аутентификации у них разный. Прежний текст звал «перенастроить
+      // API-ключ» — для 1С это вредный совет: там HTTP Basic логином и паролем,
+      // а 403 чаще всего означает не сломанные учётные данные, а недостающую роль.
+      const canonical =
+        `Отказ в доступе (HTTP ${apiErr.status}). Учётные данные не приняты либо ` +
+        "у пользователя нет прав на эту операцию. Попросите пользователя проверить " +
+        "настройки доступа сервера (ключ, токен или логин с паролем — смотря что " +
+        "требует API) и права его учётной записи.";
       return {
         isError: true,
-        content: [
-          {
-            type: "text",
-            text: `Ошибка авторизации. Токен истёк или неверен. Попросите пользователя проверить и перенастроить API-ключ.`,
-          },
-        ],
+        content: [{ type: "text", text: withDetails(canonical, error) }],
       };
+    }
 
     case "rate_limit": {
       const apiErr = error as ApiErrorInfo;
@@ -90,7 +128,10 @@ export function createToolError(error: unknown): CallToolResult {
         content: [
           {
             type: "text",
-            text: `Rate limit. Повторите через ${retryAfter}с. Если это 3-й раз подряд — сообщите пользователю о превышении лимита API.`,
+            text: withDetails(
+              `Rate limit. Повторите через ${retryAfter}с. Если это 3-й раз подряд — сообщите пользователю о превышении лимита API.`,
+              error,
+            ),
           },
         ],
       };
@@ -102,7 +143,10 @@ export function createToolError(error: unknown): CallToolResult {
         content: [
           {
             type: "text",
-            text: `Ресурс не найден. Проверьте ID или параметры. Используйте search/list tool для поиска корректного идентификатора.`,
+            text: withDetails(
+              `Ресурс не найден. Проверьте ID или параметры. Используйте search/list tool для поиска корректного идентификатора.`,
+              error,
+            ),
           },
         ],
       };
@@ -114,7 +158,10 @@ export function createToolError(error: unknown): CallToolResult {
         content: [
           {
             type: "text",
-            text: `Ошибка сервера (HTTP ${apiErr.status}). Внешний API временно недоступен. Повторите запрос через 10-30 секунд.`,
+            text: withDetails(
+              `Ошибка сервера (HTTP ${apiErr.status}). Внешний API временно недоступен. Повторите запрос через 10-30 секунд.`,
+              error,
+            ),
           },
         ],
       };
@@ -170,8 +217,17 @@ function sanitizeResult(result: CallToolResult): CallToolResult {
 
 /**
  * Wraps a tool handler with automatic error handling + output sanitization.
- * Returns `isError: true` result instead of throwing; successful results pass
- * through `sanitizeResult` (prompt-injection guard + truncation).
+ * Returns `isError: true` result instead of throwing; BOTH the success and the
+ * error result pass through `sanitizeResult` (prompt-injection guard + truncation).
+ *
+ * The error path used to skip it, which quietly punched a hole through the
+ * fleet-wide guard: `withDetails` appends the external API's own `error.message`
+ * to the canonical phrase, and several servers throw the raw upstream response
+ * body as that message. Text an attacker can author (a CRM note, a page title,
+ * a 500-page) therefore reached the model unfiltered and unbounded — via the one
+ * path where the model is *most* likely to act on it, since an error asks it to
+ * change course. `isError: true` content is injected into the LLM context exactly
+ * like success content, so it has to be filtered exactly like success content.
  */
 export function withErrorHandling<T = Record<string, unknown>>(
   handler: (params: T) => Promise<CallToolResult>,
@@ -180,7 +236,7 @@ export function withErrorHandling<T = Record<string, unknown>>(
     try {
       return sanitizeResult(await handler(params));
     } catch (error) {
-      return createToolError(error);
+      return sanitizeResult(createToolError(error));
     }
   };
 }

@@ -1,6 +1,6 @@
 name: avito-mcp
 description: MCP server for Avito — Russia's #1 classifieds platform (50M+ MAU). List your ads, get item details, browse messenger chats (v0.1.0)
-icon: https://raw.githubusercontent.com/theYahia/mcp-servers/main/servers/avito/icon.png
+icon: https://raw.githubusercontent.com/theYahia/WWmcp/main/servers/avito/assets/icon.svg
 startCommand:
   type: stdio
   configSchema:

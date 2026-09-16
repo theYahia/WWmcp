@@ -1,0 +1,37 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/getcourse-mcp",
+  "title": "GetCourse",
+  "description": "GetCourse LMS - export students, list orders for a period, create users (Russia)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/getcourse",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/getcourse"
+  },
+  "version": "1.2.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/getcourse-mcp",
+      "version": "1.2.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "GETCOURSE_DOMAIN",
+          "description": "GetCourse account domain, e.g. myschool for myschool.getcourse.ru",
+          "isRequired": true
+        },
+        {
+          "name": "GETCOURSE_API_KEY",
+          "description": "API key from the GetCourse account settings",
+          "isRequired": true,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

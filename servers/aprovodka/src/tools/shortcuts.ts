@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { oneCGet, oneCPatch, buildODataPath, buildKeyedPath, escapeODataString } from "../client.js";
 import { refKeySchema, normaliseEntity } from "../validation.js";
+import { buildQuery, pageJson } from "../lib/paging.js";
 
 // ──────────────────────────────────────────────────────────────
 // find_by_description — нечёткий поиск элементов по Description
@@ -17,13 +18,12 @@ export async function handleFindByDescription(
   params: z.infer<typeof findByDescriptionSchema>,
 ): Promise<string> {
   const safe = escapeODataString(params.query);
-  const path = buildODataPath(params.entity, {
-    $format: "json",
-    $filter: `substringof('${safe}',Description)`,
-    $top: String(params.top),
-  });
+  const path = buildODataPath(
+    params.entity,
+    buildQuery({ top: params.top, filter: `substringof('${safe}',Description)` }),
+  );
   const result = await oneCGet(path);
-  return JSON.stringify(result, null, 2);
+  return pageJson(result, params.top);
 }
 
 // ──────────────────────────────────────────────────────────────
@@ -37,11 +37,10 @@ export const getByKeySchema = z.object({
 });
 
 export async function handleGetByKey(params: z.infer<typeof getByKeySchema>): Promise<string> {
-  const query: Record<string, string> = { $format: "json" };
-  if (params.select) query["$select"] = params.select;
+  const query = buildQuery({ select: params.select });
   const path = buildKeyedPath(params.entity, params.ref_key, undefined, query);
   const result = await oneCGet(path);
-  return JSON.stringify(result, null, 2);
+  return JSON.stringify(result);
 }
 
 // ──────────────────────────────────────────────────────────────
@@ -56,6 +55,8 @@ export const countEntitiesSchema = z.object({
 export async function handleCountEntities(
   params: z.infer<typeof countEntitiesSchema>,
 ): Promise<string> {
+  // Единственный читающий инструмент мимо buildQuery, и намеренно: он не читает
+  // страницу, а просит у 1С только счётчик — $top=0 без пробного «+1».
   const query: Record<string, string> = {
     $format: "json",
     $top: "0",
@@ -65,7 +66,7 @@ export async function handleCountEntities(
   const path = buildODataPath(params.entity, query);
   const raw = (await oneCGet(path)) as Record<string, unknown>;
   const count = raw["odata.count"] ?? raw["@odata.count"] ?? null;
-  return JSON.stringify({ entity: params.entity, count }, null, 2);
+  return JSON.stringify({ entity: params.entity, count });
 }
 
 // ──────────────────────────────────────────────────────────────
@@ -84,7 +85,7 @@ export async function handleSetDeletionMark(
 ): Promise<string> {
   const path = buildKeyedPath(params.entity, params.ref_key, undefined, { $format: "json" });
   const result = await oneCPatch(path, { DeletionMark: params.mark });
-  return JSON.stringify(result, null, 2);
+  return JSON.stringify(result);
 }
 
 // ──────────────────────────────────────────────────────────────
@@ -100,13 +101,12 @@ export const getRecentDocumentsSchema = z.object({
 export async function handleGetRecentDocuments(
   params: z.infer<typeof getRecentDocumentsSchema>,
 ): Promise<string> {
-  const query: Record<string, string> = {
-    $format: "json",
-    $orderby: "Date desc",
-    $top: String(params.top),
-  };
-  if (params.posted_only) query["$filter"] = "Posted eq true";
+  const query = buildQuery({
+    top: params.top,
+    orderby: "Date desc",
+    ...(params.posted_only ? { filter: "Posted eq true" } : {}),
+  });
   const path = buildODataPath(normaliseEntity("Document_", params.document_type), query);
   const result = await oneCGet(path);
-  return JSON.stringify(result, null, 2);
+  return pageJson(result, params.top);
 }

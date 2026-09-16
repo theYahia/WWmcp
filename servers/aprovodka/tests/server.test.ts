@@ -1,11 +1,15 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
+import { readFileSync } from "node:fs";
 import {
   createServer,
   getEnabledModules,
   countRegisteredTools,
   MODULE_TOOL_COUNTS,
+  VERSION,
+  MIN_NODE_MAJOR,
+  unsupportedNodeMessage,
 } from "../src/server.js";
 
 /** Реально зарегистрированные инструменты — через tools/list живого сервера. */
@@ -146,6 +150,90 @@ describe("registration matches the counters", () => {
   });
 });
 
+/**
+ * ONEC_WRITE_MODE=deny — режим «только чтение» для работ на чужой базе:
+ * пишущих инструментов не должно быть в реестре вообще, а не «отказ при вызове».
+ */
+describe("ONEC_WRITE_MODE=deny", () => {
+  const originalEnv = { ...process.env };
+  afterEach(() => {
+    process.env = { ...originalEnv };
+  });
+
+  /** Все 12 пишущих инструментов сервера. */
+  const WRITE_TOOLS = [
+    "create_catalog_item", "update_catalog_item",
+    "create_document", "update_document", "post_document", "unpost_document", "delete_document",
+    "write_information_register", "set_constant", "set_deletion_mark",
+    "batch_create_documents", "batch_update_catalog_items",
+  ];
+
+  it("registers exactly 22 tools and none of them writes", async () => {
+    delete process.env["ONEC_SERVICES"];
+    process.env["ONEC_WRITE_MODE"] = "deny";
+    const names = await listRegisteredTools();
+    expect(names.length).toBe(22);
+    for (const w of WRITE_TOOLS) expect(names).not.toContain(w);
+    // approve_write/rollback_write тоже не нужны — одобрять нечего.
+    expect(names).not.toContain("approve_write");
+    expect(names).not.toContain("rollback_write");
+    // читающие на месте
+    expect(names).toContain("get_documents");
+    expect(names).toContain("list_entities");
+    expect(names.length).toBe(countRegisteredTools(getEnabledModules()));
+  });
+
+  it("counter matches registration under a module filter too", async () => {
+    process.env["ONEC_SERVICES"] = "documents,batch";
+    process.env["ONEC_WRITE_MODE"] = "deny";
+    const names = await listRegisteredTools();
+    expect(names.length).toBe(countRegisteredTools(getEnabledModules()));
+    expect(names).toContain("get_documents");
+    expect(names).toContain("batch_query");
+    expect(names).not.toContain("post_document");
+  });
+
+  it("off / preview / approval keep the full write surface (no regression)", async () => {
+    delete process.env["ONEC_SERVICES"];
+    for (const mode of ["off", "preview", "approval"]) {
+      process.env["ONEC_WRITE_MODE"] = mode;
+      const names = await listRegisteredTools();
+      for (const w of WRITE_TOOLS) expect(names, mode).toContain(w);
+      expect(names.length, mode).toBe(mode === "off" ? 34 : 36);
+      expect(names.length, mode).toBe(countRegisteredTools(getEnabledModules()));
+    }
+  });
+});
+
+/**
+ * Версия расходилась дважды: в коде стоял литерал «keep in sync with package.json»,
+ * и сервер представлялся клиенту версией 4.1.0, когда пакет был 4.3.0. Литерала
+ * больше нет, но server.json пишется руками — равенство держим тестом.
+ */
+describe("version is single-sourced", () => {
+  const read = (f: string) => JSON.parse(readFileSync(new URL(f, import.meta.url), "utf8"));
+
+  it("package.json, server handshake and server.json agree", () => {
+    const pkg = read("../package.json");
+    const serverJson = read("../server.json");
+    expect(VERSION).toBe(pkg.version);
+    expect(serverJson.version).toBe(pkg.version);
+    for (const p of serverJson.packages ?? []) expect(p.version).toBe(pkg.version);
+  });
+
+  it("the live MCP handshake reports that same version", async () => {
+    const server = createServer();
+    const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+    const client = new Client({ name: "test", version: "0" });
+    await Promise.all([server.connect(serverTransport), client.connect(clientTransport)]);
+    try {
+      expect(client.getServerVersion()?.version).toBe(read("../package.json").version);
+    } finally {
+      await client.close();
+    }
+  });
+});
+
 describe("createServer", () => {
   const originalEnv = { ...process.env };
   beforeEach(() => {
@@ -159,5 +247,27 @@ describe("createServer", () => {
     const server = createServer();
     expect(server).toBeDefined();
     expect(typeof server.connect).toBe("function");
+  });
+});
+
+/**
+ * `engines.node` раньше обещал 18, а CI собирал только на 20 и 22 — пользователь
+ * на 18 узнавал о несовместимости падением. Порог теперь читается из package.json
+ * и проверяется на старте; тест держит оба конца.
+ */
+describe("supported Node version", () => {
+  const pkg = JSON.parse(
+    readFileSync(new URL("../package.json", import.meta.url), "utf8"),
+  ) as { engines: { node: string } };
+
+  it("MIN_NODE_MAJOR matches the engines field", () => {
+    expect(pkg.engines.node).toBe(`>=${MIN_NODE_MAJOR}.0.0`);
+  });
+
+  it("rejects older majors and passes supported ones", () => {
+    expect(unsupportedNodeMessage("18.20.4")).toContain(String(MIN_NODE_MAJOR));
+    expect(unsupportedNodeMessage("20.11.0")).toBeNull();
+    expect(unsupportedNodeMessage("24.14.0")).toBeNull();
+    expect(unsupportedNodeMessage(process.versions.node)).toBeNull();
   });
 });

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/kaspi-mcp",
+  "title": "Kaspi.kz",
+  "description": "Kaspi.kz marketplace - seller orders with filters, order details, catalog (Kazakhstan)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/kaspi",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/kaspi"
+  },
+  "version": "1.0.2",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/kaspi-mcp",
+      "version": "1.0.2",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "KASPI_API_KEY",
+          "description": "API token from the Kaspi.kz seller cabinet",
+          "isRequired": true,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

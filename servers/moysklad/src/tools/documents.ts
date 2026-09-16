@@ -191,13 +191,13 @@ export async function handleGetDocument(p: z.infer<typeof getDocumentSchema>): P
 export const tools: ToolDef[] = [
   {
     name: "create_move",
-    description: "Create a stock transfer (move) between two warehouses.",
+    description: "Create a stock transfer (move / перемещение) between two warehouses.",
     schema: createMoveSchema,
     handler: handleCreateMove,
   },
   {
     name: "get_moves",
-    description: "List stock transfer (move) documents.",
+    description: "List stock transfer (move / перемещение) documents between warehouses.",
     schema: getMovesSchema,
     handler: handleGetMoves,
   },
@@ -215,19 +215,19 @@ export const tools: ToolDef[] = [
   },
   {
     name: "create_loss",
-    description: "Create a stock write-off (списание) from a warehouse.",
+    description: "Create a stock write-off (loss / списание) from a warehouse.",
     schema: createLossSchema,
     handler: handleCreateLoss,
   },
   {
     name: "get_losses",
-    description: "List stock write-off (списание) documents.",
+    description: "List stock write-off (loss / списание) documents.",
     schema: getLossesSchema,
     handler: handleGetLosses,
   },
   {
     name: "create_inventory",
-    description: "Create an inventory count (инвентаризация) for a warehouse.",
+    description: "Create an inventory count (инвентаризация) for a warehouse. Positions are optional — it can be filled in later.",
     schema: createInventorySchema,
     handler: handleCreateInventory,
   },
@@ -245,7 +245,7 @@ export const tools: ToolDef[] = [
   },
   {
     name: "get_purchase_orders",
-    description: "List purchase orders (заказы поставщикам).",
+    description: "List purchase orders (заказы поставщикам) with sums in rubles.",
     schema: getPurchaseOrdersSchema,
     handler: handleGetPurchaseOrders,
   },

@@ -1,6 +1,6 @@
 name: mercadopago-mcp
 description: MCP server for MercadoPago — payments, refunds, checkout preferences, merchant orders (Argentina + LATAM, v1.0.0)
-icon: https://raw.githubusercontent.com/theYahia/mcp-servers/main/servers/mercadopago/icon.png
+icon: https://raw.githubusercontent.com/theYahia/WWmcp/main/servers/mercadopago/assets/icon.svg
 startCommand:
   type: stdio
   configSchema:

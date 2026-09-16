@@ -1,0 +1,42 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/tkassa-mcp",
+  "title": "T-Kassa",
+  "description": "T-Kassa (T-Bank) - payments, refunds, saved cards, SBP QR, 54-FZ receipts (Russia)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/tkassa",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/tkassa"
+  },
+  "version": "2.0.1",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/tkassa-mcp",
+      "version": "2.0.1",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "TKASSA_TERMINAL_KEY",
+          "description": "Terminal key from the T-Kassa merchant cabinet",
+          "isRequired": true
+        },
+        {
+          "name": "TKASSA_PASSWORD",
+          "description": "Terminal password used for SHA-256 request signing",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "TINKOFF_INVEST_TOKEN",
+          "description": "T-Invest API token, required only for the portfolio and instrument tools",
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

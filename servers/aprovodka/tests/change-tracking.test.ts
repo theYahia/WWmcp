@@ -70,7 +70,35 @@ describe("poll_changes_since", () => {
     expect(parsed.has_more).toBe(false); // 3 < top 100
   });
 
-  it("has_more=true when count == top (suggests pagination)", async () => {
+  it("has_more=true only when 1C actually has one more row than top", async () => {
+    // Запрашивается top+1 = 6; шестая строка и есть доказательство продолжения,
+    // в rows она не попадает. Ровно top строк — выдача полная, has_more=false.
+    const rows = Array.from({ length: 6 }, (_, i) => ({
+      Ref_Key: `r${i}`,
+      Date: `2026-05-19T${String(i).padStart(2, "0")}:00:00`,
+    }));
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        text: () => Promise.resolve(JSON.stringify({ value: rows })),
+        headers: new Map(),
+      }),
+    );
+
+    const result = await handlePollChangesSince({
+      entity: "Document_Test",
+      since: "2026-05-19T00:00:00",
+      date_field: "Date",
+      top: 5,
+    });
+    const parsed = JSON.parse(result) as { has_more: boolean; count: number; rows: unknown[] };
+    expect(parsed.count).toBe(5);
+    expect(parsed.rows).toHaveLength(5);
+    expect(parsed.has_more).toBe(true);
+  });
+
+  it("has_more=false when 1C returns exactly top rows", async () => {
     const rows = Array.from({ length: 5 }, (_, i) => ({
       Ref_Key: `r${i}`,
       Date: `2026-05-19T${String(i).padStart(2, "0")}:00:00`,
@@ -92,7 +120,7 @@ describe("poll_changes_since", () => {
     });
     const parsed = JSON.parse(result) as { has_more: boolean; count: number };
     expect(parsed.count).toBe(5);
-    expect(parsed.has_more).toBe(true);
+    expect(parsed.has_more).toBe(false);
   });
 
   it("supports custom date_field (e.g. ModificationDate for catalogs)", async () => {

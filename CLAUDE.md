@@ -1,49 +1,68 @@
 # MCP Servers — Claude Code Instructions
 
 ## Проект
-MCP-серверы для российских, СНГ и мировых API. npm org: @theyahia. GitHub: theYahia.
-Стратегия: "Composio для остального мира" — MCP для non-Western API (33 страны).
+MCP-серверы для российских, СНГ и мировых API. npm org: @theyahia. GitHub: theYahia, монорепо `WWmcp` — **публичный**.
+Стратегия: "Composio для остального мира" — MCP для non-Western API.
 
 ## Структура
 ```
-mcp-servers/
-├── packages/core/          @theyahia/mcp-core (shared library)
-├── servers/                12 production-grade серверов (Turborepo workspaces)
-├── pipeline/               100+ серверов в build queue, по категориям:
-│   ├── ai/                 gigachat, yandexgpt, salutespeech, etc.
-│   ├── cis/                международные (50 стран)
-│   ├── comms/              jivosite, mango-office, sms-ru, etc.
-│   ├── crm/                amocrm, elma365, kaiten, megaplan
-│   ├── data/               dadata, 2gis, chestnyznak, etc.
-│   ├── finance/            aprovodka, alfa-bank, atol, kontur, sber
-│   ├── hr/                 hh, huntflow, superjob
-│   ├── logistics/          boxberry, pochta-russia, delovye-linii, etc.
-│   ├── marketing/          appmetrica, mindbox, roistat, sendpulse, etc.
-│   └── payments/           prodamus, sberbank-acquiring, yookassa
-├── skills/                 40 multi-server MCP skills (.git repo)
-├── research/               Deep Research: 33 страны, 1020 API кандидатов
-├── content/                Habr, Telegram, listings
-└── docs/
-    ├── configs/            Примеры конфигов (Claude Desktop, Cursor)
-    ├── use-cases/          Сценарии использования
-    └── planning/           PLAN.md, STRUCTURE.md, IMPLEMENTATION.md, etc.
+WWmcp/
+├── packages/
+│   ├── core/               @theyahia/mcp-core (auth, client, errors, logging, dual transport)
+│   ├── create-mcp/         @theyahia/create-mcp (скаффолдер новых серверов)
+│   └── telemetry/          @theyahia/mcp-telemetry
+├── servers/                46 серверов (Turborepo workspaces) + `_template/` — заготовка, не сервер
+├── scripts/                служебные скрипты монорепо (catalog.mjs, build-mcpb.mjs)
+├── docs/                   ⚠️ публикуется на GitHub Pages (ветка `main`, папка `/docs`)
+│   ├── index.html          витрина каталога
+│   ├── configs/            примеры конфигов (Claude Desktop, Cursor)
+│   ├── use-cases/          сценарии использования
+│   └── discoverability/
+└── .github/workflows/      ci.yml, e2e.yml, release.yml, dependabot-automerge.yml
 ```
 
-## Ключевые файлы
-- `docs/planning/PLAN.md` — единственный актуальный план (обновлять тут)
-- `docs/planning/STRUCTURE.md` — карта проекта и статус серверов
-- `docs/planning/IMPLEMENTATION.md` — детальный план (спринты)
-- `docs/planning/MASTER_INVENTORY.md` — 1020 API кандидатов
-- `docs/planning/BUILD_QUEUE.md` — очередь сборки
-- `IMPLEMENTATION_PLAN.md` — план миграции в монорепу
+Число серверов проверяется командой, а не памятью:
+
+```bash
+ls -1d servers/*/ | grep -v _template | wc -l
+```
+
+Каталогов `pipeline/`, `skills/`, `content/` в монорепо **нет**. Они перечислены в `.gitignore`,
+потому что живут отдельными репозиториями (`theYahia/<name>-mcp`, `theYahia/mcp-skills`) — не считать
+их частью дерева и не искать в них файлы.
+
+⚠️ **`docs/` целиком публикуется на GitHub Pages.** Всё, что туда положено, доступно по публичному
+URL; «спрятать» файл, переложив его в `docs/archive/`, невозможно. Внутренние планы, ресёрч и аудиты
+вынесены за пределы репозитория — в `../_archive-from-public/`.
+
+## Правило подсчёта инструментов
+
+- Считаем то, что возвращает `client.listTools()` у **собранного** сервера, а не то, что нашлось грепом.
+- `server.prompt(...)` — это промпты, в счёт инструментов они **не** входят.
+  Пример: `servers/planfix` — 20 инструментов и 2 промпта отдельно.
+- У серверов, где набор инструментов зависит от окружения, фиксируем число **при настройках по
+  умолчанию** и подписываем это условие рядом с числом:
+  - `servers/aprovodka` — `ONEC_SERVICES` фильтрует, какие группы инструментов регистрируются;
+    `ONEC_WRITE_MODE` (по умолчанию `off`) управляет пишущими;
+  - `servers/retailcrm` — `isReadonly()` (env `RETAILCRM_READONLY`, по умолчанию выключен) отсекает
+    write/destructive инструменты.
+- Источник правды по числам — `scripts/catalog.mjs`. README, `docs/` и этот файл сверяются с ним,
+  а не друг с другом.
+
+## ⚠️ .gitignore — паттерны каталогов только с ведущим слешем
+
+Писать `/skills/`, а не `skills/`. Без ведущего слеша git применяет паттерн **на любой глубине**:
+28.08 правило `skills/` молча проглотило `servers/mango-office/src/skills/index.ts`, и релизный
+конвейер был сломан две недели. То же относится к `/pipeline/`, `/content/`, `/package/`.
 
 ## Правила
-1. **НЕ создавать новые версии планов.** Обновлять docs/planning/PLAN.md in-place.
+1. **Планы, статусы и аудиты — не в публичном репозитории.** Задачи — в Яндекс Трекере, рабочие
+   материалы — в `../_archive-from-public/`. Не заводить в корне `PLAN.md`, `STATUS.md`,
+   `REVIEW-<дата>.md` и т. п.
 2. **НЕ создавать серверы-заготовки.** Допилить существующие до production.
 3. **НЕ конкурировать** с Bitrix24 official MCP и amoCRM (caiborg-ai, 36 tools).
 4. Production серверы в `servers/` — Turborepo workspaces, используют @theyahia/mcp-core.
-5. Pipeline серверы в `pipeline/{category}/{name}-mcp/` — каждый = отдельный git repo.
-6. npm scope: `@theyahia`, исключение: `@metarebalance/dadata-mcp`.
+5. npm scope: `@theyahia`, исключение: `@metarebalance/dadata-mcp`.
 
 ## Стек
 - TypeScript, Node.js >=18

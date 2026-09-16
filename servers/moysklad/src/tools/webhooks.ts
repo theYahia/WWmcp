@@ -92,13 +92,13 @@ export const tools: ToolDef[] = [
   },
   {
     name: "update_webhook",
-    description: "Update a webhook (URL, action, entity type, enabled state).",
+    description: "Update a webhook: callback URL, trigger action, entity type, or enabled state.",
     schema: updateWebhookSchema,
     handler: handleUpdateWebhook,
   },
   {
     name: "delete_webhook",
-    description: "Delete a registered webhook by UUID.",
+    description: "Delete a registered webhook by UUID. The webhook stops firing immediately.",
     schema: deleteWebhookSchema,
     handler: handleDeleteWebhook,
   },

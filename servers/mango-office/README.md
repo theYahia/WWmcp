@@ -5,7 +5,7 @@ MCP-сервер для Mango Office API — звонки, пользовате�
 [![npm](https://img.shields.io/npm/v/@theyahia/mango-office-mcp)](https://www.npmjs.com/package/@theyahia/mango-office-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Часть монорепозитория [WWmcp](https://github.com/theYahia/WWmcp) by [@theYahia](https://github.com/theYahia).
+Часть монорепозитория [WWmcp](https://github.com/theYahia/WWmcp) by [@theYahia](https://github.com/theYahia). · Telegram: [@vhodvai](https://t.me/vhodvai)
 
 ## Установка
 

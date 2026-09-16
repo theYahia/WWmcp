@@ -7,7 +7,10 @@
 
 /** Patterns that attempt to override LLM instructions */
 const INJECTION_PATTERNS = [
-  /\b(ignore|forget|disregard|override)\s+(all\s+)?(previous|prior|above|earlier|system)\s+(instructions?|prompts?|rules?|context|constraints?)/gi,
+  // Артикль/квантор между глаголом и объектом необязателен и не ограничен `all`:
+  // «disregard the above instructions» и «override any prior rules» — та же атака,
+  // а без этой группы они проходили насквозь.
+  /\b(ignore|forget|disregard|override)\s+((all|the|any|these|those)\s+)?(previous|prior|above|earlier|system)\s+(instructions?|prompts?|rules?|context|constraints?)/gi,
   /\b(you\s+are\s+now|act\s+as|pretend\s+to\s+be|switch\s+to|new\s+instructions?:)/gi,
   /\bsystem\s*:\s*you\s+(are|must|should|will)/gi,
   /<\/?system>/gi,

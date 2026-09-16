@@ -1,0 +1,32 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/mts-exolve-mcp",
+  "title": "MTS Exolve",
+  "description": "MTS Exolve - SMS and Viber, outbound calls, call status, recordings, numbers (Russia)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/mts-exolve",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/mts-exolve"
+  },
+  "version": "3.0.1",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/mts-exolve-mcp",
+      "version": "3.0.1",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "MTS_EXOLVE_TOKEN",
+          "description": "API token from the MTS Exolve dashboard (exolve.ru)",
+          "isRequired": true,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="Cloud payment">
+  <title>Cloud payment</title>
+  <rect x="8" y="8" width="240" height="240" rx="52" fill="#2F8F73" fill-opacity="0.14"/>
+  <g fill="none" stroke="#2F8F73" stroke-width="15" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M70 190 A44 44 0 0 1 74 102 A56 56 0 0 1 184 96 A46 46 0 0 1 188 190 Z"/>
+    <circle cx="129" cy="144" r="26"/>
+  </g>
+</svg>

@@ -12,24 +12,20 @@ Thumbs.db
 
 # Build artifacts that shouldn't be checked in
 *.tgz
-package/
-
-# Local research raw data — keep templates/synthesis, exclude large dumps
-research/_raw_data/
 
 # Local check / audit dirs
 .check/
 
 # Pipeline subrepos still have their own .git histories — exclude entirely.
 # Each pipeline server lives in its own GitHub repo (theYahia/<name>-mcp).
-pipeline/
+/pipeline/
 
 # Skills and content live in separate repos (theYahia/mcp-skills, etc.)
-skills/
-content/
+/skills/
+/content/
 
 # Local artifact pkg dir
-package/
+/package/
 
 # MCPB bundles — сборочный артефакт, пересобирается scripts/build-mcpb.mjs
 mcpb/*.mcpb

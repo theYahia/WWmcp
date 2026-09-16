@@ -103,3 +103,7 @@ pnpm start:http     # HTTP-сервер (порт из HTTP_PORT, по умол�
 ## Лицензия
 
 MIT
+
+---
+
+Часть монорепозитория [WWmcp](https://github.com/theYahia/WWmcp) · Telegram: [@vhodvai](https://t.me/vhodvai)

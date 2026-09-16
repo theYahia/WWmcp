@@ -1,53 +1,110 @@
 # Changelog
 
-All notable changes to this project are documented here. The format is based on
-[Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres
-to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+Все значимые изменения `@theyahia/moysklad-mcp` документируются здесь.
+Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.1.0/),
+проект следует [семантическому версионированию](https://semver.org/lang/ru/).
 
-## [3.1.0]
+Даты — даты публикации в npm.
+
+## [3.1.0] — 2026-06-23
+
+Версия 3.1.0 была выпущена в npm из отдельного репозитория `theYahia/moysklad-mcp`.
+Этот монорепозиторий догнал её: сервер здесь тоже 60 инструментов, собранных на
+`@theyahia/mcp-core`.
 
 ### Fixed
 
-- **`create_product` with a sale price no longer fails.** Previously an empty
-  `priceType.href` was sent; MoySklad requires a valid price type. The server now
-  attaches the account's default price type (from `list_price_types`), or a
-  `price_type_href` you pass. The same fix applies to `update_prices` and
-  `create_service`.
-- **Correct retry backoff after `429`.** The client now reads MoySklad's
-  `X-Lognex-Retry-After` (milliseconds) header, falling back to `Retry-After`
-  then exponential backoff.
-- **Single source of truth for the version.** The server version is read from
-  `package.json` instead of a hardcoded string that had drifted out of sync.
-- **Claude skills corrected.** `warehouse-management` no longer claims prices are
-  in kopecks (the server returns rubles), references `create_customer_order`
-  (not a non-existent `create_order`), and drops the wrong `allowed-tools`.
-  `daily-report` uses `moment_from`/`moment_to`; `find-product` no longer
-  promises stock that `search_products` doesn't return.
+- **`create_product` с ценой продажи больше не падает.** Раньше отправлялся пустой
+  `priceType.href`, а МойСклад требует валидный тип цены. Сервер подставляет тип цены
+  по умолчанию из аккаунта (через `list_price_types`) либо переданный `price_type_href`.
+  То же исправление в `update_prices` и `create_service`.
+- **Ошибки МойСклада доходят до модели целиком.** Тело ответа (`errors[]`: код,
+  сообщение, параметр) разбирается в одну строку и подставляется в текст ошибки —
+  раньше на месте «не заполнено обязательное поле organization» модель видела
+  «HTTP 400: Bad Request».
+- **Исправлены скиллы Claude.** `warehouse-management` больше не утверждает, что цены в
+  копейках (сервер отдаёт рубли), ссылается на `create_customer_order` (а не на
+  несуществующий `create_order`) и не содержит неверный `allowed-tools`. `daily-report`
+  использует `moment_from`/`moment_to`; `find-product` не обещает остатки, которых
+  `search_products` не возвращает. Со скиллов `stock-move`, `inventory-count` и
+  `warehouse-management` сняты предупреждения «требует 3.1.0 из npm» — инструменты,
+  на которые они ссылаются, теперь есть в этой сборке.
 
 ### Added
 
-- **39 new tools (21 → 60)**: stock moves, inventory, enter/loss, purchase
-  orders, sales/purchase returns, invoices, bank/cash payments, unified
-  `search_assortment`, price types, variants/bundles/services, dashboard /
-  turnover / money reports, audit log, webhook update/delete, entity metadata,
-  reference lists, and generic `get_documents`/`get_document` fallbacks.
-- **MoySklad error messages are parsed** from the API `errors[]` structure
-  (code, message, parameter) instead of dumped as raw text.
-- **Request-weight-aware, conservative rate limiting** with a parallel-request
-  cap, configurable via `MOYSKLAD_RATE_BUCKET` and `MOYSKLAD_MAX_CONCURRENT`.
-  Stock reports are charged their real weight (5 units).
-- **`User-Agent`** header for self-identification.
-- Optional `raw` flag on detail-get tools to return the full MoySklad object.
-- Dev tooling: ESLint, Prettier, Husky + lint-staged, Vitest coverage
-  (95% line coverage), and a CI matrix (Node 18 build/smoke, 20/22 full).
+- **50 новых инструментов (10 → 60)**: перемещения, инвентаризация, оприходование и
+  списание, заказы поставщикам, возвраты покупателя и поставщику, счета, банковские и
+  кассовые платежи, отгрузки, единый `search_assortment`, типы цен,
+  модификации/комплекты/услуги, отчёты «показатели»/«обороты»/«деньги»/«продажи»,
+  журнал аудита, вебхуки, метаданные сущностей, справочники организаций, складов,
+  сотрудников, валют и товарных групп, а также универсальные
+  `get_documents`/`get_document` для типов документов без отдельного инструмента.
+- **Rate limiting с учётом веса запроса**: отчёты по остаткам тарифицируются своим
+  реальным весом (5 единиц из бюджета 45 запросов / 3 с), а не одним.
+- **Единый источник версии.** Версия сервера читается из `package.json` вместо
+  захардкоженной строки, которая разошлась с реальной.
+- Необязательный флаг `raw` у `get_product` и `get_counterparty` — возвращает полный
+  объект МойСклада.
+- Проверка `TOOL_COUNT` на старте: объявленное число сверяется с фактически
+  зарегистрированным, иначе сервер не поднимается.
 
 ### Changed
 
-- **Consistent response formatting** across all tools (several previously
-  returned raw JSON).
-- HTTP transport CORS is now **opt-in** via `MOYSKLAD_HTTP_CORS_ORIGIN` instead
-  of a wildcard default.
-- Filter values are validated to prevent filter-grammar injection via `;`.
-- `vitest` moved from `dependencies` to `devDependencies`.
+- **Единый формат ответов** во всех инструментах (некоторые раньше отдавали сырой JSON).
+- Значения фильтров валидируются, чтобы исключить инъекцию в грамматику фильтров через `;`.
+- Клиент собран на `BaseHttpClient` + `TokenBucketLimiter` из `@theyahia/mcp-core`
+  вместо собственного HTTP-слоя отдельного репозитория. Отсюда отличия от сборки
+  3.1.0 из npm: backoff после `429` экспоненциальный (заголовок
+  `X-Lognex-Retry-After` не читается), переменных `MOYSKLAD_RATE_BUCKET`,
+  `MOYSKLAD_MAX_CONCURRENT` и `MOYSKLAD_HTTP_CORS_ORIGIN` нет — CORS у HTTP-транспорта
+  по умолчанию запрещён ядром целиком.
 
-All 21 original tool names and signatures are unchanged (backward compatible).
+Все 10 имён инструментов версии 2.1.0 и их сигнатуры не изменились (обратная
+совместимость).
+
+## [2.1.0] — 2026-05-03
+
+Первая публикация из монорепозитория WWmcp.
+
+### Changed
+
+- Сервер собран на `@theyahia/mcp-core`: `BaseHttpClient`, `runServer`
+  (stdio + Streamable HTTP), `withErrorHandling`, `createLogger`.
+
+## [3.0.1] — 2026-04-01
+
+### Changed
+
+- Переписаны `description` и `keywords` пакета под поиск в npm.
+
+## [3.0.0] — 2026-04-01
+
+### Added
+
+- Расширение до 21 инструмента — полное покрытие API МойСклада.
+
+## [2.0.1] — 2026-04-01
+
+Опубликовано 2026-04-01. По описанию пакета в npm — 20 инструментов: товары, остатки,
+заказы, контрагенты, отгрузки.
+
+## [2.0.0] — 2026-03-31
+
+### Added
+
+- Production-grade релиз сервера.
+- Скиллы Claude Code.
+
+## [1.0.1] — 2026-03-31
+
+Опубликовано 2026-03-31 — изменения не задокументированы.
+
+## [1.0.0] — 2026-03-31
+
+### Added
+
+- Первый релиз: товары, остатки, заказы, контрагенты.
+
+## [0.0.1] — 2026-03-30
+
+Первая публикация в npm.

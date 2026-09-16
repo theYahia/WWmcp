@@ -41,10 +41,7 @@ export async function handleApproveWrite(
       next_step:
         "Re-run the exact same tool call with identical arguments — it will execute once. " +
         "Any change to the arguments produces a different op_hash and needs a new approval.",
-    },
-    null,
-    2,
-  );
+    });
 }
 
 // ──────────────────────────────────────────────────────────────
@@ -74,5 +71,5 @@ export async function handleRollbackWrite(
   appendAudit({ event: "rollback_attempt", token: rb.token, inverse: rb.inverse });
   const result = await oneCRawWrite(rb.inverse.method, rb.inverse.path, rb.inverse.body);
   appendAudit({ event: "rollback_executed", token: rb.token });
-  return JSON.stringify({ rolled_back: rb.describes, result: result ?? null }, null, 2);
+  return JSON.stringify({ rolled_back: rb.describes, result: result ?? null });
 }

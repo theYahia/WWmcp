@@ -1,64 +1,89 @@
 # @theyahia/megaplan-mcp
 
-MCP server for **Megaplan** project management. Tasks, deals, projects,
-employees, clients, and comments via Megaplan API v3.
+> MCP server for **Megaplan** (Мегаплан) project management — tasks, deals, projects, employees, deal pipelines, CRM clients, comments via API v3.
+> 18 tools + 2 MCP prompts. Token OR Password-grant auth. Stdio + Streamable HTTP transports.
 
-> **v4.0 is a breaking release** (and the first npm release of this overhaul —
-> it supersedes the older 8-tool `3.0.0`). Request/response shapes changed to
-> match the real v3 API, and `--http` now requires an auth token. See
-> [CHANGELOG.md](./CHANGELOG.md) and [Migrating from older versions](#migrating-from-older-versions).
+[![npm](https://img.shields.io/npm/v/@theyahia/megaplan-mcp)](https://www.npmjs.com/package/@theyahia/megaplan-mcp)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Tools (18)
+---
+
+### ⚠️ Migrating from v3.x and earlier
+
+4.0.0 fixes a series of API v3 correctness bugs — the request shapes sent by earlier releases did not
+match the real Megaplan v3 API — and expands the tool surface from 8 to 18. It is **breaking**:
+
+- **List filtering & pagination rewritten.** v3 list endpoints take a nested `*Filter` JSON object and
+  a `pageAfter` cursor, not `filter[field]=value` query params or `offset`. `filter_status` now takes
+  status **code(s)** (e.g. `["filter_any"]`, account-specific), and `offset` is replaced by
+  `page_after` (a cursor id, returned as `nextPageAfter`).
+- **Comments fixed.** The endpoint is the plural `/{entity}/{id}/comments`, and `create_comment`'s
+  text field is `content` (was `text`).
+- **`create_task` deadline** is sent as a v3 `DateTime` object, not a bare string.
+- **`create_deal`** sends `program` as a `Program` ref (was `DealProgram`), money as a `Money` object
+  on the `price` field (was a bare number on `cost`), and `contact` as
+  `ContractorHuman` / `ContractorCompany` (was `Contractor`) — see the new `contact_type` param.
+- **Tool output is a compact summary** by default; pass `raw: true` for the raw API JSON.
+- `MEGAPLAN_DOMAIN` is validated (bare host only) and a bare subdomain is expanded to
+  `<sub>.megaplan.ru`.
+
+---
+
+## Tools (18) + Prompts (2)
+
+### Tasks
 
 | Tool | Description |
-|------|------------|
-| `get_tasks` | List tasks; filter by status code(s), responsible, search |
-| `get_task` | Get one task by ID |
-| `create_task` | Create a task (name, description, responsible, deadline) |
-| `update_task` | Update a task (name, description, responsible, deadline, status) |
-| `get_deals` | List deals; filter by status code(s), responsible, search |
-| `get_deal` | Get one deal by ID |
-| `create_deal` | Create a deal (requires a program/pipeline ID) |
-| `update_deal` | Update a deal (name, responsible, amount, description, status) |
-| `get_projects` | List projects; filter by status code(s), search |
-| `get_project` | Get one project by ID |
-| `get_employees` | List employees; search + department filter |
-| `get_deal_programs` | List deal programs (pipelines) — find the `program_id` for `create_deal` |
-| `get_deal_program` | Get one deal program by ID |
-| `list_clients` | List clients (contractors): people (`human`) or orgs (`company`) |
-| `get_client` | Get one client by type + ID |
-| `get_current_user` | Authenticated user's employee record (**experimental**) |
-| `get_comments` | List comments on a task/deal/project |
-| `create_comment` | Add a comment to a task/deal/project |
+|------|-------------|
+| `get_tasks` | List tasks, filtered by status code(s), responsible user, free-text search. |
+| `get_task` | Get one task by ID with full details. |
+| `create_task` | Create a task (name, description, responsible, deadline, parent task/project). |
+| `update_task` | Update an existing task (name, description, responsible, deadline, status). |
 
-All list/get tools return a **compact summary** by default; pass `raw: true` for
-the unmodified API JSON. Lists are cursor-paginated: pass the returned
-`nextPageAfter` as `page_after` to get the next page.
+### Deals & pipelines
 
-## Skills (Prompts)
+| Tool | Description |
+|------|-------------|
+| `get_deals` | List deals, filtered by status code(s), responsible user, free-text search. |
+| `get_deal` | Get one deal by ID with full details. |
+| `create_deal` | Create a deal. Requires `program_id` — discover it via `get_deal_programs`. |
+| `update_deal` | Update an existing deal (name, responsible, amount, description, status). |
+| `get_deal_programs` | List deal programs (pipelines) — the only way to find a `program_id`. |
+| `get_deal_program` | Get one deal program by ID. |
 
-| Skill | Description |
-|-------|------------|
-| `my-tasks-today` | "Мои задачи на сегодня" — your tasks (scoped via `get_current_user`) |
-| `create-deal-wizard` | "Создай сделку" — guided deal creation (lists pipelines first) |
+### Projects, people & clients
 
-## Setup
+| Tool | Description |
+|------|-------------|
+| `get_projects` | List projects, filtered by status code(s) and search. |
+| `get_project` | Get one project by ID. |
+| `get_employees` | List employees with search and department filter. |
+| `get_current_user` | The authenticated user's employee record (experimental endpoint). |
+| `list_clients` | List CRM contractors: people (`human`) or organizations (`company`). |
+| `get_client` | Get one client by type and ID. |
 
-### Option A: Access Token
+### Comments
 
-1. In Megaplan, go to **Settings → Integration → API**.
-2. Generate an access token, and set it as `MEGAPLAN_TOKEN`.
+| Tool | Description |
+|------|-------------|
+| `get_comments` | List comments on a task / deal / project. |
+| `create_comment` | Add a comment to a task / deal / project. |
 
-### Option B: Login + Password
+### MCP Prompts
 
-Set `MEGAPLAN_LOGIN` (email) + `MEGAPLAN_PASSWORD`. The server exchanges them for
-an access token (cached in memory, re-authenticated on expiry).
+| Prompt | Description |
+|--------|-------------|
+| `my-tasks-today` | "Мои задачи на сегодня" — resolves your employee id via `get_current_user`, then lists your active tasks by urgency. |
+| `create-deal-wizard` | "Создай сделку" — lists pipelines via `get_deal_programs`, then walks through `create_deal`. |
 
-`MEGAPLAN_DOMAIN` is your account host. A bare subdomain like `yourcompany` is
-expanded to `yourcompany.megaplan.ru`; a full host (`crm.example.com`) is used
-as-is.
+Every list tool returns a compact `{ total, count, items, nextPageAfter }` summary; pass `raw: true`
+for the untouched API JSON.
 
-## Usage with Claude Desktop
+---
+
+## Quick Start
+
+### Claude Desktop — token auth
 
 ```json
 {
@@ -68,101 +93,143 @@ as-is.
       "args": ["-y", "@theyahia/megaplan-mcp"],
       "env": {
         "MEGAPLAN_DOMAIN": "yourcompany",
-        "MEGAPLAN_TOKEN": "your-access-token"
+        "MEGAPLAN_TOKEN": "your_access_token"
       }
     }
   }
 }
 ```
 
-Or with login/password — replace `MEGAPLAN_TOKEN` with `MEGAPLAN_LOGIN` +
-`MEGAPLAN_PASSWORD`.
+### Claude Desktop — login/password auth
 
-## Finding IDs
-
-Several tools take IDs. Here's how to discover them via the server itself:
-
-- **`responsible_id`, `filter_responsible_id`** → `get_employees` (each item has an `id`).
-- **`filter_department_id`** → IDs appear on employees' `department` (or your Megaplan UI).
-- **`program_id`** (required by `create_deal`) → `get_deal_programs`.
-- **`contact_id`** (for `create_deal`) → `list_clients` with `type: "human"` or `"company"`; pass the matching `contact_type`.
-- **status codes** (`filter_status`) are account-specific enum codes (e.g. `filter_any`), not display names. Find them in your Megaplan UI / account API schema.
-
-## Streamable HTTP transport
-
-For remote/cloud deployments, run with `--http`. **Auth is mandatory** — the
-server holds your Megaplan credentials, so it refuses to start without
-`MCP_HTTP_TOKEN` and binds to loopback by default.
-
-```bash
-MEGAPLAN_DOMAIN=yourcompany \
-MEGAPLAN_TOKEN=xxx \
-MCP_HTTP_TOKEN=$(openssl rand -hex 32) \
-npx @theyahia/megaplan-mcp --http
-# → http://127.0.0.1:3000/mcp  (send: Authorization: Bearer $MCP_HTTP_TOKEN)
-# Health: http://127.0.0.1:3000/health
+```json
+{
+  "mcpServers": {
+    "megaplan": {
+      "command": "npx",
+      "args": ["-y", "@theyahia/megaplan-mcp"],
+      "env": {
+        "MEGAPLAN_DOMAIN": "yourcompany",
+        "MEGAPLAN_LOGIN": "user@example.com",
+        "MEGAPLAN_PASSWORD": "your_password"
+      }
+    }
+  }
+}
 ```
 
-To expose beyond loopback, set `HOST=0.0.0.0` **and** add the public host:port to
-`MCP_HTTP_ALLOWED_HOSTS` (DNS-rebinding protection is on). Only do this behind
-your own network controls.
+### Cursor / Windsurf
+
+Same configuration block under `mcpServers` in the IDE's MCP settings.
+
+### VS Code (Copilot)
+
+Same shape under `.vscode/mcp.json` `servers` key.
+
+### Streamable HTTP transport
+
+```bash
+HTTP_PORT=3000 \
+MEGAPLAN_DOMAIN=yourcompany \
+MEGAPLAN_TOKEN=your_token \
+npx @theyahia/megaplan-mcp
+# or: npx @theyahia/megaplan-mcp --http
+```
+
+Endpoints:
+- `POST /mcp` — MCP requests
+- `GET /mcp` — SSE event stream (per session)
+- `DELETE /mcp` — session termination
+- `GET /health` — `{ status: "ok", version, tools, uptime, memory_mb }`
+
+---
 
 ## Environment Variables
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `MEGAPLAN_DOMAIN` | Yes | Account host (`yourcompany` → `yourcompany.megaplan.ru`, or a full host) |
-| `MEGAPLAN_TOKEN` | One of | Bearer access token |
-| `MEGAPLAN_LOGIN` | One of | Login email (if no token) |
-| `MEGAPLAN_PASSWORD` | One of | Password (if no token) |
-| `MEGAPLAN_DEBUG` | No | `1` to log full upstream error bodies |
-| `PORT` | No | HTTP port for `--http` mode (default: 3000) |
-| `MCP_HTTP_TOKEN` | `--http` | Bearer token required to call `/mcp` (server refuses to start without it) |
-| `HOST` | No | Bind address for `--http` (default `127.0.0.1`) |
-| `MCP_HTTP_ALLOWED_HOSTS` | No | Comma-separated allowed `Host` values (default loopback:port) |
-| `MCP_HTTP_BODY_LIMIT` | No | Max request body size (default `1mb`) |
-| `MCP_HTTP_MAX_SESSIONS` | No | Max concurrent sessions (default `100`) |
-| `MCP_HTTP_SESSION_TTL_MS` | No | Idle session eviction TTL (default 30 min) |
+| `MEGAPLAN_DOMAIN` | yes | Your Megaplan subdomain (e.g. `mycompany` for `mycompany.megaplan.ru`). |
+| `MEGAPLAN_TOKEN` | one of | Bearer access token (preferred — no auth roundtrip). |
+| `MEGAPLAN_LOGIN` | one of | Login email (used with `MEGAPLAN_PASSWORD` if no token). |
+| `MEGAPLAN_PASSWORD` | one of | Password (used with `MEGAPLAN_LOGIN` if no token). |
+| `HTTP_PORT` | no | If set, server runs in HTTP mode on this port. |
 
-## Migrating from older versions
+---
 
-Applies to the previously published 8-tool builds (`1.x`–`3.0.0`):
+## Authentication
 
-- `get_*` list tools: `offset` → `page_after` (cursor); `filter_status` now takes
-  status **code(s)**, not names like `active`.
-- Output is a compact summary by default — pass `raw: true` for the old raw JSON.
-- `create_comment`: the text field is now `content` (was `text`).
-- `--http`: set `MCP_HTTP_TOKEN`; the default bind is now `127.0.0.1`.
+Two options:
 
-## Verification status
+**Option A — Token (recommended):**
+1. In Megaplan, go to **Settings → Integration → API**.
+2. Generate an access token.
+3. Use it as `MEGAPLAN_TOKEN`.
 
-Most behaviour is confirmed against the official v3 RAML and real v3 client
-libraries. A few items are best-effort from docs and marked `TODO(live-verify)`
-in the source (and `experimental` here), pending a test against a live account:
-auth body encoding, the free-text search param name, the `get_current_user`
-endpoint, and the task/deal status-change field shape. Errors are surfaced
-clearly (set `MEGAPLAN_DEBUG=1` for full detail) so any mismatch is diagnosable.
+**Option B — Password grant:**
+1. Use your Megaplan login email + password.
+2. The server fetches an access token via `/api/v3/auth/access_token` on the first request and caches it in memory. On HTTP 401 the cache is cleared and re-auth happens automatically.
 
-## Referral
+---
 
-Get **20-50% recurring** commission by referring Megaplan:
+## Demo Prompts
 
-- [Megaplan Partner Program](https://megaplan.ru/partners/)
-- Sign up as a partner, get your referral link.
-- Every client you bring = recurring revenue share.
+Try these in your MCP client:
+
+> "What active tasks do I have? Sort by urgency."
+
+> "Create a task 'Review Q2 budget' assigned to user 42, deadline next Friday."
+
+> "List the deal pipelines, then show me the deals in the Sales one."
+
+> "Add a comment to deal 1234: 'Met with the client today, going to send proposal Monday.'"
+
+> "List all employees in the 'Marketing' department."
+
+> "Create a deal for 250,000 RUB in pipeline 1 — name 'Acme Corp annual contract'."
+
+> Use the `my-tasks-today` MCP prompt to get a daily standup view.
+
+---
 
 ## Development
 
 ```bash
-npm install
-npm run build        # tsc -> dist/
-npm run typecheck    # tsc --noEmit (src + tests)
-npm run lint         # eslint
-npm test             # vitest
-npm run dev          # stdio mode with tsx
-npm run start:http   # HTTP mode (needs MCP_HTTP_TOKEN)
+pnpm install
+pnpm --filter @theyahia/megaplan-mcp build
+pnpm --filter @theyahia/megaplan-mcp test
+pnpm --filter @theyahia/megaplan-mcp dev   # tsx watch mode
 ```
+
+Project layout:
+
+```
+servers/megaplan/
+├── src/
+│   ├── index.ts          — bin entry, runServer
+│   ├── server.ts         — createServer factory + 18 tools + 2 prompts
+│   ├── client.ts         — BaseHttpClient + MegaplanAuthStrategy (token OR Password grant)
+│   ├── query.ts          — v3 list-query / filter-term / DateTime / Money builders
+│   ├── format.ts         — compact, LLM-friendly output (with a raw escape hatch)
+│   ├── prompts.ts        — MCP prompt definitions
+│   ├── types.ts          — shapes of the formatted output
+│   └── tools/
+│       ├── comments.ts    contractors.ts   deals.ts
+│       ├── employees.ts   me.ts            programs.ts
+│       └── projects.ts    tasks.ts
+└── tests/
+    ├── client.test.ts    — domain guard, v3 query encoding, password grant, error bodies
+    ├── tools.test.ts     — request shapes for all 18 tools + id path-traversal guard
+    ├── format.test.ts    — envelope unwrapping and entity formatting
+    ├── prompts.test.ts   — prompts steer toward the right tools
+    └── server.test.ts    — in-memory MCP client: 18 tools + 2 prompts
+```
+
+---
 
 ## License
 
-MIT
+MIT — see [LICENSE](./LICENSE).
+
+---
+
+Часть монорепозитория [WWmcp](https://github.com/theYahia/WWmcp) · Telegram: [@vhodvai](https://t.me/vhodvai)

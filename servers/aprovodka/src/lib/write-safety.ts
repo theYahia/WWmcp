@@ -6,7 +6,10 @@
  * placed there — no per-tool changes, nothing to forget when a tool is added.
  *
  * Configuration (all opt-in; default = pre-4.0 behaviour, byte-identical):
- *   ONEC_WRITE_MODE      off (default) | preview | approval
+ *   ONEC_WRITE_MODE      off (default) | deny | preview | approval
+ *                        deny     — the 12 write tools are not registered at
+ *                                   all: the model never sees them. Read-only
+ *                                   engagements (сверка чужой базы) run here.
  *                        preview  — writes NEVER execute; every write tool
  *                                   returns a dry-run report instead.
  *                        approval — first call returns the dry-run report +
@@ -28,7 +31,7 @@
 import { createHash } from "node:crypto";
 import { appendFileSync } from "node:fs";
 
-export type WriteMode = "off" | "preview" | "approval";
+export type WriteMode = "off" | "deny" | "preview" | "approval";
 
 export interface WriteOp {
   method: "POST" | "PATCH" | "DELETE";
@@ -38,7 +41,7 @@ export interface WriteOp {
 
 export function getWriteMode(): WriteMode {
   const raw = (process.env["ONEC_WRITE_MODE"] ?? "off").trim().toLowerCase();
-  return raw === "preview" || raw === "approval" ? raw : "off";
+  return raw === "preview" || raw === "approval" || raw === "deny" ? raw : "off";
 }
 
 function approvalTtlSec(): number {
@@ -131,6 +134,20 @@ export function appendAudit(entry: Record<string, unknown>): void {
   );
 }
 
+/**
+ * Вытеснить старейшую запись, если карта уже упёрлась в потолок.
+ *
+ * Карты этого слоя живут в памяти процесса и растут по числу операций.
+ * Порядок обхода Map — порядок вставки, поэтому первый ключ и есть старейший.
+ *
+ * ponytail: FIFO, а не LRU — счётчик обращений ради ста записей не окупается.
+ */
+function evictOldest<V>(map: Map<string, V>, max: number): void {
+  if (map.size < max) return;
+  const oldest = map.keys().next().value;
+  if (oldest !== undefined) map.delete(oldest);
+}
+
 // ──────────────────────────────────────────────────────────────
 // Approvals — one-shot, hash-bound, TTL'd, in-memory
 // ──────────────────────────────────────────────────────────────
@@ -138,6 +155,19 @@ export function appendAudit(entry: Record<string, unknown>): void {
 const approvals = new Map<string, { expires: number; reason?: string }>();
 
 export function approveOp(hash: string, reason?: string): number {
+  // Одобрение без живого предпросмотра — молчаливый сбой: consumeApproval пропустит
+  // запись, но снятого прежнего состояния уже нет, и выполненная операция останется
+  // без токена отката, хотя оператору предпросмотр обещал «reversible: true».
+  if (!previews.has(hash)) {
+    throw new Error(
+      `Одобрять нечего: предпросмотра операции op_hash=${hash} нет в памяти сервера. ` +
+        `Предпросмотры хранятся в памяти процесса, их не больше ${PREVIEW_MAX} — самые старые ` +
+        "вытесняются, после перезапуска сервера теряются все, а выполненная операция свой " +
+        "предпросмотр забирает. Повторите тот же вызов инструмента: он вернёт свежий " +
+        "предпросмотр с актуальным op_hash — одобряйте его. Одобрить хэш без предпросмотра " +
+        "нельзя: прежнее состояние не снято, и запись выполнится без токена отката.",
+    );
+  }
   const ttl = approvalTtlSec();
   approvals.set(hash, { expires: Date.now() + ttl * 1000, ...(reason ? { reason } : {}) });
   appendAudit({ event: "approved", op_hash: hash, reason: reason ?? null, ttl_sec: ttl });
@@ -232,10 +262,7 @@ function registerRollback(hash: string, op: WriteOp, before?: Record<string, unk
   const inv = inverseOf(op, before);
   if (!inv) return null;
   const rb: Rollback = { token: `rb-${hash}`, ...inv };
-  if (rollbacks.size >= ROLLBACK_MAX) {
-    const oldest = rollbacks.keys().next().value;
-    if (oldest) rollbacks.delete(oldest);
-  }
+  evictOldest(rollbacks, ROLLBACK_MAX);
   rollbacks.set(rb.token, rb);
   appendAudit({
     event: "rollback_token_issued",
@@ -299,6 +326,21 @@ export function isSafetyEnvelope(x: unknown): x is PreviewEnvelope | ExecutedEnv
 /** Previews awaiting approval — keeps the captured pre-write state for the rollback token. */
 const previews = new Map<string, { envelope: PreviewEnvelope; before?: Record<string, unknown> }>();
 
+/**
+ * Потолок карты предпросмотров — как у rollbacks.
+ *
+ * Очистка `previews.delete(hash)` стоит в ветке фактического выполнения записи, а в
+ * режиме `preview` записи не выполняются НИКОГДА — это его смысл. То есть в самом
+ * безопасном режиме карта росла линейно по числу операций, и длинная сессия сверки
+ * — ровно такой сценарий.
+ */
+export const PREVIEW_MAX = 100;
+
+/** Сколько предпросмотров держится в памяти (нужно тестам, чтобы проверить потолок). */
+export function previewCount(): number {
+  return previews.size;
+}
+
 type ReadFn = (path: string) => Promise<unknown>;
 
 /** Read the current record so a PATCH preview can show from → to. */
@@ -331,21 +373,31 @@ async function buildPreview(
     const body = (op.body ?? {}) as Record<string, unknown>;
     const { current, error } = await readCurrent(p, read);
     readError = error;
-    if (current) {
-      before = {};
-      const fields: Record<string, unknown> = {};
-      for (const [k, to] of Object.entries(body)) {
-        before[k] = current[k] ?? null;
-        fields[k] = { from: current[k] ?? null, to };
-      }
-      changes = { kind: "update_fields", fields };
-    } else {
-      changes = {
-        kind: "update_fields",
-        fields: op.body,
-        warning: `current values unavailable (${error}) — shown values are the new ones only`,
-      };
+    // Прежнее значение либо прочитано, либо неизвестно — третьего («считаем, что там
+    // был null») быть не должно. Раньше отсутствующее поле превращалось в null: предпросмотр
+    // показывал клиенту «было null», а токен отката этим же null затирал реальное значение.
+    // Для константы поле ровно одно (Value), то есть откат стирал бы всю константу.
+    const unread = current
+      ? Object.keys(body).filter((k) => !(k in current))
+      : Object.keys(body);
+    if (unread.length > 0) {
+      throw new Error(
+        `Гейт записи (ONEC_WRITE_MODE=${mode}) отклонил операцию: прежнее значение ` +
+          `${unread.join(", ")} у ${p.entity} прочитать не удалось` +
+          (error ? ` (${error})` : " — поля нет в ответе 1С") +
+          ". Без него предпросмотр «было → стало» и откат невозможны, а записывать null " +
+          "вместо неизвестного прежнего значения недопустимо. Проверьте права роли 1С на " +
+          "чтение этой сущности либо выполните изменение в режиме ONEC_WRITE_MODE=off и " +
+          "откатывайте вручную.",
+      );
     }
+    before = {};
+    const fields: Record<string, unknown> = {};
+    for (const [k, to] of Object.entries(body)) {
+      before[k] = current![k];
+      fields[k] = { from: current![k], to };
+    }
+    changes = { kind: "update_fields", fields };
   } else if (op.method === "DELETE") {
     changes = { kind: "physical_delete", target: `${p?.entity ?? op.path} ${p?.refKey ?? ""}`.trim() };
   } else if (p?.action === "Post") {
@@ -398,8 +450,20 @@ export async function guardWrite(
   const mode = getWriteMode();
   const hash = opHash(op);
 
+  // deny: write tools are not registered, so this is unreachable through the
+  // MCP surface — kept as the second rubbish barrier for any internal caller.
+  if (mode === "deny") {
+    appendAudit({ event: "denied", mode, method: op.method, path: op.path });
+    throw new Error(
+      "ONEC_WRITE_MODE=deny — сервер запущен в режиме только чтения, запись в 1С недоступна.",
+    );
+  }
+
   if (mode !== "off" && !consumeApproval(hash)) {
     const preview = await buildPreview(op, hash, mode, read);
+    // Вытеснение не трогает карту approvals, поэтому проверка срока одобрения
+    // (consumeApproval) остаётся ровно такой же.
+    evictOldest(previews, PREVIEW_MAX);
     previews.set(hash, preview);
     appendAudit({
       event: "preview",

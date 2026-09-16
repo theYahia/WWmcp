@@ -1,10 +1,11 @@
-# @theyahia/bkash-mcp
+# bKash MCP server (Bangladesh) — 8 tools to connect Tokenized Checkout to Claude or any AI agent
 
-> MCP server for **bKash** Tokenized Checkout (Bangladesh) — Bangladesh's #1 mobile financial service (70M+ users).
-> 8 tools. Custom 3-step token grant flow. Stdio + Streamable HTTP transports.
+If you were looking for how to connect bKash to Claude or another AI agent — this server gives the agent Tokenized Checkout end to end: create a payment, execute it once the customer confirms in the bKash app, check a status, refund in full or in part, look a transaction up by trxID, and set up recurring agreements. You ask "the customer says they paid invoice 4471 — did it go through?" and get the status and the amount without opening the merchant panel. The 3-step token grant and the token refresh sit inside the server; you supply the app key, app secret and merchant credentials once.
 
 [![npm](https://img.shields.io/npm/v/@theyahia/bkash-mcp)](https://www.npmjs.com/package/@theyahia/bkash-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+![Демонстрация: вопрос «клиент говорит что оплатил счёт — прошёл ли платёж» — агент вызывает query_payment и отвечает статусом и суммой платежа bKash](./assets/demo.svg)
 
 ---
 
@@ -175,3 +176,7 @@ servers/bkash/
 ## License
 
 MIT — see [LICENSE](./LICENSE).
+
+---
+
+Часть монорепозитория [WWmcp](https://github.com/theYahia/WWmcp) · Telegram: [@vhodvai](https://t.me/vhodvai)

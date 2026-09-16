@@ -37,19 +37,27 @@ const SENSITIVE_KEYS = new Set([
   "private_key",
 ]);
 
-/** Recursively mask sensitive fields in log data */
+/**
+ * Recursively mask sensitive fields in log data.
+ *
+ * Arrays are descended into as well: skipping them (as this did) meant a single
+ * `[{ access_token: "..." }]` in a log payload wrote the token to stderr verbatim,
+ * which is exactly the case the mask exists to prevent.
+ */
+function maskValue(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(maskValue);
+  if (typeof value === "object" && value !== null) {
+    return maskSensitive(value as Record<string, unknown>);
+  }
+  return value;
+}
+
 function maskSensitive(
   obj: Record<string, unknown>,
 ): Record<string, unknown> {
   const result: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(obj)) {
-    if (SENSITIVE_KEYS.has(key.toLowerCase())) {
-      result[key] = "***";
-    } else if (typeof value === "object" && value !== null && !Array.isArray(value)) {
-      result[key] = maskSensitive(value as Record<string, unknown>);
-    } else {
-      result[key] = value;
-    }
+    result[key] = SENSITIVE_KEYS.has(key.toLowerCase()) ? "***" : maskValue(value);
   }
   return result;
 }

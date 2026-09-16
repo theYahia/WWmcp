@@ -5,6 +5,7 @@ import {
 } from "../client.js";
 import { refKeySchema, normaliseEntity } from "../validation.js";
 import { isSafetyEnvelope } from "../lib/write-safety.js";
+import { buildQuery, pageJson } from "../lib/paging.js";
 
 export const getDocumentsSchema = z.object({
   document_type: z.string().describe("Тип документа — с префиксом Document_ или без него (Document_РеализацияТоваровУслуг / РеализацияТоваровУслуг)"),
@@ -16,18 +17,10 @@ export const getDocumentsSchema = z.object({
 });
 
 export async function handleGetDocuments(params: z.infer<typeof getDocumentsSchema>): Promise<string> {
-  const query: Record<string, string> = {
-    $format: "json",
-    $top: String(params.top),
-  };
-  if (params.skip) query["$skip"] = String(params.skip);
-  if (params.filter) query["$filter"] = params.filter;
-  if (params.select) query["$select"] = params.select;
-  if (params.orderby) query["$orderby"] = params.orderby;
-
+  const query = buildQuery(params);
   const path = buildODataPath(normaliseEntity("Document_", params.document_type), query);
   const result = await oneCGet(path);
-  return JSON.stringify(result, null, 2);
+  return pageJson(result, params.top, params.skip);
 }
 
 export const createDocumentSchema = z.object({
@@ -38,7 +31,7 @@ export const createDocumentSchema = z.object({
 export async function handleCreateDocument(params: z.infer<typeof createDocumentSchema>): Promise<string> {
   const path = buildODataPath(normaliseEntity("Document_", params.document_type), { $format: "json" });
   const result = await oneCPost(path, params.data);
-  return JSON.stringify(result, null, 2);
+  return JSON.stringify(result);
 }
 
 export const updateDocumentSchema = z.object({
@@ -50,7 +43,7 @@ export const updateDocumentSchema = z.object({
 export async function handleUpdateDocument(params: z.infer<typeof updateDocumentSchema>): Promise<string> {
   const path = buildKeyedPath(normaliseEntity("Document_", params.document_type), params.ref_key, undefined, { $format: "json" });
   const result = await oneCPatch(path, params.data);
-  return JSON.stringify(result, null, 2);
+  return JSON.stringify(result);
 }
 
 // ──────────────────────────────────────────────────────────────
@@ -72,7 +65,7 @@ export async function handlePostDocument(params: z.infer<typeof postDocumentSche
     PostingModeOperational: String(params.operational),
   });
   const result = await oneCPost(path, {});
-  return JSON.stringify(result, null, 2);
+  return JSON.stringify(result);
 }
 
 // ──────────────────────────────────────────────────────────────
@@ -87,7 +80,7 @@ export const unpostDocumentSchema = z.object({
 export async function handleUnpostDocument(params: z.infer<typeof unpostDocumentSchema>): Promise<string> {
   const path = buildKeyedPath(normaliseEntity("Document_", params.document_type), params.ref_key, "Unpost", { $format: "json" });
   const result = await oneCPost(path, {});
-  return JSON.stringify(result, null, 2);
+  return JSON.stringify(result);
 }
 
 // ──────────────────────────────────────────────────────────────
@@ -105,12 +98,9 @@ export async function handleDeleteDocument(params: z.infer<typeof deleteDocument
   // With write-safety active the call returns a preview / executed envelope that
   // already reports the outcome (and that the delete is irreversible) — passing
   // it through beats claiming `deleted: true` after a dry-run.
-  if (isSafetyEnvelope(res)) return JSON.stringify(res, null, 2);
+  if (isSafetyEnvelope(res)) return JSON.stringify(res);
   return JSON.stringify(
-    { deleted: true, document_type: params.document_type, ref_key: params.ref_key },
-    null,
-    2,
-  );
+    { deleted: true, document_type: params.document_type, ref_key: params.ref_key });
 }
 
 // ──────────────────────────────────────────────────────────────
@@ -139,5 +129,5 @@ export async function handleGetDocumentLines(
     $select: params.tabular_section,
   });
   const result = await oneCGet(path);
-  return JSON.stringify(result, null, 2);
+  return JSON.stringify(result);
 }

@@ -28,6 +28,33 @@ export interface RequestOptions {
   timeout?: number;
 }
 
+/**
+ * Appended to every ambiguous failure of a mutating request (timeout, 5xx,
+ * socket error). The request may well have reached the API and been applied —
+ * an automatic repeat would create a duplicate object in the customer's live
+ * database, so the caller is told to check before repeating by hand.
+ */
+const MUTATION_NOT_RETRIED =
+  "Повтор не выполнен автоматически, потому что операция изменяет данные. " +
+  "Проверьте в базе, не создан ли объект, прежде чем повторять.";
+
+/** Transport failures where a repeat of an idempotent request is worth trying. */
+const RETRYABLE_NETWORK_CODES = new Set(["ECONNRESET", "ETIMEDOUT", "EAI_AGAIN"]);
+
+/**
+ * Node's fetch reports socket failures as `TypeError: fetch failed` and hides
+ * the real `ECONNRESET`/`EAI_AGAIN` in the `cause` chain, so a plain
+ * `error.code` check never matches.
+ */
+function networkErrorCode(error: unknown): string | undefined {
+  for (let e: unknown = error, depth = 0; e != null && depth < 3; depth++) {
+    const code = (e as { code?: unknown }).code;
+    if (typeof code === "string") return code;
+    e = (e as { cause?: unknown }).cause;
+  }
+  return undefined;
+}
+
 export class ApiError extends Error {
   constructor(
     public readonly status: number,
@@ -98,9 +125,33 @@ export class BaseHttpClient {
       }
       url = `${opts.path}${query}`;
     } else {
+      // Traversal guard, the relative-path half of the SSRF check above. Tool params
+      // are interpolated straight into paths across the fleet (`/orders/${params.uuid}`,
+      // `app/${params.namespace}/...`), and fetch normalises `..` before sending — so a
+      // model-supplied id of `../../admin/x` silently reaches an endpoint no tool
+      // exposes, carrying the server's credentials. No real API path contains `..`.
+      // Checked on the path only, and reported without the query string: some
+      // servers pass credentials inside `path` (getcourse appends `?key=<apiKey>`),
+      // and this message travels to the model via createToolError.
+      const bare = opts.path.split("?")[0]!;
+      if (/(^|\/)\.\.(\/|$)/.test(bare)) {
+        throw new ApiError(
+          0,
+          `Заблокирован путь с переходом вверх по дереву (${bare}): параметры инструмента не должны содержать "..".`,
+        );
+      }
       url = `${this.baseUrl}${opts.path}${query}`;
     }
     const requestTimeout = opts.timeout ?? this.timeout;
+    // Only idempotent methods may be repeated. A timeout or 5xx on POST/PATCH/
+    // DELETE does NOT mean the API skipped the work — a 1C document posting
+    // routinely runs longer than the timeout — so a retry there duplicates the
+    // document (and its ledger movements) in the customer's live database.
+    const idempotent = method === "GET" || method === "HEAD";
+    // В логи уходит путь БЕЗ query-строки: в $filter лежат ИНН, GUID и суммы из
+    // чужой базы, а stderr клиента MCP живёт неопределённо долго. Сущности и
+    // метода хватает, чтобы понять, что именно тормозит.
+    const logPath = opts.path.split("?")[0];
 
     for (let attempt = 1; attempt <= this.maxRetries; attempt++) {
       const controller = new AbortController();
@@ -148,17 +199,16 @@ export class BaseHttpClient {
 
         const errorBody = await response.text();
 
+        const ambiguous = response.status === 429 || response.status >= 500;
+
         // Retryable server errors
-        if (
-          (response.status === 429 || response.status >= 500) &&
-          attempt < this.maxRetries
-        ) {
+        if (ambiguous && idempotent && attempt < this.maxRetries) {
           const delay = Math.min(1000 * 2 ** (attempt - 1), 8000);
           this.logger?.warn("Retryable error, backing off", {
             status: response.status,
             delay,
             attempt,
-            path: opts.path,
+            path: logPath,
           });
           await new Promise((r) => setTimeout(r, delay));
           continue;
@@ -172,7 +222,8 @@ export class BaseHttpClient {
 
         throw new ApiError(
           response.status,
-          `HTTP ${response.status}: ${response.statusText}`,
+          `HTTP ${response.status}: ${response.statusText}` +
+            (ambiguous && !idempotent ? `\n${MUTATION_NOT_RETRIED}` : ""),
           errorBody,
           respHeaders,
         );
@@ -185,17 +236,39 @@ export class BaseHttpClient {
           error instanceof DOMException &&
           error.name === "AbortError"
         ) {
-          if (attempt < this.maxRetries) {
+          if (idempotent && attempt < this.maxRetries) {
             this.logger?.warn("Request timeout, retrying", {
               attempt,
-              path: opts.path,
+              path: logPath,
             });
             continue;
           }
           throw new ApiError(
             0,
-            `Таймаут запроса (${requestTimeout / 1000}с). API не ответил вовремя.`,
+            `Таймаут запроса (${requestTimeout / 1000}с). API не ответил вовремя.` +
+              (idempotent ? "" : `\n${MUTATION_NOT_RETRIED}`),
           );
+        }
+
+        // Socket-level failures — the class retries actually exist for. No
+        // backoff, same as the timeout path above: the connection is already
+        // gone, there is nothing to let cool down.
+        const netCode = networkErrorCode(error);
+        if (netCode && RETRYABLE_NETWORK_CODES.has(netCode)) {
+          if (idempotent && attempt < this.maxRetries) {
+            this.logger?.warn("Network error, retrying", {
+              attempt,
+              code: netCode,
+              path: logPath,
+            });
+            continue;
+          }
+          if (!idempotent) {
+            throw new ApiError(
+              0,
+              `Сбой сети (${netCode}). ${MUTATION_NOT_RETRIED}`,
+            );
+          }
         }
 
         throw error;

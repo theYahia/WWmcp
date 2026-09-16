@@ -1,0 +1,37 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/huntflow-mcp",
+  "title": "Huntflow",
+  "description": "Huntflow ATS - vacancy and applicant search, resumes, stages, sources, divisions (Russia)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/huntflow",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/huntflow"
+  },
+  "version": "1.2.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/huntflow-mcp",
+      "version": "1.2.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "HUNTFLOW_TOKEN",
+          "description": "Access token from Huntflow settings (Settings -> API tokens)",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "HUNTFLOW_REFRESH_TOKEN",
+          "description": "Refresh token for automatic access-token renewal",
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

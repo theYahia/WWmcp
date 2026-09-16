@@ -116,6 +116,9 @@ class AmoCrmAuthStrategy implements AuthStrategy {
           refresh_token: refreshToken,
           redirect_uri: `https://${subdomain}.amocrm.ru`,
         }),
+        // Without an abort signal a hung amoCRM auth endpoint blocks every tool
+        // call indefinitely — this fetch does not go through BaseHttpClient.
+        signal: AbortSignal.timeout(15_000),
       },
     );
 

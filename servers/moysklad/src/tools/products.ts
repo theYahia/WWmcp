@@ -156,25 +156,25 @@ function formatProducts(raw: unknown): string {
 export const tools: ToolDef[] = [
   {
     name: "search_products",
-    description: "Search products in MoySklad by name or article. Prices returned in RUBLES.",
+    description: "Search products in MoySklad by name or article/SKU. Returns a paginated list with sale and buy prices in rubles. Supports offset-based pagination up to 1000 results per page. Use filter_article for exact SKU lookup.",
     schema: searchProductsSchema,
     handler: handleSearchProducts,
   },
   {
     name: "get_product",
-    description: "Get a single product by UUID. Prices returned in RUBLES.",
+    description: "Get a single product by its UUID. Returns name, article, code, description, all sale prices with their price types, buy price, weight, volume and last update timestamp. Prices are in rubles (converted from kopecks internally). Pass raw:true for the untouched MoySklad object.",
     schema: getProductSchema,
     handler: handleGetProduct,
   },
   {
     name: "create_product",
-    description: "Create a new product. Prices in RUBLES (converted to kopecks internally).",
+    description: "Create a new product in MoySklad. Accepts name, article/SKU, description, code, prices in rubles (automatically converted to kopecks for the API), weight in grams, volume in liters, and VAT rate. The sale price is attached to the account's default price type unless price_type_href is given. Returns the created product with its assigned UUID.",
     schema: createProductSchema,
     handler: handleCreateProduct,
   },
   {
     name: "update_prices",
-    description: "Update sale/buy/min prices for a product. Prices in RUBLES.",
+    description: "Update sale, buy, or minimum prices for an existing product by UUID. All prices are specified in rubles and converted to kopecks internally. Preserves the existing price type when updating a sale price, and falls back to the account default when the product has none. Returns the updated product.",
     schema: updatePricesSchema,
     handler: handleUpdatePrices,
   },

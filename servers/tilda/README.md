@@ -1,11 +1,13 @@
-# @theyahia/tilda-mcp
+# MCP-сервер для Tilda API — 7 инструментов для ИИ-агента: проекты, страницы, экспорт
 
-MCP-сервер для Tilda API — проекты, страницы, экспорт. **7 инструментов.** Stdio + HTTP.
+Если вы искали, как подключить сайт на Tilda к Claude или другому ИИ-агенту, — этот сервер отдаёт агенту ваши проекты и страницы через Tilda API: список страниц с датами публикации, полный HTML и CSS любой страницы, экспорт проекта целиком. Спрашиваете «что за страницы в проекте и когда их публиковали» — агент отвечает таблицей, а не ссылкой на документацию. Нужны только публичный и секретный ключи из настроек Tilda.
 
 [![npm](https://img.shields.io/npm/v/@theyahia/tilda-mcp)](https://www.npmjs.com/package/@theyahia/tilda-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Часть серии [Russian API MCP](https://github.com/theYahia/russian-mcp) (50 серверов) by [@theYahia](https://github.com/theYahia).
+![Демонстрация: вопрос «что за страницы в проекте и когда их публиковали» — агент вызывает get_pages и отвечает таблицей страниц с датами](./assets/demo.svg)
+
+Часть серии [WWmcp](https://github.com/theYahia/WWmcp) (46 серверов) by [@theYahia](https://github.com/theYahia).
 
 ## Установка
 
@@ -97,3 +99,7 @@ npx @smithery/cli install @theyahia/tilda-mcp
 ## Лицензия
 
 MIT
+
+---
+
+Часть монорепозитория [WWmcp](https://github.com/theYahia/WWmcp) · Telegram: [@vhodvai](https://t.me/vhodvai)

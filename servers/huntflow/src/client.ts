@@ -107,6 +107,13 @@ async function rawFetch(
   path: string,
   opts: { body?: unknown; auth?: string | null } = {},
 ): Promise<Response> {
+  // Traversal guard: account/applicant/vacancy ids form path segments here, and fetch normalises `..`
+  // before sending — a crafted value would reach an endpoint no tool exposes,
+  // carrying this server's credentials. Checked on the path only, so a query
+  // value containing dots is unaffected.
+  if (/(^|\/)\.\.(\/|$)/.test(path.split("?")[0]!)) {
+    throw new Error(`Huntflow: путь "${path}" содержит переход вверх по дереву ".." — параметры инструмента так выглядеть не должны.`);
+  }
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs());
   try {

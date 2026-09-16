@@ -28,10 +28,7 @@ export async function handleGetConfigPreset(
       {
         presets: listPresets(),
         hint: "Повторите вызов с config=<id>, чтобы получить сущности, примеры и ловушки.",
-      },
-      null,
-      2,
-    );
+      });
   }
 
   const found = getPresetWithCommon(params.config);
@@ -40,10 +37,7 @@ export async function handleGetConfigPreset(
       {
         error: `Пресет "${params.config}" не найден.`,
         available: listPresets().map((p) => ({ id: p.id, name: p.name, aliases: p.aliases })),
-      },
-      null,
-      2,
-    );
+      });
   }
 
   return JSON.stringify(
@@ -55,10 +49,7 @@ export async function handleGetConfigPreset(
         'confidence:"common" — типовое имя из практики, НЕ подтверждённое: сначала ' +
         "list_entities / describe_entity на конкретной базе, потом запрос. " +
         "Пресет — карта, а не гарантия: любая база могла быть доработана.",
-    },
-    null,
-    2,
-  );
+    });
 }
 
 /**

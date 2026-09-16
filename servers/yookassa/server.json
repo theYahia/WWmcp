@@ -1,0 +1,46 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/yookassa-mcp",
+  "title": "YooKassa",
+  "description": "YooKassa - payments, refunds, 54-FZ receipts, payouts, SBP, recurring, webhooks (Russia)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/yookassa",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/yookassa"
+  },
+  "version": "3.0.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/yookassa-mcp",
+      "version": "3.0.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "YOOKASSA_SHOP_ID",
+          "description": "Shop ID from the YooKassa cabinet (Settings -> Shop)",
+          "isRequired": true
+        },
+        {
+          "name": "YOOKASSA_SECRET_KEY",
+          "description": "API secret key (Integration -> API keys)",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "YOOKASSA_PAYOUT_AGENT_ID",
+          "description": "Payout agent ID, required only for the payout tools"
+        },
+        {
+          "name": "YOOKASSA_PAYOUT_SECRET_KEY",
+          "description": "Payout secret key, required only for the payout tools",
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

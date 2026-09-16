@@ -81,6 +81,9 @@ class BkashAuthStrategy implements AuthStrategy {
         app_key: creds.appKey,
         app_secret: creds.appSecret,
       }),
+      // Not a BaseHttpClient call: without this a hung bKash token endpoint
+      // blocks the tool call forever.
+      signal: AbortSignal.timeout(15_000),
     });
 
     if (!response.ok) {
@@ -116,6 +119,9 @@ class BkashAuthStrategy implements AuthStrategy {
         app_secret: creds.appSecret,
         refresh_token: this.refreshToken,
       }),
+      // Not a BaseHttpClient call: without this a hung bKash token endpoint
+      // blocks the tool call forever.
+      signal: AbortSignal.timeout(15_000),
     });
     if (!response.ok) return null;
     const data = (await response.json()) as { id_token?: string; refresh_token?: string };

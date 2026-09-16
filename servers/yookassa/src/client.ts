@@ -78,6 +78,14 @@ export class YooKassaClient {
   }
 
   private async request(method: string, path: string, body?: unknown, idempotencyKey?: string): Promise<unknown> {
+    // Tool ids go straight into the path (`/payments/${payment_id}/capture`,
+    // `/webhooks/${webhook_id}`) and are typed as plain strings. fetch normalises
+    // `..` before sending, so a model-supplied id like `x/../../me` would reach an
+    // endpoint no tool exposes, carrying the shop's Basic credentials. No YooKassa
+    // id or path contains `..`.
+    if (/(^|\/)\.\.(\/|$)/.test(path)) {
+      throw new Error(`YooKassa: path traversal blocked in "${path}" (an id must not contain "..").`);
+    }
     const url = `${BASE_URL}${path}`;
 
     // The Idempotence-Key is generated ONCE per logical operation and reused on every

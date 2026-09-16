@@ -40,7 +40,7 @@ export async function handleGetEntityAudit(p: z.infer<typeof getEntityAuditSchem
 export const tools: ToolDef[] = [
   {
     name: "get_audit",
-    description: "Get the account audit/event log (who changed what, when).",
+    description: "Get the account audit/event log: who changed what and when, filtered by date range.",
     schema: getAuditSchema,
     handler: handleGetAudit,
   },

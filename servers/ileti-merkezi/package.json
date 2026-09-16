@@ -1,7 +1,7 @@
 {
   "name": "@theyahia/ileti-merkezi-mcp",
   "version": "4.0.0",
-  "description": "Type-safe MCP server for the İletiMerkezi SMS API (Turkey) — send SMS/OTP, bulk, delivery reports, sender headers, blacklist, İYS consent",
+  "description": "Ileti Merkezi (İletiMerkezi) SMS for AI agents: send SMS/OTP and bulk, cancel scheduled orders, delivery reports, sender headers, blacklist, İYS consent (11 tools, Turkey)",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -18,14 +18,16 @@
     "build": "tsc",
     "dev": "tsx src/index.ts",
     "start": "node dist/index.js",
-    "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "prepublishOnly": "npm run build",
-    "clean": "rm -rf dist tsconfig.tsbuildinfo"
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.12.0",
+    "@theyahia/mcp-core": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "express": "^5.2.1",
     "zod": "^4.4.3"
   },
   "devDependencies": {
@@ -43,16 +45,21 @@
     "mcp-server",
     "model-context-protocol",
     "claude",
-    "ai",
-    "turkey-api",
-    "ileti-merkezi",
+    "ai-agent",
+    "llm",
     "iletimerkezi",
+    "ileti-merkezi",
+    "turkey",
+    "türkiye",
+    "turkish-api",
     "sms",
+    "toplu-sms",
+    "bulk-sms",
     "otp",
-    "iys",
     "messaging",
-    "typescript",
-    "api"
+    "emerging-markets",
+    "iys",
+    "sms-api"
   ],
   "license": "MIT",
   "repository": {

@@ -5,7 +5,7 @@ MCP-сервер для Sber GigaChat API — чат, эмбеддинги, ге
 [![npm](https://img.shields.io/npm/v/@theyahia/gigachat-mcp)](https://www.npmjs.com/package/@theyahia/gigachat-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Часть монорепозитория [WWmcp](https://github.com/theYahia/WWmcp) by [@theYahia](https://github.com/theYahia).
+Часть монорепозитория [WWmcp](https://github.com/theYahia/WWmcp) by [@theYahia](https://github.com/theYahia). · Telegram: [@vhodvai](https://t.me/vhodvai)
 
 ## Установка
 

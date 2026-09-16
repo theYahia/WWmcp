@@ -1,0 +1,31 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/hh-mcp",
+  "title": "HeadHunter",
+  "description": "HeadHunter (hh.ru) - vacancy and resume search, employers, salary stats (Russia/CIS)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/hh",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/hh"
+  },
+  "version": "2.1.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/hh-mcp",
+      "version": "2.1.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "HH_ACCESS_TOKEN",
+          "description": "OAuth 2.0 token, optional; needed only for resume access",
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

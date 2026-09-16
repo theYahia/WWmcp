@@ -64,6 +64,8 @@ export class OAuthStrategy implements AuthStrategy {
       clientSecret: string;
       /** Safety margin in ms before token expiry (default: 60s) */
       expiryBuffer?: number;
+      /** Token-endpoint request timeout in ms (default: 15s) */
+      timeout?: number;
     },
   ) {}
 
@@ -103,16 +105,24 @@ export class OAuthStrategy implements AuthStrategy {
       client_secret: this.config.clientSecret,
     });
 
+    // Timeout is NOT optional here: this fetch sits in front of every authenticated
+    // request on every OAuth server, and it is the one call that does not go through
+    // BaseHttpClient's AbortController. Without it a hung token endpoint hangs the
+    // tool call forever — the model gets no error and no result, just silence.
     const response = await fetch(this.config.tokenUrl, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: body.toString(),
+      signal: AbortSignal.timeout(this.config.timeout ?? 15_000),
     });
 
     if (!response.ok) {
-      const text = await response.text();
+      // The body is NOT echoed: an OAuth error response routinely reflects the
+      // submitted credentials back (some providers include client_id, and a
+      // misconfigured tokenUrl can be any host at all), and this message travels
+      // into the model's context via createToolError.
       throw new Error(
-        `OAuth token error (HTTP ${response.status}). Проверьте client_id и client_secret. ${text}`,
+        `OAuth token error (HTTP ${response.status}). Проверьте client_id, client_secret и tokenUrl.`,
       );
     }
 

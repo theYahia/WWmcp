@@ -1,0 +1,37 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/retailcrm-mcp",
+  "title": "RetailCRM",
+  "description": "RetailCRM - order and customer CRUD, catalog, inventory, payments, analytics (Russia)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/retailcrm",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/retailcrm"
+  },
+  "version": "3.0.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/retailcrm-mcp",
+      "version": "3.0.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "RETAILCRM_DOMAIN",
+          "description": "RetailCRM domain, e.g. yourstore.retailcrm.ru",
+          "isRequired": true
+        },
+        {
+          "name": "RETAILCRM_API_KEY",
+          "description": "API key from Settings -> Integration -> API keys",
+          "isRequired": true,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-> 📦 Part of **[WWmcp — Emerging Markets MCP](https://github.com/theYahia/WWmcp)** — 114 MCP servers for non-Western APIs (Brazil/MENA/Gulf/SE Asia/Africa/CIS).
+> 📦 Part of **[WWmcp — Emerging Markets MCP](https://github.com/theYahia/WWmcp)** — 46 MCP servers for non-Western APIs (Brazil/MENA/Gulf/SE Asia/Africa/CIS). · Telegram: [@vhodvai](https://t.me/vhodvai)
 
 # @theyahia/planfix-mcp
 
@@ -6,6 +6,8 @@ MCP-сервер для Planfix API — задачи, проекты, конта
 
 [![npm](https://img.shields.io/npm/v/@theyahia/planfix-mcp)](https://www.npmjs.com/package/@theyahia/planfix-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+![Демонстрация: вопрос «какие задачи на мне горят на этой неделе» — агент вызывает get_tasks и отвечает списком задач с дедлайнами](./assets/demo.svg)
 
 ## Переезд в монорепозиторий WWmcp
 

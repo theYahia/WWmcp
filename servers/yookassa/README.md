@@ -7,7 +7,9 @@ MCP server for YooKassa API -- payments, refunds, receipts (54-FZ), payouts, web
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![smithery badge](https://smithery.ai/badge/@theyahia/yookassa-mcp)](https://smithery.ai/server/@theyahia/yookassa-mcp)
 
-Part of [Russian API MCP](https://github.com/theYahia/russian-mcp) series by [@theYahia](https://github.com/theYahia).
+![Демонстрация: вопрос «какие платежи прошли вчера и на какую сумму» — агент вызывает list_payments и отвечает таблицей платежей ЮKassa](./assets/demo.svg)
+
+Part of [WWmcp](https://github.com/theYahia/WWmcp) series by [@theYahia](https://github.com/theYahia).
 
 ## Quick Start
 
@@ -194,7 +196,7 @@ Show all successful payments for the last 7 days and create a refund of 2500 RUB
 - **Retry**: 3 attempts on 429/5xx/timeout with exponential backoff (1s, 2s, 4s); retries reuse the same Idempotence-Key, so they are safely de-duplicated
 - **Transport**: stdio (default) or Streamable HTTP (`--http` / `HTTP_PORT`)
 
-## Part of Russian API MCP Series
+## Part of WWmcp Series
 
 | MCP | Status | Description |
 |-----|--------|-------------|
@@ -202,8 +204,12 @@ Show all successful payments for the last 7 days and create a refund of 2500 RUB
 | [@theyahia/cbr-mcp](https://github.com/theYahia/cbr-mcp) | ready | Currency rates, key rate |
 | [@theyahia/yookassa-mcp](https://github.com/theYahia/yookassa-mcp) | ready | Payments, refunds, receipts, payouts, webhooks |
 | [@theyahia/cloudpayments-mcp](https://github.com/theYahia/cloudpayments-mcp) | ready | Payments, subscriptions, orders |
-| ... | | **+46 servers** -- [full list](https://github.com/theYahia/russian-mcp) |
+| ... | | **46 servers** -- [full list](https://github.com/theYahia/WWmcp) |
 
 ## License
 
 MIT
+
+---
+
+Часть монорепозитория [WWmcp](https://github.com/theYahia/WWmcp) · Telegram: [@vhodvai](https://t.me/vhodvai)

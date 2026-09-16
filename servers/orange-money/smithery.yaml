@@ -1,6 +1,6 @@
 name: orange-money-mcp
 description: MCP server for Orange Money WebPay — payments, cashin, cashout, transfers (Senegal + 11 Francophone African countries, v1.0.0)
-icon: https://raw.githubusercontent.com/theYahia/mcp-servers/main/servers/orange-money/icon.png
+icon: https://raw.githubusercontent.com/theYahia/WWmcp/main/servers/orange-money/assets/icon.svg
 startCommand:
   type: stdio
   configSchema:

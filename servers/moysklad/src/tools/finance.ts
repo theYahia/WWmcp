@@ -136,7 +136,7 @@ export const tools: ToolDef[] = [
   },
   {
     name: "create_invoice_out",
-    description: "Create a sales invoice (счёт покупателю). Prices in RUBLES.",
+    description: "Create a sales invoice (счёт покупателю) with line items. Prices in RUBLES.",
     schema: createInvoiceOutSchema,
     handler: handleCreateInvoiceOut,
   },
@@ -148,7 +148,7 @@ export const tools: ToolDef[] = [
   },
   {
     name: "get_invoices_out",
-    description: "List sales invoices (счета покупателям).",
+    description: "List sales invoices (счета покупателям) with sums in rubles.",
     schema: getInvoicesOutSchema,
     handler: handleGetInvoicesOut,
   },

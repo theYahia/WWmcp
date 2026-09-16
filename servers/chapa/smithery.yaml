@@ -1,6 +1,6 @@
 name: chapa-mcp
 description: MCP server for Chapa — payments, transfers, banks (Ethiopia, v1.0.0)
-icon: https://raw.githubusercontent.com/theYahia/mcp-servers/main/servers/chapa/icon.png
+icon: https://raw.githubusercontent.com/theYahia/WWmcp/main/servers/chapa/assets/icon.svg
 startCommand:
   type: stdio
   configSchema:

@@ -1,43 +1,31 @@
 #!/usr/bin/env node
 
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { IletiMerkeziClient, MissingCredentialsError, readCredentials } from "./client.js";
-import { buildTools } from "./tools.js";
-import { SERVER_NAME, VERSION } from "./version.js";
+/**
+ * @theyahia/ileti-merkezi-mcp — MCP server for the İletiMerkezi SMS API (Turkey)
+ *
+ * 11 tools: send_sms, cancel_order, get_report, get_reports, get_balance,
+ * get_sender, get_blacklist, add_blacklist, delete_blacklist, iys_register,
+ * iys_check.
+ *
+ * Auth: ILETIMERKEZI_API_KEY + ILETIMERKEZI_API_HASH, sent inside the request
+ * body envelope (both values come precomputed from the panel).
+ *
+ * Transports:
+ *   - stdio (default) — for Claude Desktop / Cursor / Windsurf
+ *   - Streamable HTTP — --http flag or HTTP_PORT env (port 3000 default)
+ */
 
-async function main(): Promise<void> {
-  // Fail fast on missing credentials so the server never starts half-configured.
-  let creds;
-  try {
-    creds = readCredentials();
-  } catch (error) {
-    if (error instanceof MissingCredentialsError) {
-      console.error(`[${SERVER_NAME}] ${error.message}`);
-      process.exit(1);
-    }
-    throw error;
-  }
+import { runServer } from "@theyahia/mcp-core";
+import { createServer, TOOL_COUNT, VERSION, logger } from "./server.js";
 
-  const client = new IletiMerkeziClient(creds);
-  const server = new McpServer({ name: SERVER_NAME, version: VERSION });
-
-  const tools = buildTools(client);
-  for (const tool of tools) {
-    server.registerTool(
-      tool.name,
-      tool.config,
-      tool.handler as Parameters<typeof server.registerTool>[2],
-    );
-  }
-
-  const transport = new StdioServerTransport();
-  await server.connect(transport);
-  // stdout is reserved for the JSON-RPC stream; all logging goes to stderr.
-  console.error(`[${SERVER_NAME}] v${VERSION} started — ${tools.length} tools available.`);
-}
-
-main().catch((error) => {
-  console.error(`[${SERVER_NAME}] Fatal:`, error);
+runServer(createServer, {
+  name: "ileti-merkezi-mcp",
+  version: VERSION,
+  toolCount: TOOL_COUNT,
+  logger,
+}).catch((error) => {
+  logger.error("Fatal error", {
+    error: error instanceof Error ? error.message : String(error),
+  });
   process.exit(1);
 });

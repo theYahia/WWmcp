@@ -1,0 +1,42 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/cdek-mcp",
+  "title": "CDEK",
+  "description": "CDEK delivery - tariffs, transit time, orders, tracking, pickup points, courier call-out (Russia)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/cdek",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/cdek"
+  },
+  "version": "2.2.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/cdek-mcp",
+      "version": "2.2.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "CDEK_CLIENT_ID",
+          "description": "OAuth2 Client ID from the CDEK personal account",
+          "isRequired": true
+        },
+        {
+          "name": "CDEK_CLIENT_SECRET",
+          "description": "OAuth2 Client Secret from the CDEK personal account",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "CDEK_SANDBOX",
+          "description": "Set to true to use the CDEK test environment",
+          "format": "boolean"
+        }
+      ]
+    }
+  ]
+}

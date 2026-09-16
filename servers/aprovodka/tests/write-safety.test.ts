@@ -8,6 +8,8 @@ import {
   getWriteMode,
   resetWriteSafetyState,
   isSafetyEnvelope,
+  previewCount,
+  PREVIEW_MAX,
 } from "../src/lib/write-safety.js";
 import {
   handleApproveWrite,
@@ -15,6 +17,7 @@ import {
 } from "../src/tools/safety.js";
 import { handlePostDocument, handleDeleteDocument } from "../src/tools/documents.js";
 import { handleUpdateCatalogItem } from "../src/tools/catalogs.js";
+import { handleSetConstant } from "../src/tools/constants.js";
 import { countRegisteredTools, getEnabledModules } from "../src/server.js";
 
 const GUID = "5c8d9e2f-1a2b-3c4d-5e6f-7a8b9c0d1e2f";
@@ -253,6 +256,82 @@ describe("write-safety", () => {
     expect(executed["irreversible_reason"]).toMatch(/set_deletion_mark/);
   });
 
+  // ── константы: единственное поле Value, поэтому «неизвестное прежнее значение»
+  //    здесь означало бы откат, стирающий всю константу ──
+
+  it("set_constant preview shows the real previous Value, not null", async () => {
+    process.env["ONEC_WRITE_MODE"] = "preview";
+    // 1С отдаёт константу как одиночную запись
+    const fetchMock = mockFetch({ Value: "RUB" });
+    const preview = JSON.parse(
+      await handleSetConstant({ constant_name: "ОсновнаяВалюта", value: "USD" }),
+    );
+    expect(fetchMock).toHaveBeenCalledOnce(); // только чтение, записи нет
+    expect(fetchMock.mock.calls[0][1].method).toBe("GET");
+    expect(preview.changes.fields.Value).toEqual({ from: "RUB", to: "USD" });
+    expect(preview.reversible).toBe(true);
+  });
+
+  it("set_constant preview reads the collection envelope form too", async () => {
+    process.env["ONEC_WRITE_MODE"] = "preview";
+    mockFetch({ value: [{ Value: "RUB" }] });
+    const preview = JSON.parse(
+      await handleSetConstant({ constant_name: "Constant_ОсновнаяВалюта", value: "USD" }),
+    );
+    expect(preview.changes.fields.Value).toEqual({ from: "RUB", to: "USD" });
+  });
+
+  it("set_constant in approval mode rolls back to the real previous Value", async () => {
+    process.env["ONEC_WRITE_MODE"] = "approval";
+    mockFetch({ Value: "RUB" });
+    const preview = JSON.parse(
+      await handleSetConstant({ constant_name: "ОсновнаяВалюта", value: "USD" }),
+    );
+    expect(preview.changes.fields.Value.from).toBe("RUB");
+    await handleApproveWrite({ op_hash: preview.op_hash });
+
+    mockFetch({ Value: "USD" });
+    const executed = JSON.parse(
+      await handleSetConstant({ constant_name: "ОсновнаяВалюта", value: "USD" }),
+    );
+    expect(executed.write_safety).toBe("executed");
+
+    const fetchMock = mockFetch({ Value: "RUB" });
+    await handleRollbackWrite({ token: executed.rollback.token });
+    const [, opts] = fetchMock.mock.calls[0];
+    expect(opts.method).toBe("PATCH");
+    expect(JSON.parse(opts.body)).toEqual({ Value: "RUB" }); // не null
+  });
+
+  it.each([
+    ["ответ без поля Value", { SomethingElse: 1 }],
+    ["пустой конверт", { value: [] }],
+    ["значение скаляром в value", { value: "RUB" }],
+  ])("set_constant is refused when the previous value is unreadable (%s)", async (_name, resp) => {
+    process.env["ONEC_WRITE_MODE"] = "approval";
+    const fetchMock = mockFetch(resp);
+    await expect(
+      handleSetConstant({ constant_name: "ОсновнаяВалюта", value: "USD" }),
+    ).rejects.toThrow(/прежнее значение|отклонил операцию/);
+    // прочитали и остановились: PATCH не ушёл
+    expect(fetchMock.mock.calls.every((c: any[]) => c[1].method === "GET")).toBe(true);
+  });
+
+  it("a PATCH whose current state cannot be read is refused, no rollback token", async () => {
+    process.env["ONEC_WRITE_MODE"] = "preview";
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 403,
+      statusText: "Forbidden",
+      text: () => Promise.resolve("Недостаточно прав"),
+      headers: new Map(),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    const path = buildKeyedPath("Catalog_Номенклатура", GUID, undefined, { $format: "json" });
+    await expect(oneCPatch(path, { Description: "Кефир" })).rejects.toThrow(/отклонил операцию/);
+    expect(fetchMock.mock.calls.every((c: any[]) => c[1].method === "GET")).toBe(true);
+  });
+
   it("rejects an unknown rollback token", async () => {
     await expect(handleRollbackWrite({ token: "rb-deadbeefdeadbeef" })).rejects.toThrow(/Unknown/);
   });
@@ -352,7 +431,7 @@ describe("write gate is bound to the effect, not the spelling", () => {
       "fetch",
       vi.fn().mockResolvedValue({
         ok: true,
-        text: () => Promise.resolve(JSON.stringify({ Ref_Key: "x" })),
+        text: () => Promise.resolve(JSON.stringify({ Ref_Key: "x", Code: "0" })),
         headers: new Map(),
       }),
     );
@@ -365,5 +444,70 @@ describe("write gate is bound to the effect, not the spelling", () => {
     );
     expect(bare.op_hash).toBeDefined();
     expect(bare.op_hash).toBe(full.op_hash);
+  });
+});
+
+/**
+ * В режиме `preview` записи не выполняются никогда, а очистка карты предпросмотров
+ * стояла только в ветке фактического выполнения — то есть самый безопасный режим
+ * тёк линейно по числу операций (WORK-1531).
+ */
+describe("карта предпросмотров не растёт бесконечно", () => {
+  const originalEnv = { ...process.env };
+
+  beforeEach(() => {
+    process.env["ONEC_BASE_URL"] = "http://localhost:8080/base";
+    process.env["ONEC_LOGIN"] = "admin";
+    process.env["ONEC_PASSWORD"] = "secret";
+    process.env["ONEC_WRITE_MODE"] = "preview";
+    delete process.env["ONEC_AUDIT_LOG"];
+    resetClient();
+    resetWriteSafetyState();
+  });
+
+  afterEach(() => {
+    process.env = { ...originalEnv };
+    vi.restoreAllMocks();
+    resetClient();
+    resetWriteSafetyState();
+  });
+
+  /** 150 разных операций проведения — каждая даёт свой op_hash. */
+  async function previewMany(n: number): Promise<string[]> {
+    mockFetch();
+    const hashes: string[] = [];
+    for (let i = 0; i < n; i++) {
+      const guid = `5c8d9e2f-1a2b-3c4d-5e6f-${String(i).padStart(12, "0")}`;
+      const r = JSON.parse(
+        await handlePostDocument({ document_type: "Document_Test", ref_key: guid, operational: false }),
+      );
+      expect(r.write_safety).toBe("preview");
+      hashes.push(r.op_hash);
+    }
+    return hashes;
+  }
+
+  it("150 предпросмотров подряд — не больше 100 в памяти, самый свежий на месте", async () => {
+    const hashes = await previewMany(150);
+
+    expect(previewCount()).toBeLessThanOrEqual(PREVIEW_MAX);
+    expect(previewCount()).toBe(PREVIEW_MAX);
+
+    // Самый свежий пережил вытеснение: одобрение по нему проходит.
+    process.env["ONEC_WRITE_MODE"] = "approval";
+    const newest = hashes[hashes.length - 1]!;
+    const approved = JSON.parse(await handleApproveWrite({ op_hash: newest }));
+    expect(approved.approved).toBe(newest);
+  });
+
+  it("одобрение по хэшу вытесненного превью — понятная ошибка, а не молчаливый сбой", async () => {
+    const hashes = await previewMany(150);
+    const evicted = hashes[0]!;
+
+    process.env["ONEC_WRITE_MODE"] = "approval";
+    await expect(handleApproveWrite({ op_hash: evicted })).rejects.toThrow(
+      /предпросмотра операции op_hash=/,
+    );
+    await expect(handleApproveWrite({ op_hash: evicted })).rejects.toThrow(/токена отката/);
   });
 });

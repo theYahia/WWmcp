@@ -1,0 +1,32 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/mercadopago-mcp",
+  "title": "Mercado Pago",
+  "description": "Mercado Pago - payments, refunds, checkout preferences, merchant orders (Latin America)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/mercadopago",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/mercadopago"
+  },
+  "version": "1.1.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/mercadopago-mcp",
+      "version": "1.1.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "MERCADOPAGO_ACCESS_TOKEN",
+          "description": "Bearer access token from the Mercado Pago developers panel",
+          "isRequired": true,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

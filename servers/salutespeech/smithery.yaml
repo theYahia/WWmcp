@@ -4,7 +4,7 @@
 name: salutespeech-mcp
 displayName: SaluteSpeech MCP
 description: MCP server for Sber SaluteSpeech API — speech recognition (STT) and synthesis (TTS)
-icon: microphone
+icon: https://raw.githubusercontent.com/theYahia/WWmcp/main/servers/salutespeech/assets/icon.svg
 license: MIT
 author: theYahia
 

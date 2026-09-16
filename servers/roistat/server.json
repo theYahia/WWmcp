@@ -1,0 +1,37 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/roistat-mcp",
+  "title": "Roistat",
+  "description": "Roistat - marketing analytics and ROI, leads, visits, ad channels, costs (Russia)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/roistat",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/roistat"
+  },
+  "version": "1.1.1",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/roistat-mcp",
+      "version": "1.1.1",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "ROISTAT_API_KEY",
+          "description": "Project API key from the Roistat cabinet",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "ROISTAT_PROJECT_ID",
+          "description": "Project ID in Roistat",
+          "isRequired": true
+        }
+      ]
+    }
+  ]
+}

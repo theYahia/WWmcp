@@ -1,7 +1,25 @@
-import { VERSION } from "./version.js";
+/**
+ * İletiMerkezi v1 JSON API client.
+ *
+ * Every operation is a POST to `<base>/<action>/json` with the credentials and
+ * the operation payload nested inside a single `request` envelope:
+ *
+ *   { "request": { "authentication": { key, hash }, ...input } }
+ *
+ * There is deliberately NO client-side hashing: `hash` is the value the panel
+ * precomputes, passed through unchanged. (Pre-4.0 releases signed
+ * SHA256(key+secret+timestamp) into X-API-Key/X-API-Hash headers — that API
+ * never existed.)
+ *
+ * Wraps @theyahia/mcp-core's BaseHttpClient for retry/timeout/logging. 4xx is
+ * NOT surfaced as a throw: those bodies carry meaningful API status codes, so
+ * `call` returns them for the tool layer to interpret.
+ */
+
+import { ApiError, BaseHttpClient, createLogger } from "@theyahia/mcp-core";
 
 const BASE_URL = "https://api.iletimerkezi.com/v1";
-const TIMEOUT_MS = 30_000;
+const logger = createLogger("ileti-merkezi-mcp");
 
 export interface Credentials {
   key: string;
@@ -26,11 +44,11 @@ export class MissingCredentialsError extends Error {
 /**
  * Read API credentials from the environment. Primary names match the official
  * provider tooling so configs are drop-in; the ILETI_* aliases ease migration
- * from this package's pre-2.0 layout.
+ * from the pre-4.0 layout.
  */
-export function readCredentials(env: NodeJS.ProcessEnv = process.env): Credentials {
-  const key = (env.ILETIMERKEZI_API_KEY ?? env.ILETI_API_KEY ?? "").trim();
-  const hash = (env.ILETIMERKEZI_API_HASH ?? env.ILETI_API_HASH ?? "").trim();
+export function readCredentials(): Credentials {
+  const key = (process.env["ILETIMERKEZI_API_KEY"] ?? process.env["ILETI_API_KEY"] ?? "").trim();
+  const hash = (process.env["ILETIMERKEZI_API_HASH"] ?? process.env["ILETI_API_HASH"] ?? "").trim();
   if (!key || !hash) throw new MissingCredentialsError();
   return { key, hash };
 }
@@ -44,83 +62,59 @@ export interface ApiResult {
   requestUrl: string;
 }
 
-export interface ClientOptions {
-  baseUrl?: string;
-  timeoutMs?: number;
-  /** Injectable fetch — used by tests; defaults to the global fetch. */
-  fetchImpl?: typeof fetch;
+function parseBody(text: string | undefined): unknown {
+  if (!text) return null;
+  try {
+    return JSON.parse(text);
+  } catch {
+    return text; // provider returned non-JSON (e.g. an HTML error page)
+  }
 }
 
 /**
- * Thin transport over the İletiMerkezi v1 JSON API.
- *
- * Every operation is a POST to `<base>/<action>/json` with the credentials and
- * the operation payload nested inside a single `request` envelope:
- *
- *   { "request": { "authentication": { key, hash }, ...input } }
- *
- * There is deliberately no client-side hashing: the `hash` is the value the
- * panel precomputes and the client passes through unchanged.
+ * Lazy-initialized client. Construction never throws — credentials are read on
+ * the first call, so the server still boots (and lists tools) unconfigured.
  */
 export class IletiMerkeziClient {
-  private readonly creds: Credentials;
-  private readonly baseUrl: string;
-  private readonly timeoutMs: number;
-  private readonly fetchImpl: typeof fetch;
+  private _http: BaseHttpClient | null = null;
 
-  constructor(creds: Credentials, opts: ClientOptions = {}) {
-    this.creds = creds;
-    this.baseUrl = (opts.baseUrl ?? BASE_URL).replace(/\/$/, "");
-    this.timeoutMs = opts.timeoutMs ?? TIMEOUT_MS;
-    this.fetchImpl = opts.fetchImpl ?? globalThis.fetch;
+  private get http(): BaseHttpClient {
+    if (!this._http) {
+      this._http = new BaseHttpClient({
+        baseUrl: BASE_URL,
+        timeout: 30_000,
+        maxRetries: 3,
+        logger,
+        headers: { Accept: "application/json" },
+      });
+    }
+    return this._http;
+  }
+
+  /** Test/env-change helper: drop the cached HTTP client. */
+  reset(): void {
+    this._http = null;
   }
 
   /**
-   * POST `input` to `<base>/<path>`, wrapped in the authenticated request
-   * envelope. 4xx responses are NOT thrown — they carry meaningful API status
-   * codes in the body, so they are returned for the caller to interpret. Only
-   * network failures and timeouts throw.
+   * POST `input` to `<base><path>`, wrapped in the authenticated request
+   * envelope. Returns 4xx/5xx responses instead of throwing — their bodies hold
+   * the İletiMerkezi status code the caller needs. Only transport failures
+   * (timeout, socket error) and missing credentials throw.
    */
   async call(path: string, input: Record<string, unknown> = {}): Promise<ApiResult> {
-    const requestUrl = `${this.baseUrl}${path}`;
-    const payload = {
-      request: {
-        authentication: { key: this.creds.key, hash: this.creds.hash },
-        ...input,
-      },
-    };
+    const creds = readCredentials();
+    const requestUrl = `${BASE_URL}${path}`;
+    const body = { request: { authentication: creds, ...input } };
 
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), this.timeoutMs);
     try {
-      const response = await this.fetchImpl(requestUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          "User-Agent": `ileti-merkezi-mcp/${VERSION}`,
-        },
-        body: JSON.stringify(payload),
-        signal: controller.signal,
-      });
-
-      const text = await response.text();
-      let body: unknown;
-      try {
-        body = text ? JSON.parse(text) : null;
-      } catch {
-        body = text; // provider returned non-JSON (e.g. an HTML error page)
-      }
-      return { status: response.status, body, requestUrl };
+      return { status: 200, body: await this.http.request({ method: "POST", path, body }), requestUrl };
     } catch (error) {
-      if ((error as { name?: string })?.name === "AbortError") {
-        throw new Error(
-          `İletiMerkezi: request to ${path} timed out after ${this.timeoutMs / 1000}s.`,
-        );
+      // status 0 == transport failure (timeout / socket), no HTTP response to report.
+      if (error instanceof ApiError && error.status > 0) {
+        return { status: error.status, body: parseBody(error.body), requestUrl };
       }
       throw error;
-    } finally {
-      clearTimeout(timer);
     }
   }
 }

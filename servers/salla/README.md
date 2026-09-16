@@ -1,10 +1,11 @@
-# @theyahia/salla-mcp
+# Salla MCP server (سلة) — 22 tools to connect your Salla store to Claude or any AI agent
 
-> MCP server for **Salla** e-commerce platform (Saudi Arabia) — products, categories, brands, orders, customers, coupons, branches, store.
-> 22 tools. OAuth 2.0 Bearer auth. Stdio + Streamable HTTP transports.
+If you were looking for how to connect your Salla store to Claude or another AI agent — this server hands the agent the Salla Merchant API: products and categories, stock, orders and their statuses, customers, coupons, abandoned carts, branches. You ask in plain words — "which orders are still waiting to be confirmed?", "set SKU-4410 stock to 120" — and get a table back, or the change applied in the store, instead of JSON you still have to read. Stock for many products goes in one `bulk_update_quantities` call, so a catalogue sync is not 200 separate requests.
 
 [![npm](https://img.shields.io/npm/v/@theyahia/salla-mcp)](https://www.npmjs.com/package/@theyahia/salla-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+![Демонстрация: вопрос «какие заказы ждут проверки» — агент вызывает list_orders и отвечает таблицей заказов Salla](./assets/demo.svg)
 
 ---
 
@@ -197,3 +198,7 @@ servers/salla/
 ## License
 
 MIT — see [LICENSE](./LICENSE).
+
+---
+
+Часть монорепозитория [WWmcp](https://github.com/theYahia/WWmcp) · Telegram: [@vhodvai](https://t.me/vhodvai)

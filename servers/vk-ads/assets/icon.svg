@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="Campaign analytics">
+  <title>Campaign analytics</title>
+  <rect x="8" y="8" width="240" height="240" rx="52" fill="#C2603C" fill-opacity="0.14"/>
+  <g fill="none" stroke="#C2603C" stroke-width="15" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M46 206 H210"/>
+    <g stroke-width="24">
+      <path d="M84 206 V156"/><path d="M128 206 V122"/><path d="M172 206 V78"/>
+    </g>
+  </g>
+</svg>

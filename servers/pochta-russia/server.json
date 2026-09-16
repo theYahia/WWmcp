@@ -1,0 +1,43 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/pochta-russia-mcp",
+  "title": "Russian Post",
+  "description": "Russian Post - tracking, tariffs, delivery time, post offices, zip, addresses (Russia)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/pochta-russia",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/pochta-russia"
+  },
+  "version": "2.0.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/pochta-russia-mcp",
+      "version": "2.0.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "POCHTA_TOKEN",
+          "description": "Access token from the Russian Post otpravka cabinet",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "POCHTA_LOGIN",
+          "description": "Cabinet login",
+          "isRequired": true
+        },
+        {
+          "name": "POCHTA_PASSWORD",
+          "description": "Cabinet password",
+          "isRequired": true,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/CHANGEME-mcp",
+  "title": "CHANGEME",
+  "description": "MCP server for CHANGEME API — DESCRIBE TOOLS HERE.",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/CHANGEME",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/CHANGEME"
+  },
+  "version": "1.0.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/CHANGEME-mcp",
+      "version": "1.0.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "CHANGEME_API_KEY",
+          "description": "API key from https://example.com/settings",
+          "isRequired": true,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

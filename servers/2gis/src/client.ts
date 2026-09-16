@@ -227,5 +227,7 @@ export async function getReviews(placeId: string, limit: number = 10): Promise<A
     sort_by: "date_created",
     is_advertiser: "false",
   });
-  return callGET(`${REVIEWS_BASE}/branches/${placeId}/reviews?${params}`);
+  // encodeURIComponent: place_id is a free-form model string and this is a path
+  // segment — unescaped, a "/" or "?" in it would redirect the request.
+  return callGET(`${REVIEWS_BASE}/branches/${encodeURIComponent(placeId)}/reviews?${params}`);
 }

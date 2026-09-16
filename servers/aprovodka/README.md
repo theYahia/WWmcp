@@ -16,6 +16,8 @@
 [![npm](https://img.shields.io/npm/v/@theyahia/aprovodka)](https://www.npmjs.com/package/@theyahia/aprovodka)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+![Демонстрация: вопрос «какие реализации провели за квартал и на какую сумму» — агент вызывает get_documents и отвечает таблицей документов 1С](./assets/demo.svg)
+
 ---
 
 ### Migrating from @theyahia/1c-rest-mcp (v3.x → v4.0.0)
@@ -114,7 +116,7 @@ Tool names, arguments, return formats, and the `ONEC_*` env vars are unchanged.
 
 | Tool | Description |
 |------|-------------|
-| `get_report` | Get a 1C report from a relative HTTP service URL (`/hs/...`). Restricted to the configured `ONEC_BASE_URL` origin. |
+| `get_report` | Read a configuration HTTP service by relative path. Prefix allow-list: `/hs/` and `/odata/standard.odata`; anything else on the 1C host (`/e1cib/`, service publication endpoints) is refused, as is a foreign host (origin checked against `ONEC_BASE_URL`). |
 
 ### Generic OData — `odata`
 
@@ -239,7 +241,8 @@ Includes session management (`mcp-session-id` header), CORS, graceful shutdown.
 | `ONEC_LOGIN` | yes | Login for HTTP Basic auth. |
 | `ONEC_PASSWORD` | yes | Password for HTTP Basic auth. |
 | `ONEC_SERVICES` | no | Comma-separated module list (default: `all`). |
-| `ONEC_WRITE_MODE` | no | Write-safety gate: `off` (default) / `preview` / `approval`. See [Write safety](#write-safety). |
+| `ONEC_WRITE_MODE` | no | Write-safety gate: `off` (default) / `deny` / `preview` / `approval`. See [Write safety](#write-safety). |
+| `ONEC_MAX_CONCURRENCY` | no | Process-wide cap on concurrent requests to 1C (default `8`). One infobase session per in-flight request: on plans with 2 sessions set it to `1`. |
 | `ONEC_APPROVAL_TTL_SEC` | no | Lifetime of a pending approval, seconds (default `300`). |
 | `ONEC_AUDIT_LOG` | no | Path to a JSONL audit ledger for every gated write. Fail-closed: if it cannot be written, the write is refused. |
 | `ONEC_AUDIT_ACTOR` | no | Actor name recorded in the ledger (defaults to `ONEC_LOGIN`). |
@@ -270,10 +273,11 @@ accounting is a different risk class from reading it.
 | Mode | Behaviour |
 |------|-----------|
 | `off` (default) | Writes execute immediately. Byte-for-byte the pre-4.1 behaviour. |
+| `deny` | **Read-only.** The 12 write tools are not registered at all — the model never sees them in the tool list, instead of being refused at call time. 22 read tools remain. The mode for read-only engagements on someone else's database. |
 | `preview` | **Nothing is ever written.** Every mutation returns a dry-run envelope: the method, the resolved path, the diff `from` → `to`, and an `op_hash`. |
 | `approval` | Every mutation is refused once with an `op_hash`, and executes only after `approve_write` is called with that hash. Approvals are single-use and expire (`ONEC_APPROVAL_TTL_SEC`). |
 
-Two extra tools appear while the gate is on (they are absent in `off`):
+Two extra tools appear in `preview` and `approval` (they are absent in `off` and `deny`):
 
 | Tool | Description |
 |------|-------------|
@@ -374,3 +378,7 @@ servers/aprovodka/
 ## License
 
 MIT — see [LICENSE](./LICENSE).
+
+---
+
+Часть монорепозитория [WWmcp](https://github.com/theYahia/WWmcp) · Telegram: [@vhodvai](https://t.me/vhodvai)

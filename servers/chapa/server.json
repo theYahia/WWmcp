@@ -1,0 +1,32 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/chapa-mcp",
+  "title": "Chapa",
+  "description": "Chapa payments - initialize and verify transactions, bank transfers, balance (Ethiopia)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/chapa",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/chapa"
+  },
+  "version": "1.1.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/chapa-mcp",
+      "version": "1.1.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "CHAPA_SECRET_KEY",
+          "description": "Bearer secret key from the Chapa dashboard (CHASECK_TEST-... for test mode)",
+          "isRequired": true,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

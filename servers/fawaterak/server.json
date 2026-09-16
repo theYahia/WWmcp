@@ -1,0 +1,37 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/fawaterak-mcp",
+  "title": "Fawaterak",
+  "description": "Fawaterak payments - invoice links, Fawry, card, wallet, Meeza, status, refunds (Egypt)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/fawaterak",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/fawaterak"
+  },
+  "version": "1.1.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/fawaterak-mcp",
+      "version": "1.1.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "FAWATERAK_API_KEY",
+          "description": "Bearer API key from the Fawaterak merchant panel",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "FAWATERAK_SANDBOX",
+          "description": "Set to true to use staging.fawaterk.com",
+          "format": "boolean"
+        }
+      ]
+    }
+  ]
+}

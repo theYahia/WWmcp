@@ -1,5 +1,6 @@
 name: mts-exolve-mcp
 description: MCP server for MTS Exolve — SMS, calls, recordings, numbers, Viber (Russia)
+icon: https://raw.githubusercontent.com/theYahia/WWmcp/main/servers/mts-exolve/assets/icon.svg
 startCommand:
   type: stdio
   configSchema:

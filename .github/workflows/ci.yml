@@ -43,8 +43,15 @@ jobs:
       - name: Test
         run: pnpm turbo test --filter='...[origin/main]'
 
-      - name: Security audit
-        run: pnpm audit --audit-level=high
+      # Блокирует только боевые зависимости: они уезжают к пользователю с пакетом.
+      # Транзитивные версии держатся в pnpm.overrides корневого package.json.
+      - name: Security audit (prod deps, blocking)
+        run: pnpm audit --prod --audit-level=high
+
+      # Полное дерево вместе с dev — предупреждением: turbo/vitest/changesets
+      # к пользователю не едут, а их advisory заперли бы мерж наглухо.
+      - name: Security audit (full tree, advisory)
+        run: pnpm audit --audit-level=moderate
         continue-on-error: true
 
   # Full build on main to ensure nothing is broken

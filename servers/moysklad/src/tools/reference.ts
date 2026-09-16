@@ -62,19 +62,19 @@ export async function handleGetMetadata(p: z.infer<typeof getMetadataSchema>): P
 export const tools: ToolDef[] = [
   {
     name: "list_employees",
-    description: "List employees (for document owners/responsible persons).",
+    description: "List employees (for document owners and responsible persons) with contacts and meta hrefs.",
     schema: listEmployeesSchema,
     handler: handleListEmployees,
   },
   {
     name: "list_currencies",
-    description: "List currencies with ISO codes and rates.",
+    description: "List currencies with ISO codes and exchange rates configured in the account.",
     schema: listCurrenciesSchema,
     handler: handleListCurrencies,
   },
   {
     name: "list_product_folders",
-    description: "List product groups/folders.",
+    description: "List product groups/folders (товарные группы) with their full path names and meta hrefs.",
     schema: listProductFoldersSchema,
     handler: handleListProductFolders,
   },

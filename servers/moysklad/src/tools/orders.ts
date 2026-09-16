@@ -90,13 +90,13 @@ export async function handleUpdateCustomerOrderStatus(
 export const tools: ToolDef[] = [
   {
     name: "create_customer_order",
-    description: "Create a customer order. Prices in RUBLES (converted to kopecks).",
+    description: "Create a customer order in MoySklad. Requires organization (seller) and agent (buyer) meta hrefs, plus at least one line item with product href and quantity. Prices in rubles are converted to kopecks internally. Supports per-line discounts.",
     schema: createCustomerOrderSchema,
     handler: handleCreateCustomerOrder,
   },
   {
     name: "get_orders",
-    description: "Get customer orders with filtering and sorting. Sums in RUBLES.",
+    description: "Get customer orders with filtering and sorting. Supports search by name/number, filtering by state name or counterparty, and sorting by created date, moment, or sum. Returns paginated results with order sums in rubles. Use expand parameter for nested entities.",
     schema: getOrdersSchema,
     handler: handleGetOrders,
   },
@@ -108,7 +108,7 @@ export const tools: ToolDef[] = [
   },
   {
     name: "update_customer_order_status",
-    description: "Change the status/state of a customer order.",
+    description: "Change the status/state of a customer order. Get available state hrefs via get_metadata for customerorder.",
     schema: updateCustomerOrderStatusSchema,
     handler: handleUpdateCustomerOrderStatus,
   },

@@ -1,7 +1,7 @@
 {
   "name": "@theyahia/elma365-mcp",
   "version": "2.0.0",
-  "description": "MCP server for ELMA365 — BPM tasks, business processes, app items, schema discovery (Russia). 20 tools.",
+  "description": "ELMA365 BPM for AI agents: my tasks and completion by outcome, start business processes, app item CRUD, schema discovery, comments (20 tools, Russia)",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -21,6 +21,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint src tests",
     "test": "vitest run",
+    "test:e2e": "vitest run --config vitest.e2e.config.ts",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "prepublishOnly": "npm run build && npm run test"
@@ -49,18 +50,20 @@
     "mcp-server",
     "model-context-protocol",
     "claude",
-    "ai",
-    "russian-api",
+    "ai-agent",
+    "llm",
     "elma365",
+    "elma",
+    "элма365",
     "bpm",
-    "low-code",
-    "streamable-http",
-    "api",
-    "typescript",
-    "crm",
+    "бизнес-процессы",
     "business-process",
     "workflow",
-    "wwmcp"
+    "low-code",
+    "tasks",
+    "задачи",
+    "russia",
+    "russian-api"
   ],
   "license": "MIT",
   "repository": {

@@ -30,5 +30,8 @@ jobs:
         run: pnpm turbo build
 
       - name: E2E smoke tests
+        # Раньше стояло continue-on-error: true — из-за него workflow месяцами
+        # показывал зелёный, хотя падал на servers/_template (нет vitest.e2e.config.ts),
+        # и 12 задач не выполнялись вовсе. Тесты работают на подставных ключах,
+        # сеть им не нужна: локальный прогон — 61/61.
         run: pnpm turbo test:e2e
-        continue-on-error: true # Don't block CI on E2E since they may need API keys

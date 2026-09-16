@@ -48,6 +48,14 @@ export async function elmaRequest(
   const baseUrl = getBaseUrl();
   const timeout = getTimeout();
 
+  // Traversal guard: namespace/code/id tool params form path segments here, and fetch normalises `..`
+  // before sending — a crafted value would reach an endpoint no tool exposes,
+  // carrying this server's credentials. Checked on the path only, so a query
+  // value containing dots is unaffected.
+  if (/(^|\/)\.\.(\/|$)/.test(endpoint.split("?")[0]!)) {
+    throw new Error(`ELMA365: путь "${endpoint}" содержит переход вверх по дереву ".." — параметры инструмента так выглядеть не должны.`);
+  }
+
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeout);

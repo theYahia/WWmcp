@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 504" width="800" height="504" role="img" aria-label="Диалог с ИИ: входящие BPM-задачи ELMA365 через elma365-mcp">
+  <title>Диалог с ИИ: входящие BPM-задачи ELMA365 через elma365-mcp</title>
+  <rect x="1" y="1" width="798" height="502" rx="14" fill="#1B2028" stroke="#333C4A" stroke-width="2"/>
+  <path d="M1 56 H799" stroke="#333C4A" stroke-width="1.5"/>
+  <g fill="#3C4552"><circle cx="28" cy="28" r="6"/><circle cx="50" cy="28" r="6"/><circle cx="72" cy="28" r="6"/></g>
+  <text x="96" y="33" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" fill="#8B97A8">@theyahia/elma365-mcp</text>
+  <rect x="620" y="15" width="156" height="26" rx="13" fill="#232B36"/>
+  <text x="698" y="32" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" text-anchor="middle" fill="#8B97A8">данные — пример</text>
+  <text xml:space="preserve" x="28" y="90" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12.5" fill="#8B97A8">Вы</text>
+  <text xml:space="preserve" x="28" y="112" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#D9E0EA">Какие задачи прилетели на меня и ещё не закрыты?</text>
+  <rect x="16" y="135" width="768" height="44" rx="8" fill="#232B36"/>
+  <text xml:space="preserve" x="28" y="153" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" fill="#5FC2C9">→ elma365-mcp · get_tasks(kind: "income", closed: false, size: 50)</text>
+  <text xml:space="preserve" x="28" y="217" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12.5" fill="#8B97A8">Claude</text>
+  <text xml:space="preserve" x="28" y="239" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">Входящих незавершённых задач: 4. Первые три:</text>
+  <text xml:space="preserve" x="28" y="276" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">1. Согласовать договор с «Пример Логистика»</text>
+  <text xml:space="preserve" x="28" y="301" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#8B97A8">   id: 01j8f3c2-…-a481 | процесс: Закупки</text>
+  <text xml:space="preserve" x="28" y="326" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">2. Проверить счёт по заявке ЗЯ-2026-0148</text>
+  <text xml:space="preserve" x="28" y="351" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#8B97A8">   id: 01j8f2b7-…-c930 | процесс: Оплаты</text>
+  <text xml:space="preserve" x="28" y="376" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#D9E0EA">3. Принять работу подрядчика</text>
+  <text xml:space="preserve" x="28" y="401" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#8B97A8">   id: 01j8f1a4-…-77e2 | процесс: Подряд</text>
+  <text xml:space="preserve" x="28" y="434" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">Чем задачу можно завершить — get_task_exits(id),</text>
+  <text xml:space="preserve" x="28" y="459" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#D9E0EA">затем complete_task(id, exitId, instanceId).</text>
+</svg>

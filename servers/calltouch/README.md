@@ -101,3 +101,7 @@ Calltouch предлагает реферальную программу: **15% 
 ## Лицензия
 
 MIT
+
+---
+
+Часть монорепозитория [WWmcp](https://github.com/theYahia/WWmcp) · Telegram: [@vhodvai](https://t.me/vhodvai)

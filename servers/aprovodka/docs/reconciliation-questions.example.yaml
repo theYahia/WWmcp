@@ -1,0 +1,133 @@
+# Сверка цифр — десять вопросов. Образец для конфигурации «Бухгалтерия предприятия 3.0».
+#
+# Как пользоваться:
+#   1. Согласовать с клиентом десять вопросов ДО начала работы — приёмка идёт по ним.
+#   2. Клиент (или мы у него на глазах) открывает штатный отчёт из графы
+#      reference_report и диктует число. Оно вносится в `expected` — руками, один раз.
+#   3. `node scripts/reconcile.mjs questions.yaml --out otchet.md` — прогон и таблица.
+#
+# ⚠️ Поля `expected` здесь пустые НАМЕРЕННО: это шаблон, а не отчёт.
+#    Проставленное здесь число было бы выдумкой — продаём мы ровно обратное.
+#
+# ⚠️ Имена сущностей и реквизитов конфигурационно-зависимы. Часть имён ниже
+#    помечена в пресете как confidence:"common" (типовые из практики, не
+#    подтверждены первоисточником) — перед прогоном сверить `list_entities` /
+#    `describe_entity` на базе клиента и поправить `path`.
+#
+# Формат — строгое подмножество YAML: плоские `ключ: значение` и один список
+# `questions`. Комментарий только строкой целиком; хвостовых нет, потому что
+# решётка встречается внутри OData-литералов.
+
+config: Бухгалтерия предприятия 3.0
+base: заполнить — какая база, чья, демо или боевая
+period_from: 2026-08-01
+period_to: 2026-08-31
+
+questions:
+  - id: 1
+    title: Остаток денежных средств на расчётных счетах на конец периода (счёт 51)
+    reference_report: Оборотно-сальдовая ведомость по счёту 51, сальдо на конец
+    path: AccountingRegister_Хозрасчетный/Balance(Period=datetime'2026-09-01T00:00:00',AccountCondition='Счет.Код = "51"')?$format=json
+    field: СуммаBalance
+    aggregate: sum
+    expected:
+    tolerance: 0.01
+    note: >-
+      Граница периода — 00:00:00 СЛЕДУЮЩЕГО дня, иначе теряются проводки последнего дня.
+      Имя параметра AccountCondition первоисточником не подтверждено (см. tools/accounting.ts);
+      если база ответит ошибкой — задать отбор через Condition или снять его и суммировать.
+
+  - id: 2
+    title: Остаток в кассе на конец периода (счёт 50)
+    reference_report: Кассовая книга либо ОСВ по счёту 50, сальдо на конец
+    path: AccountingRegister_Хозрасчетный/Balance(Period=datetime'2026-09-01T00:00:00',AccountCondition='Счет.Код = "50"')?$format=json
+    field: СуммаBalance
+    aggregate: sum
+    expected:
+    tolerance: 0.01
+
+  - id: 3
+    title: Задолженность покупателей на конец периода (счёт 62)
+    reference_report: ОСВ по счёту 62, сальдо дебетовое на конец
+    path: AccountingRegister_Хозрасчетный/Balance(Period=datetime'2026-09-01T00:00:00',AccountCondition='Счет.Код = "62"')?$format=json
+    field: СуммаBalance
+    aggregate: sum
+    expected:
+    tolerance: 0.01
+    note: >-
+      Развёрнутое сальдо по субконто и свёрнутое по счёту — разные числа.
+      Согласовать с клиентом, какое из них считаем эталоном, ДО прогона.
+
+  - id: 4
+    title: Задолженность перед поставщиками на конец периода (счёт 60)
+    reference_report: ОСВ по счёту 60, сальдо кредитовое на конец
+    path: AccountingRegister_Хозрасчетный/Balance(Period=datetime'2026-09-01T00:00:00',AccountCondition='Счет.Код = "60"')?$format=json
+    field: СуммаBalance
+    aggregate: sum
+    expected:
+    tolerance: 0.01
+
+  - id: 5
+    title: Оборот по счёту 51 за период
+    reference_report: Обороты счёта 51 (или ОСВ по счёту 51, графа оборотов)
+    path: AccountingRegister_Хозрасчетный/BalanceAndTurnovers(StartPeriod=datetime'2026-08-01T00:00:00',EndPeriod=datetime'2026-09-01T00:00:00',AccountCondition='Счет.Код = "51"')?$format=json
+    field: СуммаTurnover
+    aggregate: sum
+    expected:
+    tolerance: 0.01
+    note: >-
+      Отдельной таблицы оборотов Дт/Кт инструмент не даёт: её имя первоисточником
+      не подтверждено (WORK-1516). Здесь берётся BalanceAndTurnovers — таблица,
+      имя которой подтверждено источником.
+
+  - id: 6
+    title: Число проведённых реализаций за период
+    reference_report: Журнал документов «Реализация (акты, накладные, УПД)», отбор по периоду и проведённым
+    path: Document_РеализацияТоваровУслуг?$filter=Date ge datetime'2026-08-01T00:00:00' and Date lt datetime'2026-09-01T00:00:00' and Posted eq true and DeletionMark eq false&$format=json
+    aggregate: count
+    expected:
+    tolerance: 0
+    note: >-
+      Ловушка: без `DeletionMark eq false` в выборку попадают помеченные на удаление,
+      без `Posted eq true` — черновики, которых нет ни в одном отчёте.
+      Если документов больше страницы выдачи, добавить $top или считать через $count.
+
+  - id: 7
+    title: Сумма реализаций за период
+    reference_report: Отчёт «Продажи» либо оборот по кредиту счёта 90.01 за период
+    path: Document_РеализацияТоваровУслуг?$filter=Date ge datetime'2026-08-01T00:00:00' and Date lt datetime'2026-09-01T00:00:00' and Posted eq true and DeletionMark eq false&$format=json
+    field: СуммаДокумента
+    aggregate: sum
+    expected:
+    tolerance: 0.01
+    note: >-
+      Сумма по документам и оборот по счёту 90.01 совпадают не всегда (НДС, возвраты,
+      ручные корректировки). Это не дефект — это то самое расхождение, ради которого
+      сверку и покупают: договориться с клиентом, что считаем эталоном.
+
+  - id: 8
+    title: Число поступлений товаров и услуг за период
+    reference_report: Журнал документов «Поступление (акты, накладные, УПД)», отбор по периоду
+    path: Document_ПоступлениеТоваровУслуг?$filter=Date ge datetime'2026-08-01T00:00:00' and Date lt datetime'2026-09-01T00:00:00' and Posted eq true and DeletionMark eq false&$format=json
+    aggregate: count
+    expected:
+    tolerance: 0
+
+  - id: 9
+    title: Число действующих контрагентов в справочнике
+    reference_report: Справочник «Контрагенты», счётчик записей без папок и без помеченных
+    path: Catalog_Контрагенты?$filter=IsFolder eq false and DeletionMark eq false&$format=json
+    aggregate: count
+    expected:
+    tolerance: 0
+    note: >-
+      Ловушка: справочник иерархический. Без `IsFolder eq false` считаются и группы,
+      и число получается больше, чем видит бухгалтер в своём списке.
+
+  - id: 10
+    title: Число позиций номенклатуры (товары и услуги, без групп)
+    reference_report: Справочник «Номенклатура», счётчик записей без папок и без помеченных
+    path: Catalog_Номенклатура?$filter=IsFolder eq false and DeletionMark eq false&$format=json
+    aggregate: count
+    expected:
+    tolerance: 0

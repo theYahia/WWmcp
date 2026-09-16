@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="Invoice">
+  <title>Invoice</title>
+  <rect x="8" y="8" width="240" height="240" rx="52" fill="#2F8F73" fill-opacity="0.14"/>
+  <g fill="none" stroke="#2F8F73" stroke-width="15" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M80 52 H176 V196 L160 182 L144 196 L128 182 L112 196 L96 182 L80 196 Z"/>
+    <path d="M104 92 H152"/><path d="M104 122 H152"/><path d="M104 152 H136"/>
+  </g>
+</svg>
