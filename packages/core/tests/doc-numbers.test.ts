@@ -178,7 +178,7 @@ describe("patchDocFile — обход файла целиком", () => {
 
   it("standalone-пакеты вне монорепы не трогаются", () => {
     const fixture =
-      "<tr><td>Alfa Bank</td><td><a href=x>@theyahia/alfa-bank-mcp</a></td><td>9 tools</td></tr>";
+      "<tr><td>Prodamus</td><td><a href=x>@theyahia/prodamus-mcp</a></td><td>9 tools</td></tr>";
     const { text, changes } = patchDocFile(fixture, monorepo, "docs/index.html") as {
       text: string;
       changes: Change[];

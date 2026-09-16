@@ -17,8 +17,11 @@
  *   docs/index.html, проза     22 инструмента / 8 инструментов / 1 инструмент
  */
 
-/** Пакеты монорепы. Суффикс -mcp требовать нельзя: @theyahia/aprovodka его не имеет. */
-export const PKG_RE = /@theyahia\/[a-z0-9-]+/;
+/**
+ * Пакеты монорепы. Суффикс -mcp требовать нельзя: @theyahia/aprovodka его не имеет.
+ * @metarebalance — единственное исключение из скоупа (dadata, см. CLAUDE.md).
+ */
+export const PKG_RE = /@(?:theyahia|metarebalance)\/[a-z0-9-]+/;
 
 /** Границы строки HTML-таблицы: <tr>, <tr class="..."> и </tr>. */
 export const ROW_OPEN_RE = /<tr[\s>]/;

@@ -2,20 +2,20 @@
 
 [English](README.md) | **Русский**
 
-> **46 серверов · 566 инструментов · один npm-scope: [@theyahia](https://www.npmjs.com/org/theyahia)**
+> **66 серверов · 895 инструментов · один npm-scope: [@theyahia](https://www.npmjs.com/org/theyahia)**
 >
-> Числа считает `node scripts/catalog.mjs`: каждый сервер поднимается по stdio и отвечает на `listTools()`. Последний прогон — 2026-09-02.
+> Числа считает `node scripts/catalog.mjs`: каждый сервер поднимается по stdio и отвечает на `listTools()`. Последний прогон — 2026-09-16.
 
 [![Лицензия: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![CI](https://github.com/theYahia/WWmcp/actions/workflows/ci.yml/badge.svg)](https://github.com/theYahia/WWmcp/actions/workflows/ci.yml)
 [![npm downloads](https://img.shields.io/npm/dm/@theyahia/mcp-core?label=downloads)](https://www.npmjs.com/org/theyahia)
 [![GitHub stars](https://img.shields.io/github/stars/theYahia/WWmcp?style=social)](https://github.com/theYahia/WWmcp/stargazers)
-![Серверы](https://img.shields.io/badge/MCP_Servers-46-blue)
-![Инструменты](https://img.shields.io/badge/Tools-566-green)
+![Серверы](https://img.shields.io/badge/MCP_Servers-66-blue)
+![Инструменты](https://img.shields.io/badge/Tools-895-green)
 
 MCP-серверы для API, которых нет в западных каталогах: российские и СНГ-сервисы (1С, Wildberries, ЮKassa, СДЭК, hh.ru, amoCRM, МойСклад, Авито) плюс платёжные и SMS-провайдеры Турции, Залива, Египта, Эфиопии, Бангладеш и Латинской Америки. Подключаются к Claude Desktop, Cursor, VS Code и любому MCP-клиенту.
 
-Каталог делится надвое: **[Россия и СНГ](#серверы-для-россии-и-снг)** — 39 серверов, 429 инструментов, основная часть; **[развивающиеся рынки](#серверы-для-развивающихся-рынков)** — 7 серверов, 72 инструмента за пределами постсоветского пространства.
+Каталог делится надвое: **[Россия и СНГ](#серверы-для-россии-и-снг)** — 53 сервера, 711 инструментов, основная часть; **[развивающиеся рынки](#серверы-для-развивающихся-рынков)** — 13 серверов, 184 инструмента за пределами постсоветского пространства.
 
 **Что внутри:**
 
@@ -76,7 +76,7 @@ MCP-серверы для API, которых нет в западных кат�
 
 ## Серверы для России и СНГ
 
-39 серверов, 429 инструментов. Россия, Казахстан, Узбекистан.
+53 сервера, 711 инструментов. Россия, Казахстан, Узбекистан.
 
 #### Платежи
 
@@ -88,10 +88,19 @@ MCP-серверы для API, которых нет в западных кат�
 | [@theyahia/cloudpayments-mcp](https://www.npmjs.com/package/@theyahia/cloudpayments-mcp) | v1.2.0 | 6 tools | Оплата, двухстадийная схема, отмена, возврат, поиск транзакции |
 | [@theyahia/robokassa-mcp](https://www.npmjs.com/package/@theyahia/robokassa-mcp) | v1.2.0 | 2 tools | Ссылки на оплату, статус счёта |
 
+#### Банки для бизнеса
+
+| Пакет | Версия | Инструменты | Что умеет |
+|---|---|---|---|
+| [@theyahia/alfa-bank-mcp](https://www.npmjs.com/package/@theyahia/alfa-bank-mcp) | v1.1.0 | 8 tools | Альфа-Банк для бизнеса: счета, выписки, платёжные поручения, контрагенты, курсы, зарплатные реестры |
+| [@theyahia/sber-mcp](https://www.npmjs.com/package/@theyahia/sber-mcp) | v1.2.0 | 8 tools | СберБизнес: счета, остатки, выписки, платежи, контрагенты |
+| [@theyahia/tochka-bank-mcp](https://www.npmjs.com/package/@theyahia/tochka-bank-mcp) | v2.0.0 | 7 tools | Точка: счета, остатки, выписки, платежи, клиенты |
+
 #### ERP, учёт, CRM
 
 | Пакет | Версия | Инструменты | Что умеет |
 |---|---|---|---|
+| [@theyahia/kaiten-mcp](https://www.npmjs.com/package/@theyahia/kaiten-mcp) | v4.0.0 | 63 tools | Канбан: пространства, доски, карточки, чек-листы, спринты |
 | [@theyahia/retailcrm-mcp](https://www.npmjs.com/package/@theyahia/retailcrm-mcp) | v3.0.0 | 39 tools | Заказы, клиенты, товары, оплаты, задачи, e-commerce-аналитика |
 | [@theyahia/aprovodka](https://www.npmjs.com/package/@theyahia/aprovodka) | v4.3.0 | 34 tools | 1С:Предприятие через OData: справочники, документы, регистры, бухучёт, батчи |
 | [@theyahia/planfix-mcp](https://www.npmjs.com/package/@theyahia/planfix-mcp) | v1.2.0 | 20 tools | Задачи, контакты, проекты, комментарии, кастомные поля, файлы |
@@ -99,6 +108,7 @@ MCP-серверы для API, которых нет в западных кат�
 | [@theyahia/amocrm-mcp](https://www.npmjs.com/package/@theyahia/amocrm-mcp) | v2.0.2 | 19 tools | Сделки, контакты, компании, воронки, задачи, примечания, неразобранное |
 | [@theyahia/moysklad-mcp](https://www.npmjs.com/package/@theyahia/moysklad-mcp) | v3.1.0 | 60 tools | Товары, остатки, заказы, контрагенты, приёмки, отчёт по прибыли |
 | [@theyahia/megaplan-mcp](https://www.npmjs.com/package/@theyahia/megaplan-mcp) | v4.0.0 | 18 tools | Задачи, сделки, проекты, сотрудники, комментарии |
+| [@theyahia/kontur-diadoc-mcp](https://www.npmjs.com/package/@theyahia/kontur-diadoc-mcp) | v1.1.0 | 8 tools | ЭДО: документы, организации, контрагенты, отправка и подпись |
 | [@theyahia/bitrix24-mcp](https://www.npmjs.com/package/@theyahia/bitrix24-mcp) | v1.2.0 | 4 tools | Сделки, контакты, задачи через входящий вебхук |
 | [@theyahia/getcourse-mcp](https://www.npmjs.com/package/@theyahia/getcourse-mcp) | v1.2.0 | 3 tools | Онлайн-школа: пользователи, сделки |
 
@@ -115,6 +125,7 @@ MCP-серверы для API, которых нет в западных кат�
 | Пакет | Версия | Инструменты | Что умеет |
 |---|---|---|---|
 | [@theyahia/cdek-mcp](https://www.npmjs.com/package/@theyahia/cdek-mcp) | v2.2.0 | 16 tools | Тарифы, заказы, вызов курьера, трекинг, ПВЗ, печать, вебхуки |
+| [@theyahia/ati-su-mcp](https://www.npmjs.com/package/@theyahia/ati-su-mcp) | v2.0.0 | 12 tools | Биржа грузоперевозок: грузы, фирмы, транспорт, справочники, расстояния |
 | [@theyahia/boxberry-mcp](https://www.npmjs.com/package/@theyahia/boxberry-mcp) | v1.1.1 | 6 tools | ПВЗ, расчёт доставки, трекинг, проверка индекса |
 | [@theyahia/delovye-linii-mcp](https://www.npmjs.com/package/@theyahia/delovye-linii-mcp) | v1.1.1 | 6 tools | Тарифы на грузоперевозки, терминалы, заказы, трекинг |
 | [@theyahia/pochta-russia-mcp](https://www.npmjs.com/package/@theyahia/pochta-russia-mcp) | v2.0.0 | 6 tools | Трекинг, тарифы, сроки, отделения, нормализация адреса |
@@ -125,13 +136,17 @@ MCP-серверы для API, которых нет в западных кат�
 |---|---|---|---|
 | [@theyahia/hh-mcp](https://www.npmjs.com/package/@theyahia/hh-mcp) | v2.1.0 | 19 tools | Поиск вакансий и резюме, работодатели, зарплатная статистика, справочники |
 | [@theyahia/huntflow-mcp](https://www.npmjs.com/package/@theyahia/huntflow-mcp) | v1.2.0 | 14 tools | ATS: вакансии, кандидаты, резюме, этапы, источники |
+| [@theyahia/superjob-mcp](https://www.npmjs.com/package/@theyahia/superjob-mcp) | v1.1.1 | 5 tools | Поиск вакансий, работодатели, города, профессии |
 
 #### Маркетинг, аналитика, веб
 
 | Пакет | Версия | Инструменты | Что умеет |
 |---|---|---|---|
+| [@theyahia/tgstat-mcp](https://www.npmjs.com/package/@theyahia/tgstat-mcp) | v2.0.0 | 20 tools | Аналитика Telegram-каналов: поиск, статистика, посты, упоминания |
+| [@theyahia/sendpulse-mcp](https://www.npmjs.com/package/@theyahia/sendpulse-mcp) | v1.1.1 | 11 tools | Email-рассылки, адресные книги, шаблоны, SMTP, web push |
 | [@theyahia/unisender-mcp](https://www.npmjs.com/package/@theyahia/unisender-mcp) | v1.1.1 | 10 tools | Списки, контакты, шаблоны, рассылки, статистика доставки |
 | [@theyahia/vk-ads-mcp](https://www.npmjs.com/package/@theyahia/vk-ads-mcp) | v4.0.0 | 8 tools | Кампании, объявления, таргетинги, бюджеты, статистика |
+| [@theyahia/vk-mcp](https://www.npmjs.com/package/@theyahia/vk-mcp) | v1.1.1 | 8 tools | ВКонтакте: стена, поиск записей, пользователи, группы, сообщения |
 | [@theyahia/tilda-mcp](https://www.npmjs.com/package/@theyahia/tilda-mcp) | v1.2.0 | 7 tools | Проекты, страницы, экспорт страниц |
 | [@theyahia/calltouch-mcp](https://www.npmjs.com/package/@theyahia/calltouch-mcp) | v1.2.1 | 7 tools | Коллтрекинг: звонки, лиды, источники, статистика |
 | [@theyahia/mindbox-mcp](https://www.npmjs.com/package/@theyahia/mindbox-mcp) | v1.2.0 | 6 tools | CDP: профили клиентов, заказы, сегменты, операции |
@@ -142,8 +157,11 @@ MCP-серверы для API, которых нет в западных кат�
 
 | Пакет | Версия | Инструменты | Что умеет |
 |---|---|---|---|
+| [@theyahia/voximplant-mcp](https://www.npmjs.com/package/@theyahia/voximplant-mcp) | v2.0.0 | 23 tools | Облачная телефония: звонки, SMS, записи, сценарии, очереди ACD |
+| [@theyahia/jivosite-mcp](https://www.npmjs.com/package/@theyahia/jivosite-mcp) | v1.1.1 | 11 tools | Онлайн-чат: чаты, операторы, контакты, сообщения, вебхуки |
 | [@theyahia/mts-exolve-mcp](https://www.npmjs.com/package/@theyahia/mts-exolve-mcp) | v3.0.1 | 8 tools | SMS, звонки, записи, Viber, покупка номеров |
 | [@theyahia/mango-office-mcp](https://www.npmjs.com/package/@theyahia/mango-office-mcp) | v1.1.1 | 8 tools | Облачная АТС: звонки, пользователи, callback, статистика, записи, SMS |
+| [@theyahia/sms-ru-mcp](https://www.npmjs.com/package/@theyahia/sms-ru-mcp) | v1.1.1 | 5 tools | Отправка SMS, статус доставки, стоимость, баланс, отправители |
 
 #### AI и речь
 
@@ -156,6 +174,7 @@ MCP-серверы для API, которых нет в западных кат�
 
 | Пакет | Версия | Инструменты | Что умеет |
 |---|---|---|---|
+| [@metarebalance/dadata-mcp](https://www.npmjs.com/package/@metarebalance/dadata-mcp) | v1.0.6 | 31 tools | Стандартизация адресов, ФИО, телефонов; поиск компаний и банков; геокодинг |
 | [@theyahia/kontur-focus-mcp](https://www.npmjs.com/package/@theyahia/kontur-focus-mcp) | v3.0.1 | 8 tools | Проверка контрагента: ЕГРЮЛ, финансы, арбитраж, банкротство, лицензии |
 | [@theyahia/2gis-mcp](https://www.npmjs.com/package/@theyahia/2gis-mcp) | v3.0.0 | 8 tools | Поиск мест, геокодинг, маршруты, отзывы |
 | [@theyahia/cbr-mcp](https://www.npmjs.com/package/@theyahia/cbr-mcp) | v1.2.0 | 7 tools | ЦБ РФ: курсы валют, ключевая ставка, драгметаллы, конвертация |
@@ -173,52 +192,44 @@ MCP-серверы для API, которых нет в западных кат�
 
 ## Серверы для развивающихся рынков
 
-7 серверов, 72 инструмента вне СНГ. Набор младше и уже, чем СНГ-часть; заявки на новые страны — через [issue «новый сервер»](https://github.com/theYahia/WWmcp/issues/new?template=new-server.yml).
+13 серверов, 184 инструмента вне СНГ. Набор младше и уже, чем СНГ-часть; заявки на новые страны — через [issue «новый сервер»](https://github.com/theYahia/WWmcp/issues/new?template=new-server.yml).
 
 | Пакет | Регион | Версия | Инструменты | Что умеет |
 |---|---|---|---|---|
+| [@theyahia/parasut-mcp](https://www.npmjs.com/package/@theyahia/parasut-mcp) | Турция | v2.0.0 | 37 tools | Бухгалтерия: контакты, счета, закупки, товары, e-Fatura/e-Arşiv |
+| [@theyahia/ifood-mcp](https://www.npmjs.com/package/@theyahia/ifood-mcp) | Бразилия | v1.1.0 | 26 tools | Заказы ресторана, статус и часы работы магазина, каталог и цены |
+| [@theyahia/paymongo-mcp](https://www.npmjs.com/package/@theyahia/paymongo-mcp) | Филиппины | v1.1.0 | 24 tools | Платежи, payment intents, checkout, ссылки, клиенты, возвраты, вебхуки |
 | [@theyahia/salla-mcp](https://www.npmjs.com/package/@theyahia/salla-mcp) | Саудовская Аравия | v3.1.0 | 22 tools | E-commerce: товары, заказы, покупатели, категории, купоны |
 | [@theyahia/mercadopago-mcp](https://www.npmjs.com/package/@theyahia/mercadopago-mcp) | Латинская Америка (9 стран) | v1.1.0 | 10 tools | Платежи, возвраты, checkout preferences, заказы мерчанта |
+| [@theyahia/asaas-mcp](https://www.npmjs.com/package/@theyahia/asaas-mcp) | Бразилия | v1.0.1 | 9 tools | Платежи, Pix QR, клиенты, подписки, возвраты |
 | [@theyahia/bkash-mcp](https://www.npmjs.com/package/@theyahia/bkash-mcp) | Бангладеш | v1.1.0 | 8 tools | Tokenized Checkout: платежи, возвраты, соглашения |
 | [@theyahia/chapa-mcp](https://www.npmjs.com/package/@theyahia/chapa-mcp) | Эфиопия | v1.1.0 | 8 tools | Платежи, верификация, переводы, банки, баланс |
 | [@theyahia/fawaterak-mcp](https://www.npmjs.com/package/@theyahia/fawaterak-mcp) | Египет | v1.1.0 | 8 tools | Счета, способы оплаты (Fawry, карты, кошельки, Meeza), возвраты |
 | [@theyahia/ileti-merkezi-mcp](https://www.npmjs.com/package/@theyahia/ileti-merkezi-mcp) | Турция | v4.0.0 | 11 tools | SMS, массовые рассылки, отчёты, контакты, чёрный список |
 | [@theyahia/orange-money-mcp](https://www.npmjs.com/package/@theyahia/orange-money-mcp) | Франкофонная Африка (11 стран) | v1.1.0 | 8 tools | WebPay: платежи, статусы, cash-in, cash-out, переводы |
+| [@theyahia/kavenegar-mcp](https://www.npmjs.com/package/@theyahia/kavenegar-mcp) | Иран | v1.0.1 | 8 tools | SMS, массовые рассылки, OTP, статус доставки, аккаунт |
+| [@theyahia/jazzcash-mcp](https://www.npmjs.com/package/@theyahia/jazzcash-mcp) | Пакистан | v2.0.1 | 5 tools | Платежи с кошелька и мобильного счёта, ваучеры, статус, возвраты |
 
 ---
 
 ## Отдельные репозитории
 
-77 пакетов опубликованы в npm под тем же scope, но их код лежит **не в этом монорепо** — каждый в своём репозитории. Здесь их нельзя собрать, протестировать и посчитать инструменты, поэтому версии и число инструментов смотри на странице пакета в npm.
+57 пакетов опубликованы в npm под тем же scope, но их код лежит **не в этом монорепо** — каждый в своём репозитории. Здесь их нельзя собрать, протестировать и посчитать инструменты, поэтому версии и число инструментов смотри на странице пакета в npm.
 
 Колонка «Исходники» — ссылка на репозиторий, если он публичный; «только npm» — публичного репозитория нет.
 
 <details>
-<summary><b>77 пакетов вне монорепо</b> (нажми, чтобы развернуть)</summary>
+<summary><b>57 пакетов вне монорепо</b> (нажми, чтобы развернуть)</summary>
 
 | Пакет | Регион | Исходники | Описание |
 |---|---|---|---|
-| [@metarebalance/dadata-mcp](https://www.npmjs.com/package/@metarebalance/dadata-mcp) | Россия | [github](https://github.com/theYahia/dadata-mcp) | DaData — address validation, company lookup, phone cleaning, geocoding |
-| [@theyahia/alfa-bank-mcp](https://www.npmjs.com/package/@theyahia/alfa-bank-mcp) | Россия | [github](https://github.com/theYahia/alfa-bank-mcp) | Alfa-Bank Business — accounts, balances, statements, payment orders, counterparties, FX rates, payroll |
 | [@theyahia/appmetrica-mcp](https://www.npmjs.com/package/@theyahia/appmetrica-mcp) | Россия | [github](https://github.com/theYahia/appmetrica-mcp) | AppMetrica — mobile analytics, reports, cohorts, profiles, push campaigns, crashes |
-| [@theyahia/ati-su-mcp](https://www.npmjs.com/package/@theyahia/ati-su-mcp) | Россия | [github](https://github.com/theYahia/ati-su-mcp) | ATI.su — cargo search, truck matching, company ratings |
 | [@theyahia/atol-online-mcp](https://www.npmjs.com/package/@theyahia/atol-online-mcp) | Россия | только npm | ATOL Online — fiscal receipts (54-FZ compliance) |
 | [@theyahia/casebook-mcp](https://www.npmjs.com/package/@theyahia/casebook-mcp) | Россия | только npm | Casebook/Pravo.ru — legal case search |
 | [@theyahia/chestnyznak-mcp](https://www.npmjs.com/package/@theyahia/chestnyznak-mcp) | Россия | [github](https://github.com/theYahia/chestnyznak-mcp) | Chestniy ZNAK — product marking verification |
-| [@theyahia/jivosite-mcp](https://www.npmjs.com/package/@theyahia/jivosite-mcp) | Россия | [github](https://github.com/theYahia/jivosite-mcp) | JivoSite — chats, agents, visitors |
-| [@theyahia/kaiten-mcp](https://www.npmjs.com/package/@theyahia/kaiten-mcp) | Россия | [github](https://github.com/theYahia/kaiten-mcp) | Kaiten — boards, cards, columns, tags, users, comments |
-| [@theyahia/kontur-diadoc-mcp](https://www.npmjs.com/package/@theyahia/kontur-diadoc-mcp) | Россия | [github](https://github.com/theYahia/kontur-diadoc-mcp) | Kontur.Diadoc — electronic document interchange |
 | [@theyahia/prodamus-mcp](https://www.npmjs.com/package/@theyahia/prodamus-mcp) | Россия | только npm | Prodamus — payments, subscriptions, refunds, invoices |
-| [@theyahia/sber-mcp](https://www.npmjs.com/package/@theyahia/sber-mcp) | Россия | [github](https://github.com/theYahia/sber-mcp) | Sberbank — accounts, statements |
 | [@theyahia/sberbank-acquiring-mcp](https://www.npmjs.com/package/@theyahia/sberbank-acquiring-mcp) | Россия | только npm | Sberbank eCommerce Acquiring — online payments, refunds, pre-auth, card tokenization |
-| [@theyahia/sendpulse-mcp](https://www.npmjs.com/package/@theyahia/sendpulse-mcp) | Россия | [github](https://github.com/theYahia/sendpulse-mcp) | SendPulse — mailing lists, email sending, statistics |
-| [@theyahia/sms-ru-mcp](https://www.npmjs.com/package/@theyahia/sms-ru-mcp) | Россия | [github](https://github.com/theYahia/sms-ru-mcp) | SMS.RU — send SMS, check status, balance |
 | [@theyahia/spark-interfax-mcp](https://www.npmjs.com/package/@theyahia/spark-interfax-mcp) | Россия | только npm | SPARK-Interfax — business intelligence |
-| [@theyahia/superjob-mcp](https://www.npmjs.com/package/@theyahia/superjob-mcp) | Россия | [github](https://github.com/theYahia/superjob-mcp) | SuperJob — vacancy search, employers |
-| [@theyahia/tgstat-mcp](https://www.npmjs.com/package/@theyahia/tgstat-mcp) | Россия | [github](https://github.com/theYahia/tgstat-mcp) | TGStat — Telegram channel analytics, search, posts, stats, mentions, comparison |
-| [@theyahia/tochka-bank-mcp](https://www.npmjs.com/package/@theyahia/tochka-bank-mcp) | Россия | [github](https://github.com/theYahia/tochka-bank-mcp) | Tochka Bank — accounts, payments, counterparties, company info |
-| [@theyahia/vk-mcp](https://www.npmjs.com/package/@theyahia/vk-mcp) | Россия | [github](https://github.com/theYahia/vk-mcp) | VK — wall posts, news search, users, groups |
-| [@theyahia/voximplant-mcp](https://www.npmjs.com/package/@theyahia/voximplant-mcp) | Россия | [github](https://github.com/theYahia/voximplant-mcp) | Voximplant — call history, users, SMS |
 | [@theyahia/yandex-360-mcp](https://www.npmjs.com/package/@theyahia/yandex-360-mcp) | Россия | [github](https://github.com/theYahia/yandex-360-mcp) | Yandex 360 — users, departments, groups, disk, calendar |
 | [@theyahia/yandex-cloud-mcp](https://www.npmjs.com/package/@theyahia/yandex-cloud-mcp) | Россия | [github](https://github.com/theYahia/yandex-cloud-mcp) | Yandex Cloud — compute, storage, serverless, operations |
 | [@theyahia/yandex-delivery-mcp](https://www.npmjs.com/package/@theyahia/yandex-delivery-mcp) | Россия | только npm | Yandex Delivery — claims, tracking, price estimation |
@@ -241,7 +252,6 @@ MCP-серверы для API, которых нет в западных кат�
 | [@theyahia/hepsiburada-mcp](https://www.npmjs.com/package/@theyahia/hepsiburada-mcp) | Турция | только npm | Hepsiburada — marketplace |
 | [@theyahia/is-bankasi-mcp](https://www.npmjs.com/package/@theyahia/is-bankasi-mcp) | Турция | только npm | Isbank — developer API |
 | [@theyahia/iyzico-mcp](https://www.npmjs.com/package/@theyahia/iyzico-mcp) | Турция | только npm | iyzico — payment gateway |
-| [@theyahia/parasut-mcp](https://www.npmjs.com/package/@theyahia/parasut-mcp) | Турция | [github](https://github.com/theYahia/parasut-mcp) | Parasut — accounting |
 | [@theyahia/trendyol-mcp](https://www.npmjs.com/package/@theyahia/trendyol-mcp) | Турция | только npm | Trendyol — marketplace |
 | [@theyahia/foodics-mcp](https://www.npmjs.com/package/@theyahia/foodics-mcp) | Залив (ОАЭ + Саудовская Аравия) | только npm | Foodics — POS/restaurant platform (UAE/Saudi) |
 | [@theyahia/moyasar-mcp](https://www.npmjs.com/package/@theyahia/moyasar-mcp) | Залив (ОАЭ + Саудовская Аравия) | только npm | Moyasar — payment gateway (Saudi Arabia) |
@@ -249,11 +259,9 @@ MCP-серверы для API, которых нет в западных кат�
 | [@theyahia/tabby-mcp](https://www.npmjs.com/package/@theyahia/tabby-mcp) | Залив (ОАЭ + Саудовская Аравия) | только npm | Tabby — BNPL platform (UAE/Saudi) |
 | [@theyahia/tap-payments-mcp](https://www.npmjs.com/package/@theyahia/tap-payments-mcp) | Залив (ОАЭ + Саудовская Аравия) | только npm | Tap Payments — payment gateway (UAE/Saudi/Kuwait/Bahrain) |
 | [@theyahia/unifonic-mcp](https://www.npmjs.com/package/@theyahia/unifonic-mcp) | Залив (ОАЭ + Саудовская Аравия) | только npm | Unifonic — CPaaS: SMS, Voice, WhatsApp (Saudi Arabia) |
-| [@theyahia/asaas-mcp](https://www.npmjs.com/package/@theyahia/asaas-mcp) | Латинская Америка (Бразилия + Мексика) | [github](https://github.com/theYahia/asaas-mcp) | Asaas — payment and Pix gateway (Brazil) |
 | [@theyahia/correios-mcp](https://www.npmjs.com/package/@theyahia/correios-mcp) | Латинская Америка (Бразилия + Мексика) | только npm | Correios — Brazilian postal service |
 | [@theyahia/facturapi-mcp](https://www.npmjs.com/package/@theyahia/facturapi-mcp) | Латинская Америка (Бразилия + Мексика) | только npm | Facturapi — Mexican e-invoicing (CFDI) |
 | [@theyahia/hotmart-mcp](https://www.npmjs.com/package/@theyahia/hotmart-mcp) | Латинская Америка (Бразилия + Мексика) | только npm | Hotmart — digital products platform (Brazil) |
-| [@theyahia/ifood-mcp](https://www.npmjs.com/package/@theyahia/ifood-mcp) | Латинская Америка (Бразилия + Мексика) | [github](https://github.com/theYahia/ifood-mcp) | iFood — merchant integration (Brazil) |
 | [@theyahia/nfeio-mcp](https://www.npmjs.com/package/@theyahia/nfeio-mcp) | Латинская Америка (Бразилия + Мексика) | только npm | NFe.io — fiscal document platform (Brazil) |
 | [@theyahia/pagarme-mcp](https://www.npmjs.com/package/@theyahia/pagarme-mcp) | Латинская Америка (Бразилия + Мексика) | только npm | Pagar.me — payment gateway (Brazil) |
 | [@theyahia/africas-talking-mcp](https://www.npmjs.com/package/@theyahia/africas-talking-mcp) | Африка (Нигерия + Кения + ЮАР + Алжир) | только npm | Africa's Talking — communications platform (Kenya/Nigeria/Uganda) |
@@ -264,15 +272,12 @@ MCP-серверы для API, которых нет в западных кат�
 | [@theyahia/yoco-mcp](https://www.npmjs.com/package/@theyahia/yoco-mcp) | Африка (Нигерия + Кения + ЮАР + Алжир) | только npm | Yoco — payment gateway (South Africa) |
 | [@theyahia/midtrans-mcp](https://www.npmjs.com/package/@theyahia/midtrans-mcp) | Юго-Восточная Азия (Индонезия + Вьетнам + Филиппины) | только npm | Midtrans — payment gateway (Indonesia) |
 | [@theyahia/momo-vn-mcp](https://www.npmjs.com/package/@theyahia/momo-vn-mcp) | Юго-Восточная Азия (Индонезия + Вьетнам + Филиппины) | только npm | MoMo — payment gateway (Vietnam) |
-| [@theyahia/paymongo-mcp](https://www.npmjs.com/package/@theyahia/paymongo-mcp) | Юго-Восточная Азия (Индонезия + Вьетнам + Филиппины) | [github](https://github.com/theYahia/paymongo-mcp) | PayMongo — payment gateway (Philippines) |
 | [@theyahia/rajaongkir-mcp](https://www.npmjs.com/package/@theyahia/rajaongkir-mcp) | Юго-Восточная Азия (Индонезия + Вьетнам + Филиппины) | только npm | RajaOngkir — shipping cost API (Indonesia) |
 | [@theyahia/vnpay-mcp](https://www.npmjs.com/package/@theyahia/vnpay-mcp) | Юго-Восточная Азия (Индонезия + Вьетнам + Филиппины) | только npm | VNPay — payment gateway (Vietnam) |
 | [@theyahia/xendit-mcp](https://www.npmjs.com/package/@theyahia/xendit-mcp) | Юго-Восточная Азия (Индонезия + Вьетнам + Филиппины) | только npm | Xendit — payment gateway (Indonesia/Philippines) |
 | [@theyahia/zalo-oa-mcp](https://www.npmjs.com/package/@theyahia/zalo-oa-mcp) | Юго-Восточная Азия (Индонезия + Вьетнам + Филиппины) | только npm | Zalo Official Account — messaging API (Vietnam) |
 | [@theyahia/easypaisa-mcp](https://www.npmjs.com/package/@theyahia/easypaisa-mcp) | MENA (Иран + Пакистан) | [github](https://github.com/theYahia/easypaisa-mcp) | Easypaisa — mobile wallet and payments (Pakistan) |
 | [@theyahia/idpay-mcp](https://www.npmjs.com/package/@theyahia/idpay-mcp) | MENA (Иран + Пакистан) | только npm | IDPay — payment gateway (Iran) |
-| [@theyahia/jazzcash-mcp](https://www.npmjs.com/package/@theyahia/jazzcash-mcp) | MENA (Иран + Пакистан) | [github](https://github.com/theYahia/jazzcash-mcp) | JazzCash — mobile wallet and payments (Pakistan) |
-| [@theyahia/kavenegar-mcp](https://www.npmjs.com/package/@theyahia/kavenegar-mcp) | MENA (Иран + Пакистан) | [github](https://github.com/theYahia/kavenegar-mcp) | Kavenegar — SMS gateway (Iran) |
 | [@theyahia/neshan-maps-mcp](https://www.npmjs.com/package/@theyahia/neshan-maps-mcp) | MENA (Иран + Пакистан) | только npm | Neshan Maps — maps API (Iran) |
 | [@theyahia/zarinpal-mcp](https://www.npmjs.com/package/@theyahia/zarinpal-mcp) | MENA (Иран + Пакистан) | только npm | Zarinpal — payment gateway (Iran) |
 
