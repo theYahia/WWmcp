@@ -62,7 +62,12 @@ export const tools: ToolDef[] = [
     handler: handleListSpaces,
   },
   { name: "get_space", description: "Get a single space by ID.", schema: getSpaceSchema, handler: handleGetSpace },
-  { name: "create_space", description: "Create a new space.", schema: createSpaceSchema, handler: handleCreateSpace },
+  {
+    name: "create_space",
+    description: "Create a new space in the Kaiten workspace.",
+    schema: createSpaceSchema,
+    handler: handleCreateSpace,
+  },
   {
     name: "update_space",
     description: "Update a space's title or access mode.",

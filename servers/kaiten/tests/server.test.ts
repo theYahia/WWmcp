@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { allTools } from "../src/index.js";
+import { allTools } from "../src/server.js";
 
 describe("server registry", () => {
   it("registers at least the core tools", () => {

@@ -136,4 +136,11 @@ describe("kaitenRequest", () => {
     expect(await kaitenGet("/cards/7")).toEqual({ id: 7 });
     expect(mockFetch).toHaveBeenCalledTimes(2);
   });
+
+  it("does not retry a mutation on 5xx (would duplicate the card)", async () => {
+    mockFetch.mockResolvedValue(errResponse(502, "bad gateway"));
+    const { kaitenPost } = await import("../src/client.js");
+    await expect(kaitenPost("/cards", { title: "T" })).rejects.toThrow("Kaiten HTTP 502");
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+  });
 });

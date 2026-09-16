@@ -17,43 +17,24 @@
     "build": "tsc",
     "dev": "tsx src/index.ts",
     "start": "node dist/index.js",
-    "typecheck": "tsc --noEmit",
-    "lint": "eslint \"src/**/*.ts\" \"tests/**/*.ts\"",
-    "lint:fix": "eslint \"src/**/*.ts\" \"tests/**/*.ts\" --fix",
-    "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\" \"*.json\"",
-    "format:check": "prettier --check \"src/**/*.ts\" \"tests/**/*.ts\" \"*.json\"",
     "test": "vitest run",
+    "test:e2e": "vitest run --config vitest.e2e.config.ts",
     "test:watch": "vitest",
-    "coverage": "vitest run --coverage",
-    "prepublishOnly": "npm run build",
-    "prepare": "husky"
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.12.0",
-    "zod": "^3.24.0"
+    "@theyahia/mcp-core": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "express": "^5.2.1",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.4",
-    "@types/node": "^22.0.0",
-    "@vitest/coverage-v8": "^4.1.9",
-    "eslint": "^9.39.4",
-    "eslint-config-prettier": "^9.1.2",
-    "husky": "^9.1.7",
-    "lint-staged": "^15.5.2",
-    "prettier": "^3.8.4",
+    "@types/node": "^22.19.18",
     "tsx": "^4.19.0",
-    "typescript": "^5.7.0",
-    "typescript-eslint": "^8.62.0",
-    "vitest": "^4.1.9"
-  },
-  "lint-staged": {
-    "*.ts": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.{json,md}": [
-      "prettier --write"
-    ]
+    "typescript": "^5.8.3",
+    "vitest": "^4.1.2"
   },
   "publishConfig": {
     "access": "public"
@@ -79,14 +60,8 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/theYahia/kaiten-mcp.git"
+    "url": "https://github.com/theYahia/WWmcp.git",
+    "directory": "servers/kaiten"
   },
-  "bugs": {
-    "url": "https://github.com/theYahia/kaiten-mcp/issues"
-  },
-  "homepage": "https://github.com/theYahia/kaiten-mcp#readme",
-  "author": {
-    "name": "Yahia",
-    "url": "https://github.com/theYahia"
-  }
+  "author": "theYahia (https://github.com/theYahia)"
 }

@@ -34,7 +34,7 @@ export const getCompanyInfoTool: ToolDef = {
         .optional()
         .describe("Customer code; optional if you have only one customer."),
     },
-    outputSchema: { customer: z.record(z.unknown()) },
+    outputSchema: { customer: z.record(z.string(), z.unknown()) },
     annotations: { readOnlyHint: true, openWorldHint: true },
   },
   handler: async (client: TochkaBankClient, args: { customer_code?: string }) => {

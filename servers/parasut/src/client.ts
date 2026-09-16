@@ -1,3 +1,4 @@
+import { createLogger } from "@theyahia/mcp-core";
 import { PKG_NAME, VERSION } from "./version.js";
 import type { ParasutSingleResult } from "./types.js";
 
@@ -10,6 +11,8 @@ const MAX_RETRIES = 3;
 const MAX_BACKOFF_MS = 30_000;
 
 const USER_AGENT = `${PKG_NAME}/${VERSION}`;
+
+export const logger = createLogger("parasut-mcp");
 
 function envInt(name: string, fallback: number): number {
   const v = parseInt(process.env[name] ?? "", 10);
@@ -252,7 +255,12 @@ async function apiFetch(method: string, url: string, body?: unknown): Promise<un
 
         if ((response.status === 429 || response.status >= 500) && attempt < MAX_RETRIES) {
           const delay = retryDelayMs(response.headers, attempt, response.status);
-          console.error(`[parasut-mcp] ${response.status}, retry in ${delay}ms (${attempt}/${MAX_RETRIES})`);
+          logger.warn("HTTP error, retrying", {
+            status: response.status,
+            delay_ms: delay,
+            attempt,
+            max_retries: MAX_RETRIES,
+          });
           await sleep(delay);
           continue;
         }
@@ -269,7 +277,7 @@ async function apiFetch(method: string, url: string, body?: unknown): Promise<un
         clearTimeout(timer);
         if (error instanceof DOMException && error.name === "AbortError") {
           if (attempt < MAX_RETRIES) {
-            console.error(`[parasut-mcp] Timeout, retry (${attempt}/${MAX_RETRIES})`);
+            logger.warn("Request timeout, retrying", { attempt, max_retries: MAX_RETRIES });
             continue;
           }
           throw new Error("Parasut: request timeout (15s). Try again later.");

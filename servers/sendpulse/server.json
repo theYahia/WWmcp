@@ -1,0 +1,38 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/sendpulse-mcp",
+  "title": "SendPulse",
+  "description": "SendPulse - email campaigns, mailing lists, SMTP and web push notifications (Russia)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/sendpulse",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/sendpulse"
+  },
+  "version": "1.1.1",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/sendpulse-mcp",
+      "version": "1.1.1",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "SENDPULSE_ID",
+          "description": "SendPulse REST API client ID (OAuth2 client credentials)",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "SENDPULSE_SECRET",
+          "description": "SendPulse REST API client secret (OAuth2 client credentials)",
+          "isRequired": true,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

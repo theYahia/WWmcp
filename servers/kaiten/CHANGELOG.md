@@ -4,6 +4,29 @@ All notable changes to this project are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- Moved into the WWmcp monorepo (`servers/kaiten`) on top of `@theyahia/mcp-core`
+  and zod 4. Tool names, count and input schemas are unchanged.
+- Every tool response and error now passes through the core's sanitization and
+  truncation (`withErrorHandling`); errors come back as `isError` results.
+- HTTP transport now runs on the core's `startHttp` (session-based Streamable
+  HTTP, needs `express`); `--http <port>`, `HTTP_PORT` and
+  `KAITEN_HTTP_CORS_ORIGIN` work as before. `--http` without a port now starts
+  HTTP on 3000 instead of silently falling back to stdio.
+- Logs are structured JSON on stderr.
+
+### Fixed
+
+- A 5xx or timeout on `POST`/`PATCH`/`PUT`/`DELETE` is no longer retried: the
+  request may already have been applied, and a repeat created duplicate cards or
+  comments. `GET` and any `429` are still retried with `Retry-After`.
+- The server now starts when launched through the npm bin symlink
+  (`npx @theyahia/kaiten-mcp` on macOS/Linux): the entry-point check compared
+  `argv[1]` against `index.js` and never matched there.
+
 ## [4.0.0]
 
 Major release: full house-standard alignment, large API expansion, and

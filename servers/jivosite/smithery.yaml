@@ -1,0 +1,19 @@
+name: jivosite-mcp
+description: MCP server for JivoSite API — chats, agents, contacts, messages, webhooks. 10 tools + 2 skills.
+vendor: theYahia
+sourceUrl: https://github.com/theYahia/WWmcp/tree/main/servers/jivosite
+license: MIT
+
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - JIVOSITE_TOKEN
+    properties:
+      JIVOSITE_TOKEN:
+        type: string
+        description: JivoSite API token. Get from JivoSite admin panel.
+  commandFunction:
+    |-
+    (config) => ({ command: 'npx', args: ['-y', '@theyahia/jivosite-mcp'], env: { JIVOSITE_TOKEN: config.JIVOSITE_TOKEN } })

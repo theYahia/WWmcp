@@ -1,4 +1,10 @@
+import { createLogger } from "@theyahia/mcp-core";
 import { PKG_NAME, VERSION } from "./version.js";
+
+// Свой клиент, а не BaseHttpClient ядра: ядро не читает Retry-After, не держит
+// общий лимит одновременных запросов (KAITEN_MAX_CONCURRENT) и отдаёт null на
+// пустое тело, а инструменты отвечают { success: true } на 204 от DELETE.
+export const logger = createLogger("kaiten-mcp");
 
 const TIMEOUT = 15_000;
 const MAX_RETRIES = 3;
@@ -107,6 +113,11 @@ export async function kaitenRequest(method: Method, path: string, body?: unknown
   const baseUrl = resolveBaseUrl();
   const authHeader = getAuthHeader();
 
+  // 5xx и таймаут на мутации не значат «не выполнено»: повтор POST создаёт вторую
+  // карточку или комментарий. Повторяем их только для GET (как BaseHttpClient ядра);
+  // 429 — отказ до выполнения, его безопасно повторять для любого метода.
+  const idempotent = method === "GET";
+
   await acquireSlot();
   try {
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
@@ -132,9 +143,9 @@ export async function kaitenRequest(method: Method, path: string, body?: unknown
           return text ? JSON.parse(text) : { success: true };
         }
 
-        if ((response.status === 429 || response.status >= 500) && attempt < MAX_RETRIES) {
+        if ((response.status === 429 || (response.status >= 500 && idempotent)) && attempt < MAX_RETRIES) {
           const delay = retryDelayMs(response.headers, attempt);
-          console.error(`[kaiten-mcp] ${response.status}, retry in ${delay}ms (${attempt}/${MAX_RETRIES})`);
+          logger.warn("Retryable error, backing off", { status: response.status, delay, attempt });
           await sleep(delay);
           continue;
         }
@@ -149,8 +160,8 @@ export async function kaitenRequest(method: Method, path: string, body?: unknown
         throw new Error(formatApiError(response.status, text));
       } catch (error) {
         clearTimeout(timer);
-        if (error instanceof DOMException && error.name === "AbortError" && attempt < MAX_RETRIES) {
-          console.error(`[kaiten-mcp] Timeout, retry (${attempt}/${MAX_RETRIES})`);
+        if (error instanceof DOMException && error.name === "AbortError" && idempotent && attempt < MAX_RETRIES) {
+          logger.warn("Request timeout, retrying", { attempt });
           continue;
         }
         throw error;

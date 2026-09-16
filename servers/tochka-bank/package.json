@@ -7,17 +7,38 @@
   "bin": {
     "tochka-bank-mcp": "dist/index.js"
   },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/index.ts",
-    "typecheck": "tsc --noEmit",
-    "lint": "biome check src",
-    "lint:fix": "biome check --write src",
-    "format": "biome format --write src",
+    "start": "node dist/index.js",
     "test": "vitest run",
+    "test:e2e": "vitest run --config vitest.e2e.config.ts",
     "test:watch": "vitest",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run build"
   },
+  "dependencies": {
+    "@theyahia/mcp-core": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.18",
+    "tsx": "^4.19.0",
+    "typescript": "^5.8.3",
+    "vitest": "^4.1.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "mcpName": "io.github.theYahia/tochka-bank-mcp",
   "keywords": [
     "mcp",
     "mcp-server",
@@ -30,31 +51,11 @@
     "payments",
     "typescript"
   ],
-  "author": "theYahia",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/theYahia/tochka-bank-mcp.git"
+    "url": "https://github.com/theYahia/WWmcp.git",
+    "directory": "servers/tochka-bank"
   },
-  "bugs": {
-    "url": "https://github.com/theYahia/tochka-bank-mcp/issues"
-  },
-  "homepage": "https://github.com/theYahia/tochka-bank-mcp#readme",
-  "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.12.1",
-    "zod": "^3.24.4"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "2.5.1",
-    "@types/node": "^25.5.0",
-    "tsx": "^4.19.4",
-    "typescript": "^5.8.3",
-    "vitest": "^3.1.1"
-  },
-  "files": [
-    "dist"
-  ],
-  "engines": {
-    "node": ">=18"
-  }
+  "author": "theYahia (https://github.com/theYahia)"
 }

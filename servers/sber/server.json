@@ -1,0 +1,74 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/sber-mcp",
+  "title": "Sberbank Business",
+  "description": "SberBusiness API - accounts, balance, statements, payments, counterparties (Russia)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/sber",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/sber"
+  },
+  "version": "1.2.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/sber-mcp",
+      "version": "1.2.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "SBER_TOKEN",
+          "description": "Direct Bearer token. Required unless SBER_CLIENT_ID + SBER_CLIENT_SECRET are set",
+          "isRequired": false,
+          "isSecret": true
+        },
+        {
+          "name": "SBER_CLIENT_ID",
+          "description": "OAuth client_id (with SBER_CLIENT_SECRET). Required unless SBER_TOKEN is set",
+          "isRequired": false,
+          "isSecret": false
+        },
+        {
+          "name": "SBER_CLIENT_SECRET",
+          "description": "OAuth client_secret (with SBER_CLIENT_ID). Required unless SBER_TOKEN is set",
+          "isRequired": false,
+          "isSecret": true
+        },
+        {
+          "name": "SBER_BASE_URL",
+          "description": "API host override (default https://fintech.sberbank.ru:9443)",
+          "isRequired": false,
+          "isSecret": false
+        },
+        {
+          "name": "SBER_OAUTH_URL",
+          "description": "OAuth token endpoint override",
+          "isRequired": false,
+          "isSecret": false
+        },
+        {
+          "name": "SBER_OAUTH_SCOPE",
+          "description": "Space-separated OAuth scope names",
+          "isRequired": false,
+          "isSecret": false
+        },
+        {
+          "name": "SBER_PFX_PATH",
+          "description": "mTLS: path to client certificate .p12/.pfx",
+          "isRequired": false,
+          "isSecret": false
+        },
+        {
+          "name": "SBER_PFX_PASSPHRASE",
+          "description": "mTLS: PFX passphrase",
+          "isRequired": false,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

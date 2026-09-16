@@ -1,78 +1,83 @@
-# @theyahia/tochka-bank-mcp
+# MCP-сервер для Банка Точка — счета, выписки и подготовка платежей через ИИ
 
-MCP server for the **real** [Tochka Bank](https://tochka.com/) business API
-(`https://enter.tochka.com/uapi`). It lets an MCP client (Claude Desktop, Cursor,
-etc.) read your business accounts, balances and statements, look up your company
-details, and prepare outgoing ruble payments for you to sign.
+Если вы искали, как подключить бизнес-API Точки к нейросети, поднять баланс и выписку по счёту
+или подготовить рублёвый платёж не открывая интернет-банк — это оно. 7 инструментов поверх
+боевого API (`https://enter.tochka.com/uapi`): счета, балансы, выписки, реквизиты компании,
+платежи и их статус. Деньги сервер сам не отправляет — платёж уходит во flow «на подпись»,
+подписывает человек в интернет-банке по SMS.
 
-> ⚠️ **This server can prepare real payments.** `create_payment` builds a payment
-> via Tochka's *for-sign* flow: it never sends money on its own — a human signs
-> each payment in Tochka internet-bank (SMS). It also requires `confirm: true`
-> (otherwise it returns a dry-run preview) and respects an amount limit. Run the
-> server **without auto-approve** for tools and keep `TOCHKA_MAX_PAYMENT_RUB` set
-> to a sane value.
+> MCP-сервер к **боевому** бизнес-API [Банка Точка](https://tochka.com/)
+> (`https://enter.tochka.com/uapi`). Позволяет MCP-клиенту (Claude Desktop, Cursor
+> и другим) читать ваши бизнес-счета, балансы и выписки, смотреть реквизиты компании
+> и готовить исходящие рублёвые платежи вам на подпись.
 
-## Features
+> ⚠️ **Сервер умеет готовить реальные платежи.** `create_payment` собирает платёж
+> через flow Точки *«на подпись»*: сам он деньги не отправляет — каждый платёж
+> подписывает человек в интернет-банке Точки (по SMS). Кроме того, инструмент требует
+> `confirm: true` (иначе возвращает превью без отправки) и соблюдает лимит суммы.
+> Запускайте сервер **без авто-одобрения** инструментов и держите
+> `TOCHKA_MAX_PAYMENT_RUB` на разумном значении.
 
-- Accounts, balances, and (asynchronous) statements
-- Company/customer info
-- Outgoing payments via the *for-sign* flow, with dry-run preview, a required
-  `confirm` flag, an amount limit, and an optional recipient allowlist
-- OAuth 2.0 hybrid auth with a one-time `auth` command and automatic token refresh
-- PII/secret redaction, request timeouts, rate-limit handling, structured output
+## Возможности
 
-## Install
+- Счета, балансы и (асинхронные) выписки
+- Информация о компании и клиенте
+- Исходящие платежи через flow *«на подпись»*, с превью без отправки, обязательным
+  флагом `confirm`, лимитом суммы и опциональным белым списком получателей
+- Гибридная авторизация OAuth 2.0 с разовой командой `auth` и автообновлением токенов
+- Скрытие персональных данных и секретов, таймауты запросов, обработка лимитов, структурированный вывод
+
+## Установка
 
 ```bash
 npx -y @theyahia/tochka-bank-mcp
 ```
 
-Requires Node.js ≥ 18.
+Требуется Node.js ≥ 18.
 
-## Authentication
+## Авторизация
 
-Tochka's account and payment APIs require the OAuth 2.0 **hybrid flow** — a bare
-`client_credentials` token is not enough. Setup is a one-time step:
+API счетов и платежей Точки требует **гибридного flow** OAuth 2.0 — голого токена
+`client_credentials` недостаточно. Настройка делается один раз:
 
-1. In Tochka internet-bank, open **Интеграции и API**, create an application, and
-   copy its **client id** and **client secret**.
-2. Register a redirect URI for the app. For local setup use
-   `http://localhost:8765/callback` (or set `TOCHKA_REDIRECT_URI` to match what you
-   registered — the host must be a loopback address).
-3. Run the one-time authorization (opens your browser, you approve the requested
-   permissions, tokens are saved locally):
+1. В интернет-банке Точки откройте **Интеграции и API**, создайте приложение и
+   скопируйте его **client id** и **client secret**.
+2. Зарегистрируйте для приложения redirect URI. Для локальной настройки подойдёт
+   `http://localhost:8765/callback` (либо задайте `TOCHKA_REDIRECT_URI` в точности как
+   зарегистрировали — хост должен быть loopback-адресом).
+3. Выполните разовую авторизацию (откроется браузер, вы подтверждаете запрошенные
+   права, токены сохраняются локально):
 
    ```bash
    TOCHKA_CLIENT_ID=... TOCHKA_CLIENT_SECRET=... npx -y @theyahia/tochka-bank-mcp auth
    ```
 
-   Run `npx -y @theyahia/tochka-bank-mcp auth --help` for details.
+   Подробности — `npx -y @theyahia/tochka-bank-mcp auth --help`.
 
-After that, the server refreshes tokens automatically (access token ~24h, refresh
-token ~30d). For headless deployments you can instead provide the refresh token
-via `TOCHKA_REFRESH_TOKEN`.
+Дальше сервер обновляет токены сам (access-токен ~24 ч, refresh-токен ~30 дней). Для
+headless-развёртываний refresh-токен можно передать через `TOCHKA_REFRESH_TOKEN`.
 
-> Single-tenant alternative: Tochka also supports a JWT generated directly in the
-> developer cabinet. This server currently implements the OAuth flow; JWT support
-> can be added by setting `TOCHKA_REFRESH_TOKEN`-style config in a future release.
+> Альтернатива для одного тенанта: Точка поддерживает и JWT, сгенерированный прямо в
+> кабинете разработчика. Сейчас сервер реализует OAuth-flow; поддержку JWT можно
+> добавить конфигом в духе `TOCHKA_REFRESH_TOKEN` в будущем релизе.
 
-## Configuration
+## Конфигурация
 
-| Variable | Required | Description |
+| Переменная | Обяз. | Описание |
 |----------|----------|-------------|
-| `TOCHKA_CLIENT_ID` | Yes | OAuth client id from the Tochka developer cabinet |
-| `TOCHKA_CLIENT_SECRET` | Yes | OAuth client secret |
-| `TOCHKA_REDIRECT_URI` | No | OAuth redirect URI (default `http://localhost:8765/callback`); must match the one registered for your app |
-| `TOCHKA_BASE_URL` | No | API base (default `https://enter.tochka.com/uapi`; sandbox `https://enter.tochka.com/sandbox/v2`) |
-| `TOCHKA_TOKEN_STORE` | No | Token file path (default `~/.config/tochka-bank-mcp/tokens.json`, mode 0600) |
-| `TOCHKA_REFRESH_TOKEN` | No | Pre-issued refresh token (headless; skips the `auth` step) |
-| `TOCHKA_MAX_PAYMENT_RUB` | No | Max payment amount allowed by `create_payment` (default `100000`) |
-| `TOCHKA_ALLOWED_RECIPIENTS` | No | Comma-separated recipient account allowlist for `create_payment` |
-| `TOCHKA_STATEMENT_TIMEOUT_MS` | No | Max wait for an async statement to become Ready (default `25000`) |
+| `TOCHKA_CLIENT_ID` | да | OAuth client id из кабинета разработчика Точки |
+| `TOCHKA_CLIENT_SECRET` | да | OAuth client secret |
+| `TOCHKA_REDIRECT_URI` | нет | Redirect URI для OAuth (по умолчанию `http://localhost:8765/callback`); должен совпадать с зарегистрированным для приложения |
+| `TOCHKA_BASE_URL` | нет | База API (по умолчанию `https://enter.tochka.com/uapi`; песочница `https://enter.tochka.com/sandbox/v2`) |
+| `TOCHKA_TOKEN_STORE` | нет | Путь к файлу токенов (по умолчанию `~/.config/tochka-bank-mcp/tokens.json`, права 0600) |
+| `TOCHKA_REFRESH_TOKEN` | нет | Заранее выданный refresh-токен (headless; позволяет пропустить шаг `auth`) |
+| `TOCHKA_MAX_PAYMENT_RUB` | нет | Максимальная сумма платежа, разрешённая в `create_payment` (по умолчанию `100000`) |
+| `TOCHKA_ALLOWED_RECIPIENTS` | нет | Белый список счетов получателей через запятую для `create_payment` |
+| `TOCHKA_STATEMENT_TIMEOUT_MS` | нет | Сколько ждать готовности асинхронной выписки (по умолчанию `25000`) |
 
-## Claude Desktop setup
+## Настройка Claude Desktop
 
-Add to `claude_desktop_config.json`:
+Добавьте в `claude_desktop_config.json`:
 
 ```json
 {
@@ -89,40 +94,40 @@ Add to `claude_desktop_config.json`:
 }
 ```
 
-Run the `auth` step (above) once before starting the client so the tokens exist.
+Один раз выполните шаг `auth` (см. выше) до запуска клиента, чтобы токены уже существовали.
 
-## Tools
+## Инструменты
 
-| Tool | Kind | Description |
+| Инструмент | Тип | Описание |
 |------|------|-------------|
-| `list_accounts` | read | List business accounts (accountId, currency, type, status) |
-| `get_account_balance` | read | Balances for an account (one row per balance type) |
-| `get_statement` | read | Transactions for a date range (async: init + poll) |
-| `list_customers` | read | Your Tochka customer codes (legal entities) |
-| `get_company_info` | read | Company details for a customer code (auto-selected if only one) |
-| `create_payment` | **write / destructive** | Prepare an outgoing RUB payment for signing (rubles, dry-run unless `confirm:true`) |
-| `get_payment_status` | read | Payment status by `request_id` |
+| `list_accounts` | чтение | Список бизнес-счетов (accountId, валюта, тип, статус) |
+| `get_account_balance` | чтение | Балансы по счёту (по строке на каждый тип баланса) |
+| `get_statement` | чтение | Операции за период (асинхронно: запуск + опрос) |
+| `list_customers` | чтение | Ваши коды клиентов Точки (юрлица) |
+| `get_company_info` | чтение | Реквизиты компании по коду клиента (выбирается автоматически, если он один) |
+| `create_payment` | **запись / разрушающая** | Подготовить исходящий рублёвый платёж на подпись (в рублях, превью без отправки, пока не передан `confirm:true`) |
+| `get_payment_status` | чтение | Статус платежа по `request_id` |
 
-External counterparties are not a Tochka resource; derive them from
-`get_statement` transactions.
+Внешних контрагентов Точка отдельной сущностью не отдаёт — выводите их из операций
+`get_statement`.
 
-## Demo prompts
+## Демо-промпты
 
-1. "Show me all my Tochka Bank accounts and their balances."
-2. "Prepare a payment of 75000.50 RUB to OOO Romashka, account 40702810000000005678,
-   BIK 044525225, for web development services — show me a preview first."
-3. "Get my company registration info from Tochka Bank."
+1. «Покажи все мои счета в Точке и их балансы.»
+2. «Подготовь платёж на 75 000,50 рубля ООО „Ромашка“, счёт 40702810000000005678,
+   БИК 044525225, назначение — услуги веб-разработки. Сначала покажи превью.»
+3. «Достань из Точки регистрационные данные моей компании.»
 
-## Security
+## Безопасность
 
-- `create_payment` is annotated `destructiveHint`, requires `confirm: true`,
-  supports `dry_run`, enforces `TOCHKA_MAX_PAYMENT_RUB`, and an optional recipient
-  allowlist. Funds never move without a human signing in internet-bank.
-- API error bodies can contain INNs, account numbers, and balances; all error
-  messages and logs are redacted (identifiers keep only the last 4 characters).
-- Tokens are stored locally (mode 0600). Do not commit the token store.
+- У `create_payment` выставлен `destructiveHint`, требуется `confirm: true`,
+  поддерживается `dry_run`, соблюдается `TOCHKA_MAX_PAYMENT_RUB` и опциональный белый
+  список получателей. Деньги не двигаются, пока человек не подпишет платёж в интернет-банке.
+- Тела ошибок API могут содержать ИНН, номера счетов и балансы; все тексты ошибок и
+  логи маскируются (у идентификаторов остаются только последние 4 символа).
+- Токены хранятся локально (права 0600). Не коммитьте файл с токенами.
 
-## Development
+## Разработка
 
 ```bash
 npm install
@@ -132,6 +137,10 @@ npm test
 npm run build
 ```
 
-## License
+## Лицензия
 
 MIT
+
+---
+
+Часть [WWmcp](https://github.com/theYahia/WWmcp) · Telegram: [@vhodvai](https://t.me/vhodvai)

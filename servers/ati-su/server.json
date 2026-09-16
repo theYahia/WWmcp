@@ -1,0 +1,68 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/ati-su-mcp",
+  "title": "ATI.su",
+  "description": "ATI.su freight exchange (Russia) - firms, loads, own fleet, dictionaries, distance",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/ati-su",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/ati-su"
+  },
+  "version": "2.0.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/ati-su-mcp",
+      "version": "2.0.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "ATI_TOKEN",
+          "description": "Static API token from ati.su/developers/tokens (required unless the OAuth2 trio is set)",
+          "isRequired": false,
+          "isSecret": true
+        },
+        {
+          "name": "ATI_CLIENT_ID",
+          "description": "OAuth2 client id (alternative to ATI_TOKEN)",
+          "isRequired": false,
+          "isSecret": false
+        },
+        {
+          "name": "ATI_CLIENT_SECRET",
+          "description": "OAuth2 client secret (alternative to ATI_TOKEN)",
+          "isRequired": false,
+          "isSecret": true
+        },
+        {
+          "name": "ATI_REFRESH_TOKEN",
+          "description": "OAuth2 refresh token (alternative to ATI_TOKEN)",
+          "isRequired": false,
+          "isSecret": true
+        },
+        {
+          "name": "ATI_ALLOW_WRITES",
+          "description": "Set to 1 to enable create_load (publishes real loads)",
+          "isRequired": false,
+          "isSecret": false
+        },
+        {
+          "name": "ATI_ENABLE_DISTANCE",
+          "description": "Set to 1 to enable the paid get_distance tool",
+          "isRequired": false,
+          "isSecret": false
+        },
+        {
+          "name": "ATI_SANDBOX",
+          "description": "Set to 1 to target sandbox-api.ati.su",
+          "isRequired": false,
+          "isSecret": false
+        }
+      ]
+    }
+  ]
+}

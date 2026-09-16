@@ -1,0 +1,17 @@
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - SMS_RU_API_ID
+    properties:
+      SMS_RU_API_ID:
+        type: string
+        description: "API ключ от sms.ru — получите на https://sms.ru/my/settings"
+  commandFunction:
+    |-
+    (config) => ({
+      command: "node",
+      args: ["dist/index.js"],
+      env: { SMS_RU_API_ID: config.SMS_RU_API_ID }
+    })

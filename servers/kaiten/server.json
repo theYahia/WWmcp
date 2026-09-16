@@ -1,0 +1,44 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/kaiten-mcp",
+  "title": "Kaiten",
+  "description": "Kaiten kanban - spaces, boards, cards, checklists, comments, sprints (Russia)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/kaiten",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/kaiten"
+  },
+  "version": "4.0.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/kaiten-mcp",
+      "version": "4.0.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "KAITEN_DOMAIN",
+          "description": "Kaiten subdomain (acme) or full host (acme.kaiten.io); not needed if KAITEN_BASE_URL is set",
+          "isRequired": true,
+          "isSecret": false
+        },
+        {
+          "name": "KAITEN_TOKEN",
+          "description": "Bearer token from Kaiten Profile > API tokens",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "KAITEN_BASE_URL",
+          "description": "Full API base for self-hosted Kaiten, e.g. https://kaiten.mycorp.ru/api/latest",
+          "isRequired": false,
+          "isSecret": false
+        }
+      ]
+    }
+  ]
+}

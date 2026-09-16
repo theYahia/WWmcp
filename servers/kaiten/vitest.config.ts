@@ -5,6 +5,8 @@ export default defineConfig({
     globals: true,
     restoreMocks: true,
     include: ["tests/**/*.test.ts"],
+    // e2e-смоук гоняет собранный dist — у него свой конфиг vitest.e2e.config.ts.
+    exclude: ["tests/e2e/**"],
     coverage: {
       provider: "v8",
       reporter: ["text", "lcov"],

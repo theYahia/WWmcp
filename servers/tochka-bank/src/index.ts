@@ -2,7 +2,7 @@
 
 import { readFileSync } from "node:fs";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { createLogger, startStdio, withErrorHandling } from "@theyahia/mcp-core";
 import { runAuthCommand } from "./auth/authCommand.js";
 import { OAuthAuthProvider } from "./auth/provider.js";
 import { TochkaBankClient } from "./client.js";
@@ -11,6 +11,9 @@ import { type ToolDef, wrapTool } from "./tools/_shared.js";
 import { getAccountBalanceTool, getStatementTool, listAccountsTool } from "./tools/accounts.js";
 import { getCompanyInfoTool, listCustomersTool } from "./tools/customers.js";
 import { createPaymentTool, getPaymentStatusTool } from "./tools/payments.js";
+
+const NAME = "tochka-bank-mcp";
+const logger = createLogger(NAME);
 
 const TOOLS: ToolDef[] = [
   listAccountsTool,
@@ -66,33 +69,35 @@ async function main(): Promise<void> {
   const baseUrl = process.env.TOCHKA_BASE_URL || "https://enter.tochka.com/uapi";
 
   if (!clientId || !clientSecret) {
-    console.error("Missing TOCHKA_CLIENT_ID or TOCHKA_CLIENT_SECRET environment variables");
+    logger.error("Missing TOCHKA_CLIENT_ID or TOCHKA_CLIENT_SECRET environment variables");
     process.exit(1);
   }
 
   const auth = new OAuthAuthProvider({ clientId, clientSecret, baseUrl });
   const client = new TochkaBankClient({ auth, baseUrl });
+  const version = packageVersion();
 
-  const server = new McpServer({
-    name: "tochka-bank-mcp",
-    version: packageVersion(),
-  });
+  const server = new McpServer({ name: NAME, version });
 
   for (const tool of TOOLS) {
     server.registerTool(
       tool.name,
       tool.config,
+      // wrapTool redacts PII/secrets in errors; core withErrorHandling adds
+      // prompt-injection filtering and truncation on top.
       // biome-ignore lint/suspicious/noExplicitAny: bridging our ToolDef registry to the SDK's per-tool generic callback type.
-      wrapTool(client, tool) as any,
+      withErrorHandling(wrapTool(client, tool)) as any,
     );
   }
 
-  const transport = new StdioServerTransport();
-  await server.connect(transport);
-  console.error(`Tochka Bank MCP server v${packageVersion()} running on stdio`);
+  // ponytail: stdio only, as in the satellite. Core runServer would also enable
+  // HTTP on HTTP_PORT — no bearer auth, all interfaces — not acceptable for a bank.
+  await startStdio(server, { name: NAME, version, toolCount: TOOLS.length, logger });
 }
 
 main().catch((err) => {
-  console.error("Fatal error:", redact(err instanceof Error ? err.message : String(err)));
+  logger.error("Fatal error", {
+    error: redact(err instanceof Error ? err.message : String(err)),
+  });
   process.exit(1);
 });

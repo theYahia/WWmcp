@@ -1,0 +1,25 @@
+# Smithery configuration for superjob-mcp
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    properties:
+      secretKey:
+        type: string
+        title: SuperJob Secret Key
+        description: "API secret key from api.superjob.ru"
+      appId:
+        type: string
+        title: SuperJob App ID
+        description: "Application ID from api.superjob.ru (optional)"
+    required:
+      - secretKey
+  commandFunction: |-
+    (config) => ({
+      command: "node",
+      args: ["dist/index.js"],
+      env: {
+        SUPERJOB_SECRET_KEY: config.secretKey,
+        ...(config.appId ? { SUPERJOB_APP_ID: config.appId } : {})
+      }
+    })

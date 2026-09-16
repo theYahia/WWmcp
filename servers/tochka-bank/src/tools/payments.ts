@@ -72,7 +72,7 @@ export const createPaymentTool: ToolDef = {
       status: z.string(),
       requestId: z.string().optional(),
       message: z.string(),
-      preview: z.record(z.unknown()).optional(),
+      preview: z.record(z.string(), z.unknown()).optional(),
     },
     annotations: {
       readOnlyHint: false,

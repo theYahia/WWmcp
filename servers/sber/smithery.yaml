@@ -1,0 +1,58 @@
+name: sber-mcp
+description: MCP server for Sberbank API — accounts, balance, statements, payments, counterparties. Bearer or OAuth (with optional mTLS).
+icon: bank
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    properties:
+      SBER_TOKEN:
+        type: string
+        title: Sber Bearer Token
+        description: Direct API token (alternative to OAuth)
+      SBER_CLIENT_ID:
+        type: string
+        title: OAuth Client ID
+        description: Sber OAuth client_id (use with CLIENT_SECRET)
+      SBER_CLIENT_SECRET:
+        type: string
+        title: OAuth Client Secret
+        description: Sber OAuth client_secret (use with CLIENT_ID)
+      SBER_BASE_URL:
+        type: string
+        title: API Base URL
+        description: Override API host (default https://fintech.sberbank.ru:9443)
+      SBER_OAUTH_URL:
+        type: string
+        title: OAuth Token URL
+        description: Override OAuth endpoint (default https://api.sberbank.ru:8443/prod/tokens/v2/oauth)
+      SBER_OAUTH_SCOPE:
+        type: string
+        title: OAuth Scope
+        description: Space-separated scope names (default GET_STATEMENT_ACCOUNT PAY_DOC_RU GET_CLIENT_ACCOUNTS)
+      SBER_PFX_PATH:
+        type: string
+        title: mTLS PFX path
+        description: Path to client certificate .p12/.pfx for mutual TLS (with SBER_PFX_PASSPHRASE)
+      SBER_PFX_PASSPHRASE:
+        type: string
+        title: mTLS PFX passphrase
+        description: Passphrase for the PFX container
+    oneOf:
+      - required: [SBER_TOKEN]
+      - required: [SBER_CLIENT_ID, SBER_CLIENT_SECRET]
+  commandFunction: |-
+    (config) => ({
+      command: 'node',
+      args: ['dist/index.js'],
+      env: {
+        ...(config.SBER_TOKEN ? { SBER_TOKEN: config.SBER_TOKEN } : {}),
+        ...(config.SBER_CLIENT_ID ? { SBER_CLIENT_ID: config.SBER_CLIENT_ID } : {}),
+        ...(config.SBER_CLIENT_SECRET ? { SBER_CLIENT_SECRET: config.SBER_CLIENT_SECRET } : {}),
+        ...(config.SBER_BASE_URL ? { SBER_BASE_URL: config.SBER_BASE_URL } : {}),
+        ...(config.SBER_OAUTH_URL ? { SBER_OAUTH_URL: config.SBER_OAUTH_URL } : {}),
+        ...(config.SBER_OAUTH_SCOPE ? { SBER_OAUTH_SCOPE: config.SBER_OAUTH_SCOPE } : {}),
+        ...(config.SBER_PFX_PATH ? { SBER_PFX_PATH: config.SBER_PFX_PATH } : {}),
+        ...(config.SBER_PFX_PASSPHRASE ? { SBER_PFX_PASSPHRASE: config.SBER_PFX_PASSPHRASE } : {}),
+      }
+    })

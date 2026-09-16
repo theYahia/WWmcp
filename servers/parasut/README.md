@@ -1,6 +1,6 @@
-# @theyahia/parasut-mcp
+# Paraşüt MCP — yapay zekâ ile ön muhasebe, fatura ve e-Fatura
 
-MCP server for **Parasut** (Paraşüt) — the Turkish accounting / invoicing platform. 37 tools covering the full bookkeeping loop: contacts, sales invoices, purchase bills, products, cash & bank accounts, payments, sales offers, and **e-Fatura / e-Arşiv** issuance over OAuth 2.0.
+Paraşüt hesabınızı Claude gibi bir yapay zekâya bağlamayı, sohbet ederek fatura kesmeyi, cari hesapları sormayı veya e-Fatura / e-Arşiv göndermeyi kod yazmadan halletmek istiyorsanız aradığınız şey bu. 37 araç ön muhasebenin tamamını kapsar: cariler, satış faturaları, alış faturaları, ürünler, kasa ve banka hesapları, tahsilat ve ödemeler, satış teklifleri ve OAuth 2.0 üzerinden **e-Fatura / e-Arşiv** düzenleme.
 
 [![npm](https://img.shields.io/npm/v/@theyahia/parasut-mcp)](https://www.npmjs.com/package/@theyahia/parasut-mcp)
 [![license](https://img.shields.io/npm/l/@theyahia/parasut-mcp)](./LICENSE)
@@ -182,3 +182,7 @@ spec at [github.com/parasutcom/api-doc](https://github.com/parasutcom/api-doc).
 ## License
 
 MIT
+
+---
+
+Telegram: [@vhodvai](https://t.me/vhodvai)

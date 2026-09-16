@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { allTools } from "../src/index.js";
+import { allTools } from "../src/server.js";
 
 const mockFetch = vi.fn();
 vi.stubGlobal("fetch", mockFetch);

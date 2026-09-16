@@ -1,0 +1,38 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/voximplant-mcp",
+  "title": "Voximplant",
+  "description": "Voximplant cloud telephony - calls, SMS, recordings, VoxEngine scenarios, ACD queues (Russia)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/voximplant",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/voximplant"
+  },
+  "version": "2.0.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/voximplant-mcp",
+      "version": "2.0.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "VOXIMPLANT_ACCOUNT_ID",
+          "description": "Voximplant Account ID from manage.voximplant.com",
+          "isRequired": true,
+          "isSecret": false
+        },
+        {
+          "name": "VOXIMPLANT_API_KEY",
+          "description": "Voximplant API key from manage.voximplant.com",
+          "isRequired": true,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

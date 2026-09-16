@@ -1,0 +1,38 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/dadata-mcp",
+  "title": "DaData",
+  "description": "DaData - address validation, company lookup, phone/email cleaning, geocoding (Russia)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/dadata",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/dadata"
+  },
+  "version": "1.0.6",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@metarebalance/dadata-mcp",
+      "version": "1.0.6",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "DADATA_API_KEY",
+          "description": "API key from dadata.ru/profile/#info",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "DADATA_SECRET_KEY",
+          "description": "Secret key for paid clean_* tools and get_balance (optional)",
+          "isRequired": false,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/tochka-bank-mcp",
+  "title": "Tochka Bank",
+  "description": "Tochka Bank business API (Russia) - accounts, balances, statements, payments for signing",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/tochka-bank",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/tochka-bank"
+  },
+  "version": "2.0.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/tochka-bank-mcp",
+      "version": "2.0.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "TOCHKA_CLIENT_ID",
+          "description": "OAuth client id from the Tochka developer cabinet",
+          "isRequired": true,
+          "isSecret": false
+        },
+        {
+          "name": "TOCHKA_CLIENT_SECRET",
+          "description": "OAuth client secret",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "TOCHKA_REFRESH_TOKEN",
+          "description": "Pre-issued refresh token for headless setups (skips the `auth` step)",
+          "isRequired": false,
+          "isSecret": true
+        },
+        {
+          "name": "TOCHKA_BASE_URL",
+          "description": "API base URL (default https://enter.tochka.com/uapi)",
+          "isRequired": false,
+          "isSecret": false
+        },
+        {
+          "name": "TOCHKA_TOKEN_STORE",
+          "description": "Token file path (default ~/.config/tochka-bank-mcp/tokens.json)",
+          "isRequired": false,
+          "isSecret": false
+        },
+        {
+          "name": "TOCHKA_MAX_PAYMENT_RUB",
+          "description": "Max amount allowed in create_payment, RUB (default 100000)",
+          "isRequired": false,
+          "isSecret": false
+        },
+        {
+          "name": "TOCHKA_ALLOWED_RECIPIENTS",
+          "description": "Comma-separated allowlist of recipient accounts for create_payment",
+          "isRequired": false,
+          "isSecret": false
+        },
+        {
+          "name": "TOCHKA_STATEMENT_TIMEOUT_MS",
+          "description": "How long to wait for an async statement to become ready, ms (default 25000)",
+          "isRequired": false,
+          "isSecret": false
+        }
+      ]
+    }
+  ]
+}

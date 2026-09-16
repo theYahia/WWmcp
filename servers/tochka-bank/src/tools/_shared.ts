@@ -2,11 +2,13 @@ import type { ZodRawShape } from "zod";
 import type { TochkaBankClient } from "../client.js";
 import { redact } from "../redact.js";
 
-export interface ToolResult {
+// ponytail: type alias, not interface — SDK CallToolResult has an index signature,
+// and only aliases are implicitly assignable to it (needed by core withErrorHandling).
+export type ToolResult = {
   content: Array<{ type: "text"; text: string }>;
   structuredContent?: Record<string, unknown>;
   isError?: boolean;
-}
+};
 
 export interface ToolAnnotations {
   readOnlyHint?: boolean;

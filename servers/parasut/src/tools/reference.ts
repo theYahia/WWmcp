@@ -35,6 +35,6 @@ export const tools: ToolDef[] = [
   },
   listTool("tags", "tags", "List tags used to categorize invoices and contacts."),
   listTool("item_categories", "item_categories", "List item categories (for products, invoices, contacts)."),
-  listTool("warehouses", "warehouses", "List warehouses."),
+  listTool("warehouses", "warehouses", "List warehouses (stock locations) of the company."),
   listTool("taxes", "taxes", "List taxes (VAT/withholding records you owe)."),
 ];

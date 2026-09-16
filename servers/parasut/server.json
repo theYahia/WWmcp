@@ -1,0 +1,56 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/parasut-mcp",
+  "title": "Paraşüt",
+  "description": "Paraşüt accounting for Turkey - contacts, invoices, bills, payments, e-Fatura / e-Arşiv",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/parasut",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/parasut"
+  },
+  "version": "2.0.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/parasut-mcp",
+      "version": "2.0.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "PARASUT_CLIENT_ID",
+          "description": "OAuth client ID of your Parasut API application",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "PARASUT_CLIENT_SECRET",
+          "description": "OAuth client secret of your Parasut API application",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "PARASUT_USERNAME",
+          "description": "Parasut account email (OAuth password grant)",
+          "isRequired": true,
+          "isSecret": false
+        },
+        {
+          "name": "PARASUT_PASSWORD",
+          "description": "Parasut account password (OAuth password grant)",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "PARASUT_COMPANY_ID",
+          "description": "Company ID (number in the dashboard URL); resolved via GET /me when omitted",
+          "isRequired": false,
+          "isSecret": false
+        }
+      ]
+    }
+  ]
+}
