@@ -1,0 +1,50 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/kontur-diadoc-mcp",
+  "title": "Kontur.Diadoc",
+  "description": "Kontur.Diadoc EDI - search organizations and counterparties, list, send and sign documents (Russia)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/kontur-diadoc",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/kontur-diadoc"
+  },
+  "version": "1.1.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/kontur-diadoc-mcp",
+      "version": "1.1.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "DIADOC_API_CLIENT_ID",
+          "description": "Diadoc developer key (ddauth_api_client_id) from developer.kontur.ru",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "DIADOC_LOGIN",
+          "description": "Diadoc account login",
+          "isRequired": true,
+          "isSecret": false
+        },
+        {
+          "name": "DIADOC_PASSWORD",
+          "description": "Diadoc account password",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "DIADOC_BASE_URL",
+          "description": "Alternative API host, e.g. the sandbox (default https://diadoc-api.kontur.ru)",
+          "isRequired": false,
+          "isSecret": false
+        }
+      ]
+    }
+  ]
+}

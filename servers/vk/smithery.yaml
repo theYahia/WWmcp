@@ -1,0 +1,21 @@
+name: vk-mcp
+description: MCP server for VK (VKontakte) API — wall posts, messages, friends, stats. 8 tools.
+icon: https://vk.com/images/icons/favicons/fav_logo.ico
+
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - VK_ACCESS_TOKEN
+    properties:
+      VK_ACCESS_TOKEN:
+        type: string
+        description: VK API access token from vk.com/dev
+  commandFunction:
+    |-
+    (config) => ({
+      command: "npx",
+      args: ["-y", "@theyahia/vk-mcp"],
+      env: { VK_ACCESS_TOKEN: config.VK_ACCESS_TOKEN }
+    })

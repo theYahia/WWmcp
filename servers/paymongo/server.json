@@ -1,0 +1,38 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/paymongo-mcp",
+  "title": "PayMongo",
+  "description": "PayMongo - payments, GCash, GrabPay, refunds, checkout, links, webhooks (Philippines)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/paymongo",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/paymongo"
+  },
+  "version": "1.1.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/paymongo-mcp",
+      "version": "1.1.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "PAYMONGO_SECRET_KEY",
+          "description": "Secret API key from dashboard.paymongo.com (sk_test_... or sk_live_...)",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "PAYMONGO_ALLOW_LIVE",
+          "description": "Set to true to allow money-moving tools with a live key",
+          "isRequired": false,
+          "isSecret": false
+        }
+      ]
+    }
+  ]
+}

@@ -2,7 +2,7 @@
   "name": "@theyahia/mcp-servers",
   "version": "0.0.0",
   "private": true,
-  "description": "Monorepo of 46 MCP servers for non-Western APIs — CIS, MENA, Africa, LATAM, Southeast Asia (501 tools)",
+  "description": "Monorepo of 66 MCP servers for non-Western APIs — CIS, MENA, Africa, LATAM, Southeast Asia (895 tools)",
   "author": "theYahia (https://github.com/theYahia)",
   "license": "MIT",
   "engines": {

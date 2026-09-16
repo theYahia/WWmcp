@@ -1,0 +1,26 @@
+name: dadata-mcp
+description: "DaData API — address validation, company lookup, geocoding. 31 tools for Russian data."
+icon: "\U0001F1F7\U0001F1FA"
+
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - DADATA_API_KEY
+    properties:
+      DADATA_API_KEY:
+        type: string
+        description: "DaData API key (get free at dadata.ru/profile/#info)"
+      DADATA_SECRET_KEY:
+        type: string
+        description: "DaData secret key for paid tools (clean_*). Optional — 23 free tools work without it."
+  commandFunction: |-
+    (config) => ({
+      command: 'npx',
+      args: ['-y', '@metarebalance/dadata-mcp'],
+      env: {
+        DADATA_API_KEY: config.DADATA_API_KEY,
+        ...(config.DADATA_SECRET_KEY ? { DADATA_SECRET_KEY: config.DADATA_SECRET_KEY } : {})
+      }
+    })

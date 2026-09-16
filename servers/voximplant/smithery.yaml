@@ -1,0 +1,28 @@
+name: voximplant-mcp
+description: MCP server for Voximplant API — calls, SMS, recordings, scenarios, rules, ACD/SmartQueue, phone numbers, billing. 21 tools + 2 skills.
+version: 2.0.0
+
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - VOXIMPLANT_API_KEY
+      - VOXIMPLANT_ACCOUNT_ID
+    properties:
+      VOXIMPLANT_API_KEY:
+        type: string
+        description: Voximplant API key from manage.voximplant.com
+      VOXIMPLANT_ACCOUNT_ID:
+        type: string
+        description: Voximplant Account ID
+  commandFunction:
+    |-
+    (config) => ({
+      command: "npx",
+      args: ["-y", "@theyahia/voximplant-mcp"],
+      env: {
+        VOXIMPLANT_API_KEY: config.VOXIMPLANT_API_KEY,
+        VOXIMPLANT_ACCOUNT_ID: config.VOXIMPLANT_ACCOUNT_ID
+      }
+    })

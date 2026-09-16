@@ -1,0 +1,50 @@
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - ALFA_CLIENT_ID
+      - ALFA_CLIENT_SECRET
+    properties:
+      ALFA_CLIENT_ID:
+        type: string
+        title: Client ID
+        description: OAuth 2.0 client ID from the Alfa-Bank developer portal (developers.alfabank.ru)
+      ALFA_CLIENT_SECRET:
+        type: string
+        title: Client Secret
+        description: OAuth 2.0 client secret
+      ALFA_BASE_URL:
+        type: string
+        title: Base URL
+        description: "API base URL (default: https://baas.alfabank.ru)"
+      ALFA_SCOPE:
+        type: string
+        title: OAuth scope
+        description: Space-separated OAuth/OIDC scopes required by the called methods
+      ALFA_TLS_CERT:
+        type: string
+        title: mTLS certificate
+        description: Client certificate (inline PEM or file path) — required for live API access
+      ALFA_TLS_KEY:
+        type: string
+        title: mTLS private key
+        description: Client private key (inline PEM or file path)
+      ALFA_TLS_CA:
+        type: string
+        title: mTLS CA bundle
+        description: CA bundle (inline PEM or file path), optional
+  commandFunction: |-
+    (config) => ({
+      command: "npx",
+      args: ["-y", "@theyahia/alfa-bank-mcp"],
+      env: {
+        ALFA_CLIENT_ID: config.ALFA_CLIENT_ID,
+        ALFA_CLIENT_SECRET: config.ALFA_CLIENT_SECRET,
+        ...(config.ALFA_BASE_URL ? { ALFA_BASE_URL: config.ALFA_BASE_URL } : {}),
+        ...(config.ALFA_SCOPE ? { ALFA_SCOPE: config.ALFA_SCOPE } : {}),
+        ...(config.ALFA_TLS_CERT ? { ALFA_TLS_CERT: config.ALFA_TLS_CERT } : {}),
+        ...(config.ALFA_TLS_KEY ? { ALFA_TLS_KEY: config.ALFA_TLS_KEY } : {}),
+        ...(config.ALFA_TLS_CA ? { ALFA_TLS_CA: config.ALFA_TLS_CA } : {}),
+      },
+    })

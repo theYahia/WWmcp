@@ -1,0 +1,32 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/kavenegar-mcp",
+  "title": "Kavenegar",
+  "description": "Kavenegar - send SMS, bulk SMS, template lookup and OTP, delivery status, balance (Iran)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/kavenegar",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/kavenegar"
+  },
+  "version": "1.0.1",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/kavenegar-mcp",
+      "version": "1.0.1",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "KAVENEGAR_API_KEY",
+          "description": "API key from panel.kavenegar.com",
+          "isRequired": true,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

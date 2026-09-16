@@ -1,0 +1,38 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/superjob-mcp",
+  "title": "SuperJob",
+  "description": "SuperJob - vacancy search, employers, towns and professions catalogues (Russia)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/superjob",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/superjob"
+  },
+  "version": "1.1.1",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/superjob-mcp",
+      "version": "1.1.1",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "SUPERJOB_SECRET_KEY",
+          "description": "API secret key from api.superjob.ru",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "SUPERJOB_APP_ID",
+          "description": "Application ID from api.superjob.ru (optional)",
+          "isRequired": false,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

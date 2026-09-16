@@ -1,0 +1,24 @@
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - SENDPULSE_CLIENT_ID
+      - SENDPULSE_CLIENT_SECRET
+    properties:
+      SENDPULSE_CLIENT_ID:
+        type: string
+        description: "SendPulse OAuth2 Client ID"
+      SENDPULSE_CLIENT_SECRET:
+        type: string
+        description: "SendPulse OAuth2 Client Secret"
+  commandFunction:
+    |-
+    (config) => ({
+      command: "npx",
+      args: ["-y", "@theyahia/sendpulse-mcp"],
+      env: {
+        SENDPULSE_ID: config.SENDPULSE_CLIENT_ID,
+        SENDPULSE_SECRET: config.SENDPULSE_CLIENT_SECRET
+      }
+    })

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/sms-ru-mcp",
+  "title": "SMS.RU",
+  "description": "SMS.RU - send SMS, check delivery status, balance, cost and sender names (Russia)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/sms-ru",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/sms-ru"
+  },
+  "version": "1.1.1",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/sms-ru-mcp",
+      "version": "1.1.1",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "SMS_RU_API_ID",
+          "description": "API ID from sms.ru (https://sms.ru/my/settings)",
+          "isRequired": true,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

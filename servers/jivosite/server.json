@@ -1,0 +1,38 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/jivosite-mcp",
+  "title": "JivoSite",
+  "description": "JivoSite live chat - chats, agents, contacts, messages, webhooks (Russia)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/jivosite",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/jivosite"
+  },
+  "version": "1.1.1",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/jivosite-mcp",
+      "version": "1.1.1",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "JIVOSITE_TOKEN",
+          "description": "JivoSite API token (JivoSite admin panel -> Управление -> API)",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "JIVOSITE_BASE_URL",
+          "description": "API base URL override (default https://api.jivosite.com/v1)",
+          "isRequired": false,
+          "isSecret": false
+        }
+      ]
+    }
+  ]
+}

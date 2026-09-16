@@ -1,0 +1,32 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/tgstat-mcp",
+  "title": "TGStat",
+  "description": "TGStat - Telegram channel analytics: search, subscribers, reach, ERR, keyword trends (Russia)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/tgstat",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/tgstat"
+  },
+  "version": "2.0.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/tgstat-mcp",
+      "version": "2.0.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "TGSTAT_TOKEN",
+          "description": "API token from api.tgstat.ru",
+          "isRequired": true,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

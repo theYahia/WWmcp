@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WWmcp — 46 MCP-серверов для API России, СНГ и развивающихся рынков</title>
-<meta name="description" content="Монорепозиторий из 46 MCP-серверов: 39 для России, Казахстана и Узбекистана, 7 для Турции, Египта, Саудовской Аравии, Эфиопии, Бангладеш, Западной Африки и Латинской Америки. Работает с Claude, Cursor, VS Code.">
-<meta property="og:title" content="WWmcp — 46 MCP-серверов для российских и развивающихся рынков">
+<title>WWmcp — 66 MCP-серверов для API России, СНГ и развивающихся рынков</title>
+<meta name="description" content="Монорепозиторий из 66 MCP-серверов: 53 для России, Казахстана и Узбекистана, 13 для Турции, Египта, Саудовской Аравии, Эфиопии, Бангладеш, Пакистана, Ирана, Филиппин, Западной Африки и Латинской Америки. Работает с Claude, Cursor, VS Code.">
+<meta property="og:title" content="WWmcp — 66 MCP-серверов для российских и развивающихся рынков">
 <meta property="og:description" content="39 серверов RU/CIS и 7 для развивающихся рынков. Открытый код, лицензия MIT.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://theyahia.github.io/WWmcp/">
@@ -150,12 +150,12 @@ footer .links{display:flex;flex-wrap:wrap;gap:1.25rem;margin-bottom:1rem}
 <div class="wrap">
   <div class="kicker">MIT · открытый код · open source</div>
   <h1>WWmcp</h1>
-  <p class="sub prose">MCP-серверы, которые подключают Claude, Cursor и VS Code к API, до которых не дотягиваются западные интеграции. 46 сервера в этом монорепозитории.</p>
+  <p class="sub prose">MCP-серверы, которые подключают Claude, Cursor и VS Code к API, до которых не дотягиваются западные интеграции. 66 серверов в этом монорепозитории.</p>
   <div class="figures">
-    <div>46<span>серверов в репозитории</span></div>
+    <div>66<span>серверов в репозитории</span></div>
     <!-- число берётся из scripts/catalog.json -->
-    <div>500+<span>инструментов</span></div>
-    <div>18<span>стран названо в описаниях</span></div>
+    <div>890+<span>инструментов</span></div>
+    <div>21<span>страна названа в описаниях</span></div>
   </div>
   <nav>
     <a href="#ru">RU / CIS</a>
@@ -175,14 +175,14 @@ footer .links{display:flex;flex-wrap:wrap;gap:1.25rem;margin-bottom:1rem}
 
     <a class="door" href="#ru">
       <h2>RU / CIS</h2>
-      <div class="count">39 серверов · Россия, Казахстан, Узбекистан</div>
+      <div class="count">53 сервера · Россия, Казахстан, Узбекистан</div>
       <p>Платежи, маркетплейсы, CRM, логистика, телефония, 1С, госданные. Описания на русском.</p>
       <span class="go">К каталогу →</span>
     </a>
 
     <a class="door" href="#em">
       <h2>Emerging Markets</h2>
-      <div class="count">7 servers · Turkey, MENA, Gulf, Africa, LATAM</div>
+      <div class="count">13 servers · Turkey, MENA, Gulf, Africa, LATAM, Asia</div>
       <p>Payments, mobile money, SMS and e-commerce APIs outside the RU/CIS bloc. Descriptions in English.</p>
       <span class="go">Go to catalogue →</span>
     </a>
@@ -194,7 +194,7 @@ footer .links{display:flex;flex-wrap:wrap;gap:1.25rem;margin-bottom:1rem}
 <section class="cat" id="ru">
 <div class="wrap">
   <h2>RU / CIS</h2>
-  <p class="lede prose">39 серверов. Версии и описания взяты из <code>servers/*/package.json</code> — то, что опубликовано в npm, а не то, что планировалось.</p>
+  <p class="lede prose">53 сервера. Версии и описания взяты из <code>servers/*/package.json</code> — то, что опубликовано в npm, а не то, что планировалось.</p>
   <p class="prose" style="color:var(--muted)">Страны: Россия, Казахстан (Kaspi), Узбекистан (Payme, ЦБ РУз).</p>
   <div class="label">Подключение</div>
   <pre class="cfg">{
@@ -218,6 +218,12 @@ footer .links{display:flex;flex-wrap:wrap;gap:1.25rem;margin-bottom:1rem}
 <td><a class="src" href="https://github.com/theYahia/WWmcp/tree/main/servers/2gis">код</a></td>
 </tr>
 <tr>
+<td><a href="https://www.npmjs.com/package/@theyahia/alfa-bank-mcp">@theyahia/alfa-bank-mcp</a></td>
+<td class="ver">1.1.0</td>
+<td>Альфа-Банк для бизнеса (Alfa API): счета, выписки, платёжные поручения, контрагенты, курсы валют, зарплатные реестры. 8 инструментов.</td>
+<td><a class="src" href="https://github.com/theYahia/WWmcp/tree/main/servers/alfa-bank">код</a></td>
+</tr>
+<tr>
 <td><a href="https://www.npmjs.com/package/@theyahia/amocrm-mcp">@theyahia/amocrm-mcp</a></td>
 <td class="ver">2.0.2</td>
 <td>amoCRM: сделки, контакты, воронки, задачи.</td>
@@ -228,6 +234,12 @@ footer .links{display:flex;flex-wrap:wrap;gap:1.25rem;margin-bottom:1rem}
 <td class="ver">4.3.0</td>
 <td>1С:Предприятие через OData 3.0. 34 инструмента в 11 модулях: справочники и документы (CRUD), проведение и отмена проведения, регистры и остатки, регистры бухгалтерии включая виртуальные таблицы, константы, пакетные операции, отслеживание изменений, обзор метаданных, готовые пресеты конфигураций, опциональный режим защиты от записи и 3 подсказки-сценария. Basic-авторизация.</td>
 <td><a class="src" href="https://github.com/theYahia/WWmcp/tree/main/servers/aprovodka">код</a></td>
+</tr>
+<tr>
+<td><a href="https://www.npmjs.com/package/@theyahia/ati-su-mcp">@theyahia/ati-su-mcp</a></td>
+<td class="ver">2.0.0</td>
+<td>ATI.su, биржа грузоперевозок: грузы, фирмы, транспорт, справочники, расстояния. 12 инструментов. OAuth2 или статический токен.</td>
+<td><a class="src" href="https://github.com/theYahia/WWmcp/tree/main/servers/ati-su">код</a></td>
 </tr>
 <tr>
 <td><a href="https://www.npmjs.com/package/@theyahia/avito-mcp">@theyahia/avito-mcp</a></td>
@@ -278,6 +290,12 @@ footer .links{display:flex;flex-wrap:wrap;gap:1.25rem;margin-bottom:1rem}
 <td><a class="src" href="https://github.com/theYahia/WWmcp/tree/main/servers/cloudpayments">код</a></td>
 </tr>
 <tr>
+<td><a href="https://www.npmjs.com/package/@metarebalance/dadata-mcp">@metarebalance/dadata-mcp</a></td>
+<td class="ver">1.0.6</td>
+<td>DaData: стандартизация адресов, ФИО и телефонов, подсказки, поиск компаний и банков, геокодирование. 31 инструмент.</td>
+<td><a class="src" href="https://github.com/theYahia/WWmcp/tree/main/servers/dadata">код</a></td>
+</tr>
+<tr>
 <td><a href="https://www.npmjs.com/package/@theyahia/delovye-linii-mcp">@theyahia/delovye-linii-mcp</a></td>
 <td class="ver">1.1.1</td>
 <td>Деловые Линии: грузоперевозки, расчёт тарифа, города, терминалы, заказы, отслеживание. 6 инструментов.</td>
@@ -314,10 +332,28 @@ footer .links{display:flex;flex-wrap:wrap;gap:1.25rem;margin-bottom:1rem}
 <td><a class="src" href="https://github.com/theYahia/WWmcp/tree/main/servers/huntflow">код</a></td>
 </tr>
 <tr>
+<td><a href="https://www.npmjs.com/package/@theyahia/jivosite-mcp">@theyahia/jivosite-mcp</a></td>
+<td class="ver">1.1.1</td>
+<td>JivoSite, онлайн-чат: чаты, операторы, контакты, сообщения, вебхуки. 11 инструментов.</td>
+<td><a class="src" href="https://github.com/theYahia/WWmcp/tree/main/servers/jivosite">код</a></td>
+</tr>
+<tr>
+<td><a href="https://www.npmjs.com/package/@theyahia/kaiten-mcp">@theyahia/kaiten-mcp</a></td>
+<td class="ver">4.0.0</td>
+<td>Kaiten: пространства, доски, колонки, карточки, чек-листы, блокировки, спринты. 63 инструмента.</td>
+<td><a class="src" href="https://github.com/theYahia/WWmcp/tree/main/servers/kaiten">код</a></td>
+</tr>
+<tr>
 <td><a href="https://www.npmjs.com/package/@theyahia/kaspi-mcp">@theyahia/kaspi-mcp</a></td>
 <td class="ver">1.0.2</td>
 <td>Kaspi (Казахстан): заказы маркетплейса, платежи.</td>
 <td><a class="src" href="https://github.com/theYahia/WWmcp/tree/main/servers/kaspi">код</a></td>
+</tr>
+<tr>
+<td><a href="https://www.npmjs.com/package/@theyahia/kontur-diadoc-mcp">@theyahia/kontur-diadoc-mcp</a></td>
+<td class="ver">1.1.0</td>
+<td>Контур.Диадок, электронный документооборот: документы, организации, контрагенты, отправка и подписание. 8 инструментов.</td>
+<td><a class="src" href="https://github.com/theYahia/WWmcp/tree/main/servers/kontur-diadoc">код</a></td>
 </tr>
 <tr>
 <td><a href="https://www.npmjs.com/package/@theyahia/kontur-focus-mcp">@theyahia/kontur-focus-mcp</a></td>
@@ -398,6 +434,36 @@ footer .links{display:flex;flex-wrap:wrap;gap:1.25rem;margin-bottom:1rem}
 <td><a class="src" href="https://github.com/theYahia/WWmcp/tree/main/servers/salutespeech">код</a></td>
 </tr>
 <tr>
+<td><a href="https://www.npmjs.com/package/@theyahia/sber-mcp">@theyahia/sber-mcp</a></td>
+<td class="ver">1.2.0</td>
+<td>СберБизнес: счета, остатки, выписки, платежи, контрагенты. 8 инструментов.</td>
+<td><a class="src" href="https://github.com/theYahia/WWmcp/tree/main/servers/sber">код</a></td>
+</tr>
+<tr>
+<td><a href="https://www.npmjs.com/package/@theyahia/sendpulse-mcp">@theyahia/sendpulse-mcp</a></td>
+<td class="ver">1.1.1</td>
+<td>SendPulse: email-рассылки, адресные книги, шаблоны, SMTP, web push, статистика. 11 инструментов.</td>
+<td><a class="src" href="https://github.com/theYahia/WWmcp/tree/main/servers/sendpulse">код</a></td>
+</tr>
+<tr>
+<td><a href="https://www.npmjs.com/package/@theyahia/sms-ru-mcp">@theyahia/sms-ru-mcp</a></td>
+<td class="ver">1.1.1</td>
+<td>SMS.RU: отправка SMS, статус доставки, стоимость, баланс, имена отправителей. 5 инструментов.</td>
+<td><a class="src" href="https://github.com/theYahia/WWmcp/tree/main/servers/sms-ru">код</a></td>
+</tr>
+<tr>
+<td><a href="https://www.npmjs.com/package/@theyahia/superjob-mcp">@theyahia/superjob-mcp</a></td>
+<td class="ver">1.1.1</td>
+<td>SuperJob: поиск вакансий, работодатели, города, профессии. 5 инструментов.</td>
+<td><a class="src" href="https://github.com/theYahia/WWmcp/tree/main/servers/superjob">код</a></td>
+</tr>
+<tr>
+<td><a href="https://www.npmjs.com/package/@theyahia/tgstat-mcp">@theyahia/tgstat-mcp</a></td>
+<td class="ver">2.0.0</td>
+<td>TGStat, аналитика Telegram-каналов: поиск каналов и постов, статистика, упоминания. 20 инструментов.</td>
+<td><a class="src" href="https://github.com/theYahia/WWmcp/tree/main/servers/tgstat">код</a></td>
+</tr>
+<tr>
 <td><a href="https://www.npmjs.com/package/@theyahia/tilda-mcp">@theyahia/tilda-mcp</a></td>
 <td class="ver">1.2.0</td>
 <td>Tilda: конструктор сайтов, управление страницами.</td>
@@ -408,6 +474,12 @@ footer .links{display:flex;flex-wrap:wrap;gap:1.25rem;margin-bottom:1rem}
 <td class="ver">2.0.1</td>
 <td>Т-Касса (Т-Банк / Тинькофф): 16 инструментов — платежи, возвраты, покупатели, QR СБП, чеки, Т-Инвестиции. Токен-авторизация SHA-256.</td>
 <td><a class="src" href="https://github.com/theYahia/WWmcp/tree/main/servers/tkassa">код</a></td>
+</tr>
+<tr>
+<td><a href="https://www.npmjs.com/package/@theyahia/tochka-bank-mcp">@theyahia/tochka-bank-mcp</a></td>
+<td class="ver">2.0.0</td>
+<td>Точка Банк (бизнес-API): счета, остатки, выписки, платежи, клиенты. 7 инструментов. OAuth с refresh-токеном.</td>
+<td><a class="src" href="https://github.com/theYahia/WWmcp/tree/main/servers/tochka-bank">код</a></td>
 </tr>
 <tr>
 <td><a href="https://www.npmjs.com/package/@theyahia/travelpayouts-mcp">@theyahia/travelpayouts-mcp</a></td>
@@ -422,10 +494,22 @@ footer .links{display:flex;flex-wrap:wrap;gap:1.25rem;margin-bottom:1rem}
 <td><a class="src" href="https://github.com/theYahia/WWmcp/tree/main/servers/unisender">код</a></td>
 </tr>
 <tr>
+<td><a href="https://www.npmjs.com/package/@theyahia/vk-mcp">@theyahia/vk-mcp</a></td>
+<td class="ver">1.1.1</td>
+<td>ВКонтакте: стена, поиск записей, пользователи, друзья, группы, сообщения. 8 инструментов.</td>
+<td><a class="src" href="https://github.com/theYahia/WWmcp/tree/main/servers/vk">код</a></td>
+</tr>
+<tr>
 <td><a href="https://www.npmjs.com/package/@theyahia/vk-ads-mcp">@theyahia/vk-ads-mcp</a></td>
 <td class="ver">4.0.0</td>
 <td>VK Реклама: 8 инструментов — кампании, объявления, статистика, таргетинг, бюджеты. Bearer-авторизация.</td>
 <td><a class="src" href="https://github.com/theYahia/WWmcp/tree/main/servers/vk-ads">код</a></td>
+</tr>
+<tr>
+<td><a href="https://www.npmjs.com/package/@theyahia/voximplant-mcp">@theyahia/voximplant-mcp</a></td>
+<td class="ver">2.0.0</td>
+<td>Voximplant, облачная телефония: звонки, SMS, записи, сценарии, очереди ACD. 23 инструмента, из них 2 скилла.</td>
+<td><a class="src" href="https://github.com/theYahia/WWmcp/tree/main/servers/voximplant">код</a></td>
 </tr>
 <tr>
 <td><a href="https://www.npmjs.com/package/@theyahia/wildberries-mcp">@theyahia/wildberries-mcp</a></td>
@@ -454,8 +538,8 @@ footer .links{display:flex;flex-wrap:wrap;gap:1.25rem;margin-bottom:1rem}
 <section class="cat" id="em">
 <div class="wrap">
   <h2>Emerging Markets</h2>
-  <p class="lede prose">7 servers. Versions and descriptions come from <code>servers/*/package.json</code>.</p>
-  <p class="prose" style="color:var(--muted)">Countries named in the package descriptions: Turkey, Egypt, Saudi Arabia, Ethiopia, Bangladesh, Senegal, Argentina, Brazil, Mexico, Uruguay, Chile, Colombia, Peru, Ecuador, Venezuela. Orange Money also covers 10 Francophone West and Central African markets its description does not name individually.</p>
+  <p class="lede prose">13 servers. Versions and descriptions come from <code>servers/*/package.json</code>.</p>
+  <p class="prose" style="color:var(--muted)">Countries named in the package descriptions: Turkey, Egypt, Saudi Arabia, Ethiopia, Bangladesh, Pakistan, Iran, Philippines, Senegal, Argentina, Brazil, Mexico, Uruguay, Chile, Colombia, Peru, Ecuador, Venezuela. Orange Money also covers 10 Francophone West and Central African markets its description does not name individually.</p>
   <div class="label">Setup</div>
   <pre class="cfg">{
   "mcpServers": {
@@ -471,6 +555,12 @@ footer .links{display:flex;flex-wrap:wrap;gap:1.25rem;margin-bottom:1rem}
 <table>
 <thead><tr><th>Package</th><th>Version</th><th>Description</th><th>Source</th></tr></thead>
 <tbody>
+<tr>
+<td><a href="https://www.npmjs.com/package/@theyahia/asaas-mcp">@theyahia/asaas-mcp</a></td>
+<td class="ver">1.0.1</td>
+<td>MCP server for Asaas (Brazil) — 9 tools for payments, Pix QR codes, customers, subscriptions, refunds.</td>
+<td><a class="src" href="https://github.com/theYahia/WWmcp/tree/main/servers/asaas">source</a></td>
+</tr>
 <tr>
 <td><a href="https://www.npmjs.com/package/@theyahia/bkash-mcp">@theyahia/bkash-mcp</a></td>
 <td class="ver">1.1.0</td>
@@ -490,10 +580,28 @@ footer .links{display:flex;flex-wrap:wrap;gap:1.25rem;margin-bottom:1rem}
 <td><a class="src" href="https://github.com/theYahia/WWmcp/tree/main/servers/fawaterak">source</a></td>
 </tr>
 <tr>
+<td><a href="https://www.npmjs.com/package/@theyahia/ifood-mcp">@theyahia/ifood-mcp</a></td>
+<td class="ver">1.1.0</td>
+<td>MCP server for iFood (Brazil) — 26 tools for the order lifecycle, merchant status and opening hours, catalog items and prices.</td>
+<td><a class="src" href="https://github.com/theYahia/WWmcp/tree/main/servers/ifood">source</a></td>
+</tr>
+<tr>
 <td><a href="https://www.npmjs.com/package/@theyahia/ileti-merkezi-mcp">@theyahia/ileti-merkezi-mcp</a></td>
 <td class="ver">4.0.0</td>
 <td>MCP server for Ileti Merkezi SMS API (Turkey) — 11 tools: SMS, bulk SMS, reports, contacts, blacklist. HMAC auth.</td>
 <td><a class="src" href="https://github.com/theYahia/WWmcp/tree/main/servers/ileti-merkezi">source</a></td>
+</tr>
+<tr>
+<td><a href="https://www.npmjs.com/package/@theyahia/jazzcash-mcp">@theyahia/jazzcash-mcp</a></td>
+<td class="ver">2.0.1</td>
+<td>MCP server for JazzCash (Pakistan) — 5 tools for mobile wallet and mobile account payments, OTC vouchers, status, refunds. HMAC-SHA256 signed requests.</td>
+<td><a class="src" href="https://github.com/theYahia/WWmcp/tree/main/servers/jazzcash">source</a></td>
+</tr>
+<tr>
+<td><a href="https://www.npmjs.com/package/@theyahia/kavenegar-mcp">@theyahia/kavenegar-mcp</a></td>
+<td class="ver">1.0.1</td>
+<td>MCP server for Kavenegar (Iran) — 8 tools for SMS, bulk SMS, OTP, delivery status, template lookup, account info.</td>
+<td><a class="src" href="https://github.com/theYahia/WWmcp/tree/main/servers/kavenegar">source</a></td>
 </tr>
 <tr>
 <td><a href="https://www.npmjs.com/package/@theyahia/mercadopago-mcp">@theyahia/mercadopago-mcp</a></td>
@@ -506,6 +614,18 @@ footer .links{display:flex;flex-wrap:wrap;gap:1.25rem;margin-bottom:1rem}
 <td class="ver">1.1.0</td>
 <td>MCP server for Orange Money WebPay (Senegal + 10 Francophone West/Central African countries) — 8 tools for web payments, status, cashin, cashout. OAuth2 Client Credentials with Basic auth header.</td>
 <td><a class="src" href="https://github.com/theYahia/WWmcp/tree/main/servers/orange-money">source</a></td>
+</tr>
+<tr>
+<td><a href="https://www.npmjs.com/package/@theyahia/parasut-mcp">@theyahia/parasut-mcp</a></td>
+<td class="ver">2.0.0</td>
+<td>MCP server for Paraşüt accounting (Turkey) — 37 tools for contacts, sales invoices, purchase bills, products, cash accounts, e-Fatura/e-Arşiv. OAuth 2.0 password grant.</td>
+<td><a class="src" href="https://github.com/theYahia/WWmcp/tree/main/servers/parasut">source</a></td>
+</tr>
+<tr>
+<td><a href="https://www.npmjs.com/package/@theyahia/paymongo-mcp">@theyahia/paymongo-mcp</a></td>
+<td class="ver">1.1.0</td>
+<td>MCP server for PayMongo (Philippines) — 24 tools for payments, payment intents, checkout sessions, links, customers, refunds, webhooks.</td>
+<td><a class="src" href="https://github.com/theYahia/WWmcp/tree/main/servers/paymongo">source</a></td>
 </tr>
 <tr>
 <td><a href="https://www.npmjs.com/package/@theyahia/salla-mcp">@theyahia/salla-mcp</a></td>
@@ -522,47 +642,33 @@ footer .links{display:flex;flex-wrap:wrap;gap:1.25rem;margin-bottom:1rem}
 <section class="cat" id="standalone">
 <div class="wrap">
   <h2>Отдельные репозитории / Separate repositories</h2>
-  <p class="lede prose">Эти 76 пакетов опубликованы в npm, но лежат вне этого монорепозитория — в <code>servers/</code> их нет. Поэтому версии и число инструментов здесь не приводятся: смотрите страницу пакета. Репозитории — в <a href="https://github.com/theYahia?tab=repositories">профиле theYahia на GitHub</a>.</p>
-  <p class="prose note">These 76 packages are published on npm but are not part of this monorepo. Versions and tool counts are omitted on purpose — check each npm page. Group labels are carried over from the previous version of this page. Every link below was checked against the npm registry.</p>
+  <p class="lede prose">Эти 56 пакетов опубликованы в npm, но лежат вне этого монорепозитория — в <code>servers/</code> их нет. Поэтому версии и число инструментов здесь не приводятся: смотрите страницу пакета. Репозитории — в <a href="https://github.com/theYahia?tab=repositories">профиле theYahia на GitHub</a>.</p>
+  <p class="prose note">These 56 packages are published on npm but are not part of this monorepo. Versions and tool counts are omitted on purpose — check each npm page. Group labels are carried over from the previous version of this page. Every link below was checked against the npm registry.</p>
   <div class="group">
-    <h3>Russia — 33</h3>
+    <h3>Russia — 19</h3>
 <div class="tw">
 <table>
 <thead><tr><th>Сервис / Service</th><th>Пакет / Package</th></tr></thead>
 <tbody>
-<tr><td>Alfa Bank</td><td><a href="https://www.npmjs.com/package/@theyahia/alfa-bank-mcp">@theyahia/alfa-bank-mcp</a></td></tr>
 <tr><td>Sberbank Acquiring</td><td><a href="https://www.npmjs.com/package/@theyahia/sberbank-acquiring-mcp">@theyahia/sberbank-acquiring-mcp</a></td></tr>
-<tr><td>Tochka Bank</td><td><a href="https://www.npmjs.com/package/@theyahia/tochka-bank-mcp">@theyahia/tochka-bank-mcp</a></td></tr>
 <tr><td>Prodamus</td><td><a href="https://www.npmjs.com/package/@theyahia/prodamus-mcp">@theyahia/prodamus-mcp</a></td></tr>
 <tr><td>Ozon</td><td><a href="https://www.npmjs.com/package/@theyahia/ozon-mcp">@theyahia/ozon-mcp</a></td></tr>
 <tr><td>Yandex Market</td><td><a href="https://www.npmjs.com/package/@theyahia/yandex-market-mcp">@theyahia/yandex-market-mcp</a></td></tr>
 <tr><td>InSales</td><td><a href="https://www.npmjs.com/package/@theyahia/insales-mcp">@theyahia/insales-mcp</a></td></tr>
-<tr><td>DaData</td><td><a href="https://www.npmjs.com/package/@metarebalance/dadata-mcp">@metarebalance/dadata-mcp</a></td></tr>
 <tr><td>Chestniy ZNAK</td><td><a href="https://www.npmjs.com/package/@theyahia/chestnyznak-mcp">@theyahia/chestnyznak-mcp</a></td></tr>
 <tr><td>SPARK Interfax</td><td><a href="https://www.npmjs.com/package/@theyahia/spark-interfax-mcp">@theyahia/spark-interfax-mcp</a></td></tr>
 <tr><td>Casebook</td><td><a href="https://www.npmjs.com/package/@theyahia/casebook-mcp">@theyahia/casebook-mcp</a></td></tr>
-<tr><td>Kaiten</td><td><a href="https://www.npmjs.com/package/@theyahia/kaiten-mcp">@theyahia/kaiten-mcp</a></td></tr>
 <tr><td>Yandex Tracker</td><td><a href="https://www.npmjs.com/package/@theyahia/yandex-tracker-mcp">@theyahia/yandex-tracker-mcp</a></td></tr>
 <tr><td>Yandex 360</td><td><a href="https://www.npmjs.com/package/@theyahia/yandex-360-mcp">@theyahia/yandex-360-mcp</a></td></tr>
-<tr><td>ATI.su</td><td><a href="https://www.npmjs.com/package/@theyahia/ati-su-mcp">@theyahia/ati-su-mcp</a></td></tr>
 <tr><td>Yandex.Metrika</td><td><a href="https://www.npmjs.com/package/@theyahia/yandex-metrika-mcp">@theyahia/yandex-metrika-mcp</a></td></tr>
 <tr><td>Yandex.Direct</td><td><a href="https://www.npmjs.com/package/@theyahia/yandex-direct-mcp">@theyahia/yandex-direct-mcp</a></td></tr>
 <tr><td>Yandex.Webmaster</td><td><a href="https://www.npmjs.com/package/@theyahia/yandex-webmaster-mcp">@theyahia/yandex-webmaster-mcp</a></td></tr>
-<tr><td>SendPulse</td><td><a href="https://www.npmjs.com/package/@theyahia/sendpulse-mcp">@theyahia/sendpulse-mcp</a></td></tr>
 <tr><td>AppMetrica</td><td><a href="https://www.npmjs.com/package/@theyahia/appmetrica-mcp">@theyahia/appmetrica-mcp</a></td></tr>
-<tr><td>TGStat</td><td><a href="https://www.npmjs.com/package/@theyahia/tgstat-mcp">@theyahia/tgstat-mcp</a></td></tr>
 <tr><td>Yandex Maps</td><td><a href="https://www.npmjs.com/package/@theyahia/yandex-maps-mcp">@theyahia/yandex-maps-mcp</a></td></tr>
-<tr><td>SuperJob</td><td><a href="https://www.npmjs.com/package/@theyahia/superjob-mcp">@theyahia/superjob-mcp</a></td></tr>
-<tr><td>VK</td><td><a href="https://www.npmjs.com/package/@theyahia/vk-mcp">@theyahia/vk-mcp</a></td></tr>
-<tr><td>JivoSite</td><td><a href="https://www.npmjs.com/package/@theyahia/jivosite-mcp">@theyahia/jivosite-mcp</a></td></tr>
-<tr><td>Voximplant</td><td><a href="https://www.npmjs.com/package/@theyahia/voximplant-mcp">@theyahia/voximplant-mcp</a></td></tr>
-<tr><td>SMS.ru</td><td><a href="https://www.npmjs.com/package/@theyahia/sms-ru-mcp">@theyahia/sms-ru-mcp</a></td></tr>
 <tr><td>YandexGPT</td><td><a href="https://www.npmjs.com/package/@theyahia/yandexgpt-mcp">@theyahia/yandexgpt-mcp</a></td></tr>
 <tr><td>Yandex SpeechKit</td><td><a href="https://www.npmjs.com/package/@theyahia/yandex-speechkit-mcp">@theyahia/yandex-speechkit-mcp</a></td></tr>
 <tr><td>Yandex Cloud</td><td><a href="https://www.npmjs.com/package/@theyahia/yandex-cloud-mcp">@theyahia/yandex-cloud-mcp</a></td></tr>
 <tr><td>ATOL Online</td><td><a href="https://www.npmjs.com/package/@theyahia/atol-online-mcp">@theyahia/atol-online-mcp</a></td></tr>
-<tr><td>Kontur.Diadoc</td><td><a href="https://www.npmjs.com/package/@theyahia/kontur-diadoc-mcp">@theyahia/kontur-diadoc-mcp</a></td></tr>
-<tr><td>Sber API</td><td><a href="https://www.npmjs.com/package/@theyahia/sber-mcp">@theyahia/sber-mcp</a></td></tr>
 </tbody>
 </table>
 </div>
@@ -586,7 +692,7 @@ footer .links{display:flex;flex-wrap:wrap;gap:1.25rem;margin-bottom:1rem}
 </div>
   </div>
   <div class="group">
-    <h3>Turkey — 6</h3>
+    <h3>Turkey — 5</h3>
 <div class="tw">
 <table>
 <thead><tr><th>Сервис / Service</th><th>Пакет / Package</th></tr></thead>
@@ -594,7 +700,6 @@ footer .links{display:flex;flex-wrap:wrap;gap:1.25rem;margin-bottom:1rem}
 <tr><td>iyzico</td><td><a href="https://www.npmjs.com/package/@theyahia/iyzico-mcp">@theyahia/iyzico-mcp</a></td></tr>
 <tr><td>Trendyol</td><td><a href="https://www.npmjs.com/package/@theyahia/trendyol-mcp">@theyahia/trendyol-mcp</a></td></tr>
 <tr><td>Hepsiburada</td><td><a href="https://www.npmjs.com/package/@theyahia/hepsiburada-mcp">@theyahia/hepsiburada-mcp</a></td></tr>
-<tr><td>Parasut</td><td><a href="https://www.npmjs.com/package/@theyahia/parasut-mcp">@theyahia/parasut-mcp</a></td></tr>
 <tr><td>Getir</td><td><a href="https://www.npmjs.com/package/@theyahia/getir-mcp">@theyahia/getir-mcp</a></td></tr>
 <tr><td>Is Bankasi</td><td><a href="https://www.npmjs.com/package/@theyahia/is-bankasi-mcp">@theyahia/is-bankasi-mcp</a></td></tr>
 </tbody>
@@ -618,7 +723,7 @@ footer .links{display:flex;flex-wrap:wrap;gap:1.25rem;margin-bottom:1rem}
 </div>
   </div>
   <div class="group">
-    <h3>LATAM (Brazil &amp; Mexico) — 6</h3>
+    <h3>LATAM (Brazil &amp; Mexico) — 4</h3>
 <div class="tw">
 <table>
 <thead><tr><th>Сервис / Service</th><th>Пакет / Package</th></tr></thead>
@@ -626,8 +731,6 @@ footer .links{display:flex;flex-wrap:wrap;gap:1.25rem;margin-bottom:1rem}
 <tr><td>Facturapi</td><td><a href="https://www.npmjs.com/package/@theyahia/facturapi-mcp">@theyahia/facturapi-mcp</a></td></tr>
 <tr><td>Pagar.me</td><td><a href="https://www.npmjs.com/package/@theyahia/pagarme-mcp">@theyahia/pagarme-mcp</a></td></tr>
 <tr><td>Hotmart</td><td><a href="https://www.npmjs.com/package/@theyahia/hotmart-mcp">@theyahia/hotmart-mcp</a></td></tr>
-<tr><td>Asaas</td><td><a href="https://www.npmjs.com/package/@theyahia/asaas-mcp">@theyahia/asaas-mcp</a></td></tr>
-<tr><td>iFood</td><td><a href="https://www.npmjs.com/package/@theyahia/ifood-mcp">@theyahia/ifood-mcp</a></td></tr>
 <tr><td>Correios</td><td><a href="https://www.npmjs.com/package/@theyahia/correios-mcp">@theyahia/correios-mcp</a></td></tr>
 </tbody>
 </table>
@@ -649,7 +752,7 @@ footer .links{display:flex;flex-wrap:wrap;gap:1.25rem;margin-bottom:1rem}
 </div>
   </div>
   <div class="group">
-    <h3>SE Asia — 6</h3>
+    <h3>SE Asia — 5</h3>
 <div class="tw">
 <table>
 <thead><tr><th>Сервис / Service</th><th>Пакет / Package</th></tr></thead>
@@ -659,22 +762,19 @@ footer .links{display:flex;flex-wrap:wrap;gap:1.25rem;margin-bottom:1rem}
 <tr><td>RajaOngkir</td><td><a href="https://www.npmjs.com/package/@theyahia/rajaongkir-mcp">@theyahia/rajaongkir-mcp</a></td></tr>
 <tr><td>VNPay</td><td><a href="https://www.npmjs.com/package/@theyahia/vnpay-mcp">@theyahia/vnpay-mcp</a></td></tr>
 <tr><td>Zalo OA</td><td><a href="https://www.npmjs.com/package/@theyahia/zalo-oa-mcp">@theyahia/zalo-oa-mcp</a></td></tr>
-<tr><td>PayMongo</td><td><a href="https://www.npmjs.com/package/@theyahia/paymongo-mcp">@theyahia/paymongo-mcp</a></td></tr>
 </tbody>
 </table>
 </div>
   </div>
   <div class="group">
-    <h3>MENA (Iran &amp; Pakistan) — 6</h3>
+    <h3>MENA (Iran &amp; Pakistan) — 4</h3>
 <div class="tw">
 <table>
 <thead><tr><th>Сервис / Service</th><th>Пакет / Package</th></tr></thead>
 <tbody>
 <tr><td>Zarinpal</td><td><a href="https://www.npmjs.com/package/@theyahia/zarinpal-mcp">@theyahia/zarinpal-mcp</a></td></tr>
-<tr><td>Kavenegar</td><td><a href="https://www.npmjs.com/package/@theyahia/kavenegar-mcp">@theyahia/kavenegar-mcp</a></td></tr>
 <tr><td>Neshan Maps</td><td><a href="https://www.npmjs.com/package/@theyahia/neshan-maps-mcp">@theyahia/neshan-maps-mcp</a></td></tr>
 <tr><td>IDPay</td><td><a href="https://www.npmjs.com/package/@theyahia/idpay-mcp">@theyahia/idpay-mcp</a></td></tr>
-<tr><td>JazzCash</td><td><a href="https://www.npmjs.com/package/@theyahia/jazzcash-mcp">@theyahia/jazzcash-mcp</a></td></tr>
 <tr><td>Easypaisa</td><td><a href="https://www.npmjs.com/package/@theyahia/easypaisa-mcp">@theyahia/easypaisa-mcp</a></td></tr>
 </tbody>
 </table>
@@ -707,7 +807,7 @@ footer .links{display:flex;flex-wrap:wrap;gap:1.25rem;margin-bottom:1rem}
     <a href="https://www.npmjs.com/org/theyahia">npm @theyahia</a>
     <a href="https://t.me/vhodvai">Telegram</a>
   </div>
-  <div>MIT License · 46 серверов в <code>servers/</code> · страница собрана из <code>servers/*/package.json</code></div>
+  <div>MIT License · 66 серверов в <code>servers/</code> · страница собрана из <code>servers/*/package.json</code></div>
 </div>
 </footer>
 

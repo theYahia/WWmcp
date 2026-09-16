@@ -1,0 +1,76 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.theYahia/alfa-bank-mcp",
+  "title": "Alfa-Bank Business",
+  "description": "Alfa-Bank Business (Alfa API) - accounts, statements, payments, beneficiaries, rates, payroll (Russia)",
+  "websiteUrl": "https://github.com/theYahia/WWmcp/tree/main/servers/alfa-bank",
+  "repository": {
+    "url": "https://github.com/theYahia/WWmcp",
+    "source": "github",
+    "subfolder": "servers/alfa-bank"
+  },
+  "version": "1.1.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@theyahia/alfa-bank-mcp",
+      "version": "1.1.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "ALFA_CLIENT_ID",
+          "description": "OAuth 2.0 client ID from developers.alfabank.ru",
+          "isRequired": true,
+          "format": "string"
+        },
+        {
+          "name": "ALFA_CLIENT_SECRET",
+          "description": "OAuth 2.0 client secret",
+          "isRequired": true,
+          "format": "string",
+          "isSecret": true
+        },
+        {
+          "name": "ALFA_BASE_URL",
+          "description": "API base URL (default: https://baas.alfabank.ru)",
+          "isRequired": false,
+          "format": "string"
+        },
+        {
+          "name": "ALFA_SCOPE",
+          "description": "Space-separated OAuth/OIDC scopes required by the called methods",
+          "isRequired": false,
+          "format": "string"
+        },
+        {
+          "name": "ALFA_TLS_CERT",
+          "description": "mTLS client certificate (inline PEM or file path) - required for live API access",
+          "isRequired": false,
+          "format": "string"
+        },
+        {
+          "name": "ALFA_TLS_KEY",
+          "description": "mTLS client private key (inline PEM or file path)",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": true
+        },
+        {
+          "name": "ALFA_TLS_CA",
+          "description": "mTLS CA bundle (inline PEM or file path)",
+          "isRequired": false,
+          "format": "string"
+        },
+        {
+          "name": "ALFA_TIMEOUT_MS",
+          "description": "Per-request timeout in ms (default: 15000)",
+          "isRequired": false,
+          "format": "string"
+        }
+      ]
+    }
+  ]
+}
