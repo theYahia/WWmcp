@@ -108,8 +108,9 @@ export const RESPONSE_BUDGET = 45_000;
 
 const TRUNCATED_NOTE =
   "Ответ обрезан по целым записям, чтобы остаться валидным JSON. " +
-  "Отброшенные записи не потеряны: сузьте $filter, уменьшите top или возьмите " +
-  "следующую страницу. Считать по этой выборке итоги и «сколько всего» нельзя.";
+  "Отброшенные записи не потеряны: перечислите в $select только нужные поля, сузьте " +
+  "$filter, уменьшите top или возьмите следующую страницу. Считать по этой выборке " +
+  "итоги и «сколько всего» нельзя.";
 
 /**
  * Компактный JSON с обрезкой по записям, а не по символам.
@@ -172,12 +173,16 @@ export function stringifyCapped(
  *
  * `top` может быть `Infinity` — так виртуальные таблицы без `$top` получают тот же
  * конверт: `has_more` становится `true` только из-за обрезки.
+ *
+ * Если в бюджет не влезла даже одна запись (у регистра бухгалтерии запись — весь
+ * набор проводок регистратора), `next_skip` не выдаётся: `skip + 0` указывал бы на
+ * ту же страницу, и модель ходила бы по кругу. Выход тут один — $select.
  */
 export function pageJson(result: unknown, top: number, skip?: number): string {
   const page = toPage(result, top, skip);
   return stringifyCapped(page, "value", (keep) => {
     const fix: Record<string, unknown> = { returned: keep, has_more: true };
-    if (skip !== undefined) fix["next_skip"] = skip + keep;
+    if (skip !== undefined && keep > 0) fix["next_skip"] = skip + keep;
     return fix;
   });
 }

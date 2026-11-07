@@ -161,6 +161,25 @@ describe("обрезка по записям, а не по символам", ()
     expect(parsed.next_skip).toBe(200 + parsed.value!.length);
   });
 
+  it("если не влезла ни одна запись — next_skip нет (иначе skip+0 водил бы по кругу)", async () => {
+    const huge = { Recorder: "r", RecordSet: "x".repeat(60_000) };
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        text: () => Promise.resolve(JSON.stringify({ value: [huge, huge] })),
+        headers: new Map(),
+      }),
+    );
+    const raw = await handleGetDocuments({ document_type: "Document_Test", top: 5, skip: 0 });
+    expect(raw.length).toBeLessThanOrEqual(CORE_LIMIT);
+    const parsed = JSON.parse(raw) as Capped;
+    expect(parsed.returned).toBe(0);
+    expect(parsed.has_more).toBe(true);
+    expect(parsed).not.toHaveProperty("next_skip");
+    expect(parsed.note).toContain("$select");
+  });
+
   const VIRTUAL = [
     ["get_accounting_balance", () =>
       handleGetAccountingBalance({
