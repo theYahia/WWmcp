@@ -88,14 +88,14 @@
 |------------|----------|
 | `get_register` | Чтение данных регистра сведений или регистра накопления. |
 | `write_information_register` | Записать запись в независимый регистр сведений (POST на `InformationRegister_*`). |
-| `get_accumulation_balance` | Остатки регистра накопления через виртуальный OData-метод `Balance(Period=…,Condition=…)`. |
+| `get_accumulation_balance` | **Виртуальные таблицы** регистра накопления: `Balance` (остатки на дату), `Turnovers` и `BalanceAndTurnovers` (обороты за `start_period`…`end_period`); параметры `condition`, `dimensions`, `select`, `filter`, `orderby`, `top`/`skip` (страницы — только вместе с `orderby`). У регистров оборотов вроде `ВыручкаИСебестоимостьПродаж` есть только `Turnovers`. |
 
 ### Бухгалтерия — `accounting`
 
 | Инструмент | Описание |
 |------------|----------|
 | `get_accounting_register` | Чтение записей регистра бухгалтерии (`AccountingRegister_*`, например Хозрасчетный — проводки). |
-| `get_accounting_balance` | **Виртуальные таблицы** регистра бухгалтерии: `Balance`, `Turnovers`, `BalanceAndTurnovers`, `RecordsWithExtDimensions`, `ExtDimensions`. Не путать с `get_accumulation_balance`, который работает с `AccumulationRegister_*`, — здесь речь о двойной записи (счета, субконто). Таблицы оборотов Дт/Кт сознательно не включены: их точное имя ни одним прочитанным источником не подтверждено, сверяйте по `get_metadata` своей базы. |
+| `get_accounting_balance` | **Виртуальные таблицы** регистра бухгалтерии: `Balance`, `Turnovers`, `BalanceAndTurnovers`, `RecordsWithExtDimensions`, `ExtDimensions`. Не путать с `get_accumulation_balance`, который работает с `AccumulationRegister_*`, — здесь речь о двойной записи (счета, субконто). Принимает `select`, `filter`, `orderby`, `top`/`skip` (страницы — только вместе с `orderby`); `select` — главный рычаг против лимита ответа: 1С сворачивает строки по выбранным полям. `Turnovers` уже раскладывает обороты по корреспондирующим счетам (`BalancedAccount_Key`). Таблицы оборотов Дт/Кт сознательно не включены: их точное имя ни одним прочитанным источником не подтверждено, сверяйте по `get_metadata` своей базы. |
 
 ### Константы — `constants`
 
