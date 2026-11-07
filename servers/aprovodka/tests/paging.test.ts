@@ -9,8 +9,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { handleGetCatalogs } from "../src/tools/catalogs.js";
 import { handleGetDocuments } from "../src/tools/documents.js";
-import { handleGetRegister } from "../src/tools/registers.js";
-import { handleGetAccountingRegister } from "../src/tools/accounting.js";
+import { handleGetRegister, handleGetAccumulationBalance } from "../src/tools/registers.js";
+import { handleGetAccountingRegister, handleGetAccountingBalance } from "../src/tools/accounting.js";
 import { handleODataQuery } from "../src/tools/odata-query.js";
 import { handleFindByDescription, handleGetRecentDocuments } from "../src/tools/shortcuts.js";
 import { handleBatchQuery } from "../src/tools/batch.js";
@@ -47,6 +47,19 @@ const PAGED = [
     handleGetAccountingRegister({ register_name: "Хозрасчетный", top, skip: 0 })],
   ["odata_query", (top: number) =>
     handleODataQuery({ entity: "Catalog_Test", top, skip: 0, inlinecount: false })],
+  // Виртуальные таблицы листаются только с orderby (стабильный порядок строк).
+  ["get_accounting_balance", (top: number) =>
+    handleGetAccountingBalance({
+      register_name: "Хозрасчетный", table: "Turnovers",
+      start_period: "2026-01-01T00:00:00", end_period: "2026-12-31T23:59:59",
+      orderby: "Account_Key", top, skip: 0,
+    })],
+  ["get_accumulation_balance", (top: number) =>
+    handleGetAccumulationBalance({
+      register_name: "ВыручкаИСебестоимостьПродаж", table: "Turnovers",
+      start_period: "2026-01-01T00:00:00", end_period: "2026-12-31T23:59:59",
+      orderby: "Подразделение_Key", top, skip: 0,
+    })],
 ] as const;
 
 /** Инструменты без skip: has_more обязателен, next_skip был бы подсказкой в никуда. */

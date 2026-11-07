@@ -86,14 +86,14 @@ Tool names, arguments, return formats, and the `ONEC_*` env vars are unchanged.
 |------|-------------|
 | `get_register` | Read information or accumulation register data. |
 | `write_information_register` | Write a record into an independent information register (POST on `InformationRegister_*`). |
-| `get_accumulation_balance` | Accumulation-register balances (остатки) via the OData virtual method `Balance(Period=…,Condition=…)`. |
+| `get_accumulation_balance` | Accumulation-register **virtual tables**: `Balance` (остатки on a date), `Turnovers` and `BalanceAndTurnovers` (обороты for `start_period`…`end_period`), with `condition`, `dimensions`, `select`, `filter`, `orderby`, and `top`/`skip` (paging only together with `orderby`). Turnover registers such as `ВыручкаИСебестоимостьПродаж` have only `Turnovers`. |
 
 ### Accounting — `accounting`
 
 | Tool | Description |
 |------|-------------|
 | `get_accounting_register` | Read accounting-register records (`AccountingRegister_*`, e.g. Хозрасчетный — проводки). |
-| `get_accounting_balance` | Accounting-register **virtual tables**: `Balance`, `Turnovers`, `BalanceAndTurnovers`, `RecordsWithExtDimensions`, `ExtDimensions`. Not to be confused with `get_accumulation_balance`, which serves `AccumulationRegister_*` — this one is the double-entry ledger. Dr/Cr turnover tables are deliberately absent: their exact name is not confirmed by any source we could read, so check `get_metadata` on your own database. |
+| `get_accounting_balance` | Accounting-register **virtual tables**: `Balance`, `Turnovers`, `BalanceAndTurnovers`, `RecordsWithExtDimensions`, `ExtDimensions`. Not to be confused with `get_accumulation_balance`, which serves `AccumulationRegister_*` — this one is the double-entry ledger. Accepts `select`, `filter`, `orderby`, and `top`/`skip` (paging only together with `orderby`); `select` is the main lever against the response limit — 1C collapses rows to the selected fields. `Turnovers` already splits turnovers by the corresponding account (`BalancedAccount_Key`). Dr/Cr turnover tables are deliberately absent: their exact name is not confirmed by any source we could read, so check `get_metadata` on your own database. |
 
 ### Constants — `constants`
 

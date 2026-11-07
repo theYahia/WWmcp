@@ -108,8 +108,9 @@ export const RESPONSE_BUDGET = 45_000;
 
 const TRUNCATED_NOTE =
   "Ответ обрезан по целым записям, чтобы остаться валидным JSON. " +
-  "Отброшенные записи не потеряны: сузьте $filter, уменьшите top или возьмите " +
-  "следующую страницу. Считать по этой выборке итоги и «сколько всего» нельзя.";
+  "Отброшенные записи не потеряны: перечислите в $select только нужные поля, сузьте " +
+  "$filter, уменьшите top или возьмите следующую страницу. Считать по этой выборке " +
+  "итоги и «сколько всего» нельзя.";
 
 /**
  * Компактный JSON с обрезкой по записям, а не по символам.
@@ -117,8 +118,16 @@ const TRUNCATED_NOTE =
  * `arrayKey` — поле-массив, которое можно укоротить (`value`, `rows`, `results`).
  * Если ответ влезает в бюджет — отдаётся как есть, без лишних полей. Если нет —
  * добавляются `truncated` (сколько записей отброшено) и `note`.
+ *
+ * `onTruncate(keep)` — поля конверта, которые после обрезки надо пересчитать.
+ * Счётчики в конверте посчитаны до обрезки и описывают уже не тот массив:
+ * `pageJson` через это исправляет `returned` / `has_more` / `next_skip`.
  */
-export function stringifyCapped(payload: unknown, arrayKey: string): string {
+export function stringifyCapped(
+  payload: unknown,
+  arrayKey: string,
+  onTruncate?: (keep: number) => Record<string, unknown>,
+): string {
   const full = JSON.stringify(payload);
   if (full.length <= RESPONSE_BUDGET) return full;
   if (!payload || typeof payload !== "object") return full;
@@ -129,8 +138,11 @@ export function stringifyCapped(payload: unknown, arrayKey: string): string {
   if (!Array.isArray(items)) return full;
 
   // Сколько записей влезает: один проход с накоплением, без подбора.
+  // Оценка сверху: числа в пересчитанных полях при keep = items.length не короче,
+  // чем при любом меньшем keep.
   let used = JSON.stringify({
     ...envelope,
+    ...onTruncate?.(items.length),
     [arrayKey]: [],
     truncated: items.length,
     note: TRUNCATED_NOTE,
@@ -145,15 +157,34 @@ export function stringifyCapped(payload: unknown, arrayKey: string): string {
 
   return JSON.stringify({
     ...envelope,
+    ...onTruncate?.(keep),
     [arrayKey]: items.slice(0, keep),
     truncated: items.length - keep,
     note: TRUNCATED_NOTE,
   });
 }
 
-/** `toPage` + компактная сериализация с обрезкой по записям. */
+/**
+ * `toPage` + компактная сериализация с обрезкой по записям.
+ *
+ * После обрезки конверт пересчитывается. Иначе в ответе оставалось бы «вернул 100,
+ * следующая страница с 100», хотя в `value` их 60: модель взяла бы `skip=100` и
+ * молча потеряла 40 записей, а при `has_more: false` решила бы, что получила всё.
+ *
+ * `top` может быть `Infinity` — так виртуальные таблицы без `$top` получают тот же
+ * конверт: `has_more` становится `true` только из-за обрезки.
+ *
+ * Если в бюджет не влезла даже одна запись (у регистра бухгалтерии запись — весь
+ * набор проводок регистратора), `next_skip` не выдаётся: `skip + 0` указывал бы на
+ * ту же страницу, и модель ходила бы по кругу. Выход тут один — $select.
+ */
 export function pageJson(result: unknown, top: number, skip?: number): string {
-  return stringifyCapped(toPage(result, top, skip), "value");
+  const page = toPage(result, top, skip);
+  return stringifyCapped(page, "value", (keep) => {
+    const fix: Record<string, unknown> = { returned: keep, has_more: true };
+    if (skip !== undefined && keep > 0) fix["next_skip"] = skip + keep;
+    return fix;
+  });
 }
 
 /**

@@ -2,6 +2,7 @@ import { z } from "zod";
 import { oneCGet, buildODataPath, buildVirtualTablePath, escapeODataString } from "../client.js";
 import { normaliseEntity, odataDateTime } from "../validation.js";
 import { buildQuery, pageJson } from "../lib/paging.js";
+import { periodArgs, requireStableOrder } from "../lib/virtual-tables.js";
 
 // ──────────────────────────────────────────────────────────────
 // get_accounting_register — записи регистра бухгалтерии
@@ -75,7 +76,8 @@ export const getAccountingBalanceSchema = z.object({
       "Turnovers / BalanceAndTurnovers — за период (start_period + end_period). " +
       "RecordsWithExtDimensions / ExtDimensions — субконто. " +
       "DrCrTurnover / DrCrTurnovers (обороты Дт/Кт) НЕ поддержаны: имя таблицы " +
-      "первоисточником не подтверждено. Вызов вернёт объяснение и путь в обход.",
+      "первоисточником не подтверждено. Вызов вернёт объяснение и путь в обход. " +
+      "Turnovers уже раскладывает обороты по корреспондирующим счетам (BalancedAccount_Key).",
     ),
   period: odataDateTime
     .optional()
@@ -101,9 +103,32 @@ export const getAccountingBalanceSchema = z.object({
     .record(z.string(), z.string())
     .optional()
     .describe(
-      "Прочие параметры вызова как есть: {\"Dimensions\": \"'Счет,Организация'\"}. " +
-      "Значения — готовые OData-литералы; экранирование содержимого на вызывающем.",
+      "Прочие параметры вызова как есть: {\"Имя\": \"<готовый OData-литерал>\"}; " +
+      "экранирование содержимого на вызывающем. Dimensions регистр бухгалтерии НЕ " +
+      "принимает (1С отвечает 500 «Field not found PeriodAdjustment») — чтобы свернуть " +
+      "строки до нужных измерений, перечислите их в select.",
     ),
+  select: z
+    .string()
+    .optional()
+    .describe(
+      "OData $select. Главный рычаг против лимита ответа: 1С сворачивает строки по " +
+      "выбранным полям, например \"Account_Key,ExtDimension1,BalancedAccount_Key," +
+      "СуммаTurnoverDr,СуммаTurnoverCr\".",
+    ),
+  filter: z.string().optional().describe("OData $filter по полям таблицы, например \"СуммаTurnoverDr gt 0\""),
+  orderby: z
+    .string()
+    .optional()
+    .describe("OData $orderby. Обязателен вместе с top/skip — без порядка страницы нестабильны."),
+  top: z
+    .number()
+    .int()
+    .min(1)
+    .max(5000)
+    .optional()
+    .describe("$top — только вместе с orderby. Без top возвращаются все строки (с обрезкой по бюджету ответа)."),
+  skip: z.number().int().min(0).optional().describe("$skip — только вместе с orderby"),
 });
 
 export async function handleGetAccountingBalance(
@@ -113,32 +138,22 @@ export async function handleGetAccountingBalance(
   // получает только .shape, SDK пересобирает свой z.object, и refinement
   // уровня объекта молча теряется на каждом реальном вызове.
   if ((UNCONFIRMED_ACCOUNTING_TABLES as readonly string[]).includes(params.table)) {
+    // odata_query здесь не выход: он URL-кодирует всё имя сущности, и `/` перед
+    // именем таблицы уходит как %2F — веб-сервер публикации отвечает 404 (проверено
+    // на живой базе БП 3.0). Советовать его значит отправлять модель в тупик.
     throw new Error(
       `Обороты Дт/Кт (${params.table}) инструментом не поддержаны: точное имя виртуальной ` +
       "таблицы — DrCrTurnover или DrCrTurnovers — ни в одном прочитанном источнике не " +
-      "зафиксировано, а неверное имя даст 404 без внятной причины. " +
-      "Как обойти: (1) get_metadata / describe_entity на своей базе — найти фактическое имя " +
-      "в описании AccountingRegister_*; (2) вызвать его через odata_query, который имя не " +
-      "трогает. Подтверждённое имя стоит прислать в проект — задача WORK-1516. " +
-      "Остатки и обороты по счёту доступны уже сейчас: table=BalanceAndTurnovers.",
+      "зафиксировано, а неверное имя даст 404 без внятной причины. odata_query виртуальную " +
+      "таблицу не адресует: он кодирует `/` в имени, и публикация отвечает 404. " +
+      "Что делать сейчас: table=Turnovers уже раскладывает обороты счёта по " +
+      "корреспондирующим счетам (BalancedAccount_Key, СуммаTurnoverDr / СуммаTurnoverCr); " +
+      "остатки и обороты по счёту — table=BalanceAndTurnovers. Фактическое имя таблицы " +
+      "из get_metadata / describe_entity своей базы стоит прислать в проект — задача WORK-1516.",
     );
   }
-  const periodic = params.table === "Turnovers" || params.table === "BalanceAndTurnovers";
-  if (params.table === "Balance" && (params.start_period || params.end_period)) {
-    throw new Error(
-      "Balance takes `period` (a point in time); start_period/end_period belong to Turnovers / BalanceAndTurnovers.",
-    );
-  }
-  if (periodic && params.period) {
-    throw new Error(
-      `${params.table} takes start_period + end_period, not \`period\`.`,
-    );
-  }
-
-  const args: Record<string, string> = {};
-  if (params.period) args["Period"] = `datetime'${params.period}'`;
-  if (params.start_period) args["StartPeriod"] = `datetime'${params.start_period}'`;
-  if (params.end_period) args["EndPeriod"] = `datetime'${params.end_period}'`;
+  const args = periodArgs(params.table, params);
+  requireStableOrder(params);
   if (params.condition) args["Condition"] = `'${escapeODataString(params.condition)}'`;
   if (params.account_condition) {
     args["AccountCondition"] = `'${escapeODataString(params.account_condition)}'`;
@@ -151,8 +166,9 @@ export async function handleGetAccountingBalance(
     normaliseEntity("AccountingRegister_", params.register_name),
     params.table,
     args,
-    { $format: "json" },
+    buildQuery(params),
   );
   const result = await oneCGet(path);
-  return JSON.stringify(result);
+  // Без top — Infinity: конверт тот же, has_more=true только если ответ обрезан.
+  return pageJson(result, params.top ?? Number.POSITIVE_INFINITY, params.skip ?? 0);
 }

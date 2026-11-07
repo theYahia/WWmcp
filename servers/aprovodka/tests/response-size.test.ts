@@ -12,7 +12,8 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { handleGetDocuments } from "../src/tools/documents.js";
 import { handleODataQuery } from "../src/tools/odata-query.js";
-import { handleGetRegister } from "../src/tools/registers.js";
+import { handleGetRegister, handleGetAccumulationBalance } from "../src/tools/registers.js";
+import { handleGetAccountingBalance } from "../src/tools/accounting.js";
 import { handleListEntities, resetMetadataCache } from "../src/tools/metadata.js";
 import { handlePollChangesSince } from "../src/tools/change-tracking.js";
 import { resetClient } from "../src/client.js";
@@ -24,6 +25,9 @@ const CORE_LIMIT = 50_000;
 
 interface Capped {
   value?: unknown[];
+  returned?: number;
+  has_more?: boolean;
+  next_skip?: number;
   rows?: unknown[];
   entities?: unknown[];
   truncated?: number;
@@ -143,6 +147,66 @@ describe("обрезка по записям, а не по символам", ()
     expect(parsed.truncated).toBeGreaterThan(0);
     expect(typeof parsed.entities!.at(-1)).toBe("string");
   });
+
+  // После обрезки конверт описывает то, что реально осталось в value. Иначе
+  // next_skip перепрыгивает отброшенные записи, а has_more=false выдаёт кусок за всё.
+  it("после обрезки returned = длина value, has_more=true, next_skip=skip+returned", async () => {
+    mockValue(5000);
+    const parsed = JSON.parse(
+      await handleGetDocuments({ document_type: "Document_Test", top: 5000, skip: 200 }),
+    ) as Capped;
+    expect(parsed.truncated).toBeGreaterThan(0);
+    expect(parsed.returned).toBe(parsed.value!.length);
+    expect(parsed.has_more).toBe(true);
+    expect(parsed.next_skip).toBe(200 + parsed.value!.length);
+  });
+
+  it("если не влезла ни одна запись — next_skip нет (иначе skip+0 водил бы по кругу)", async () => {
+    const huge = { Recorder: "r", RecordSet: "x".repeat(60_000) };
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        text: () => Promise.resolve(JSON.stringify({ value: [huge, huge] })),
+        headers: new Map(),
+      }),
+    );
+    const raw = await handleGetDocuments({ document_type: "Document_Test", top: 5, skip: 0 });
+    expect(raw.length).toBeLessThanOrEqual(CORE_LIMIT);
+    const parsed = JSON.parse(raw) as Capped;
+    expect(parsed.returned).toBe(0);
+    expect(parsed.has_more).toBe(true);
+    expect(parsed).not.toHaveProperty("next_skip");
+    expect(parsed.note).toContain("$select");
+  });
+
+  const VIRTUAL = [
+    ["get_accounting_balance", () =>
+      handleGetAccountingBalance({
+        register_name: "Хозрасчетный", table: "Turnovers",
+        start_period: "2026-01-01T00:00:00", end_period: "2026-12-31T23:59:59",
+      })],
+    ["get_accumulation_balance", () =>
+      handleGetAccumulationBalance({
+        register_name: "ВыручкаИСебестоимостьПродаж", table: "Turnovers",
+        start_period: "2026-01-01T00:00:00", end_period: "2026-12-31T23:59:59",
+      })],
+  ] as const;
+
+  for (const [name, call] of VIRTUAL) {
+    it(`${name} без top при 5000 строк: режет по записям, конверт честный`, async () => {
+      mockValue(5000);
+      const raw = await call();
+      expect(raw.length).toBeLessThanOrEqual(CORE_LIMIT);
+      const parsed = JSON.parse(raw) as Capped;
+      expect(parsed.truncated).toBeGreaterThan(0);
+      expect(parsed.value!.length + parsed.truncated!).toBe(5000);
+      expect(parsed.returned).toBe(parsed.value!.length);
+      expect(parsed.has_more).toBe(true);
+      expect(parsed.next_skip).toBe(parsed.value!.length);
+      expect(parsed.value!.at(-1)).toHaveProperty("Posted", true);
+    });
+  }
 
   it("короткий ответ не получает truncated и note", async () => {
     mockValue(3);

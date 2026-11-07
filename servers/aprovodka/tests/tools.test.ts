@@ -623,7 +623,7 @@ describe("accounting virtual tables", () => {
     for (const table of ["DrCrTurnover", "DrCrTurnovers"] as const) {
       await expect(
         handleGetAccountingBalance({ register_name: "Хозрасчетный", table }),
-      ).rejects.toThrow(/не поддержаны[\s\S]*odata_query/i);
+      ).rejects.toThrow(/не поддержаны[\s\S]*odata_query виртуальную таблицу не адресует[\s\S]*table=Turnovers/i);
     }
     // Главное: запрос с неподтверждённым именем таблицы в базу НЕ уходит.
     expect(fetchMock).not.toHaveBeenCalled();
@@ -641,6 +641,154 @@ describe("accounting virtual tables", () => {
     const [url] = fetchMock.mock.calls[0];
     expect(url).toContain("AccountCondition=");
     expect(url).toContain("O''Brien");
+  });
+});
+
+// ──────────────────────────────────────────────────────────────
+// Виртуальные таблицы обоих видов регистров: период, отбор, страницы
+// ──────────────────────────────────────────────────────────────
+
+describe("virtual tables: period, query options, paging", () => {
+  const okJson = (body: unknown) => ({
+    ok: true,
+    text: () => Promise.resolve(JSON.stringify(body)),
+    headers: new Map(),
+  });
+  const stub = (body: unknown = { value: [] }) => {
+    const fetchMock = vi.fn().mockResolvedValue(okJson(body));
+    vi.stubGlobal("fetch", fetchMock);
+    return fetchMock;
+  };
+  const calledUrl = (fetchMock: ReturnType<typeof vi.fn>) =>
+    decodeURIComponent(String(fetchMock.mock.calls[0]![0]));
+
+  beforeEach(() => {
+    process.env["ONEC_BASE_URL"] = "http://1c.test/base";
+    process.env["ONEC_LOGIN"] = "u";
+    process.env["ONEC_PASSWORD"] = "p";
+    resetClient();
+  });
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  // Оба инструмента идут через один periodArgs — правила периода не расходятся.
+  const HANDLERS = [
+    ["get_accounting_balance", (p: Record<string, unknown>) =>
+      handleGetAccountingBalance({ register_name: "Хозрасчетный", ...p } as never)],
+    ["get_accumulation_balance", (p: Record<string, unknown>) =>
+      handleGetAccumulationBalance({ register_name: "ВыручкаИСебестоимостьПродаж", ...p } as never)],
+  ] as const;
+
+  const BAD_PERIODS = [
+    [{ table: "Turnovers", period: "2026-06-01T00:00:00" }, /start_period/],
+    [{ table: "BalanceAndTurnovers", period: "2026-06-01T00:00:00" }, /start_period/],
+    [{ table: "Balance", start_period: "2026-01-01T00:00:00" }, /Balance takes/],
+    [{ table: "Balance", end_period: "2026-12-31T23:59:59" }, /Balance takes/],
+  ] as const;
+
+  for (const [name, call] of HANDLERS) {
+    for (const [args, err] of BAD_PERIODS) {
+      it(`${name}: отклоняет ${JSON.stringify(args)} без запроса в базу`, async () => {
+        const fetchMock = stub();
+        await expect(call(args)).rejects.toThrow(err);
+        expect(fetchMock).not.toHaveBeenCalled();
+      });
+    }
+
+    it(`${name}: select/filter/orderby уходят в query, $top без top не появляется`, async () => {
+      const fetchMock = stub();
+      await call({
+        table: "Turnovers",
+        start_period: "2026-01-01T00:00:00",
+        end_period: "2026-12-31T23:59:59",
+        select: "Подразделение_Key,СуммаTurnover",
+        filter: "СуммаTurnover gt 0",
+        orderby: "Подразделение_Key",
+      });
+      const url = calledUrl(fetchMock);
+      expect(url).toContain("/Turnovers(StartPeriod=datetime'2026-01-01T00:00:00',EndPeriod=datetime'2026-12-31T23:59:59')");
+      expect(url).toContain("$select=Подразделение_Key,СуммаTurnover");
+      expect(url).toContain("$filter=СуммаTurnover gt 0");
+      expect(url).toContain("$orderby=Подразделение_Key");
+      expect(url).toContain("$format=json");
+      expect(url).not.toContain("$top");
+      expect(url).not.toContain("$skip");
+    });
+
+    it(`${name}: top/skip без orderby — отказ с подсказкой, запрос не уходит`, async () => {
+      const fetchMock = stub();
+      const period = { table: "Turnovers", start_period: "2026-01-01T00:00:00", end_period: "2026-12-31T23:59:59" };
+      await expect(call({ ...period, top: 10 })).rejects.toThrow(/требуют orderby/);
+      await expect(call({ ...period, skip: 10 })).rejects.toThrow(/требуют orderby/);
+      expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it(`${name}: top с orderby → $top=top+1, has_more и next_skip`, async () => {
+      const fetchMock = stub({ value: Array.from({ length: 6 }, (_, i) => ({ n: i })) });
+      const raw = await call({
+        table: "Turnovers",
+        start_period: "2026-01-01T00:00:00",
+        end_period: "2026-12-31T23:59:59",
+        orderby: "n",
+        top: 5,
+        skip: 10,
+      });
+      const url = calledUrl(fetchMock);
+      expect(url).toContain("$top=6");
+      expect(url).toContain("$skip=10");
+      const parsed = JSON.parse(raw);
+      expect(parsed.returned).toBe(5);
+      expect(parsed.has_more).toBe(true);
+      expect(parsed.next_skip).toBe(15);
+    });
+
+    it(`${name}: без top весь ответ в конверте с has_more=false`, async () => {
+      stub({ value: [{ n: 1 }, { n: 2 }] });
+      const parsed = JSON.parse(
+        await call({ table: "Turnovers", start_period: "2026-01-01T00:00:00", end_period: "2026-12-31T23:59:59" }),
+      );
+      expect(parsed.value).toHaveLength(2);
+      expect(parsed.returned).toBe(2);
+      expect(parsed.has_more).toBe(false);
+      expect(parsed).not.toHaveProperty("next_skip");
+    });
+  }
+
+  it("get_accumulation_balance: Turnovers с Dimensions и $select на регистре накопления", async () => {
+    const fetchMock = stub();
+    await handleGetAccumulationBalance({
+      register_name: "ВыручкаИСебестоимостьПродаж",
+      table: "Turnovers",
+      start_period: "2026-01-01T00:00:00",
+      end_period: "2026-12-31T23:59:59",
+      dimensions: "Номенклатура,Склад",
+      select: "Номенклатура_Key,СуммаВыручкиTurnover",
+    });
+    const url = calledUrl(fetchMock);
+    expect(url).toContain("AccumulationRegister_ВыручкаИСебестоимостьПродаж/Turnovers(");
+    expect(url).toContain(
+      "StartPeriod=datetime'2026-01-01T00:00:00',EndPeriod=datetime'2026-12-31T23:59:59',Dimensions='Номенклатура,Склад')",
+    );
+    expect(url).toContain("$select=Номенклатура_Key,СуммаВыручкиTurnover");
+  });
+
+  it("get_accumulation_balance: кавычка в dimensions удваивается", async () => {
+    const fetchMock = stub();
+    await handleGetAccumulationBalance({
+      register_name: "ТоварыНаСкладах",
+      table: "Turnovers",
+      start_period: "2026-01-01T00:00:00",
+      end_period: "2026-01-31T23:59:59",
+      dimensions: "Склад') or ('1",
+    });
+    expect(calledUrl(fetchMock)).toContain("Dimensions='Склад'') or (''1'");
+  });
+
+  it("get_accumulation_balance: без table — Balance, как раньше", async () => {
+    const fetchMock = stub();
+    await handleGetAccumulationBalance({ register_name: "ТоварыНаСкладах" } as never);
+    expect(calledUrl(fetchMock)).toContain("AccumulationRegister_ТоварыНаСкладах/Balance()");
   });
 });
 

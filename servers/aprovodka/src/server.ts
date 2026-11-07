@@ -210,6 +210,18 @@ export function createServer(): McpServer {
     "и \"сколько всего\" НЕЛЬЗЯ — либо дозапросите следующую страницу со `skip: next_skip`, либо " +
     "сузьте отбор, либо посчитайте count_entities.";
 
+  // Виртуальные таблицы (остатки и обороты): ответ без $top может быть огромным —
+  // обороты счёта 26 за год без $select весят ~430 КБ при лимите ответа 45 000
+  // символов. Модели нужно сказать, чем сокращать ответ, иначе она получит
+  // обрезанный кусок и посчитает по нему затраты.
+  const VIRTUAL_TABLE_NOTE =
+    " Ответ — конверт `{ value, returned, has_more }`. Ответ ограничен ~45 000 символов: " +
+    "перечисляйте в select только нужные измерения и ресурсы — 1С сворачивает строки по " +
+    "выбранным полям, и годовой оборот сжимается в десятки раз. Если в ответе есть `truncated` " +
+    "или `has_more: true`, выборка неполная — считать по ней итоги НЕЛЬЗЯ: сузьте select / " +
+    "condition / filter, разбейте период по месяцам или листайте страницами (top + skip, " +
+    "только вместе с orderby).";
+
   // Те же поля, но без next_skip: у инструмента нет параметра skip, подсказка была бы в никуда.
   const PAGING_NOTE_NO_SKIP =
     " Ответ — конверт `{ value, returned, has_more }`. `has_more: true` значит, что подходящих " +
@@ -389,8 +401,12 @@ export function createServer(): McpServer {
 
     server.tool(
       "get_accumulation_balance",
-      "Остатки регистра накопления через виртуальный метод OData Balance(Period=…,Condition=…). Без " +
-      "указания периода возвращает текущие остатки.",
+      "Остатки и обороты регистра накопления (AccumulationRegister_*) через виртуальные таблицы " +
+      "OData: Balance(Period=…) — остатки на дату (без period — текущие), Turnovers(StartPeriod=…," +
+      "EndPeriod=…) — обороты за период, BalanceAndTurnovers — остатки и обороты. Обороты " +
+      "регистров вроде ВыручкаИСебестоимостьПродаж и ПрочиеРасходы за период — здесь, " +
+      "table=Turnovers, а не get_register: основную таблицу таких регистров по Period не отобрать. " +
+      "dimensions сворачивает итоги до нужных измерений." + VIRTUAL_TABLE_NOTE,
       getAccumulationBalanceSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleGetAccumulationBalance(params) }],
@@ -459,7 +475,9 @@ export function createServer(): McpServer {
       "Виртуальные таблицы регистра бухгалтерии (AccountingRegister_*): Balance / Turnovers / " +
       "BalanceAndTurnovers / RecordsWithExtDimensions / ExtDimensions. Не путать с " +
       "get_accumulation_balance — тот работает с AccumulationRegister_*, а этот с двойной записью " +
-      "(счета, субконто).",
+      "(счета, субконто). Обороты счёта: table=Turnovers, start_period + end_period, " +
+      "account_condition \"Account_Key eq guid'…'\"; строки разложены по корреспондирующим " +
+      "счетам (BalancedAccount_Key)." + VIRTUAL_TABLE_NOTE,
       getAccountingBalanceSchema.shape,
       withErrorHandling(async (params) => ({
         content: [{ type: "text", text: await handleGetAccountingBalance(params) }],
